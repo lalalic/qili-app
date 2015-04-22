@@ -1,1 +1,0 @@
-mklink /J yang d:\workspace\Personal\base\javascript\yang

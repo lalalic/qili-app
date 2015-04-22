@@ -1,0 +1,50 @@
+{
+  "name": "dashboard",
+  "description": "qili dashboard",
+  "version": "0.1.0",
+  "author": {
+    "name": "Raymond Li",
+    "email": "lalalic@139.com"
+  },
+  "dependencies": {
+    "apromise": "git://github.com/lalalic/apromise",
+    "immutable": "^3.7.2",
+    "material-ui": ">=0.7.3",
+    "minimongo": ">=3.2.13",
+    "react": "0.13.x",
+    "react-infinite": "^0.3.4",
+    "react-router": ">=0.13.2",
+    "react-tap-event-plugin": ">=0.1.6"
+  },
+  "devDependencies": {
+    "adeamdify": "^0.1.1",
+    "jasmine": "^2.2.1",
+    "reactify": "^1.1.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "engines": {
+    "node": ">= 0.4.4"
+  },
+  "scripts": {
+    "js": "watchify -d -t reactify index.jsx -o www/index.js",
+    "css":"lessc lib/css/index.less www/index.css"
+  },
+  "readme": "README.md"
+}
