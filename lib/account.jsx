@@ -1,4 +1,5 @@
 var React=require('react');
+var {User}=require('./db');
 var mui=require('material-ui'),
     {TextField,FlatButton, RaisedButton}=mui,
     ajax=function(){return "ajax"};
@@ -60,14 +61,14 @@ class Main extends React.Component{
         this.state={}
     }
     verify(){
-        ajax("/verify").then(function(){
+        User.verify().then(function(){
             this.setState({verified:true})
         }.bind(this),function(e){
             this.setState({verifyError:e})
         }.bind(this))
     }
     signup(){
-        ajax("/signup").then(function(user){
+        User.signup().then(function(user){
             global.user=user
         }.bind(this),function(e){
             this.setState({signupError:e})

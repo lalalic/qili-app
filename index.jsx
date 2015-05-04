@@ -1,6 +1,4 @@
-global.user=null
-
-var getDb=require("./lib/db")
+var {init,Service}=require('./lib/db')
 var React=require('react');
 var Promise=require('apromise');
 var Router= require('react-router'),
@@ -8,14 +6,14 @@ var Router= require('react-router'),
 var mui=require('material-ui'),
     {FloatingActionButton, AppCanvas, LeftNav}=mui;
 
-var Account=require('./lib/account.jsx');
-
 class Main extends React.Component{
     constructor(props){
         super(props)
         this.state={user:global.user}
     }
     render(){
+        var Account=require('./lib/account.jsx');
+
         if(!this.state.user)
             return (<Account/>)
 
@@ -47,8 +45,19 @@ var Dashboard=require('./lib/dashboard.jsx'),
         <DefaultRoute handler={Dashboard}/>
         <NotFoundRoute handler={Dashboard}/>
     </Route>
-) ;
+);
 
-Router.run(routes, function(Handler, state){
-    React.render(<Handler params={state.params} query={state.query}/>, document.body)
-})
+
+class Application extends Service{
+    
+}
+
+function onReady(){
+    init("http://192.168.0.105:9080/1/","admin",function(){
+        Router.run(routes, function(Handler, state){
+            React.render(<Handler params={state.params} query={state.query}/>, document.body)
+        })
+    })
+}
+
+typeof(document.ondeviceready)!='undefined' ? document.ondeviceready(onReady) : onReady();
