@@ -1,4 +1,5 @@
 var {init,Service}=require('./lib/db')
+var Apps=require('./lib/db/app')
 var React=require('react');
 var Promise=require('apromise');
 var Router= require('react-router'),
@@ -48,14 +49,12 @@ var Dashboard=require('./lib/dashboard.jsx'),
 );
 
 
-class Application extends Service{
-    
-}
-
 function onReady(){
-    init("http://192.168.0.105:9080/1/","admin",function(){
-        Router.run(routes, function(Handler, state){
-            React.render(<Handler params={state.params} query={state.query}/>, document.body)
+    init("http://192.168.0.105:9080/1/","admin",function(db){
+        Apps.init(db).then(function(){
+            Router.run(routes, function(Handler, state){
+                React.render(<Handler params={state.params} query={state.query}/>, document.body)
+            })
         })
     })
 }
