@@ -18,17 +18,12 @@
   },
   "devDependencies": {
     "adeamdify": "^0.1.1",
-    "jasmine": "^2.2.1",
-    "reactify": "^1.1.0"
+    "babelify": "^6.0.2",
+    "jasmine": "^2.2.1"
   },
   "browserify": {
     "transform": [
-      [
-        "reactify",
-        {
-          "es6": true
-        }
-      ]
+      "babelify"
     ]
   },
   "keywords": [],
@@ -43,8 +38,8 @@
     "node": ">= 0.4.4"
   },
   "scripts": {
-    "js": "watchify -d -t reactify index.jsx -o www/index.js",
-    "css":"lessc lib/css/index.less www/index.css"
+    "js": "watchify -d index.js -o www/index.js",
+    "css": "lessc lib/css/index.less www/index.css"
   },
   "readme": "README.md"
 }
