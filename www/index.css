@@ -1031,6 +1031,9 @@ hr {
   opacity: 1;
   transform: scale(1);
 }
+.mui-date-picker-day-button.mui-is-disabled {
+  color: rgba(0, 0, 0, 0.3);
+}
 .mui-date-picker-day-button.mui-is-current-date {
   color: #00bcd4;
 }
@@ -1332,6 +1335,8 @@ hr {
   overflow: hidden;
   background-color: #ff4081;
   border-radius: 50%;
+  text-align: center;
+  vertical-align: bottom;
   transform: translate3d(0, 0, 0);
 }
 .mui-floating-action-button .mui-floating-action-button-container.mui-is-disabled {
@@ -4560,6 +4565,9 @@ hr {
 .icon-cancel:before {
   content: "\f252";
 }
+.mui-app-canvas {
+  margin-top: 60px;
+}
 .form {
   padding: 5px;
 }
@@ -4567,19 +4575,15 @@ hr {
   display: block;
   width: 100%;
 }
-.form .commands {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-}
-.form .commands > * {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  box-flex: 1;
+.commands {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
   text-align: center;
+  color: lightblue;
+}
+.commands > * {
+  display: table-cell;
 }
 .smsrequest {
   position: relative;
