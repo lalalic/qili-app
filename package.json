@@ -39,7 +39,7 @@
     "node": ">= 0.4.4"
   },
   "scripts": {
-    "js": "watchify -d index.js -o www/index.js",
+    "js": "watchify -d main.js -o www/index.js",
     "css": "lessc lib/css/index.less www/index.css"
   },
   "readme": "README.md"
