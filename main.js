@@ -1,7 +1,6 @@
-var {init,User,Main,React,Component}=require('./index'),
+var {init,User,Main,React,Component,Router}=require('./index'),
     Application=require('./lib/db/app'),
 
-    Router= require('react-router'),
     {Route, NotFoundRoute, Link, State, DefaultRoute} = Router;
 
 class Entry extends Component{
