@@ -4593,3 +4593,17 @@ hr {
   right: 0px;
   bottom: 10px;
 }
+.messager {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 10px;
+  background-color: black;
+  color: white;
+}
+.messager:empty {
+  display: hidden;
+}
+.messager.error {
+  color: red;
+}

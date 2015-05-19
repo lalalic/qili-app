@@ -1,4 +1,5 @@
 var React=require('react/addons'),
+    {Component}=React,
     {init}=require('./lib/db/index'),
     Application=require('./lib/db/app'),
 
@@ -20,8 +21,20 @@ var Dashboard=require('./lib/dashboard'),
     </Route>
 );
 
+class Messager extends Component{
+    constructor(props){
+        super(props)
+        this.state={message:null, type:null}
+    }
+
+    render(){
+        return (<div className={"messager "+(this.state.type||"")}>{this.state.message}</div>)
+    }
+}
 
 function onReady(){
+    var messager=React.render(<Messager/>, document.body)
+
     init("http://192.168.0.105:9080/1/","admin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, function(Handler, state){
@@ -30,6 +43,8 @@ function onReady(){
                     query={state.query}/>, document.body)
             })
         })
+    }, function(error){
+        messager.setState({message:"Server Error:"+error,type:'error'})
     })
 }
 
