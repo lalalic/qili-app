@@ -4607,3 +4607,16 @@ hr {
 .messager.error {
   color: red;
 }
+.empty {
+  text-align: center;
+  margin: 200px 50px;
+}
+.empty .mui-font-icon {
+  font-size: 48px;
+  color: lightgray;
+}
+.empty p {
+  color: lightgray;
+  font-size: x-large;
+  line-height: 1.5;
+}

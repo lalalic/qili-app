@@ -14,3 +14,11 @@ exports.File=File
 exports.Log=Log
 
 exports.Main=require('./lib/main')
+
+exports.UI={
+    Empty:require('./lib/components/empty'),
+    Loading:require('./lib/components/loading'),
+    List: require('./lib/components/list'),
+    Comment:require('./lib/components/comment'),
+    CommandBar: require('./lib/components/command-bar')
+}
