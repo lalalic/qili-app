@@ -7,23 +7,21 @@
     "email": "lalalic@139.com"
   },
   "dependencies": {
-    "apromise": "git://github.com/lalalic/apromise",
-    "immutable": "^3.7.2",
+    "apromise": "^0.1.3",
+    "babelify": "^6.0.2",
     "material-ui": "0.7.5",
     "minimongo": ">=3.2.13",
-    "reactable": "^0.10.1"
+    "react-infinite": "^0.3.4",
+    "react-router": "0.13.x",
+    "react-tap-event-plugin": ">=0.1.3",
+    "reactable": "^0.10.1",
+    "reactify": "^1.1.1"
   },
   "peerDependencies": {
-    "react-infinite": "^0.3.4",
-    "react-router": ">=0.13.2",
-    "react": ">=0.13",
-    "react-tap-event-plugin": ">=0.1.3"
+    "react": "0.13.x"
   },
   "devDependencies": {
-    "adeamdify": "^0.1.1",
-    "babelify": "^6.0.2",
-    "jasmine": "^2.2.1",
-    "reactify": "^1.1.1"
+    "jasmine": "^2.2.1"
   },
   "browserify": {
     "transform": [
@@ -35,7 +33,6 @@
       ]
     ]
   },
-  "keywords": [],
   "repository": {
     "type": "git",
     "url": ""
