@@ -20,5 +20,6 @@ exports.UI={
     Loading:require('./lib/components/loading'),
     List: require('./lib/components/list'),
     Comment:require('./lib/components/comment'),
-    CommandBar: require('./lib/components/command-bar')
+    CommandBar: require('./lib/components/command-bar'),
+	DialogCommand: require('./lib/components/dialog-command')
 }
