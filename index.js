@@ -21,5 +21,6 @@ exports.UI={
     List: require('./lib/components/list'),
     Comment:require('./lib/components/comment'),
     CommandBar: require('./lib/components/command-bar'),
-	DialogCommand: require('./lib/components/dialog-command')
+	DialogCommand: require('./lib/components/dialog-command'),
+    Photo: require('./lib/components/photo')
 }
