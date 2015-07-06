@@ -2,6 +2,8 @@ var {init,Model,User,Role,File,Log}=require("./lib/db"),
     React=require('react/addons'),
     {Component}=React;
 
+Date.Helper=require('material-ui/lib/utils/date-time')
+
 exports.React=React
 exports.Component=Component
 exports.Router=require('react-router')
