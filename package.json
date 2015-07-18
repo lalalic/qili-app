@@ -17,7 +17,7 @@
     "reactify": "^1.1.1"
   },
   "peerDependencies": {
-    "material-ui": "0.9.x",
+    "material-ui": "0.10.x",
     "react": "0.13.x"
   },
   "devDependencies": {
