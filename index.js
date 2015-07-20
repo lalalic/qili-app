@@ -1,7 +1,7 @@
 require('restmock')
 require('babel/polyfill')
 
-var {init,User,Main,React,Component,Router}=require('./index'),
+var {init,User,Main,React,Component,Router}=require('./lib/'),
     Application=require('./lib/db/app'),
 
     {Route, NotFoundRoute, Link, State, DefaultRoute} = Router;
