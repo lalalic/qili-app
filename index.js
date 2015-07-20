@@ -3,58 +3,81 @@ require('babel/polyfill')
 
 var {init,User,Main,React,Component,Router}=require('./lib/'),
     Application=require('./lib/db/app'),
-
-    {Route, NotFoundRoute, Link, State, DefaultRoute} = Router;
+	App=require('./lib/app'),
+	{MenuItem,Styles:{ThemeManager}, FloatingActionButton, Avatar}=require('material-ui'),
+	themeManager=new ThemeManager(),
+    {Route, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
-    constructor(props){
-        super(props)
-        this.state={
-            user:User.current,
-            apps:Application.all,
-            app: Application.current
-        }
+	getChildContext(){
+        return {muiTheme:themeManager.getCurrentTheme()}
     }
     render(){
-        var quickActions=[]
-        Application.all.forEach(function(app){
-            quickActions.push({route:"app",text:app.name})
-        })
-        quickActions.push({text:"logout", iconClassName:'icon-log-out'})
+        var floatAction,main
+        if(Application.current){
+            floatAction=(<CurrentApp onChange={()=>this.forceUpdate()}/>)
+            main=(<RouteHandler/>)
+        }else{
+            main=(<App/>)
+        }
 
-        return (<Main
-                    title="Qili Admin"
-                    quickActions={quickActions}
-                    menuItems={[
-                        {route:'app',text:'Setting'},
-                        {route:'cloudcode',text:'Cloud Code'},
-                        {route:'data',text:'data'}
-                    ]}/>)
+        return (
+            <Main.Light>
+                <div className="withFootbar">
+                    {floatAction}
+                    {main}
+                </div>
+            </Main.Light>
+        )
     }
 }
+Entry.childContextTypes={muiTheme:React.PropTypes.object}
 
-var Dashboard=require('./lib/dashboard'),
-    routes=(
-    <Route name="main" path="/" handler={Entry}>
-        <Route name="dashboard" handler={Dashboard}/>
-        <Route name="app" handler={require('./lib/app')}/>
-        <Route name="cloud" handler={require('./lib/cloud')}/>
-        <Route name="data" handler={require('./lib/data')}/>
+class CurrentApp extends Component{
+    render(){
+        return(
+            <FloatingActionButton
+                onClick={this.change.bind(this)}
+                style={{position:'fixed',top:10,right:10}}>
+                {Application.current.name}
+            </FloatingActionButton>
+        )
+    }
+    change(){
+        var current=Application.current,
+            apps=Application.all,
+            len=apps.length;
+        if(len<2)
+            return;
 
-        <DefaultRoute handler={Dashboard}/>
-    </Route>
-);
+        var index=apps.indexOf(current)
+        Application.current=apps[index+1 % len]
+        var {onChange}=this.props
+        onChange()
+    }
+}
+CurrentApp.PropTypes={
+    onChange: React.PropTypes.func.isRequired
+}
 
-function onReady(){
+;(function onReady(){
+	var Dashboard=require('./lib/dashboard'),
+		routes=(
+			<Route name="main" path="/" handler={Entry}>
+				<Route name="dashboard" handler={Dashboard}/>
+				<Route name="app" handler={require('./lib/app')}/>
+				<Route name="cloud" handler={require('./lib/cloud')}/>
+				<Route name="data" handler={require('./lib/data')}/>
+
+				<DefaultRoute handler={Dashboard}/>
+			</Route>
+		);
+
     init("http://192.168.0.105:9080/1/","admin",function(db){
         Application.init(db).then(function(){
-            Router.run(routes, function(Handler, state){
-                React.render(<Handler
-                    params={state.params}
-                    query={state.query}/>, document.body)
+            Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
+                React.render(<Handler params={state.params} query={state.query}/>, document.body)
             })
         })
     })
-}
-
-typeof(document.ondeviceready)!='undefined' ? document.ondeviceready(onReady) : onReady();
+})();

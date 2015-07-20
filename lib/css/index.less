@@ -9,3 +9,18 @@
 @import "icons.less";
 
 @import "custom-overrides.less";
+
+@footbarHeight:50px;
+@footbarzIndex:10;
+
+.footbar{
+    position:fixed;
+    bottom:0px;
+    background-color:white;
+    height:@footbarHeight;
+    z-index:@footbarzIndex;
+}
+
+.withFootbar{
+    margin-bottom:@footbarHeight;
+}

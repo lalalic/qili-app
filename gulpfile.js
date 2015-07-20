@@ -5,12 +5,12 @@ var gulp=require('gulp'),
 gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js --ignore jquery'))
     .task('watchcss',function(){
         gulp.watch(['lib/css/*'],['css'])
-            .on('change',function(e){
-                console.log(e.path+' was '+e.type)
-            })
     })
-    .task('css',['watchcss'],shell.task('lessc lib/css/index.less www/index.css'))
-    .task('mock',shell.task('"node_modules/.bin/restmock"'))
+	.task('css',['watchcss'],shell.task('lessc lib/css/index.less www/index.css'))
+    .task('watchmock', function(){
+		 gulp.watch(['mock.json'],['javascript'])
+	})
+    .task('mock',['watchmock'], shell.task('"node_modules/.bin/restmock"'))
     .task('default',['mock','css','javascript'],function(){
         /*
          * can't be here since it's blocked by mock and javascript,

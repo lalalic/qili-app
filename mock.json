@@ -1,6 +1,24 @@
 {
     "port":"9080",
     "routes":[
+		{
+			"path":"/me",
+			"type":"get",
+			"response":{
+				"_id":"lalalic",
+				"name":"lalalic",
+				"sessionToken":"lalalic"
+			}
+		},
+		{
+			"path":"/login",
+			"type":"get",
+			"response":{
+				"_id":"lalalic",
+				"name":"lalalic",
+				"sessionToken":"lalalic"
+			}
+		},
         {
             "path":"/",
             "type":"static",
@@ -10,10 +28,8 @@
 			"path":"/1/apps",
 			"type":"get",
 			"response":[{
-					
-			},
-			{
-			
+				"name":"admin",
+				"apiKey":"admin"	
 			}]
 		}
     ]
