@@ -1,28 +1,60 @@
-var {init,Model,User,Role,File,Log}=require("./lib/db"),
-    React=require('react/addons'),
-    {Component}=React;
+require('restmock')
+require('babel/polyfill')
 
-Date.Helper=require('material-ui/lib/utils/date-time')
+var {init,User,Main,React,Component,Router}=require('./index'),
+    Application=require('./lib/db/app'),
 
-exports.React=React
-exports.Component=Component
-exports.Router=require('react-router')
+    {Route, NotFoundRoute, Link, State, DefaultRoute} = Router;
 
-exports.init=init
-exports.Model=Model
-exports.User=User
-exports.Role=Role
-exports.File=File
-exports.Log=Log
+class Entry extends Component{
+    constructor(props){
+        super(props)
+        this.state={
+            user:User.current,
+            apps:Application.all,
+            app: Application.current
+        }
+    }
+    render(){
+        var quickActions=[]
+        Application.all.forEach(function(app){
+            quickActions.push({route:"app",text:app.name})
+        })
+        quickActions.push({text:"logout", iconClassName:'icon-log-out'})
 
-exports.Main=require('./lib/main')
-
-exports.UI={
-    Empty:require('./lib/components/empty'),
-    Loading:require('./lib/components/loading'),
-    List: require('./lib/components/list'),
-    Comment:require('./lib/components/comment'),
-    CommandBar: require('./lib/components/command-bar'),
-    Photo: require('./lib/components/photo'),
-    Messager: require('./lib/components/messager')
+        return (<Main
+                    title="Qili Admin"
+                    quickActions={quickActions}
+                    menuItems={[
+                        {route:'app',text:'Setting'},
+                        {route:'cloudcode',text:'Cloud Code'},
+                        {route:'data',text:'data'}
+                    ]}/>)
+    }
 }
+
+var Dashboard=require('./lib/dashboard'),
+    routes=(
+    <Route name="main" path="/" handler={Entry}>
+        <Route name="dashboard" handler={Dashboard}/>
+        <Route name="app" handler={require('./lib/app')}/>
+        <Route name="cloud" handler={require('./lib/cloud')}/>
+        <Route name="data" handler={require('./lib/data')}/>
+
+        <DefaultRoute handler={Dashboard}/>
+    </Route>
+);
+
+function onReady(){
+    init("http://192.168.0.105:9080/1/","admin",function(db){
+        Application.init(db).then(function(){
+            Router.run(routes, function(Handler, state){
+                React.render(<Handler
+                    params={state.params}
+                    query={state.query}/>, document.body)
+            })
+        })
+    })
+}
+
+typeof(document.ondeviceready)!='undefined' ? document.ondeviceready(onReady) : onReady();
