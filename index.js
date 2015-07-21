@@ -6,7 +6,7 @@ var {init,User,Main,React,Component,Router}=require('./lib/'),
 	App=require('./lib/app'),
 	{MenuItem,Styles:{ThemeManager}, FloatingActionButton, Avatar}=require('material-ui'),
 	themeManager=new ThemeManager(),
-    {Route, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
+    {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
 	getChildContext(){

@@ -2,7 +2,7 @@
     "port":"9080",
     "routes":[
 		{
-			"path":"/me",
+			"path":"/1/me",
 			"type":"get",
 			"response":{
 				"_id":"lalalic",
@@ -11,7 +11,7 @@
 			}
 		},
 		{
-			"path":"/login",
+			"path":"/1/login",
 			"type":"get",
 			"response":{
 				"_id":"lalalic",
@@ -26,6 +26,14 @@
         },
 		{
 			"path":"/1/apps",
+			"type":"get",
+			"response":[{
+				"name":"admin",
+				"apiKey":"admin"	
+			}]
+		},
+		{
+			"path":"/1/schemas",
 			"type":"get",
 			"response":[{
 				"name":"admin",
