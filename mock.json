@@ -24,21 +24,62 @@
             "type":"static",
             "response":"www"
         },
-		{
+        {
+            "path":"/data",
+            "type":"static",
+            "response":"www"
+        },
+        {
+            "path":"/cloud",
+            "type":"static",
+            "response":"www"
+        },
+        {
+            "path":"/log",
+            "type":"static",
+            "response":"www"
+        },
+        {
+            "path":"/app",
+            "type":"static",
+            "response":"www"
+        },
+        {
 			"path":"/1/apps",
 			"type":"get",
 			"response":[{
+                "_id":"admin",
 				"name":"admin",
-				"apiKey":"admin"	
+				"apiKey":"admin"
 			}]
 		},
 		{
 			"path":"/1/schemas",
 			"type":"get",
 			"response":[{
-				"name":"admin",
-				"apiKey":"admin"	
-			}]
-		}
+				"name":"users",
+                "fields":[{"name":"_id"},{"name":"name"},{"name":"phone"}]
+			},{
+                "name":"roles",
+                "fields":[{"name":"_id"},{"name":"name"},{"name":"ACL"}]
+            },{
+                "name":"logs",
+                "fields":[{"name":"_id"},{"name":"createdAt"},{"name":"level"}]
+            },{
+                "name":"apps",
+                "fields":[{"name":"_id"},{"name":"name"},{"name":"url"}]
+            }
+            ]
+		},
+        {
+            "path":"/1/users",
+            "type":"get",
+            "response":[
+                {
+                    "name":"lalalic",
+                    "_id":"lalalic"
+                }
+            ]
+        }
     ]
 }

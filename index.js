@@ -9,16 +9,20 @@ var {init,User,Main,React,Component,Router}=require('./lib/'),
     {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
+    constructor(p){
+        super(p)
+        this.constructor.instance=this
+    }
 	getChildContext(){
         return {muiTheme:themeManager.getCurrentTheme()}
     }
     render(){
         var floatAction,main
         if(Application.current){
-            floatAction=(<CurrentApp onChange={()=>this.forceUpdate()}/>)
+            floatAction=(<CurrentApp app={Application.current}/>)
             main=(<RouteHandler/>)
         }else{
-            main=(<App/>)
+            main=(<App app={Application.current={}}/>)
         }
 
         return (
@@ -34,40 +38,51 @@ class Entry extends Component{
 Entry.childContextTypes={muiTheme:React.PropTypes.object}
 
 class CurrentApp extends Component{
+    constructor(props){
+        super(props)
+        this.state={app:this.props.app}
+    }
+    componentWillReceiveProps(next){
+        var {_id:nextId}=next.app,
+            {_id:oldId}=this.props.app
+        if(nextId!=oldId)
+            this.setState({app:next.app})
+    }
+
     render(){
+        var {app}=this.state
         return(
             <FloatingActionButton
                 onClick={this.change.bind(this)}
-                style={{position:'fixed',top:10,right:10}}>
-                {Application.current.name}
+                style={{position:'fixed',top:10,right:10, opacity:0.7, zIndex:99}}>
+                {app.name}
             </FloatingActionButton>
         )
     }
     change(){
-        var current=Application.current,
+        var {app}=this.state,
             apps=Application.all,
             len=apps.length;
         if(len<2)
             return;
 
-        var index=apps.indexOf(current)
+        var index=-1
+        apps.find((a)=>index++,a._id==app._id)
         Application.current=apps[index+1 % len]
-        var {onChange}=this.props
-        onChange()
     }
 }
-CurrentApp.PropTypes={
-    onChange: React.PropTypes.func.isRequired
-}
+
+Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 
 ;(function onReady(){
 	var Dashboard=require('./lib/dashboard'),
 		routes=(
 			<Route name="main" path="/" handler={Entry}>
 				<Route name="dashboard" handler={Dashboard}/>
-				<Route name="app" handler={require('./lib/app')}/>
-				<Route name="cloud" handler={require('./lib/cloud')}/>
-				<Route name="data" handler={require('./lib/data')}/>
+				<Route name="app" path="app" handler={require('./lib/app')}/>
+				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
+				<Route name="data" path="data/:name?" handler={require('./lib/data')}/>
+                <Route name="log" path="log/" handler={require('./lib/log')}/>
 
 				<DefaultRoute handler={Dashboard}/>
 			</Route>
