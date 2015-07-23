@@ -80,6 +80,17 @@
                     "_id":"lalalic"
                 }
             ]
+        },
+		{
+            "path":"/1/roles",
+            "type":"get",
+            "response":[
+                {
+                    "name":"admin",
+                    "_id":"admin",
+					"ACL":"*"
+                }
+            ]
         }
     ]
 }
