@@ -30,6 +30,11 @@
             "response":"www"
         },
         {
+            "path":"/data/*",
+            "type":"static",
+            "response":"www"
+        },
+		{
             "path":"/cloud",
             "type":"static",
             "response":"www"
@@ -54,6 +59,13 @@
 			}]
 		},
 		{
+            "path":"/1/apps",
+            "type":"post",
+            "response":{
+				"updatedAt":"today"
+			}
+        },
+		{
 			"path":"/1/schemas",
 			"type":"get",
 			"response":[{
@@ -70,6 +82,16 @@
                 "fields":[{"name":"_id"},{"name":"name"},{"name":"url"}]
             }
             ]
+		},
+		{
+			"path":"/1/indexes",
+			"type":"get",
+			"response":{
+				users:[{username:1, $option:{unique:true}},{email:1, $option:{unique:true, sparse:true}}],
+				roles:[{name:1, $option:{unique:true}}],
+				apps:[{'author._id':1,'name':1, $option:{unique:true}}],
+				logs:[{level:1}, {'message.path':1, $option:{name:'accesspath', spare:true}}]
+			}
 		},
         {
             "path":"/1/users",
@@ -89,6 +111,27 @@
                     "name":"admin",
                     "_id":"admin",
 					"ACL":"*"
+                }
+            ]
+        },
+		{
+            "path":"/1/logs",
+            "type":"get",
+            "response":[
+                {
+                    "createdAt":"today",
+                    "level":9,
+					"message":"hello9"
+                },
+				{
+                    "createdAt":"today",
+                    "level":3,
+					"message":"hello3"
+                },
+				{
+                    "createdAt":"today",
+                    "level":2,
+					"message":"hello"
                 }
             ]
         }

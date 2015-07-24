@@ -8,7 +8,9 @@ gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js --ignore
     })
 	.task('css',['watchcss'],shell.task('lessc lib/css/index.less www/index.css'))
     .task('watchmock', function(){
-		 gulp.watch(['mock.json'],['javascript'])
+		 gulp.watch(['mock.json'],['javascript'], function(){
+			console.log("mock.json changed, rebuild javascript")
+		 })
 	})
     .task('mock',['watchmock'], shell.task('"node_modules/.bin/restmock"'))
     .task('default',['mock','css','javascript'],function(){

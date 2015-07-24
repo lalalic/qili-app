@@ -82,7 +82,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 				<Route name="app" path="app" handler={require('./lib/app')}/>
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
 				<Route name="data" path="data/:name?" handler={require('./lib/data')}/>
-                <Route name="log" path="log/" handler={require('./lib/log')}/>
+                <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
 
 				<DefaultRoute handler={Dashboard}/>
 			</Route>
