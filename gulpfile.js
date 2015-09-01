@@ -1,6 +1,5 @@
 var gulp=require('gulp'),
-    shell=require('gulp-shell'),
-    isWin=/^win/.test(process.platform);
+    shell=require('gulp-shell');
 
 gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js --ignore jquery'))
     .task('watchcss',function(){

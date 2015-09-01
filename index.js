@@ -9,6 +9,9 @@ var {init,User,Main,React,Component,Router}=require('./lib/'),
     {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
+    static get name(){
+        return "qili.Dashboard"
+    }
     constructor(p){
         super(p)
         this.constructor.instance=this
@@ -88,7 +91,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 			</Route>
 		);
 
-    init("http://192.168.0.105:9080/1/","admin",function(db){
+    init("http://localhost:9080/1/","admin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
                 React.render(<Handler params={state.params} query={state.query}/>, document.body)

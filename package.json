@@ -16,7 +16,7 @@
     "reactable": "^0.10.1"
   },
   "peerDependencies": {
-    "material-ui": "0.10.x",
+    "material-ui": ">=0.10.0",
     "react": "0.13.x"
   },
   "devDependencies": {
