@@ -9,9 +9,6 @@ var {init,User,Main,React,Component,Router}=require('./lib/'),
     {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
-    static get name(){
-        return "qili.Dashboard"
-    }
     constructor(p){
         super(p)
         this.constructor.instance=this

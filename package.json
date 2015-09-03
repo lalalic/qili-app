@@ -44,9 +44,5 @@
     "node": ">= 0.4.4"
   },
   "main": "lib/index.js",
-  "scripts": {
-    "js": "watchify -d main.js -o www/index.js",
-    "css": "lessc lib/css/index.less www/index.css"
-  },
   "readme": "README.md"
 }
