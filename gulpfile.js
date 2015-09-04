@@ -1,7 +1,7 @@
 var gulp=require('gulp'),
     shell=require('gulp-shell');
 
-gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js --ignore jquery'))
+gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js -x jquery'))
     .task('watchcss',function(){
         gulp.watch(['lib/css/*'],['css'])
     })
