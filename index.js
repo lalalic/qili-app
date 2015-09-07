@@ -1,4 +1,4 @@
-require('restmock')
+//require('restmock')
 require('babel/polyfill')
 
 var {init,User,Main,React,Component,Router}=require('./lib/'),
@@ -88,7 +88,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 			</Route>
 		);
 
-    init("http://localhost:9080/1/","admin",function(db){
+    init("http://qili2.com/1/","admin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
                 React.render(<Handler params={state.params} query={state.query}/>, document.body)
