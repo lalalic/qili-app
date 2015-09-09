@@ -2,6 +2,7 @@ var gulp=require('gulp'),
     shell=require('gulp-shell');
 
 gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js -i jquery'))
+    .task('min',shell.task('watchify index.js -o www/index.min.js -i jquery '))
     .task('watchcss',function(){
         gulp.watch(['lib/css/*'],['css'])
     })
@@ -12,7 +13,7 @@ gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js -i jquer
 		 })
 	})
     .task('mock',['watchmock'], shell.task('"node_modules/.bin/restmock"'))
-    .task('default',['mock','css','javascript'],function(){
+    .task('default',['mock','css','javascript','min'],function(){
         /*
          * can't be here since it's blocked by mock and javascript,
          * so make seperated watch task, and make default task dependent
