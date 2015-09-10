@@ -1,4 +1,5 @@
 //require('restmock')
+require('./lib/css/index.less')
 require('babel/polyfill')
 
 var {init,User,Main,React,Component,Router}=require('./lib/'),
