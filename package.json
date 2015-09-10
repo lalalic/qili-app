@@ -25,11 +25,11 @@
     "node-lessify": "0.0.10",
     "reactify": "^1.1.1",
     "restmock": "0.1.x",
+    "uglify-js": "^2.4.24",
     "uglifyify": "^3.0.1"
   },
   "browserify": {
     "transform": [
-        ["node-lessify",{"plugins":[]}],
       [
         "babelify",
         {
@@ -37,8 +37,11 @@
         }
       ],
       [
-        "uglifyify"
-    ]
+        "node-lessify",
+        {
+          "plugins": []
+        }
+      ]
     ]
   },
   "repository": {

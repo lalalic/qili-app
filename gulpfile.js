@@ -1,19 +1,33 @@
 var gulp=require('gulp'),
     shell=require('gulp-shell');
 
-gulp.task('javascript',shell.task('watchify -d index.js -o www/index.js -i jquery'))
-    .task('min',shell.task('watchify index.js -o www/index.min.js -i jquery '))
-    .task('watchcss',function(){
-        gulp.watch(['lib/css/*'],['css'])
+gulp.task('javascript',shell.task('watchify -d -g uglifyify index.js -o www/index.js -i jquery'))
+    .task('minify', shell.task('node_modules/.bin/uglifyjs www/index.js > www/index.min.js'))
+    .task('product', function(){
+        gulp.watch(['www/index.js'],['minify']).on('change', function(){
+            var fs=require('fs'), root="www/";
+
+            fs.readFile(root+"index.html", 'utf8', function(error, html){
+                if(error)
+                    return console.log(error);
+                var js=fs.readFileSync(root+'index.min.js','utf8')
+
+                html=html.replace('<script type="text/javascript" src="index.js"></script>',
+                        '<script type="text/javascript">'+js+'</script>');
+                fs.writeFile(root+"allin1.html", html, 'utf8', function(error){
+                    if(error)
+                        console.log(error)
+                })
+            })
+        })
     })
-	.task('css',['watchcss'],shell.task('lessc lib/css/index.less www/index.css'))
     .task('watchmock', function(){
-		 gulp.watch(['mock.json'],['javascript'], function(){
+		 gulp.watch(['mock.json'],['javascript']).on('change', function(){
 			console.log("mock.json changed, rebuild javascript")
 		 })
 	})
     .task('mock',['watchmock'], shell.task('"node_modules/.bin/restmock"'))
-    .task('default',['mock','javascript','min'],function(){
+    .task('default',['mock','javascript'],function(){
         /*
          * can't be here since it's blocked by mock and javascript,
          * so make seperated watch task, and make default task dependent
