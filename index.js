@@ -1,4 +1,4 @@
-//require('restmock')
+require('restmock')
 require('./lib/css/index.less')
 require('babel/polyfill')
 
@@ -78,7 +78,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 ;(function onReady(){
 	var Dashboard=require('./lib/dashboard'),
 		routes=(
-			<Route name="main" path="/" handler={Entry}>
+			<Route name="main" path="/dashboard/" handler={Entry}>
 				<Route name="dashboard" handler={Dashboard}/>
 				<Route name="app" path="app" handler={require('./lib/app')}/>
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>

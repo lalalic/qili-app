@@ -20,43 +20,39 @@
 			}
 		},
         {
-            "path":"/",
+            "path":"/dashboard",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/data",
+            "path":"/dashboard/data",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/data/*",
+            "path":"/dashboard/data/*",
             "type":"static",
             "response":"www"
         },
 		{
-            "path":"/cloud",
+            "path":"/dashboard/cloud",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/log",
+            "path":"/dashboard/log",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/app",
+            "path":"/dashboard/app",
             "type":"static",
             "response":"www"
         },
         {
 			"path":"/1/apps",
 			"type":"get",
-			"response":[{
-                "_id":"admin",
-				"name":"admin",
-				"apiKey":"admin"
-			}]
+			"response":[]
 		},
 		{
             "path":"/1/apps",
