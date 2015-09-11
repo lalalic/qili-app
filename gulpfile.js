@@ -9,7 +9,7 @@ gulp.task('javascript', shell.task('browserify -d index.js -o www/index.js -i jq
         try{
             var js=require('uglify-js').minify('www/index.js').code
             var data=html.split(/<script.*\/script>/i)
-            data.splice(1,1,'<script>'+js+'</script>')
+            data.splice(1,0,'<script>'+js+'</script>')
 
             fs.writeFileSync("www/allin1.html", data.join(''), 'utf8')
         }catch(error){}
