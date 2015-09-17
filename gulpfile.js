@@ -12,6 +12,8 @@ gulp.task('javascript', shell.task('browserify -d index.js -o www/index.js -i jq
             data.splice(1,0,'<script>'+js+'</script>')
 
             fs.writeFileSync("www/allin1.html", data.join(''), 'utf8')
+
+            //fs.writeFileSync("../qili/www/dashboard/index.html", data.join(''), 'utf8')
         }catch(error){}
     })
     .task('watch', function(){

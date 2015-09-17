@@ -1,4 +1,4 @@
-require('restmock')
+//require('restmock')
 require('./lib/css/index.less')
 require('babel/polyfill')
 
@@ -89,7 +89,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 			</Route>
 		);
 
-    init("http://qili2.com/1/","qiliAdmin",function(db){
+    init("http://localhost:9080/1/","qiliAdmin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
                 React.render(<Handler params={state.params} query={state.query}/>, document.body)
