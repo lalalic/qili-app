@@ -1,7 +1,7 @@
 var gulp=require('gulp'),
     shell=require('gulp-shell');
 
-gulp.task('javascript', shell.task('browserify -d index.js -o www/index.js -i jquery'))
+gulp.task('javascript', shell.task('watchify -d index.js -o www/index.js -i jquery'))
     .task('allin1',function(){
         var fs=require('fs')
 
@@ -17,10 +17,10 @@ gulp.task('javascript', shell.task('browserify -d index.js -o www/index.js -i jq
         }catch(error){}
     })
     .task('watch', function(){
-		 gulp.watch(['mock.json','index.js','lib/**/*.*'],['javascript'])
+		 //gulp.watch(['mock.json','index.js','lib/**/*.*'],['javascript'])
          gulp.watch(['www/index.js','www/index.html'],['allin1'])
 	})
-    .task('default',['javascript','watch'], shell.task('"node_modules/.bin/restmock"'))
+    .task('default',['watch'], shell.task('"node_modules/.bin/restmock"'))
 
     .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=www']))
     .task('cordovaConfig', ['cordovaCreate'], function(){

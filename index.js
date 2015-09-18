@@ -10,27 +10,30 @@ var {init,User,Main,React,Component,Router}=require('./lib/'),
     {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
 
 class Entry extends Component{
-    constructor(p){
-        super(p)
-        this.constructor.instance=this
+    constructor(props){
+        super(props)
+        this.state={app:Application.current}
+    }
+    componentDidMount(){
+        Application.event.on('change',this.__onchange=()=>this.setState({app:Application.current}))
+    }
+
+    componentWillUnmount(){
+        Application.event.removeListener('change',this.__onchange)
     }
 	getChildContext(){
         return {muiTheme:themeManager.getCurrentTheme()}
     }
     render(){
-        var floatAction,main
-        if(Application.current){
-            floatAction=(<CurrentApp app={Application.current}/>)
-            main=(<RouteHandler/>)
-        }else{
-            main=(<App app={Application.current={}}/>)
-        }
+        var floatAction
+        if(this.state.app)
+            floatAction=(<CurrentApp app={this.state.app}/>)
 
         return (
             <Main.Light>
                 <div className="withFootbar">
                     {floatAction}
-                    {main}
+                    <RouteHandler/>
                 </div>
             </Main.Light>
         )
@@ -73,7 +76,6 @@ class CurrentApp extends Component{
     }
 }
 
-Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 
 ;(function onReady(){
 	var Dashboard=require('./lib/dashboard'),
@@ -89,7 +91,7 @@ Application.onCurrentChange(()=>Entry.instance.forceUpdate())
 			</Route>
 		);
 
-    init("http://qili2.com/1/","qiliAdmin",function(db){
+    init("http://localhost:9080/1/","qiliAdmin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
                 React.render(<Handler params={state.params} query={state.query}/>, document.body)
