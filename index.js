@@ -91,10 +91,10 @@ class CurrentApp extends Component{
 			</Route>
 		);
 
-    init("http://localhost:9080/1/","qiliAdmin",function(db){
+    init("http://qili2.com/1/","qiliAdmin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
-                React.render(<Handler params={state.params} query={state.query}/>, document.body)
+                React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
             })
         })
     })
