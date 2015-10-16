@@ -58,7 +58,7 @@ class CurrentApp extends Component{
         return(
             <FloatingActionButton
                 onClick={this.change.bind(this)}
-                style={{position:'fixed',top:10,right:10, opacity:0.7, zIndex:99}}>
+                style={{position:'absolute',top:10,right:10, opacity:0.7, zIndex:99}}>
                 {app.name}
             </FloatingActionButton>
         )
@@ -80,7 +80,7 @@ class CurrentApp extends Component{
 ;(function onReady(){
 	var Dashboard=require('./lib/dashboard'),
 		routes=(
-			<Route name="main" path="/dashboard/" handler={Entry}>
+			<Route name="main" path="/" handler={Entry}>
 				<Route name="dashboard" handler={Dashboard}/>
 				<Route name="app" path="app" handler={require('./lib/app')}/>
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
@@ -94,7 +94,9 @@ class CurrentApp extends Component{
     init("http://qili2.com/1/","qiliAdmin",function(db){
         Application.init(db).then(function(){
             Router.run(routes, (!window.cordova ? HistoryLocation : undefined), function(Handler, state){
-                React.render(<Handler params={state.params} query={state.query}/>, document.getElementById('app'))
+                var container=document.getElementById('app')
+                container.style.height=window.innerHeight+'px'
+                React.render(<Handler params={state.params} query={state.query}/>, container)
             })
         })
     })

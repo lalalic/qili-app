@@ -20,32 +20,32 @@
 			}
 		},
         {
-            "path":"/dashboard",
+            "path":"/",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/dashboard/data",
+            "path":"/data",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/dashboard/data/*",
+            "path":"/data/*",
             "type":"static",
             "response":"www"
         },
 		{
-            "path":"/dashboard/cloud",
+            "path":"/cloud",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/dashboard/log",
+            "path":"/log",
             "type":"static",
             "response":"www"
         },
         {
-            "path":"/dashboard/app",
+            "path":"/app",
             "type":"static",
             "response":"www"
         },
