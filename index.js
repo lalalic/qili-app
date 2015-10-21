@@ -1,4 +1,4 @@
-//require('restmock')
+//require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 
@@ -54,11 +54,15 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app}=this.state
+        var {app}=this.state,
+            style={position:'absolute',top:10,right:10, opacity:0.7, zIndex:99};
+        if(!app || !app._id)
+            style.display="none"
+
         return(
             <FloatingActionButton
                 onClick={this.change.bind(this)}
-                style={{position:'absolute',top:10,right:10, opacity:0.7, zIndex:99}}>
+                style={style}>
                 {app.name}
             </FloatingActionButton>
         )
@@ -82,11 +86,10 @@ class CurrentApp extends Component{
 		routes=(
 			<Route name="main" path="/" handler={Entry}>
 				<Route name="dashboard" handler={Dashboard}/>
-				<Route name="app" path="app" handler={require('./lib/app')}/>
+				<Route name="app" path="app/:name?" handler={require('./lib/app')}/>
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
 				<Route name="data" path="data/:name?" handler={require('./lib/data')}/>
-                <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
-
+        <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
 				<DefaultRoute handler={Dashboard}/>
 			</Route>
 		);
