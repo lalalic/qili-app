@@ -1,4 +1,4 @@
-//require('restmock');
+require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 
@@ -15,11 +15,11 @@ class Entry extends Component{
         this.state={app:Application.current}
     }
     componentDidMount(){
-        Application.event.on('change',this.__onchange=()=>this.setState({app:Application.current}))
+        Application.event.on('change',this.__onCurrentAppchange=()=>this.setState({app:Application.current}))
     }
 
     componentWillUnmount(){
-        Application.event.removeListener('change',this.__onchange)
+        Application.event.removeListener('change',this.__onCurrentAppchange)
     }
 	getChildContext(){
         return {muiTheme:themeManager.getCurrentTheme()}
@@ -33,7 +33,7 @@ class Entry extends Component{
             <Main.Light>
                 <div className="withFootbar">
                     {floatAction}
-                    <RouteHandler/>
+                    <RouteHandler app={this.state.app}/>
                 </div>
             </Main.Light>
         )
@@ -75,8 +75,8 @@ class CurrentApp extends Component{
             return;
 
         var index=-1
-        apps.find((a)=>index++,a._id==app._id)
-        Application.current=apps[index+1 % len]
+        apps.find((a)=>(index++,a._id==app._id))
+        Application.current=apps[(index+1) % len]
     }
 }
 
@@ -89,7 +89,7 @@ class CurrentApp extends Component{
 				<Route name="app" path="app/:name?" handler={require('./lib/app')}/>
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
 				<Route name="data" path="data/:name?" handler={require('./lib/data')}/>
-        <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
+                <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
 				<DefaultRoute handler={Dashboard}/>
 			</Route>
 		);
