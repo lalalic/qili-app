@@ -79,7 +79,11 @@ body{
 .commands{
     .grid;
     text-align:center;
+    
     color:lightblue;
+    svg{
+        fill:lightblue!important;
+    }
 
     &.centerinput{
         >:first-child, >:last-child{
@@ -200,3 +204,19 @@ body{
 }
 
 .form{margin:10px auto}
+
+
+table.data{
+    width:100%;
+    border: 1px solid gray;
+    border-collapse: collapse;
+    th,td{
+        text-align: left;
+        border: 1px solid gray;
+        min-width: 50px;
+    }
+
+    tbody tr:nth-child(2n+1){
+        background-color: lightyellow;
+    }
+}
