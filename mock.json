@@ -52,7 +52,7 @@
         {
 			"path":"/1/apps",
 			"type":"get",
-			"response":[{"name":"admin","_id":"admin"},{"name":"super daddy","_id":"superdaddy"}]
+			"response":[{"name":"admin","_id":"admin", "apiKey":"admin"},{"name":"super daddy","_id":"superdaddy", "apiKey":"superdaddy"}]
 		},
 		{
             "path":"/1/apps",
