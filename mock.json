@@ -79,6 +79,25 @@
             }
             ]
 		},
+        {
+			"path":"/1/schemas/users",
+			"type":"get",
+			"response":[{
+                    "name":"lalalic",
+                    "_id":"lalalic"
+                }
+            ]
+		},
+        {
+			"path":"/1/schemas/roles",
+			"type":"get",
+			"response":[{
+                    "name":"admin",
+                    "_id":"admin",
+                    "ACL":"*"
+                }
+            ]
+		},
 		{
 			"path":"/1/indexes",
 			"type":"get",

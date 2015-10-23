@@ -1,3 +1,7 @@
+@maxWidth:960px!important;
+@footbarHeight:50px;
+@topzIndex:10;
+
 *{
     box-sizing:border-box;
     outline:none;
@@ -35,15 +39,12 @@ body{
     }
 }
 
-@footbarHeight:50px;
-@footbarzIndex:10;
-
 .footbar{
-    position:absolute;
+    position:fixed;
     bottom:0px;
     background-color:white;
     height:@footbarHeight;
-    z-index:@footbarzIndex;
+    z-index:@topzIndex;
 }
 
 .withFootbar{
@@ -178,5 +179,27 @@ table.data{
 
     tbody tr:nth-child(2n+1){
         background-color: lightyellow;
+    }
+}
+
+
+@media screen and (min-width:960px){
+    body{
+        background-color:lightgray;
+
+        #app{
+            width:@maxWidth;
+            margin:0px auto!important;
+            background-color:white;
+        }
+
+        #app>div{
+            width:@maxWidth;
+            height:100%;
+        }
+
+        .footbar{
+            width:@maxWidth;
+        }
     }
 }

@@ -1,4 +1,4 @@
-require('restmock');
+//require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 
@@ -42,20 +42,16 @@ class Entry extends Component{
 Entry.childContextTypes={muiTheme:React.PropTypes.object}
 
 class CurrentApp extends Component{
-    constructor(props){
-        super(props)
-        this.state={app:this.props.app}
-    }
     componentWillReceiveProps(next){
         var {_id:nextId}=next.app,
             {_id:oldId}=this.props.app
         if(nextId!=oldId)
-            this.setState({app:next.app})
+            this.forceUpdate()
     }
 
     render(){
-        var {app}=this.state,
-            style={position:'absolute',top:10,right:10, opacity:0.7, zIndex:99};
+        var {app}=this.props,
+            style={position:'fixed',top:10,right:10, opacity:0.7, zIndex:9};
         if(!app || !app._id)
             style.display="none"
 
@@ -68,7 +64,7 @@ class CurrentApp extends Component{
         )
     }
     change(){
-        var {app}=this.state,
+        var {app}=this.props,
             apps=Application.all,
             len=apps.length;
         if(len<2)
