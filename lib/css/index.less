@@ -1,33 +1,14 @@
-body{
-    margin:0px;
-}
-::-webkit-scrollbar {
-    width: 0px;
-}
-
 *{
     box-sizing:border-box;
     outline:none;
 }
 
-@media screen and (min-width:600px) {
-    body{
-        background-color:gray;
-        position:relative;
-    }
-    #app{
-        background-color:white;
-        width:420px;
-        margin:0px auto;
-        position:relative;
-    }
+body{
+    margin:0px;
 }
 
-
-.round-corner(@radius:10px;) {
-	-webkit-border-radius: @radius;
-	-moz-border-radius: @radius;
-	border-radius: @radius;
+::-webkit-scrollbar {
+    width: 0px;
 }
 
 .vendor(@prop,@value){
@@ -54,32 +35,33 @@ body{
     }
 }
 
+@footbarHeight:50px;
+@footbarzIndex:10;
 
+.footbar{
+    position:absolute;
+    bottom:0px;
+    background-color:white;
+    height:@footbarHeight;
+    z-index:@footbarzIndex;
+}
 
-
-.mui-floating-action-button{position:absolute;bottom:10px;right:10px}
-.mui-tabs-container{}
-.mui-app-bar{position:fixed;top:0}
-
-
-
-.mui-app-canvas{
-    margin-top: 60px
+.withFootbar{
+    padding-bottom:@footbarHeight;
+    position:absolute;
+    width:100%;
+    height:100%;
 }
 
 .form{
+    margin:10px auto;
     padding:5px;
-
-    .mui-text-field{
-        display:block;
-        width:100%
-    }
 }
 
 .commands{
     .grid;
     text-align:center;
-    
+
     color:lightblue;
     svg{
         fill:lightblue!important;
@@ -103,8 +85,6 @@ body{
             }
         }
     }
-
-
 }
 
 .smsrequest{
@@ -116,6 +96,8 @@ body{
         bottom:10px;
     }
 }
+
+
 .messager{
     position:fixed;
     bottom:10px;
@@ -138,9 +120,9 @@ body{
     margin:200px 50px;
 
 
-    .mui-font-icon{
+    svg{
         font-size:48px;
-        color:lightgray;
+        color:lightgray!important;
     }
 
     p{
@@ -171,7 +153,7 @@ body{
     min-height:1500px;
 
     .content{
-        .round-corner(3px);
+        border-radius:3px;
         background-color:white;
         padding:5px;
         float:left;
@@ -183,28 +165,6 @@ body{
         }
     }
 }
-
-
-@footbarHeight:50px;
-@footbarzIndex:10;
-
-.footbar{
-    position:absolute;
-    bottom:0px;
-    background-color:white;
-    height:@footbarHeight;
-    z-index:@footbarzIndex;
-}
-
-.withFootbar{
-    padding-bottom:@footbarHeight;
-    position:absolute;
-    width:100%;
-    height:100%;
-}
-
-.form{margin:10px auto}
-
 
 table.data{
     width:100%;
