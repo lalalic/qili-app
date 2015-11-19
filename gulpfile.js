@@ -1,7 +1,7 @@
 var gulp=require('gulp'),
     shell=require('gulp-shell');
 
-gulp.task('javascript', shell.task('"node_modules/.bin/watchify" -d index.js -o www/index.js -i jquery'))
+gulp.task('build', shell.task('"node_modules/.bin/watchify" -d index.js -o www/index.js -i jquery'))
     .task('allin1',function(){
         var fs=require('fs')
 
@@ -16,11 +16,11 @@ gulp.task('javascript', shell.task('"node_modules/.bin/watchify" -d index.js -o 
             //fs.writeFileSync("../qili/www/dashboard/index.html", data.join(''), 'utf8')
         }catch(error){}
     })
-    .task('watch', function(){
+    .task('watch4allin1', function(){
 		 //gulp.watch(['mock.json','index.js','lib/**/*.*'],['javascript'])
          gulp.watch(['www/index.js','www/index.html'],['allin1'])
 	})
-    .task('default',['watch'], shell.task('"node_modules/.bin/restmock"'))
+    .task('default', shell.task('"node_modules/.bin/restmock"'))
 
     .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=www']))
     .task('cordovaConfig', ['cordovaCreate'], function(){
