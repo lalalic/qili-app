@@ -1,6 +1,7 @@
 @maxWidth:960px!important;
 @footbarHeight:50px;
 @topzIndex:10;
+@background:white;
 
 *{
     box-sizing:border-box;
@@ -91,6 +92,7 @@ body{
                 padding: 2px;
                 border-width: 0px;
                 border-bottom: 1px solid lightgray;
+                text-align:center;
             }
         }
     }
@@ -132,7 +134,7 @@ body{
     svg{
         width: 150px!important;
         height:150px!important;
-        color:lightgray!important;
+        fill:lightgray!important;
     }
 
     p{
@@ -144,17 +146,21 @@ body{
 
 
 .dialog-command{
-    position: absolute!important;
-    top: -50px!important;
-    .content{
+    .layout{
         position: fixed;
-        background-color: lightgray;
-        width: 100%;
-        padding:10px;
-        bottom:0px;
-        >*{
-            background-color:white;
+        bottom:@footbarHeight;
+        width:100%;
+
+        .content{
+            background-color: lightgray;
+            width: 100%;
+            padding:10px;
+            margin:0 auto;
+            >*{
+                background-color:white;
+            }
         }
+
     }
 }
 
@@ -203,7 +209,12 @@ table{
         #app{
             width:@maxWidth;
             margin:0px auto!important;
-            background-color:white;
+            background-color:@background;
+        }
+
+        #container{
+            width: 100%;
+            background-color:@background;
         }
 
         #app>div{
@@ -213,6 +224,14 @@ table{
 
         .footbar{
             width:@maxWidth;
+        }
+
+        .dialog-command{
+            .layout{
+                .content{
+                    width:@maxWidth;
+                }
+            }
         }
     }
 }
