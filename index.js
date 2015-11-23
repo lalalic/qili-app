@@ -5,62 +5,44 @@ require('babel/polyfill')
 var {init,User,Main,React,Component,Router:_Router, UI:{Loading, Empty}}=require('./lib/'),
     Application=require('./lib/db/app'),
 	App=require('./lib/app'),
-	{MenuItem,Styles:{ThemeManager}, FloatingActionButton, Avatar}=require('material-ui'),
-	muiTheme=ThemeManager.getMuiTheme(require('material-ui/lib/styles/raw-themes/light-raw-theme')),
-    {Router, Route, IndexRoute, HistoryLocation} = _Router;
+	{MenuItem, FloatingActionButton, Avatar}=require('material-ui'),
+	{Router, Route, IndexRoute, HistoryLocation} = _Router;
 
 class QiliConsole extends Component{
     constructor(props){
         super(props)
-        this.state={app:Application.current, inited:false}
-        init("http://qili2.com/1/","qiliAdmin",
-            (db)=>Application.init(db)
-                .then(()=>this.setState({inited:true}),(e)=>this.setState({inited:true,initedError:e.message})))
+        this.state={app:Application.current}
+        this.__onCurrentAppchange=()=>this.setState({app:Application.current})
     }
     componentDidMount(){
-        Application.event.on('change',this.__onCurrentAppchange=()=>this.setState({app:Application.current}))
+        Application.event.on('change',this.__onCurrentAppchange)
     }
 
     componentWillUnmount(){
         Application.event.removeListener('change',this.__onCurrentAppchange)
     }
-	getChildContext(){
-        return {muiTheme}
-    }
 
     render(){
-        var {inited, initedError}=this.state
-        if(!inited){
-            if(initedError)
-                return (<Empty text={`Initializing Error: ${initedError}`}/>)
-            return  (<Loading/>)
-        }
-
-        var floatAction
-        if(this.state.app)
-            floatAction=(<CurrentApp app={this.state.app}/>)
-
         var Dashboard=require('./lib/dashboard')
         return (
-            <Main.Light>
+            <Main.Light appId="qiliAdmin" init={()=>Application.init()}>
                 <div className="withFootbar">
-                    {floatAction}
-                    <Router app={this.state.app}
-                        history={(!window.cordova ? HistoryLocation : undefined)}>
-                        <IndexRoute component={Dashboard}/>
-                        <Route name="dashboard" component={Dashboard}/>
-                        <Route name="app" path="app/:name?" component={require('./lib/app')}/>
-                        <Route name="cloud" path="cloud/" component={require('./lib/cloud')}/>
-                        <Route name="data" path="data/:name?" component={require('./lib/data')}/>
-                        <Route name="log" path="log/:level?" component={require('./lib/log')}/>
+                    {this.state.app ? (<CurrentApp app={this.state.app}/>) : null}
+                    <Router createElement={(A)=>(<A app={this.state.app}/>)}>
+                        <Route path="/">
+                            <IndexRoute component={Dashboard}/>
+                            <Route name="dashboard" component={Dashboard}/>
+                            <Route name="app" path="app/:name?" component={require('./lib/app')}/>
+                            <Route name="cloud" path="cloud/" component={require('./lib/cloud')}/>
+                            <Route name="data" path="data/:name?" component={require('./lib/data')}/>
+                            <Route name="log" path="log/:level?" component={require('./lib/log')}/>
+                        </Route>
                     </Router>
                 </div>
             </Main.Light>
         )
     }
 }
-QiliConsole.childContextTypes={muiTheme:React.PropTypes.object}
-QiliConsole.contextTypes={router:React.PropTypes.func}
 
 class CurrentApp extends Component{
     componentWillReceiveProps(next){
@@ -100,6 +82,11 @@ class CurrentApp extends Component{
 
 ;(function onReady(){
     var container=document.getElementById('app')
+    if(!container){
+        container=document.createElement('div')
+        container.id='app'
+        document.body.appendChild(container)
+    }
     container.style.height=window.innerHeight+'px'
     require('react-dom').render(<QiliConsole/>,container)
     /*
