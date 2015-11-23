@@ -1,19 +1,20 @@
 {
   "name": "dashboard",
   "description": "qili dashboard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
   "dependencies": {
     "babel": "^5.6.14",
+    "material-ui": "^0.13.3",
     "minimongo": ">=3.2.13",
-    "react-router": "0.13.x",
-    "react-tap-event-plugin": "0.1.6",
-    "reactable": "^0.10.x",
-    "material-ui": "^0.10.x",
-    "react": "^0.13.x"
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-router": "^1.0.0",
+    "react-tap-event-plugin": "^0.2.1",
+    "reactable": "^0.10.x"
   },
   "devDependencies": {
     "babelify": "^6.0.2",

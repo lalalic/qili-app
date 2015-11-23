@@ -2,17 +2,20 @@ require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 
-var {init,User,Main,React,Component,Router}=require('./lib/'),
+var {init,User,Main,React,Component,Router:_Router, UI:{Loading, Empty}}=require('./lib/'),
     Application=require('./lib/db/app'),
 	App=require('./lib/app'),
 	{MenuItem,Styles:{ThemeManager}, FloatingActionButton, Avatar}=require('material-ui'),
-	themeManager=new ThemeManager(),
-    {Route, RouteHandler, NotFoundRoute, Link, State, DefaultRoute, HistoryLocation} = Router;
+	muiTheme=ThemeManager.getMuiTheme(require('material-ui/lib/styles/raw-themes/light-raw-theme')),
+    {Router, Route, IndexRoute, HistoryLocation} = _Router;
 
-class Entry extends Component{
+class QiliConsole extends Component{
     constructor(props){
         super(props)
-        this.state={app:Application.current}
+        this.state={app:Application.current, inited:false}
+        init("http://qili2.com/1/","qiliAdmin",
+            (db)=>Application.init(db)
+                .then(()=>this.setState({inited:true}),(e)=>this.setState({inited:true,initedError:e.message})))
     }
     componentDidMount(){
         Application.event.on('change',this.__onCurrentAppchange=()=>this.setState({app:Application.current}))
@@ -22,24 +25,42 @@ class Entry extends Component{
         Application.event.removeListener('change',this.__onCurrentAppchange)
     }
 	getChildContext(){
-        return {muiTheme:themeManager.getCurrentTheme()}
+        return {muiTheme}
     }
+
     render(){
+        var {inited, initedError}=this.state
+        if(!inited){
+            if(initedError)
+                return (<Empty text={`Initializing Error: ${initedError}`}/>)
+            return  (<Loading/>)
+        }
+
         var floatAction
         if(this.state.app)
             floatAction=(<CurrentApp app={this.state.app}/>)
 
+        var Dashboard=require('./lib/dashboard')
         return (
             <Main.Light>
                 <div className="withFootbar">
                     {floatAction}
-                    <RouteHandler app={this.state.app}/>
+                    <Router app={this.state.app}
+                        history={(!window.cordova ? HistoryLocation : undefined)}>
+                        <IndexRoute component={Dashboard}/>
+                        <Route name="dashboard" component={Dashboard}/>
+                        <Route name="app" path="app/:name?" component={require('./lib/app')}/>
+                        <Route name="cloud" path="cloud/" component={require('./lib/cloud')}/>
+                        <Route name="data" path="data/:name?" component={require('./lib/data')}/>
+                        <Route name="log" path="log/:level?" component={require('./lib/log')}/>
+                    </Router>
                 </div>
             </Main.Light>
         )
     }
 }
-Entry.childContextTypes={muiTheme:React.PropTypes.object}
+QiliConsole.childContextTypes={muiTheme:React.PropTypes.object}
+QiliConsole.contextTypes={router:React.PropTypes.func}
 
 class CurrentApp extends Component{
     componentWillReceiveProps(next){
@@ -78,6 +99,10 @@ class CurrentApp extends Component{
 
 
 ;(function onReady(){
+    var container=document.getElementById('app')
+    container.style.height=window.innerHeight+'px'
+    require('react-dom').render(<QiliConsole/>,container)
+    /*
 	var Dashboard=require('./lib/dashboard'),
 		routes=(
 			<Route name="main" path="/" handler={Entry}>
@@ -86,7 +111,7 @@ class CurrentApp extends Component{
 				<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
 				<Route name="data" path="data/:name?" handler={require('./lib/data')}/>
                 <Route name="log" path="log/:level?" handler={require('./lib/log')}/>
-				<DefaultRoute handler={Dashboard}/>
+				<IndexRoute handler={Dashboard}/>
 			</Route>
 		);
 
@@ -99,4 +124,5 @@ class CurrentApp extends Component{
             })
         })
     })
+    */
 })();
