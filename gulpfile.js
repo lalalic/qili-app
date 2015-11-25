@@ -22,14 +22,15 @@ gulp.task('build4test', shell.task('watchify -d testonly.js -o www/index.js -i j
             return
         }
 
-        var qiniu=require('qiniu'), secret=require("./secret")
+        var qiniu=require('qiniu')
+        var secret=require("./secret")
         qiniu.conf.ACCESS_KEY=secret.qiniu.ACCESS_KEY
 		qiniu.conf.SECRET_KEY=secret.qiniu.SECRET_KEY
 
-        var policy=Object.assign(new qiniu.rs.PutPolicy(),{scope:secret.qiniu.bucket})
+        var policy=new qiniu.rs.PutPolicy(secret.qiniu.bucket+":"+secret.qiniu.appIndexFile)
         console.log("Starting upload to "+secret.qiniu.bucket)
         qiniu.io.putFile(policy.token(),secret.qiniu.appIndexFile,fileName, null, function(e,ret){
-            e ? console.error(e.error) : console.info(secret.appIndexFile+" is uploaded.")
+            e ? console.error(e.error) : console.info(secret.qiniu.appIndexFile+" is uploaded.")
         })
     })
     .task('default', shell.task('restmock'))
