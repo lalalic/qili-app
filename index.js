@@ -1,4 +1,3 @@
-require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 

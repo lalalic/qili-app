@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "qiliApp",
   "description": "qili dashboard and application framework",
   "version": "0.2.0",
   "author": {
@@ -24,6 +24,7 @@
     "karma-chrome-launcher": "^0.2.1",
     "karma-jasmine": "^0.3.6",
     "node-lessify": "0.0.10",
+    "qiniu": "^6.1.8",
     "reactify": "^1.1.1",
     "restmock": "0.1.x",
     "uglify-js": "^2.4.24",
@@ -44,6 +45,9 @@
         }
       ]
     ]
+  },
+  "scripts": {
+    "publish": "gulp upload"
   },
   "repository": {
     "type": "git",
