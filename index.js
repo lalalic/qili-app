@@ -2,38 +2,39 @@ require('restmock');
 require('./lib/css/index.less')
 require('babel/polyfill')
 
-var {init,User,QiliApp,React,Component,Router}=require('./lib/'),
-    Application=require('./lib/db/app'),
-	App=require('./lib/app'),
-	{MenuItem, Styles, FloatingActionButton, Avatar}=require('material-ui'),
-    {Route, RouteHandler,  DefaultRoute, HistoryLocation} = Router;
+import {init,User,QiliApp,React,Component,Router} from './lib/'
+import Application from './lib/db/app'
+import App from './lib/app'
+import {FloatingActionButton} from 'material-ui'
 
-var muiTheme=(new Styles.ThemeManager()).getCurrentTheme()
-class QiliConsole extends Component{
+class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
         this.state={app:Application.current}
     }
-    
+
     componentDidMount(){
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
-    getChildContext(){
-        return {muiTheme}
-    }
-    render(){
+    render(a){
+        if(a=super.render())
+            return a;
+        var {app}=this.state
         return (
-            <QiliApp appId="qiliAdmin" init={()=>Application.init()}>
                 <div className="withFootbar">
-                    {this.state.app ? (<CurrentApp app={this.state.app}/>) : null}
-                    <RouteHandler app={this.state.app}/>
+                    <div id="container">
+                        <CurrentApp app={app}/>
+                        <RouteHandler app={app}/>
+                    </div>
                 </div>
-            </QiliApp>
-        )
+            )
     }
 }
-QiliConsole.childContextTypes={muiTheme:React.PropTypes.object}
+Object.assign(QiliConsole.defaultProps,{
+    appId:"qiliAdmin",
+    init:()=>Application.init()
+})
 
 class CurrentApp extends Component{
     componentWillReceiveProps(next){
@@ -44,7 +45,7 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app}=this.props,
+        var {app={name:""}}=this.props,
             style={position:'fixed',top:10,right:10, opacity:0.7, zIndex:9};
         if(!app || !app._id)
             style.display="none"
@@ -70,8 +71,10 @@ class CurrentApp extends Component{
     }
 }
 
-QiliApp.render(
-    <Route name="main" path="/" handler={QiliConsole}>
+
+var {Route, RouteHandler,  DefaultRoute} = Router;
+module.exports=QiliApp.render(
+    <Route path="/" handler={QiliConsole}>
     	<Route name="app" path="app/:name?" handler={require('./lib/app')}/>
     	<Route name="cloud" path="cloud/" handler={require('./lib/cloud')}/>
     	<Route name="data" path="data/:name?" handler={require('./lib/data')}/>

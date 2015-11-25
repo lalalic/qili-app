@@ -49,10 +49,13 @@ body{
 }
 
 .withFootbar{
-    padding-bottom:@footbarHeight;
     position:absolute;
     width:100%;
     height:100%;
+
+    >:last-child{
+        padding-bottom:@footbarHeight+10;
+    }
 }
 
 .form{

@@ -10,6 +10,11 @@
 				"sessionToken":"lalalic"
 			}
 		},
+        {
+            "path":"/**/index.js",
+            "type":"static",
+            "response":"www/index.js"
+        },        
 		{
 			"path":"/1/login",
 			"type":"get",
