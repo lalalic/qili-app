@@ -23,7 +23,7 @@ gulp.task('build4test', shell.task('watchify -d testonly.js -o www/index.js -i j
         }
 
         var qiniu=require('qiniu')
-        var secret=require("./secret")
+        var secret=require(process.cwd()+"/secret")
         qiniu.conf.ACCESS_KEY=secret.qiniu.ACCESS_KEY
 		qiniu.conf.SECRET_KEY=secret.qiniu.SECRET_KEY
 
@@ -34,6 +34,7 @@ gulp.task('build4test', shell.task('watchify -d testonly.js -o www/index.js -i j
         })
     })
     .task('default', shell.task('restmock'))
+    .task('karma', shell.task('karma start'))
 
     .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=www']))
     .task('cordovaConfig', ['cordovaCreate'], function(){
