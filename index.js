@@ -10,9 +10,6 @@ class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
         this.state={app:Application.current}
-    }
-
-    componentDidMount(){
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
@@ -37,9 +34,7 @@ Object.assign(QiliConsole.defaultProps,{
 
 class CurrentApp extends Component{
     componentWillReceiveProps(next){
-        var {_id:nextId}=next.app,
-            {_id:oldId}=this.props.app
-        if(nextId!=oldId)
+        if(this.props.app!=next.app)
             this.forceUpdate()
     }
 
