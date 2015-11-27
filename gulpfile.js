@@ -2,8 +2,13 @@ var gulp=require('gulp'),
     shell=require('gulp-shell');
 
 
-gulp.task('build4test', shell.task('watchify -d testonly.js -o www/index.js -i jquery'))
-    .task('build', shell.task('"node_modules/watchify/node_modules/.bin/browserify" index.js -o www/index.dist.js -i jquery'))
+gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browserify" index.js -o www/index.dist.js -i jquery'))
+    .task('build.test.mock', shell.task([
+        `echo 'require("restmock");module.exports=require("./index")' > __test.js`,
+        'watchify -d __test.js -o www/index.js -i jquery']))
+    .task('build.test.mongo', shell.task([
+        `echo 'this.__test={service:"http://localhost:9080/1"};module.exports=require("./index")' > __test.js`,
+        'watchify -d __test.js -o www/index.js -i jquery']))
     .task('upload', ['build'], function(){
         var fileName="www/allin1.html";
         console.log("Starting merge all into "+fileName)
@@ -23,7 +28,7 @@ gulp.task('build4test', shell.task('watchify -d testonly.js -o www/index.js -i j
         }
 
         var qiniu=require('qiniu')
-        var secret=require(process.cwd()+"/secret")
+        var secret=require(process.cwd()+"/__secret")
         qiniu.conf.ACCESS_KEY=secret.qiniu.ACCESS_KEY
 		qiniu.conf.SECRET_KEY=secret.qiniu.SECRET_KEY
 

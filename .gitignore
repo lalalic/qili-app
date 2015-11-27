@@ -28,5 +28,4 @@ node_modules
 .lock-wscript
 
 www/*.js
-www/allin1.html
-secret.js
+__*.js
