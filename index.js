@@ -76,3 +76,20 @@ module.exports=QiliApp.render(
     	<DefaultRoute handler={require('./lib/dashboard')}/>
     </Route>
 )
+
+
+/**
+@Todo:
+* after adding new application
+    application list doesn't reflect the change
+    local storage without All fields, such as without application name, ..., because server returned only _id, createdAt, ...
+* after application deletion, UI should go to / even with error
+* error happens, UI should not be Empty
+*** after remove app, local cache should be removed too
+* use <Link/> rather than this.context.router.transitionTo
+** Never empty UI
+** FloatActionButton position when view width is 960
+* too small-zoom size in mobile browser
+* first focus on form, cloud UI
+* background to upload to backend
+*/

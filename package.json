@@ -8,12 +8,13 @@
   },
   "dependencies": {
     "babel": "^5.6.14",
+    "material-ui": "^0.10.x",
     "minimongo": ">=3.2.13",
+    "react": "^0.13.x",
     "react-router": "0.13.x",
     "react-tap-event-plugin": "0.1.6",
     "reactable": "^0.10.x",
-    "material-ui": "^0.10.x",
-    "react": "^0.13.x"
+    "webworkify": "^1.0.2"
   },
   "devDependencies": {
     "babelify": "^6.0.2",
