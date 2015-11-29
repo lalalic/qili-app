@@ -7,7 +7,7 @@ gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browseri
         "echo require('restmock');module.exports=require('./index') > __test.js",
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('build.test.mongo', shell.task([
-        "echo global.__test={service:'http://localhost/1/'};module.exports=require('./index') > __test.js",
+        `echo "global.__test={service:'http://localhost/1/'};module.exports=require('./index')" > __test.js`,
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('upload', ['build'], function(){
         var fileName="www/allin1.html";
@@ -18,7 +18,7 @@ gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browseri
         try{
             var js=require('uglify-js').minify('www/index.dist.js').code
             var data=html.split(/<script.*\/script>/i)
-            data.splice(1,0,'<script>'+js+'</script>')
+            data.splice(1,0,`<script>/*${new Date()}*/${js}</script>`)
 
             fs.writeFileSync(fileName, data.join(''), 'utf8')
             console.log("Finished merge")
