@@ -7,7 +7,7 @@ gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browseri
         "echo require('restmock');module.exports=require('./index') > __test.js",
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('build.test.mongo', shell.task([
-        `echo global.__test={service:'http://localhost/1/'};module.exports=require('./index') > __test.js`,
+        `echo "global.__test={service:'http://localhost/1/'};module.exports=require('./index')" > __test.js`,
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('upload', ['build'], function(){
         var fileName="www/allin1.html";

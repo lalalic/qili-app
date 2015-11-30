@@ -76,18 +76,18 @@ module.exports=QiliApp.render(
 
 /**
 @Todo:
-* after adding new application
+*Done: after adding new application
     application list doesn't reflect the change
     local storage without All fields, such as without application name, ..., because server returned only _id, createdAt, ...
-* after application deletion, UI should go to / even with error
-* error happens, UI should not be Empty
-* use <Link/> rather than this.context.router.transitionTo
-** Never empty UI
+*Done: after application deletion, UI should go to / even with error
+*Done: error happens, UI should not be Empty
+*Don't: use <Link/> rather than this.context.router.transitionTo
+**Done: Never empty UI
 ** FloatActionButton position when view width is 960
 * too small-zoom size in mobile browser
 * first focus on form, cloud UI
 * background to upload to backend
     done: WebSQLDb is done
-    * sqlite
+    *** sqlite
     done: *** after remove app, local cache should be removed too
 */
