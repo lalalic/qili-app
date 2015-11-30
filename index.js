@@ -1,7 +1,7 @@
 require('./lib/css/index.less')
 require('babel/polyfill')
 
-import {init,User,QiliApp,React,Component,Router} from './lib/'
+import {init,User,QiliApp,React,Component,Router, UI} from './lib/'
 import Application from './lib/db/app'
 import App from './lib/app'
 import {FloatingActionButton} from 'material-ui'
@@ -13,18 +13,14 @@ class QiliConsole extends QiliApp{
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
-    render(a){
-        if(a=super.render())
-            return a;
+    renderContent(){
         var {app}=this.state
         return (
-                <div className="withFootbar">
-                    <div id="container">
-                        <CurrentApp app={app}/>
-                        <RouteHandler app={app}/>
-                    </div>
-                </div>
-            )
+            <div>
+                <CurrentApp  app={app}/>
+                <RouteHandler app={app}/>
+            </div>
+        )
     }
 }
 Object.assign(QiliConsole.defaultProps,{
@@ -85,11 +81,13 @@ module.exports=QiliApp.render(
     local storage without All fields, such as without application name, ..., because server returned only _id, createdAt, ...
 * after application deletion, UI should go to / even with error
 * error happens, UI should not be Empty
-*** after remove app, local cache should be removed too
 * use <Link/> rather than this.context.router.transitionTo
 ** Never empty UI
 ** FloatActionButton position when view width is 960
 * too small-zoom size in mobile browser
 * first focus on form, cloud UI
 * background to upload to backend
+    done: WebSQLDb is done
+    * sqlite
+    done: *** after remove app, local cache should be removed too
 */
