@@ -9,7 +9,7 @@ import {FloatingActionButton} from 'material-ui'
 class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
-        this.state={app:Application.current}
+        Object.assign(this.state,{app:Application.current})
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
@@ -17,7 +17,7 @@ class QiliConsole extends QiliApp{
         var {app}=this.state
         return (
             <div>
-                <CurrentApp  app={app}/>
+                {app && app._id && (<CurrentApp  app={app}/>) || null}
                 <RouteHandler app={app}/>
             </div>
         )
@@ -29,16 +29,15 @@ Object.assign(QiliConsole.defaultProps,{
 })
 
 class CurrentApp extends Component{
-    componentWillReceiveProps(next){
-        if(this.props.app!=next.app)
-            this.forceUpdate()
+    shouldComponentUpdate(nextProps, nextState){
+        var {nextName}=nextProps.app,
+            {name}=this.props.app;
+        return nextName!=name
     }
 
     render(){
         var {app={name:""}}=this.props,
             style={position:'fixed',top:10,right:10, opacity:0.7, zIndex:9};
-        if(!app || !app._id)
-            style.display="none"
 
         return(
             <FloatingActionButton
