@@ -1,10 +1,11 @@
 require('./lib/css/index.less')
 require('babel/polyfill')
 
-import {init,User,QiliApp,React,Component,Router, UI} from './lib/'
+import {init,User,QiliApp,React,Component,Router, UI, Position} from './lib/'
 import Application from './lib/db/app'
 import App from './lib/app'
 import {FloatingActionButton} from 'material-ui'
+
 
 class QiliConsole extends QiliApp{
     constructor(props){
@@ -13,11 +14,16 @@ class QiliConsole extends QiliApp{
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
+    findFloatingButton(){
+        return this.refs.floating
+    }
+
     renderContent(){
         var {app}=this.state
         return (
             <div>
-                {app && app._id && (<CurrentApp  app={app}/>) || null}
+                <CurrentApp app={app}
+                    style={{position:'fixed',top:10,right:Position.right(10), opacity:0.7, zIndex:9}}/>
                 <RouteHandler app={app}/>
             </div>
         )
@@ -30,14 +36,15 @@ Object.assign(QiliConsole.defaultProps,{
 
 class CurrentApp extends Component{
     shouldComponentUpdate(nextProps, nextState){
-        var {nextName}=nextProps.app,
-            {name}=this.props.app;
+        var {nextName}=nextProps.app||{},
+            {name}=this.props.app||{};
         return nextName!=name
     }
 
     render(){
-        var {app={name:""}}=this.props,
-            style={position:'fixed',top:10,right:10, opacity:0.7, zIndex:9};
+        var {app={name:""}, style}=this.props;
+        if(!app._id)
+            style.display="hidden"
 
         return(
             <FloatingActionButton
@@ -82,7 +89,8 @@ module.exports=QiliApp.render(
 *Done: error happens, UI should not be Empty
 *Don't: use <Link/> rather than this.context.router.transitionTo
 **Done: Never empty UI
-** FloatActionButton position when view width is 960
+**Done: FloatActionButton position when view width is 960
+
 * too small-zoom size in mobile browser
 * first focus on form, cloud UI
 * background to upload to backend
