@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"

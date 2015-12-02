@@ -14,16 +14,12 @@ class QiliConsole extends QiliApp{
         Application.event.on('change',()=>this.setState({app:Application.current}))
     }
 
-    findFloatingButton(){
-        return this.refs.floating
-    }
-
     renderContent(){
         var {app}=this.state
         return (
             <div>
                 <CurrentApp app={app}
-                    style={{position:'fixed',top:10,right:Position.right(10), opacity:0.7, zIndex:9}}/>
+                    style={{position:'fixed',top:10,right:this._right(10), opacity:0.7, zIndex:9}}/>
                 <RouteHandler app={app}/>
             </div>
         )
@@ -42,14 +38,14 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, style}=this.props;
+        var {app={name:""}, ...others}=this.props;
         if(!app._id)
             style.display="hidden"
 
         return(
             <FloatingActionButton
                 onClick={this.change.bind(this)}
-                style={style}>
+                {...others}>
                 {app.name}
             </FloatingActionButton>
         )
@@ -97,4 +93,6 @@ module.exports=QiliApp.render(
     done: WebSQLDb is done
     *** sqlite
     done: *** after remove app, local cache should be removed too
+** textfield can't be changed
+
 */
