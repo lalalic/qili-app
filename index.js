@@ -1,6 +1,3 @@
-require('./lib/css/index.less')
-require('babel/polyfill')
-
 import {init,User,QiliApp,React,Component,Router, UI, Position} from './lib/'
 import Application from './lib/db/app'
 import App from './lib/app'
@@ -11,7 +8,7 @@ class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
         Object.assign(this.state,{app:Application.current})
-        Application.event.on('change',()=>this.setState({app:Application.current}))
+        Application.on('change',()=>this.setState({app:Application.current}))
     }
 
     renderContent(){
@@ -24,11 +21,12 @@ class QiliConsole extends QiliApp{
             </div>
         )
     }
-}
+};
+
 Object.assign(QiliConsole.defaultProps,{
     appId:"qiliAdmin",
     init:()=>Application.init()
-})
+});
 
 class CurrentApp extends Component{
     shouldComponentUpdate(nextProps, nextState){
