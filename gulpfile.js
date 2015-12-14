@@ -1,13 +1,18 @@
 var gulp=require('gulp'),
-    shell=require('gulp-shell');
+    shell=require('gulp-shell'),
+    isWin=process.platform.indexOf('win')!=-1;
+
+function safe(x){
+    return isWin ? x : `"${x}"`
+}
 
 
 gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browserify" index.js -o www/index.dist.js -i jquery'))
     .task('build.test.mock', shell.task([
-        "echo require('restmock');module.exports=require('./index') > __test.js",
+        `echo ${safe("require('restmock');module.exports=require('./index')")} > __test.js`,
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('build.test.mongo', shell.task([
-        `echo "global.__test={service:'http://localhost/1/'};module.exports=require('./index')" > __test.js`,
+        `echo ${safe("global.__test={service:'http://localhost/1/'};module.exports=require('./index')")} > __test.js`,
         'watchify -d __test.js -o www/index.js -i jquery']))
     .task('upload', ['build'], function(){
         var fileName="www/allin1.html";

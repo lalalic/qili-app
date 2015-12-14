@@ -51,7 +51,6 @@
   },
   "scripts": {
     "publish": "gulp upload"
-    
   },
   "repository": {
     "type": "git",
