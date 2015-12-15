@@ -7,7 +7,7 @@ function safe(x){
 }
 
 
-gulp.task('build', shell.task('"node_modules/watchify/node_modules/.bin/browserify" index.js -o www/index.dist.js -i jquery'))
+gulp.task('build', shell.task('browserify index.js -o www/index.dist.js -i jquery'))
     .task('build.test.mock', shell.task([
         `echo ${safe("require('restmock');module.exports=require('./index')")} > __test.js`,
         'watchify -d __test.js -o www/index.js -i jquery']))
