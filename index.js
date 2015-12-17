@@ -30,7 +30,7 @@ Object.assign(QiliConsole.defaultProps,{
 
 class CurrentApp extends Component{
     shouldComponentUpdate(nextProps, nextState){
-        var {nextName}=nextProps.app||{},
+        var {name:nextName}=nextProps.app||{},
             {name}=this.props.app||{};
         return nextName!=name
     }
@@ -92,9 +92,12 @@ module.exports=QiliApp.render(
     done: WebSQLDb is done
     *** sqlite
     done: *** after remove app, local cache should be removed too
-** textfield can't be changed
-* login error, placeholder and value show together
+** textfield can't be changed (which??)
+*Done: login error, placeholder and value show together
 * simple data mode:
     * remote upsert and remove directly
     * local cache for search
+* Cannot read property 'componentDidEnter' of undefined
+*Done: Date show as meaningful
+* data list to show object field [object]=>{...}
 */

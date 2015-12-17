@@ -1,9 +1,9 @@
 var gulp=require('gulp'),
     shell=require('gulp-shell'),
-    isWin=process.platform.indexOf('win')!=-1;
+    isMac=process.platform.indexOf('darwin')!=-1;
 
 function safe(x){
-    return isWin ? x : `"${x}"`
+    return isMac ? `"${x}"` : x
 }
 
 
