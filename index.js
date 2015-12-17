@@ -36,13 +36,14 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, ...others}=this.props;
+        var {app={name:""}, style={}, ...others}=this.props;
         if(!app._id)
             style.display="hidden"
 
         return(
             <FloatingActionButton
                 onClick={this.change.bind(this)}
+                style={style}
                 {...others}>
                 {app.name}
             </FloatingActionButton>
@@ -92,5 +93,8 @@ module.exports=QiliApp.render(
     *** sqlite
     done: *** after remove app, local cache should be removed too
 ** textfield can't be changed
-
+* login error, placeholder and value show together
+* simple data mode:
+    * remote upsert and remove directly
+    * local cache for search
 */
