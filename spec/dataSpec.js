@@ -28,37 +28,40 @@ describe("Data retrive service", function(){
 
     function failx(done){
         return (e)=>{
+            console.error(e.message||e)
             fail(e.message||e)
             done()
         }
     }
-    fit("init",done=>{
+    fit("init data service",done=>{
+        console.info(`start init data service....`)
         expect(init).toBeTruthy()
 
         var user={username:'test',_id:'test',sessionToken:"adffsdfasdf"}
 
         spyOn(User,"init").and.callFake(function(){
+            console.info(`init user service...`)
             return User.signin(user)
         })
 
         spyOn(holder,'ajax').and.callFake(function(method, url, params, data, success){
+            console.info(`fake ajax for user service to return current user`)
             success(user)
             return Promise.resolve(user)
         })
 
         init(root,appId,()=>{
                 expect(User.current).toBe(user)
+                console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
             },
             (...o)=>holder._httpError(...o),
             holder._loadingHandler,
             (...o)=>holder.ajax(...o))
                 .then(()=>{
+                    console.info(`inited data service, and promise returned with user: ${JSON.stringify(User.current)}`)
                     expect(User.current).toBe(user)
                     done()
-                },(e)=>{
-                    fail(e.message)
-                    done()
-                })
+                },failx(done))
     })
 
 
@@ -66,38 +69,38 @@ describe("Data retrive service", function(){
         describe("online mode", function(){
             describe("local first",function(){
                 fit("insert doc", done=>{
+                    console.info(`start inserting doc`)
                     var book={name:`_book${uuid++}`},
                         title="hello",
                         i=0,
                         id;
-                    Promise.all([
-                        new Promise((resolve, reject)=>{
-                            spyOn(holder, "ajax").and.callFake(function(a,b,c,data){
-                                console.info(`${a} ${b} with ${JSON.stringify(data)}`)
-                                arguments[SUCCESS](Object.assign(data,{createdAt:new Date(), title}))
-                                i++
+                    new Promise((resolve, reject)=>{
+                        spyOn(holder, "ajax").and.callFake(function(a,b,c,data){
+                            console.info(`${a} ${b} with ${JSON.stringify(data)}`)
+                            arguments[SUCCESS](Object.assign(data,{createdAt:new Date(), title}))
+                            console.info(`handled ajax`)
+                            i++
+                        })
+                        var _raw=Book.cols.upload
+                        spyOn(Book.cols,'upload').and.callFake(function(s,e){
+                            _raw.call(Book.cols,(...o)=>{
+                                s && s(...o)
+                                resolve()
+                            },(...o)=>{
+                                e && e(...o)
+                                reject()
                             })
-                            var _raw=Book.cols.upload
-                            spyOn(Book.cols,'upload').and.callFake(function(s,e){
-                                _raw.call(Book.cols,(...o)=>{
-                                    s && s(...o)
-                                    resolve()
-                                },(...o)=>{
-                                    e && e(...o)
-                                    reject()
-                                })
-                            })
-                        }),
-                        new Promise((resolve, reject)=>
-                            Book.upsert(book, null,(doc)=>{
-                                id=doc._id
-                                expect(doc.name).toBe(book.name)
-                                expect(doc.createdAt).toBeDefined()
-                                expect(doc._id).toBeDefined()
-                                resolve(doc)
-                            }, reject)
-                        )
-                    ]).then(()=>{
+                        })
+
+                        Book.upsert(book, null,(doc)=>{
+                            id=doc._id
+                            expect(doc.name).toBe(book.name)
+                            expect(doc.createdAt).toBeDefined()
+                            expect(doc._id).toBeDefined()
+                            console.info(`book upserted with ${JSON.stringify(doc)}`)
+                            resolve(doc)
+                        }, reject)
+                    }).then(()=>{
                         expect(id).toBeTruthy()
                         //check local db
                         Book.cols.localCol.findOne({_id:id},(localdoc)=>{
