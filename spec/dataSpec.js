@@ -1,4 +1,5 @@
 import {init, Model, User} from "../lib/db"
+var XMLHttpRequest=window.XMLHttpRequest=require('fakexmlhttprequest')
 
 class Book extends Model{
     static get _name(){return 'book'}
@@ -6,25 +7,7 @@ class Book extends Model{
 
 describe("Data retrive service", function(){
     var uuid=Date.now(),
-        holder={
-            ajax:()=>1,
-            success:()=>1,
-            _httpError(e, code){
-
-            },
-            _loadingHandler:{
-                show(){
-
-                },
-                close(){
-
-                }
-            }
-        },
-        root="http://localhost/1/",
-        appId="test"+uuid,
-        SUCCESS=4,
-        DATA=3;
+        root="http://localhost/1/";
 
     function failx(done){
         return (e)=>{
@@ -33,42 +16,111 @@ describe("Data retrive service", function(){
             done()
         }
     }
-    fit("init data service",done=>{
-        console.info(`start init data service....`)
-        expect(init).toBeTruthy()
 
-        var user={username:'test',_id:'test',sessionToken:"adffsdfasdf"}
+    function initWithUser(appId,done=()=>1,username="test",password="test",_id="test",sessionToken="test"){
+        (function hack(_init,_send,_done){
+            User.init=function(){
+                console.info(`init user service...`)
+                return User.signin({username,password})
+            }
 
-        spyOn(User,"init").and.callFake(function(){
-            console.info(`init user service...`)
-            return User.signin(user)
-        })
+            XMLHttpRequest.prototype.send=function(){
+                this.respond(200,{"Content-Type":'application/json'},
+                    JSON.stringify({username,sessionToken,_id}))
+            }
 
-        spyOn(holder,'ajax').and.callFake(function(method, url, params, data, success){
-            console.info(`fake ajax for user service to return current user`)
-            success(user)
-            return Promise.resolve(user)
-        })
+            done=function(){
+                User.init=_init
+                XMLHttpRequest.prototype.send=_send
+                _done()
+            }
+        })(User.init, XMLHttpRequest.prototype.send,done);
 
-        init(root,appId,()=>{
-                expect(User.current).toBe(user)
-                console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
-            },
-            (...o)=>holder._httpError(...o),
-            holder._loadingHandler,
-            (...o)=>holder.ajax(...o))
-                .then(()=>{
-                    console.info(`inited data service, and promise returned with user: ${JSON.stringify(User.current)}`)
-                    expect(User.current).toBe(user)
+        init(root,appId)
+            .then(()=>{
+                    expect(User.current).toBeDefined()
+                    expect(User.current.sessionToken).toBe(sessionToken)
+                    console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
                     done()
                 },failx(done))
+    }
+
+
+    describe("user service", function(){
+        describe('init',function(){
+            describe("with cached session token", function(){
+                let appId=`testUser${uuid++}`
+                beforeAll((done)=>initWithUser(appId,done))
+
+                it("online",done=>{
+                    spyOn(User,'ajax').and.returnValue(Promise.resolve(User.current))
+                    init(root,appId)
+                        .catch(failx(done))
+                        .then(()=>{
+                            expect(User.ajax).toHaveBeenCalled()
+                        })
+                })
+
+                it("offline",done=>{
+                    spyOn(User,'ajax')
+                    init(root,appId)
+                        .catch(failx(done))
+                        .then(()=>{
+                            expect(User.ajax).toHaveBeenCalled()
+                        })
+                })
+            })
+
+            describe('without sessionToken', function(){
+                it("online",done=>{
+                    init()
+                })
+
+                it("offline",done=>{
+                    init()
+                })
+            })
+        })
+        describe("online mode", function(){
+            it("login",done=>{
+                done()
+            })
+
+            it("signup", done=>{
+                done()
+            })
+
+            it("verify session", done=>{
+                done()
+            })
+        })
+
+        describe("offline mode", function(){
+            it("login",done=>{
+                done()
+            })
+
+            it("signup", done=>{
+                done()
+            })
+
+            it("verify session", done=>{
+                done()
+            })
+        })
     })
 
 
-    describe("model service", function(){
+
+    xdescribe("model service", function(){
+        let appId="test"+uuid,
+            SUCCESS=4,
+            DATA=3;
+        beforeAll(done=>initWithUser(appId,done))
+
         describe("online mode", function(){
             describe("local first",function(){
-                fit("insert doc", done=>{
+                it("insert doc", done=>{
                     console.info(`start inserting doc`)
                     var book={name:`_book${uuid++}`},
                         title="hello",
@@ -304,41 +356,7 @@ describe("Data retrive service", function(){
             })
         })
     })
-    describe("user service", function(){
-        describe("online mode", function(){
-            it('init', done=>{
 
-            })
-            it("login",done=>{
-                done()
-            })
-
-            it("signup", done=>{
-                done()
-            })
-
-            it("verify session", done=>{
-                done()
-            })
-        })
-
-        describe("offline mode", function(){
-            it('init', done=>{
-
-            })
-            it("login",done=>{
-                done()
-            })
-
-            it("signup", done=>{
-                done()
-            })
-
-            it("verify session", done=>{
-                done()
-            })
-        })
-    })
 
     describe("file service", function(){
         it("get token", done=>{
