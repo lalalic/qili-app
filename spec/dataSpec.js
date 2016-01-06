@@ -1,9 +1,7 @@
+require('babel/polyfill')
+
 import {init, Model, User} from "../lib/db"
 var XMLHttpRequest=window.XMLHttpRequest=require('fakexmlhttprequest')
-
-class Book extends Model{
-    static get _name(){return 'book'}
-}
 
 describe("Data retrive service", function(){
     var uuid=Date.now(),
@@ -15,6 +13,14 @@ describe("Data retrive service", function(){
             fail(e.message||e)
             done()
         }
+    }
+
+    function spyOnXHR(result,expected,headers={"Content-Type":'application/json'},status=200){
+        spyOn(XMLHttpRequest.prototype,"send").and.callFake(function(data){
+            console.info(`run spied xhr.send : ${this}`)
+            expected && expected(this,data)
+            this.respond(status,headers,JSON.stringify(result))
+        })
     }
 
     function initWithUser(appId,done=()=>1,username="test",password="test",_id="test",sessionToken="test"){
@@ -36,76 +42,52 @@ describe("Data retrive service", function(){
             }
         })(User.init, XMLHttpRequest.prototype.send,done);
 
-        init(root,appId)
-            .then(()=>{
+        return init(root,appId).catch(failx(done)).then(()=>{
                     expect(User.current).toBeDefined()
                     expect(User.current.sessionToken).toBe(sessionToken)
                     console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
                     done()
-                },failx(done))
+                })
     }
 
 
     describe("user service", function(){
         describe('init',function(){
-            describe("with cached session token", function(){
-                let appId=`testUser${uuid++}`
-                beforeAll((done)=>initWithUser(appId,done))
-
-                it("online",done=>{
-                    spyOn(User,'ajax').and.returnValue(Promise.resolve(User.current))
-                    init(root,appId)
-                        .catch(failx(done))
-                        .then(()=>{
-                            expect(User.ajax).toHaveBeenCalled()
-                        })
+            describe("online", function(){
+                let username="sessionUser"
+                it("should request server by ajax with sessionToken cache",done=>{
+                    let appId=`testUser${uuid++}`
+                    initWithUser(appId,a=>1).catch(failx(done)).then(()=>{
+                        expect(User.current).toBeDefined()
+                        spyOn(User,'ajax').and.returnValue(Promise.resolve(User.current))
+                        init(root,appId)
+                            .catch(failx(done))
+                            .then(()=>{
+                                expect(User.ajax).toHaveBeenCalled()
+                                done()
+                            })
+                    })
                 })
 
-                it("offline",done=>{
+                it("should not request server, and current user is null without sessionToken cache",done=>{
                     spyOn(User,'ajax')
-                    init(root,appId)
+                    init(root,`testUser${uuid++}`)
                         .catch(failx(done))
                         .then(()=>{
-                            expect(User.ajax).toHaveBeenCalled()
+                            expect(User.ajax.calls.any()).toEqual(false)
+                            done()
                         })
                 })
             })
 
-            describe('without sessionToken', function(){
-                it("online",done=>{
-                    init()
+            xdescribe('offline', function(){
+                it("offline, should not request server, and current user is null",()=>{
+
                 })
 
-                it("offline",done=>{
-                    init()
+                it("offline: not call server, but User.current set",()=>{
+
                 })
-            })
-        })
-        describe("online mode", function(){
-            it("login",done=>{
-                done()
-            })
-
-            it("signup", done=>{
-                done()
-            })
-
-            it("verify session", done=>{
-                done()
-            })
-        })
-
-        describe("offline mode", function(){
-            it("login",done=>{
-                done()
-            })
-
-            it("signup", done=>{
-                done()
-            })
-
-            it("verify session", done=>{
-                done()
             })
         })
     })
@@ -113,203 +95,79 @@ describe("Data retrive service", function(){
 
 
     xdescribe("model service", function(){
-        let appId="test"+uuid,
+        class Book extends Model{
+            static get _name(){return 'book'}
+        }
+
+        let appId=`testModel${uuid++}`,
             SUCCESS=4,
             DATA=3;
         beforeAll(done=>initWithUser(appId,done))
 
         describe("online mode", function(){
-            describe("local first",function(){
-                it("insert doc", done=>{
-                    console.info(`start inserting doc`)
-                    var book={name:`_book${uuid++}`},
-                        title="hello",
-                        i=0,
-                        id;
-                    new Promise((resolve, reject)=>{
-                        spyOn(holder, "ajax").and.callFake(function(a,b,c,data){
-                            console.info(`${a} ${b} with ${JSON.stringify(data)}`)
-                            arguments[SUCCESS](Object.assign(data,{createdAt:new Date(), title}))
-                            console.info(`handled ajax`)
-                            i++
-                        })
-                        var _raw=Book.cols.upload
-                        spyOn(Book.cols,'upload').and.callFake(function(s,e){
-                            _raw.call(Book.cols,(...o)=>{
-                                s && s(...o)
-                                resolve()
-                            },(...o)=>{
-                                e && e(...o)
-                                reject()
-                            })
-                        })
+            fit("can create document on server, then cache locally",done=>{
+                spyOnXHR({createdAt:new Date(),_id:"a"},(xhr,data)=>{
+                    data=JSON.parse(data)
+                    expect(data._id).toBeUndefined()//server side _id
+                    expect(xhr.method).toBe('post')
+                });
 
-                        Book.upsert(book, null,(doc)=>{
-                            id=doc._id
-                            expect(doc.name).toBe(book.name)
-                            expect(doc.createdAt).toBeDefined()
-                            expect(doc._id).toBeDefined()
-                            console.info(`book upserted with ${JSON.stringify(doc)}`)
-                            resolve(doc)
-                        }, reject)
-                    }).then(()=>{
-                        expect(id).toBeTruthy()
-                        //check local db
-                        Book.cols.localCol.findOne({_id:id},(localdoc)=>{
-                            expect(i).toBe(1)
-                            console.info(JSON.stringify(localdoc))
-                            expect(localdoc).toBeTruthy()
-                            expect(localdoc.name).toBe(book.name)
-                            expect(localdoc.title).toBe(title)
-                            done()
-                        },failx(done))
-                    })
-                })
-
-                it("insert doc without base", done=>{
-                    var book={name:`_book${uuid++}`}, now=new Date()
-                    spyOn(holder, "ajax").and.callFake(function(){
-                        arguments[SUCCESS]({createdAt:now, _id:"hello"})
-                    })
-
-                    Book.upsert(book,(doc)=>{
-                        expect(doc.name).toBe(book.name)
+                ([[{title:"a"}],
+                    [{title:"a"},null],
+                    [{title:"a"},a=>1],
+                    [{title:"a"},null,a=>1]]).forEach((args)=>{
+                    Book.upsert(...args).catch(failx(done)).then((doc)=>{
+                        expect(doc).toBeDefined()
+                        expect(doc.title).toBe('a')
                         expect(doc._id).toBeDefined()
-
-                        //check local db
-                        Book.cols.localCol.findOne({_id:doc._id},(localdoc)=>{
-                            expect(localdoc).toBeTruthy()
-                            expect(localdoc.name).toBe(doc.name)
-                            expect(doc.createdAt.getTime()).toBe(now.getTime())
-                            done()
-                        },failx(done))
-
-                    }, failx(done))
-                })
-
-                it("update doc", done=>{
-                    var book={name:`_book${uuid++}`}, i=0
-                    spyOn(holder, "ajax").and.callFake(function(){
-                        switch(i){
-                        case 0:
-                            arguments[SUCCESS]({createdAt:new Date(), _id:"hello"})
-                            break
-                        case 1:
-                            arguments[SUCCESS]({updatedAt:new Date()})
-                            break
-                        }
-                        i++
-                    })
-
-                    Book.upsert(book,(doc)=>{//create
-                        expect(doc.name).toBe(book.name)
-                        doc.name="test"
-                        Book.upsert(doc,(doc)=>{//update
-                            expect(doc.name).toBe("test")
-                            expect(doc.updatedAt).toBeDefined()
-
-                            Book.cols.localCol.findOne({_id:doc._id},(localdoc)=>{
-                                expect(localdoc).toBeTruthy()
-                                expect(localdoc.name).toBe(doc.name)
-                                done()
-                            },failx(done))
-                        })
-
-                    }, failx(done))
-                })
-
-                it("remove doc", done=>{
-                    var book={name:`_book${uuid++}`}, i=0
-                    spyOn(holder, "ajax").and.callFake(function(m,u,ps, data ){
-                        switch(i){
-                        case 0:
-                            arguments[SUCCESS]({createdAt:new Date(), _id:"hello"})
-                            break
-                        case 1:
-                            arguments[SUCCESS]()
-                            break
-                        }
-                        i++
-                    })
-
-                    Book.upsert(book,(doc)=>{//create
-                        expect(doc.name).toBe(book.name)
-
-                        Book.remove(doc,()=>{//update
-
-
-                            Book.cols.localCol.findOne({_id:doc._id},(localdoc)=>{
-                                //expect(localdoc).toBeUndefined()
-                                done()
-                            },failx(done))
-                        })
-
-                    }, failx(done))
-                })
-
-                it("find docs", done=>{
-                    var book={name:`_book${uuid++}`}, i=0
-                    spyOn(holder, "ajax").and.callFake(function(){
-                        if(i<2)
-                            arguments[SUCCESS]({createdAt:new Date(), _id:"hello"})
-                        else {
-                            ;
-                        }
-                        i++
-                    })
-
-                    Book.upsert(book1,(doc)=>{
-                        expect(doc.name).toBe(book1.name)
                         expect(doc.createdAt).toBeDefined()
-                        expect(doc._id).toBeDefined()
-
-                        var book2={name:`_book${uuid++}`}
-                        Book.upsert(book2,(doc)=>{
-                            expect(doc.name).toBe(book2.name)
-                            expect(doc.createdAt).toBeDefined()
-                            expect(doc._id).toBeDefined()
-
-                            //check local db
-                            Book.localCol.findOne({},(docs)=>{
-                                expect(Array.isArray(docs)).toBe(true)
-                                expect(docs.length).toBe(2)
-                                done()
-                            },failx(done))
-
-                        }, failx(done))
+                        //input is updated
+                        expect(args[0]).toBe(doc)
+                        done()
                     })
                 })
+            })
 
-                it("find one doc", done=>{
+            fit("can update document on server, then cache locally",done=>{
+                var book={title:"a",createdAt:new Date(), _id:"adfd"}
+
+                spyOnXHR({updatedAt:new Date()},(xhr,data)=>{
+                    data=JSON.parse(data)
+                    expect(data._id).toBe(book._id)
+                    expect(xhr.method).toBe('put')
+                });
+
+                Book.upsert(book).catch(failx(done)).then((doc)=>{
+                    expect(doc).toBeDefined()
+                    expect(doc.title).toBe('a')
+                    expect(doc._id).toBeDefined()
+                    expect(doc.updatedAt).toBeDefined()
+                    //input is updated
+                    expect(book).toBe(doc)
                     done()
                 })
             })
 
-            describe("remote first",function(){
-                it("insert doc()", done=>{
-                    done()
-                })
+            fit("can remove document on server, then no local cache",done=>{
+                spyOnXHR(true,(xhr,data)=>{
+                    expect(data).toBeFalsy()
+                    expect(xhr.method).toBe('delete')
+                });
 
-                it("update doc", done=>{
-                    done()
+                ([["a"],
+                    ["a",null,a=>1],
+                    ["a",a=>1],
+                    ["a",a=>1,a=>1]]).forEach((args)=>{
+                    Book.remove(...args).catch(failx(done)).then(done)
                 })
+            })
 
-                it("remove doc", done=>{
-                    done()
-                })
+            it("can query documents",done=>{
 
-
-                it("find docs", done=>{
-                    done()
-                })
-
-                it("find one doc", done=>{
-                    done()
-                })
             })
         })
 
-        describe("offline mode", function(){
+        xdescribe("offline mode", function(){
             describe("local first",function(){
                 it("insert doc", done=>{
                     done()

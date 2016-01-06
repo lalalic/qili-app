@@ -15,7 +15,6 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        'spec/init.js',
         'spec/**/*Spec.js'
     ],
 
@@ -31,7 +30,7 @@ module.exports = function(config) {
         'spec/**/*Spec.js': ['browserify']
     },
 
-    browserify:require('./package.json').browserify,
+    browserify:Object.assign({debug:false},require('./package.json').browserify),
 
 
     // test results reporter to use
