@@ -27,10 +27,10 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'spec/**/*Spec.js': ['browserify']
+        'spec/**/dataSpec.js': ['browserify']
     },
-
-    browserify:Object.assign({debug:false},require('./package.json').browserify),
+//****the browserify of karma-browserify has issue with debug, so remove it to use main browserify
+    browserify:Object.assign({debug:true},require('./package.json').browserify),
 
 
     // test results reporter to use
