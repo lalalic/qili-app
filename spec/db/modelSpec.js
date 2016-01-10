@@ -1,4 +1,4 @@
-import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid, root} from './helper'
+import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid} from './helper'
 import {init, Model, User} from "../../lib/db"
 
 describe("model service", function(){

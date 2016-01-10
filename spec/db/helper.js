@@ -3,7 +3,7 @@ require('babel/polyfill')
 import {init, User} from "../../lib/db"
 var XMLHttpRequest=window.XMLHttpRequest=require('fakexmlhttprequest')
 
-export var root="http://localhost/1"
+export var root="http://localhost/1/"
 
 
 export function failx(done){
