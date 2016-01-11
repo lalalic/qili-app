@@ -1,5 +1,5 @@
 
-import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid} from './helper'
+import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid,root} from './helper'
 import {init, Model, User} from "../../lib/db"
 import App from "../../lib/db/app"
 
@@ -128,34 +128,74 @@ describe("application service", function(){
             },failx(done))
         })
 
-        fit("can get schema of current app",done=>{
+        it("can get schema of current app, and promise resolved with []",done=>{
             var current=App.current,
                 schema=[{name:"book",fields:[{name:"_id"},{name:"title"}]},
                     {name:"publisher",fields:[{name:"_id"},{name:"name"}]}]
 
             spyOnXHR({results:schema},(xhr,data)=>{
-                expect(xhr.url).toMatch(new Reg(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`${root}schema`))
             })
 
-            App.schema.catch(failx(done)).then((schema)=>{
+            App.schema.catch(failx(done)).then((returnedSchema)=>{
                 ajaxHaveBeenCalled()
-
-                expect(Array.isArray(schema)).toBe(true)
+                expect(Array.isArray(returnedSchema)).toBe(true)
+                expect(returnedSchema.length).toBe(schema.length)
                 done()
             })
         })
 
-        it("can get indexes of current app", done=>{
-            done()
+        it("can get indexes of current app,and promise resolved by {user:[{},{}]}", done=>{
+            var current=App.current,
+                indexes={
+                    users:[{username:1, $option:{unique:true}},{email:1, $option:{unique:true, sparse:true}}],
+            	    roles:[{name:1, $option:{unique:true}}],
+                    apps:[{'author._id':1,'name':1, $option:{unique:true}}]
+                }
+
+
+            spyOnXHR(indexes,(xhr,data)=>{
+                expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`${root}schemas/indexes`),'ig')
+            })
+
+            App.indexes.catch(failx(done)).then((returnedIndexes)=>{
+                ajaxHaveBeenCalled()
+                expect(returnedIndexes).toBeDefined()
+                expect(returnedIndexes.users).toBeDefined()
+                expect(returnedIndexes.apps).toBeDefined()
+                done()
+            })
         })
 
         it("can set schema of current app", done=>{
+            var current=App.current
+            spyOnXHR(null,(xhr,data)=>{
+                expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`${root}schemas`),'ig')
+                expect(xhr.method).toBe('post')
+            })
 
+            App.setSchema({users:[{name:1}]}).catch(failx(done)).then((a)=>{
+                ajaxHaveBeenCalled()
+                expect(a).toBeDefined()
+                done()
+            })
         })
-    })
 
-    describe("log query service",function(){
-
+        it("can get all logs", done=>{
+            var current=App.current,logs=[{},{}]
+            spyOnXHR({results:logs}, (xhr, data)=>{
+                expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`${root}schemas/logs`,'ig'))
+            })
+            App.getLog().then(logs=>{
+                    ajaxHaveBeenCalled()
+                    expect(logs).toBeDefined()
+                    done()
+                },failx(done))
+        })
     })
 
     describe("dev service", function(){
