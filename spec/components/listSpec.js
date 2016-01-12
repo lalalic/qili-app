@@ -1,9 +1,10 @@
-var {React, addons:{TestUtils}}= require('react/addons'),
-    List=require('../../lib/components/list')
+import React, {addons} from 'react/addons'
+import List from '../../lib/components/list'
+var {TestUtils}=addons
 
 describe("List", function(){
     describe("async mode", function(){
-        it("can accept promise as model", done=>{
+        fit("can accept promise as model", done=>{
             var resolve, reject,
                 data=new Promise((a,b)=>{resolve=a;reject=b})
 
