@@ -30,6 +30,7 @@
     "karma-jasmine": "^0.3.6",
     "node-lessify": "0.0.10",
     "qiniu": "^6.1.8",
+    "react-stub-context": "^0.4.0",
     "reactify": "^1.1.1",
     "request": "^2.67.0",
     "restmock": "0.1.x",

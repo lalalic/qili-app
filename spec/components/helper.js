@@ -1,9 +1,14 @@
 require('babel/polyfill')
 
 import React, {addons} from 'react/addons'
-var {TestUtils}=addons, _now=Date.now()
+import {Styles} from 'material-ui'
+import stubContext from 'react-stub-context'
 
+var {TestUtils}=addons,
+    _now=Date.now(),
+    {ThemeManager}=Styles;
 
+const Manager = new ThemeManager();
 
 module.exports={
     React,
@@ -14,5 +19,19 @@ module.exports={
     },
     uuid(){
         return _now++
+    },
+    injectTheme: function(Component, theme){
+        let injectedTheme = theme || Manager.getCurrentTheme();
+        return stubContext(Component, {muiTheme: injectedTheme});
+    },
+    expectHasType(el,type,n=1){
+        var a
+        try {
+            a=TestUtils.findRenderedComponentWithType(el,type)
+            expect(a.length).toBe(1)
+        } catch (e) {
+            console.info(`can't find type`)
+        }
+        return expect(a)
     }
 }

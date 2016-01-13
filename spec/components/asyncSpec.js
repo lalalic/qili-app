@@ -1,4 +1,4 @@
-import {React, Component, TestUtils, newPromise,uuid} from './Helper'
+import {React, Component, TestUtils, newPromise,uuid,expectHasType} from './Helper'
 import Async from '../../lib/components/async'
 
 class Empty extends Component{
@@ -10,13 +10,8 @@ class Empty extends Component{
 class Loading extends Empty{
     constructor(){super(...arguments)}
 }
-class Error extends Empty{
+class AError extends Empty{
     constructor(){super(...arguments)}
-}
-
-function expectHasType(el,type,n=1){
-    expect(TestUtils.findRenderedComponentWithType(el,type)).toBeTruthy()
-    //expect(TestUtils.findAllInRenderedTree(el,(a)=>TestUtils.isElementOfType(a,type)).length).toBe(n)
 }
 
 describe("<Async/>", function(){
@@ -27,56 +22,163 @@ describe("<Async/>", function(){
         })
     })
 
+    it("test empty", ()=>{
+        let render=TestUtils.renderIntoDocument(<Async/>)
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:null})
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:[]})
+        expect(render.isEmpty()).toBeTruthy()
+
+        render=TestUtils.renderIntoDocument(<Async {...{children:[]}}/>)
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:null})
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:[]})
+        expect(render.isEmpty()).toBeTruthy()
+
+        render=TestUtils.renderIntoDocument(<Async></Async>)
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:null})
+        expect(render.isEmpty()).toBeTruthy()
+
+        render.setState({data:[]})
+        expect(render.isEmpty()).toBeTruthy()
+    })
+
+    it("test not empty", ()=>{
+        let render=TestUtils.renderIntoDocument(<Async><div/></Async>)
+        expect(render.isEmpty()).toBeFalsy()
+
+        render.setState({data:[]})
+        expect(render.isEmpty()).toBeFalsy()
+
+        render.setState({data:null})
+        expect(render.isEmpty()).toBeFalsy()
+
+        render=TestUtils.renderIntoDocument(<Async/>)
+        render.setState({data:{}})
+        expect(render.isEmpty()).toBeFalsy()
+
+        render.setState({data:[{}]})
+        expect(render.isEmpty()).toBeFalsy()
+    })
+
+    it("only error,loading,empty when state data is empty",()=>{
+        let loading=(<Loading/>),
+            empty=(<Empty/>),
+            errorMsg=`error${uuid()}`,
+            render=TestUtils.renderIntoDocument(<Async {...{loading,empty}}/>);
+
+        spyOn(render,'renderError').and.returnValue(<AError/>)
+
+        render.setState({loading:true,data:undefined,loadError:undefined})
+        expect(render.state.loading).toBe(true)
+        expectHasType(render,Loading).toBeDefined()
+
+        render.setState({loading:undefined,data:undefined,loadError:errorMsg})
+        expect(render.state.loadError).toBe(errorMsg)
+        expectHasType(render,AError).toBeDefined()
+
+        render.setState({loading:undefined,data:[],loadError:undefined})
+        expectHasType(render,Empty).toBeDefined()
+
+        render.setState({loading:undefined,data:null,loadError:undefined})
+        expectHasType(render,Empty).toBeDefined()
+    })
+
 
 
     describe("Async model",  function(){
-        it("error,loading,empty when data is empty",()=>{
-            let loading=(<Loading/>),
-                empty=(<Empty/>),
-                errorMsg=`error${uuid()}`,
-                render=TestUtils.renderIntoDocument(<Async {...{loading,empty}}/>);
-
-            spyOn(render,'renderError').and.returnValue(<Error/>)
-
-
-            expectHasType(render,Async)
-
-            render.setState({loading:true,data:undefined,loadError:undefined})
+        it("support Promise, resolve with data",(done)=>{
+            let model=newPromise()
+            let render=TestUtils.renderIntoDocument(<Async {...{model}}/>);
             expect(render.state.loading).toBe(true)
-            expectHasType(render,Loading)
 
-            render.setState({loading:undefined,data:undefined,loadError:errorMsg})
-            expect(render.state.loadError).toBe(errorMsg)
-            expectHasType(render,Error)
-
-            render.setState({loading:undefined,data:[],loadError:undefined})
-            expectHasType(render,Empty)
-
-            render.setState({loading:undefined,data:null,loadError:undefined})
-            expectHasType(render,Empty)
+            spyOn(render,'setState')
+            let data={name:"hello"}
+            model.resolve(data)
+            setTimeout(()=>{
+                    expect(render.setState).toHaveBeenCalledWith({data,loading:undefined,loadError:undefined})
+                    done()
+                },100)
         })
 
-        fit("should be loading with unresolved promise, and thenable", (done)=>{
+        it("support Promise, reject with data",(done)=>{
+            let model=newPromise()
+            let render=TestUtils.renderIntoDocument(<Async {...{model}}/>);
+            expect(render.state.loading).toBe(true)
+
+            spyOn(render,'setState')
+            let error=`error${uuid()}`
+            model.reject(new Error(error))
+            setTimeout(()=>{
+                    expect(render.setState).toHaveBeenCalledWith({loading:undefined,loadError:error})
+                    done()
+                },100)
+        })
+
+        it("support fetchable, resolve with data",(done)=>{
+            let p=newPromise(),
+                model={fetch(success,error){
+                    p.then(success,error)
+                }}
+            let render=TestUtils.renderIntoDocument(<Async {...{model}}/>);
+            expect(render.state.loading).toBe(true)
+
+            spyOn(render,'setState')
+            let data={name:"hello"}
+            p.resolve(data)
+            setTimeout(()=>{
+                    expect(render.setState).toHaveBeenCalledWith({data,loading:undefined,loadError:undefined})
+                    done()
+                },100)
+        })
+
+        it("support fetchable, reject with data",(done)=>{
+            let p=newPromise(),
+                model={fetch(success,error){
+                    p.then(success,error)
+                }}
+            let render=TestUtils.renderIntoDocument(<Async {...{model}}/>);
+            expect(render.state.loading).toBe(true)
+
+            spyOn(render,'setState')
+            let error=`error${uuid()}`
+            p.reject(new Error(error))
+            setTimeout(()=>{
+                    expect(render.setState).toHaveBeenCalledWith({loading:undefined,loadError:error})
+                    done()
+                },100)
+        })
+
+        it("should show error,loading when data is not empty during loading, or loaded with error", ()=>{
             let loading=(<Loading/>),
                 empty=(<Empty/>),
+                error=(<AError/>),
                 errorMsg=`error${uuid()}`,
-                model=newPromise(),
-                render=TestUtils.renderIntoDocument(<Async {...{loading,empty,model}}/>);
+                model=newPromise();
 
-            spyOn(render,'renderError').and.returnValue(<Error/>)
+            let render=TestUtils.renderIntoDocument(<Async {...{loading,empty,model}}/>);
+            expect(render.state.loading).toBe(true)
+
+            spyOn(render,'renderError').and.returnValue(error)
             spyOn(render,'render').and.callThrough()
+            spyOn(render,"renderContent").and.returnValue(null)
 
+            render.setState({data:[{name:"sdfd"}]})
             expect(render.state.loading).toBe(true)
+            expect(render.renderContent).toHaveBeenCalledWith(loading)
 
-            model.resolve()
-        })
-
-        it("should show error with rejected promise, and error thenable", ()=>{
-
+            render.renderContent.calls.reset()
+            render.setState({loadError:errorMsg,loading:undefined})
+            expect(render.renderContent).toHaveBeenCalledWith(error)
         })
     })
 
-    describe("sync mode", function(){
-
-    })
 })
