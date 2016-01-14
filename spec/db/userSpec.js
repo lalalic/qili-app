@@ -32,11 +32,11 @@ describe("user service", function(){
 
         xdescribe('offline', function(){
             it("offline, should not request server, and current user is null",()=>{
-
+                fail("not supported")
             })
 
             it("offline: not call server, but User.current set",()=>{
-
+                fail("not supported")
             })
         })
     })

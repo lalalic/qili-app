@@ -1,4 +1,4 @@
-import {React, Component, TestUtils, newPromise,uuid,expectHasType} from './Helper'
+import {React, Component, TestUtils, newPromise,uuid,expectHasType} from './helper'
 import Async from '../../lib/components/async'
 
 class Empty extends Component{

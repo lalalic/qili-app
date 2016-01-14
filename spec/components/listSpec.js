@@ -1,4 +1,4 @@
-import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType} from './Helper'
+import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType} from './helper'
 import MyList from '../../lib/components/list'
 
 describe("List", function(){
@@ -18,25 +18,47 @@ describe("List", function(){
       List = injectTheme(MyList);
     });
 
-    it("create with nothing",()=>{
-        let render=TestUtils.renderIntoDocument(<List/>)
+    it("create with static children",()=>{
+        [
+            null,
+            (<Item/>),
+            [(<Item key={uuid()}/>),(<Item key={uuid()}/>)],
+            "Hello",
+            [(<Item key={uuid()}/>),"Hello"]
+        ].forEach((children)=>TestUtils.renderIntoDocument(<List>{children}</List>))
     })
 
-    xit("create with children",()=>{
-        let render=TestUtils.renderIntoDocument(<List><List.Item/></List>)
+    it("create with model without template",()=>{
+        let props={model:[{name:"1"},{name:"2"}]}
+        TestUtils.renderIntoDocument(<List {...props}/>);
     })
 
-    xit("show static list",()=>{
-        spyOn(MyList.Item.prototype,'render').and.callThrough()
+    it("create with model with template",()=>{
+        let props={template:Item, model:[{name:"1"},{name:"2"}]}
+        TestUtils.renderIntoDocument(<List {...props}/>);
+    })
 
+    it("should merge static items and model data",()=>{
         let props={template:Item, model:[{name:"1"},{name:"2"}]},
-            render=TestUtils.renderIntoDocument(<List {...props}/>)
+            render=TestUtils.renderIntoDocument(<List {...props}/>),
+            items=TestUtils.scryRenderedComponentsWithType(render,Item);
 
-        //var items=TestUtils.findRenderedComponentWithType(render,Item)
-        expect(MyList.Item.prototype.render.calls.count()).toBe(2)
-    })
+        expect(items.length).toBe(2)
 
-    describe("sync mode", function(){
+        render=TestUtils.renderIntoDocument(<List {...props}><Item/></List>)
+        items=TestUtils.scryRenderedComponentsWithType(render,Item)
+        expect(items.length).toBe(3)
 
+        render=TestUtils.renderIntoDocument(<List {...props}>Hello</List>)
+        items=TestUtils.scryRenderedComponentsWithType(render,Item)
+        expect(items.length).toBe(2)
+
+        render=TestUtils.renderIntoDocument(<List {...props}><Item/>Hello</List>)
+        items=TestUtils.scryRenderedComponentsWithType(render,Item)
+        expect(items.length).toBe(3)
+
+        render=TestUtils.renderIntoDocument(<List {...props}><Item/>Hello<Item/></List>)
+        items=TestUtils.scryRenderedComponentsWithType(render,Item)
+        expect(items.length).toBe(4)
     })
 })

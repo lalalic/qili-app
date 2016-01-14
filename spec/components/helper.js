@@ -28,7 +28,6 @@ module.exports={
         var a
         try {
             a=TestUtils.findRenderedComponentWithType(el,type)
-            expect(a.length).toBe(1)
         } catch (e) {
             console.info(`can't find type`)
         }
