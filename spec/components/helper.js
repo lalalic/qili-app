@@ -8,6 +8,16 @@ var {TestUtils}=addons,
     _now=Date.now(),
     {ThemeManager}=Styles;
 
+
+class Any extends React.Component{
+    constructor(){
+        super(...arguments)
+    }
+    render(){
+        return null
+    }
+}
+
 const Manager = new ThemeManager();
 
 module.exports={
@@ -32,5 +42,6 @@ module.exports={
             console.info(`can't find type`)
         }
         return expect(a)
-    }
+    },
+    Any
 }
