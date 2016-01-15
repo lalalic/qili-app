@@ -72,7 +72,7 @@ describe("command bar", ()=>{
     })
 
 
-    fit("should call command onSelect even with bar onSelect",()=>{
+    it("should call command onSelect even with bar onSelect",()=>{
         let holder={onSelect(action){}},
             anotherHolder={onSelect(action){}},
             props={
@@ -105,24 +105,85 @@ describe("command bar", ()=>{
 
     })
 
-    it("support smart Back", ()=>{
-        let props={items:[]},
-            render=TestUtils.renderIntoDocument(<CommandBar {...props}/>)
+    it("support smart Back, back to home if no history, otherwise last", ()=>{
+        var length=1
+        spyOn(MyComponent.prototype,'historyLength').and.callFake(()=>length)
+        let props={items:["Back"]},
+            render=TestUtils.renderIntoDocument(<CommandBar {...props}/>),
+            command=TestUtils.findRenderedComponentWithType(render,Command),
+            A=TestUtils.findRenderedDOMComponentWithTag(command, 'a');
+
+        expect(A.getDOMNode().text).toBe("Home")
+
+        length=3
+        render=TestUtils.renderIntoDocument(<CommandBar {...props}/>),
+        command=TestUtils.findRenderedComponentWithType(render,Command),
+        A=TestUtils.findRenderedDOMComponentWithTag(command, 'a');
+        expect(A.getDOMNode().text).toBe("Back")
     })
 
-    it("support default icon of Refresh, Save, icon unspecifed",()=>{
+    it("dialog command",()=>{
+        let DialogCommand=injectTheme(MyComponent.DialogCommand)
+        let Overlay=require('material-ui/lib/overlay')
+        let render=TestUtils.renderIntoDocument(<DialogCommand/>)
+        let overlay=TestUtils.findRenderedComponentWithType(render,Overlay)
 
-    })
+        /*
+        //@TODO:hide when click
+        render.setState({open:true})
+        TestUtils.Simulate.click(overlay)
+        expect(render.state.open).toBe(false)
+        */
 
-    it("support dialog command",()=>{
-
+        render=TestUtils.renderIntoDocument(<DialogCommand><Any/></DialogCommand>)
+        overlay=TestUtils.findRenderedComponentWithType(render,Overlay)
+        TestUtils.findRenderedComponentWithType(overlay,Any)
     })
 
     it("comment dialog",()=>{
+        class Book{
+            constructor(){
+                this._id="hello"
+            }
+        }
+        Book._name="book"
 
+        let Comment=injectTheme(MyComponent.Comment)
+        let comment=(<Comment type={Book} model={new Book()}/>),
+            props={items:[comment]},
+            render=TestUtils.renderIntoDocument(<CommandBar {...props}/>),
+            command=TestUtils.findRenderedComponentWithType(render,Comment),
+            A=TestUtils.findRenderedDOMComponentWithTag(command, 'a');
+
+        expect(A.getDOMNode().text).toBe("Comment")
+        try{
+            TestUtils.Simulate.click(A)
+            fail("no router, so should throw error")
+        }catch(e){//command.context.[no router].transitionTo("command",{type:"book",_id:"hello"})
+            expect(e.message).toMatch(/transitionTo/)
+        }
     })
 
-    it("share dialog",()=>{
+    it("share to wechat",()=>{
+        let Share=injectTheme(MyComponent.Share),
+            message="hello share!",
+            holder={
+                    message(){
+                        return message
+                    }
+            },
+            props={items:[(<Share message={()=>holder.message()} />)]},
+            render=TestUtils.renderIntoDocument(<CommandBar {...props}/>),
+            command=TestUtils.findRenderedComponentWithType(render,Command),
+            A=TestUtils.findRenderedDOMComponentWithTag(command, 'a');
 
+        expect(A.getDOMNode().text).toBe("Share")
+        spyOn(holder,'message').and.callThrough()
+        window.WeChat=jasmine.createSpyObj('WeChat',['share'])
+        TestUtils.Simulate.click(A)
+        expect(holder.message).toHaveBeenCalled()
+        expect(window.WeChat.share).toHaveBeenCalled()
+        expect(window.WeChat.share.calls.argsFor(0)).toEqual(jasmine.arrayContaining([message]))
+        delete window.WeChat
     })
 })
