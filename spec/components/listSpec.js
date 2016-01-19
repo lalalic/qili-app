@@ -1,5 +1,6 @@
 import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType} from './helper'
 import MyList from '../../lib/components/list'
+import {Table as RawTable} from 'reactable'
 
 describe("List", function(){
     class Item extends Component{
@@ -12,10 +13,11 @@ describe("List", function(){
         }
     }
 
-    let List;
+    let List, Table;
 
     beforeEach(() => {
       List = injectTheme(MyList);
+      Table=injectTheme(MyList.Table)
     });
 
     it("create with static children",()=>{
@@ -60,5 +62,34 @@ describe("List", function(){
         render=TestUtils.renderIntoDocument(<List {...props}><Item/>Hello<Item/></List>)
         items=TestUtils.scryRenderedComponentsWithType(render,Item)
         expect(items.length).toBe(4)
+    })
+
+    it("should support <table model={[] or promise}/>",(done)=>{
+        spyOn(MyList.Table.prototype,"renderContent").and.callThrough()
+
+        let rowData=[{name:"1"},{name:"2"}]
+            ,props={model:rowData}
+            ,render=TestUtils.renderIntoDocument(<Table {...props}/>)
+            ,table=TestUtils.findRenderedComponentWithType(render,MyList.Table)
+            ,rawTable=TestUtils.findRenderedComponentWithType(table,RawTable)
+
+        expect(rawTable.props.data).toBe(rowData)
+        expect(MyList.Table.prototype.renderContent).toHaveBeenCalled()
+        var count=MyList.Table.prototype.renderContent.calls.count()
+
+
+        let model=newPromise()
+        props={model}
+        debugger
+        render=TestUtils.renderIntoDocument(<Table {...props}/>)
+        table=TestUtils.findRenderedComponentWithType(render,MyList.Table)
+        model.resolve(rowData)
+        setTimeout(()=>{
+            rawTable=TestUtils.findRenderedComponentWithType(table,RawTable)
+            expect(MyList.Table.prototype.renderContent.calls.count()).toBe(count+1)
+            expect(table.state.data).toBe(rowData)
+            expect(rawTable.props.data).toBe(rowData)
+            done()
+        },500)
     })
 })

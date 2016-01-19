@@ -130,8 +130,8 @@ describe("application service", function(){
 
         it("can get schema of current app, and promise resolved with []",done=>{
             var current=App.current,
-                schema=[{name:"book",fields:[{name:"_id"},{name:"title"}]},
-                    {name:"publisher",fields:[{name:"_id"},{name:"name"}]}]
+                schema=[{name:"book",fields:["_id","title"]},
+                    {name:"publisher",fields:["_id","name"]}]
 
             spyOnXHR({results:schema},(xhr,data)=>{
                 expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))

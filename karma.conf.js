@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        'spec/**/*Spec.js'
+        'spec/**/ui/dataSpec.js'
     ],
 
 
@@ -30,7 +30,20 @@ module.exports = function(config) {
         'spec/**/*Spec.js': ['browserify']
     },
 //****the browserify of karma-browserify has issue with debug, so remove it to use main browserify
-    browserify:Object.assign({debug:true},require('./package.json').browserify),
+    browserify:{
+        debug:true,
+        transform: [
+          [
+            "babelify",
+            {
+              "stage": 1
+            }
+          ],
+          [
+            "./spec/node-lessify"
+          ]
+        ]
+    },
 
 
     // test results reporter to use
