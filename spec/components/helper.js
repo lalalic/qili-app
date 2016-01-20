@@ -43,5 +43,10 @@ module.exports={
         }
         return expect(a)
     },
-    Any
+    Any,
+    findCommand(render,action){
+        return TestUtils.scryRenderedDOMComponentsWithTag(render,"a").filter((a)=>{
+            return a.getDOMNode().text==action
+        })[0]
+    }
 }

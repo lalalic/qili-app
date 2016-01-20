@@ -1,18 +1,18 @@
-import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType,Any} from '../components/helper'
+import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType,Any, findCommand} from '../components/helper'
 import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, root} from "../db/helper"
 import App from "../../lib/db/app"
 import User from "../../lib/db/user"
-import MyUI from "../../lib/data"
+import MyUI, {IndexItem, NameItem} from "../../lib/data"
 
 describe("Data UI", ()=>{
     let DataUI=injectTheme(MyUI)
 
-    beforeAll((done)=>{
+    beforeAll(function(done){
         let appId=`data${uuid()}`
         initWithUser(appId).then(()=>{
             var apps=[{_id:`${uuid()}`,name:`${uuid()}`,apiKey:`${uuid()}key`},
                     {_id:`${uuid()}`,name:`${uuid()}`,apiKey:`${uuid()}key`}],
-                schema=[
+                schema=this.schema=[
                     {name:User._name,fields:["_id","username"]},
                     {name:"book",fields:["_id","title"]},
                     {name:"publisher",fields:["_id","name"]}];
@@ -43,45 +43,71 @@ describe("Data UI", ()=>{
         },failx(done))
     })
 
-    it("can create",()=>{
+    it("can create for default User._name collection",()=>{
         spyOn(App, "collectionData").and.returnValue(newPromise())
         spyOn(App, "collectionIndexes").and.returnValue(newPromise())
 
         let props={},
             ui=TestUtils.renderIntoDocument(<DataUI {...props}/>)
+        expect(App.collectionData).toHaveBeenCalledWith(User._name)
+    })
+
+    it("can create with specified collection name",()=>{
+        spyOn(App,"collectionData")
+        let props={params:{name:"book"}},
+            ui=TestUtils.renderIntoDocument(<DataUI {...props}/>)
+
+        expect(App.collectionData).toHaveBeenCalledWith("book")
     })
 
     describe("rendered content", ()=>{
-        beforeAll((done)=>{
+        beforeAll(function(done){
             var data=newPromise(),
                 indexes=newPromise();
             spyOn(App, "collectionData").and.returnValue(data)
             spyOn(App, "collectionIndexes").and.returnValue(indexes)
 
             let props={},
-                ui=TestUtils.renderIntoDocument(<DataUI {...props}/>)
+                ui=this.ui=TestUtils.renderIntoDocument(<DataUI {...props}/>)
 
             data.resolve([{_id:`${uuid()}`,username:"test"},{_id:`${uuid()}`,username:"test2"}])
-            indexes.resolve({users:[{username:1}]})
-            setTimeout(()=>{
-                done()
-            },100)
+            indexes.resolve([{username:1}])
+            setTimeout(done,500)
         })
 
-        fit("should show data and indexes of specified collection", function(){
+        it("should show data and indexes of specified collection", function(){
+            let indexItems=TestUtils.scryRenderedComponentsWithType(this.ui,IndexItem)
+            expect(indexItems.length).toBe(1)
 
+            let dataRows=TestUtils.scryRenderedDOMComponentsWithTag(this.ui,'tr')
+            expect(dataRows.length).toBe(2+1)//header+data rows
         })
 
         it("should list all collections for selection", function(){
-
+            let nameItems=TestUtils.scryRenderedComponentsWithType(this.ui, NameItem)
+            expect(nameItems.length).toBe(this.schema.length)
         })
 
-        it("can upload schema", ()=>{
-
+        it("can upload schema", function(){
+            spyOn(App, "setSchema")
+            let cmd=findCommand(this.ui, "Schema")
+            expect(cmd).toBeTruthy()
+            //@TODO: check upload
+            //TestUtils.Simulate.click(cmd)
+            //expect(App.setSchema).toHaveBeenCalled()
         })
 
-        it("can update data", ()=>{
-
+        it("can update data", function(){
+            App.collectionData.calls.reset()
+            let cmd=findCommand(this.ui, "Data")
+            expect(cmd).toBeTruthy()
+            //@TODO: check upload
+            //TestUtils.Simulate.click(cmd)
+            //expect(App.collectionData).toHaveBeenCalled()
         })
     })
+
+
+
+
 })

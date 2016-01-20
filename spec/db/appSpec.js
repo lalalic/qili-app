@@ -128,6 +128,16 @@ describe("application service", function(){
             },failx(done))
         })
 
+        it("can get collection array data of current app",done=>{
+            let books=[{_id:`book${uuid()}`, title:"a"},{_id:`book${uuid()}`, title:"b"}]
+            spyOnXHR({results:books})
+            App.collectionData("books").catch(failx(done)).then((books)=>{
+                expect(Array.isArray(books)).toBe(true)
+                expect(books.length).toBe(2)
+                done()
+            })
+        })
+
         it("can get schema of current app, and promise resolved with []",done=>{
             var current=App.current,
                 schema=[{name:"book",fields:["_id","title"]},
@@ -154,7 +164,6 @@ describe("application service", function(){
                     apps:[{'author._id':1,'name':1, $option:{unique:true}}]
                 }
 
-
             spyOnXHR(indexes,(xhr,data)=>{
                 expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
                 expect(xhr.url).toMatch(new RegExp(`${root}schemas/indexes`),'ig')
@@ -165,6 +174,26 @@ describe("application service", function(){
                 expect(returnedIndexes).toBeDefined()
                 expect(returnedIndexes.users).toBeDefined()
                 expect(returnedIndexes.apps).toBeDefined()
+                done()
+            })
+        })
+
+        it("can get collection index array by collectionIndexes(name)", done=>{
+            var current=App.current,
+                indexes={
+                    users:[{username:1, $option:{unique:true}},{email:1, $option:{unique:true, sparse:true}}],
+            	    roles:[{name:1, $option:{unique:true}}],
+                    apps:[{'author._id':1,'name':1, $option:{unique:true}}]
+                }
+
+            spyOnXHR(indexes,(xhr,data)=>{
+                expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
+                expect(xhr.url).toMatch(new RegExp(`${root}schemas/indexes`),'ig')
+            })
+
+            App.collectionIndexes("users").catch(failx(done)).then((data)=>{
+                expect(Array.isArray(data)).toBe(true)
+                expect(data.length).toBe(indexes.users.length)
                 done()
             })
         })
@@ -184,15 +213,33 @@ describe("application service", function(){
             })
         })
 
-        it("can get all logs", done=>{
+        it("can upload model data for current app", done=>{
+            var current=App.current
+            spyOnXHR(null,(xhr,data)=>{
+                expect(xhr.method).toBe('post')
+                expect(xhr.url).toMatch(new RegExp(`${root}classes/books`),'ig')
+                expect(xhr.requestHeaders['X-Application-Id']).toBe(current.apiKey)
+            })
+
+            let books=[{name:"book1"},{name:"book2"}]
+            App.collectionData("books",books)
+                .catch(failx(done))
+                .then(()=>{
+                    ajaxHaveBeenCalled(books.length)
+                    done()
+                })
+        })
+
+        it("can get all logs array", done=>{
             var current=App.current,logs=[{},{}]
             spyOnXHR({results:logs}, (xhr, data)=>{
                 expect(xhr.url).toMatch(new RegExp(`appman=${current.apiKey}`,"ig"))
                 expect(xhr.url).toMatch(new RegExp(`${root}schemas/logs`,'ig'))
             })
-            App.getLog().then(logs=>{
+            App.getLog().then(data=>{
                     ajaxHaveBeenCalled()
-                    expect(logs).toBeDefined()
+                    expect(Array.isArray(data)).toBe(true)
+                    expect(data.length).toBe(logs.length)
                     done()
                 },failx(done))
         })
