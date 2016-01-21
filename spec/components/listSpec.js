@@ -32,12 +32,16 @@ describe("List", function(){
 
     it("create with model without template",()=>{
         let props={model:[{name:"1"},{name:"2"}]}
-        TestUtils.renderIntoDocument(<List {...props}/>);
+            ,render=TestUtils.renderIntoDocument(<List {...props}/>)
+            ,items=TestUtils.scryRenderedComponentsWithType(render, MyList.Item)
+        expect(items.length).toBe(2)
     })
 
     it("create with model with template",()=>{
         let props={template:Item, model:[{name:"1"},{name:"2"}]}
-        TestUtils.renderIntoDocument(<List {...props}/>);
+            ,render=TestUtils.renderIntoDocument(<List {...props}/>)
+            ,items=TestUtils.scryRenderedComponentsWithType(render, Item)
+        expect(items.length).toBe(2)
     })
 
     it("should merge static items and model data",()=>{

@@ -2,6 +2,7 @@ import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType,
 import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, root} from "../db/helper"
 import App from "../../lib/db/app"
 import User from "../../lib/db/user"
+import selector from "../../lib/components/file-selector"
 import MyUI, {IndexItem, NameItem} from "../../lib/data"
 
 describe("Data UI", ()=>{
@@ -88,22 +89,34 @@ describe("Data UI", ()=>{
             expect(nameItems.length).toBe(this.schema.length)
         })
 
-        it("can upload schema", function(){
+        it("can upload schema", function(done){
             spyOn(App, "setSchema")
             let cmd=findCommand(this.ui, "Schema")
             expect(cmd).toBeTruthy()
-            //@TODO: check upload
-            //TestUtils.Simulate.click(cmd)
-            //expect(App.setSchema).toHaveBeenCalled()
+
+            let newSchema=[{}]
+            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data:newSchema}))
+            TestUtils.Simulate.click(cmd)
+            expect(selector.selectJsonInJsFile).toHaveBeenCalled()
+            setTimeout(()=>{
+                expect(App.setSchema).toHaveBeenCalledWith(newSchema)
+                done()
+            },200)
         })
 
-        it("can update data", function(){
+        it("can update data", function(done){
             App.collectionData.calls.reset()
             let cmd=findCommand(this.ui, "Data")
             expect(cmd).toBeTruthy()
-            //@TODO: check upload
-            //TestUtils.Simulate.click(cmd)
-            //expect(App.collectionData).toHaveBeenCalled()
+
+            let data=[{}]
+            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data,name:"books"}))
+            TestUtils.Simulate.click(cmd)
+            expect(selector.selectJsonInJsFile).toHaveBeenCalled()
+            setTimeout(()=>{
+                expect(App.collectionData).toHaveBeenCalledWith("books",data)
+                done()
+            },200)
         })
     })
 
