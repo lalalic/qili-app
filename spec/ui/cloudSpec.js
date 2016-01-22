@@ -5,18 +5,26 @@ import User from "../../lib/db/user"
 import selector from "../../lib/components/file-selector"
 import MyUI from "../../lib/cloud"
 
-describe("cloud ui", function(done){
-    it("can create", ()=>{
-        let cloudCode=`code${uuid()}`
-            ,props={app:{cloudCode}}
-            ,ui=render(MyUI,props)
-            ,input=TestUtils.findRenderedDOMComponentWithTag(ui, 'textarea')
-            ,cmdSave=findCommand(ui,"Save")
-            ,cmdUpload=findCommand(ui,"Upload")
+describe("cloud ui", function(){
 
+    beforeAll(function(){
+        let cloudCode=this.cloudCode=`code${uuid()}`
+            ,props={app:{cloudCode}}
+            ,ui=this.ui=render(MyUI,props)
+            ,input=this.input=TestUtils.findRenderedDOMComponentWithTag(ui, 'textarea')
+            ,cmdSave=this.cmdSave=findCommand(ui,"Save")
+            ,cmdUpload=this.cmdUpload=findCommand(ui,"Upload")
+    })
+
+    it("can create", function(){
+        let {cloudCode, ui, input, cmdSave, cmdUpload}=this
         expect(input.getDOMNode().value).toBe(cloudCode)
         expect(cmdSave).toBeTruthy()
         expect(cmdUpload).toBeTruthy()
+    })
+
+    it("can change code", function(){
+        let {cloudCode, ui, input, cmdSave, cmdUpload}=this
 
         //change
         let changed=`code${uuid()}`
@@ -27,17 +35,25 @@ describe("cloud ui", function(done){
         spyOn(App,"upsert")
         TestUtils.Simulate.click(cmdSave)
         expect(App.upsert).toHaveBeenCalledWith(jasmine.objectContaining({cloudCode:changed}))
+    })
+
+    it("can load from file", function(done){
+        let {cloudCode, ui, input, cmdSave, cmdUpload}=this
 
         let fileContent=`code${uuid()}`
-        App.upsert.calls.reset()
-        spyOn(selector,"selectTextFile").and.returnValue(Promise.resolve(fileContent))
+        spyOn(App,"upsert")
+        spyOn(selector,"selectTextFile").and.returnValue(Promise.resolve({data:fileContent}))
         TestUtils.Simulate.click(cmdUpload)
         expect(selector.selectTextFile).toHaveBeenCalled()
         setTimeout(()=>{
+                expect(ui.state.cloudCode).toBe(fileContent)
                 expect(App.upsert)
                     .toHaveBeenCalledWith(jasmine.objectContaining({cloudCode:fileContent}))
-                expect(ui.state.cloudCode).toBe(fileContent)
                 done()
             }, 200)
+    })
+
+    it("should check code when saving", ()=>{
+        //@TODO
     })
 })

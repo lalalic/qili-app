@@ -90,16 +90,31 @@ describe("Data UI", ()=>{
         })
 
         it("can upload schema", function(done){
-            spyOn(App, "setSchema")
             let cmd=findCommand(this.ui, "Schema")
             expect(cmd).toBeTruthy()
 
             let newSchema=[{}]
-            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data:newSchema}))
+            spyOn(App, "setSchema").and.returnValue(Promise.resolve())
+            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data:newSchema,name:"unknown"}))
             TestUtils.Simulate.click(cmd)
             expect(selector.selectJsonInJsFile).toHaveBeenCalled()
             setTimeout(()=>{
                 expect(App.setSchema).toHaveBeenCalledWith(newSchema)
+                done()
+            },200)
+        })
+
+        it("should NOT upload empty schema", function(done){
+            let cmd=findCommand(this.ui, "Schema")
+            expect(cmd).toBeTruthy()
+
+            let newSchema=[]
+            spyOn(App, "setSchema").and.returnValue(Promise.resolve())
+            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data:newSchema,name:"unknown"}))
+            TestUtils.Simulate.click(cmd)
+            expect(selector.selectJsonInJsFile).toHaveBeenCalled()
+            setTimeout(()=>{
+                expect(App.setSchema).not.toHaveBeenCalled()
                 done()
             },200)
         })
@@ -115,6 +130,21 @@ describe("Data UI", ()=>{
             expect(selector.selectJsonInJsFile).toHaveBeenCalled()
             setTimeout(()=>{
                 expect(App.collectionData).toHaveBeenCalledWith("books",data)
+                done()
+            },200)
+        })
+
+        it("should NOT update empty data", function(done){
+            App.collectionData.calls.reset()
+            let cmd=findCommand(this.ui, "Data")
+            expect(cmd).toBeTruthy()
+
+            let data=[]
+            spyOn(selector,"selectJsonInJsFile").and.returnValue(Promise.resolve({data,name:"books"}))
+            TestUtils.Simulate.click(cmd)
+            expect(selector.selectJsonInJsFile).toHaveBeenCalled()
+            setTimeout(()=>{
+                expect(App.collectionData).not.toHaveBeenCalled()
                 done()
             },200)
         })
