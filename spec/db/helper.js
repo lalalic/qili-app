@@ -1,6 +1,6 @@
 require('babel/polyfill')
 
-import {init, User} from "../../lib/db"
+import {init, User, Model} from "../../lib/db"
 var XMLHttpRequest=window.XMLHttpRequest=require('fakexmlhttprequest')
 
 export var root="http://localhost/1/"
@@ -54,6 +54,21 @@ export function initWithUser(appId,done=()=>1,username="test",password="test",
                 console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
                 done()
             })
+}
+
+export function injectLocalStorageWithoutInit(storage={removeItem:()=>1,setItem:()=>1}){
+    (function(init){
+        spyOn(Model,"init").and.callFake(function(opt, db, httpclient,server, tempStorage){
+            init.call(Model,null,{},null,null,storage)
+        })
+    })(Model.init)
+    Model.init()
+}
+
+export function clearCurrentUser(){
+    injectLocalStorageWithoutInit()
+    spyOn(Promise,"all").and.returnValue(Promise.resolve())
+    return User.logout()
 }
 
 var _now=Date.now()

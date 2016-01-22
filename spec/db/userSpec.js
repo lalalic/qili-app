@@ -28,6 +28,37 @@ describe("user service", function(){
                         done()
                     })
             })
+
+            describe("key functions", function(){
+                //@TODO
+                it("can signin", function(){
+
+                })
+
+                it("can signup", function(){
+
+                })
+
+                it("can requestVerification", function(){
+
+                })
+
+                it("can verifyPhone", function(){
+
+                })
+
+                it("can request Password Reset", function(){
+                    
+                })
+
+                it("can reset password", function(){
+
+                })
+
+                it("should emit user change event when signin, signup", function(){
+
+                })
+            })
         })
 
         xdescribe('offline', function(){
