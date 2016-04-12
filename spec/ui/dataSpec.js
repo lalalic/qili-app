@@ -1,5 +1,5 @@
 import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType,Any, findCommand} from '../components/helper'
-import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, root} from "../db/helper"
+import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, root, clearCurrentUser} from "../db/helper"
 import App from "../../lib/db/app"
 import User from "../../lib/db/user"
 import selector from "../../lib/components/file-selector"
@@ -9,6 +9,7 @@ describe("Data UI", ()=>{
     let DataUI=injectTheme(MyUI)
 
     beforeAll(function(done){
+		clearCurrentUser()
         let appId=`data${uuid()}`
         initWithUser(appId).then(()=>{
             var apps=[{_id:`${uuid()}`,name:`${uuid()}`,apiKey:`${uuid()}key`},

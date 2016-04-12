@@ -1,7 +1,9 @@
-import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid,root} from './helper'
+import {initWithUser, spyOnXHR, ajaxHaveBeenCalled, failx, uuid,root,clearCurrentUser} from './helper'
 import {init, Model, User} from "../../lib/db"
 
 describe("data service", function(){
+	beforeEach(clearCurrentUser)
+	
     describe("init", function(){
         it("can't call success when no User.current",(done)=>{
             let holder={inited(){}}
@@ -10,7 +12,7 @@ describe("data service", function(){
             init(root,`initdb${uuid()}`,()=>holder.inited())
                 .then(()=>{
                     expect(User.init).toHaveBeenCalled()
-                    expect(User.current).toBe(null)
+                    expect(User.current).toBeFalsy()
                     expect(holder.inited).not.toHaveBeenCalled()
                     done()
                 },failx(done))
@@ -40,7 +42,12 @@ describe("data service", function(){
         }
 
         let appId=`testModel${uuid()}`
-        beforeAll(done=>initWithUser(appId,done))
+        beforeAll(done=>{
+			initWithUser(appId,()=>{
+				Book.init()
+				done()
+			})
+		})
 
         describe("online mode", function(){
             describe("update data", function(){
@@ -81,7 +88,7 @@ describe("data service", function(){
                     spyOnXHR({updatedAt:new Date()},(xhr,data)=>{
                         data=JSON.parse(data)
                         expect(data._id).toBe(book._id)
-                        expect(xhr.method).toBe('put')
+                        expect(xhr.method).toBe('post')
                     });
 
                     Book.upsert(book).catch(failx(done)).then((doc)=>{
@@ -299,7 +306,7 @@ describe("data service", function(){
             })
         })
 
-        xdescribe("offline mode", function(){
+        describe("offline mode", function(){
 
         })
     })

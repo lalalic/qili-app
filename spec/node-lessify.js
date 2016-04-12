@@ -5,7 +5,6 @@ module.exports=function(file,options){
 	}
 
     return through((a,b,next)=>next(), function(done){
-        console.info(`ignore ${file}`)
         this.push(null)
         done()
     });

@@ -44,7 +44,7 @@ module.exports={
         try {
             a=TestUtils.findRenderedComponentWithType(el,type)
         } catch (e) {
-            console.info(`can't find type`)
+            
         }
         return expect(a)
     },

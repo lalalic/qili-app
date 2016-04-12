@@ -17,7 +17,6 @@ export function failx(done){
 export function spyOnXHR(result,expected,headers={"Content-Type":'application/json'},status=200){
     var _send=XMLHttpRequest.prototype.send
     spyOn(XMLHttpRequest.prototype,"send").and.callFake(function(data){
-        console.info('spiedXHR.send calling')
         expected && expected(this,data);
         _send.apply(this,arguments)
         this.respond(status,headers,JSON.stringify(result), 200)
@@ -32,7 +31,6 @@ export function initWithUser(appId,done=()=>1,username="test",password="test",
     _id="test",sessionToken="test"){
     (function hack(_init,_send,_done){
         User.init=function(){
-            console.info(`init user service...`)
             return User.signin({username,password})
         }
 
@@ -51,7 +49,6 @@ export function initWithUser(appId,done=()=>1,username="test",password="test",
     return init(root,appId).catch(failx(done)).then(()=>{
                 expect(User.current).toBeDefined()
                 expect(User.current.sessionToken).toBe(sessionToken)
-                console.info(`init data service successfully with user: ${JSON.stringify(User.current)}`)
                 done()
             })
 }

@@ -84,7 +84,7 @@ describe("application service", function(){
                     expect(doc).toBeDefined()
                     expect(doc.name).toBe(name)
                     expect(doc.updated).toBeDefined()
-                    console.info(doc.updated)
+
                     expect(doc._id).toBe(last._id)
 
                     expect(App.all.length).toBe(count)
