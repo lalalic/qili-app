@@ -1,4 +1,4 @@
-require('babel/polyfill')
+require('babel-polyfill')
 
 import React, {addons} from 'react/addons'
 import {Styles} from 'material-ui'

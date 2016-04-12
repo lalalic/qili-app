@@ -1,4 +1,4 @@
-require('babel/polyfill')
+require('babel-polyfill')
 
 import {init, User, Model} from "../../lib/db"
 var XMLHttpRequest=window.XMLHttpRequest=require('fakexmlhttprequest')

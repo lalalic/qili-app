@@ -30,16 +30,10 @@ module.exports = function(config) {
     preprocessors: {
         'spec/**/*Spec.js': ['browserify']
     },
-//****the browserify of karma-browserify has issue with debug, so remove it to use main browserify
+
     browserify:{
         debug:true,
         transform: [
-          [
-            "babelify",
-            {
-              "stage": 1
-            }
-          ],
           [
             "./spec/node-lessify"
           ]
