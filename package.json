@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.3.1",
+  "version": "0.3.5",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
@@ -13,15 +13,13 @@
     "react": "^0.13.x",
     "react-router": "0.13.x",
     "react-tap-event-plugin": "0.1.6",
-    "reactable": "^0.10.x",
-    "webworkify": "^1.0.2"
+    "reactable": "^0.10.x"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-transform-object-rest-spread": "^6.6.5",
     "babel-preset-es2015": "^6.6.0",
     "babel-preset-react": "^6.5.0",
-    "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "fakexmlhttprequest": "0.0.1",
     "gulp": "^3.8.11",
@@ -34,18 +32,15 @@
     "node-lessify": "0.0.10",
     "qiniu": "^6.1.8",
     "react-stub-context": "^0.4.0",
-    "reactify": "^1.1.1",
     "request": "^2.67.0",
     "restmock": "0.1.x",
     "through2": "^2.0.0",
-    "uglify-js": "^2.4.24",
-    "watchify": "^3.6.1"
+	"uglifyify": "^3.0.1",
+    "watchify": "^3.6.1",
+	"babelify": "^7.2.0"
   },
   "browserify": {
     "transform": [
-      [
-        "babelify"
-      ],
       [
         "node-lessify",
         {
@@ -65,7 +60,16 @@
     ]
   },
   "scripts": {
-    "publish": "gulp upload"
+	"build": "babel src -d lib --source-maps inline",
+    "dist": "browserify -g uglifyify ./lib/main.js -o dist/qili-app.js",
+	"prepublish": "npm run dist",
+    "publish": "gulp upload",
+	
+	"karma": "karma start",
+	
+	"test": "restmock",
+	"test.mock": "watchify -v -d -g uglifyify ./.mock.js -o dist/test.js",
+	"test.mongo": "watchify -v -d -g uglifyify ./.mongo.js -o dist/test.js"
   },
   "repository": {
     "type": "git",
@@ -74,6 +78,6 @@
   "engines": {
     "node": ">= 0.4.4"
   },
-  "main": "lib/index.js",
+  "main": "lib",
   "readme": "README.md"
 }

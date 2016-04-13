@@ -7,21 +7,14 @@ function safe(x){
 }
 
 
-gulp.task('build', shell.task('browserify index.js -o www/index.dist.js -i jquery'))
-    .task('build.test.mock', shell.task([
-        `echo ${safe("require('restmock');module.exports=require('./index')")} > __test.js`,
-        'watchify -d __test.js -o www/index.js -i jquery']))
-    .task('build.test.mongo', shell.task([
-        `echo ${safe("global.__test={service:'http://localhost/1/'};module.exports=require('./index')")} > __test.js`,
-        'watchify -d __test.js -o www/index.js -i jquery']))
-    .task('upload', ['build'], function(){
-        var fileName="www/allin1.html";
+gulp.task('upload', function(){
+        var fileName="dist/allin1.html";
         console.log("Starting merge all into "+fileName)
         var fs=require('fs')
 
-        var html=fs.readFileSync("www/index.html", 'utf8')
+        var html=fs.readFileSync("dist/index.html", 'utf8')
+		var js=fs.readFileSync("dist/qili-app.js",'utf8')
         try{
-            var js=require('uglify-js').minify('www/index.dist.js').code
             var data=html.split(/<script.*\/script>/i)
             data.splice(1,0,`<script>/*${new Date()}*/${js}</script>`)
 
@@ -36,7 +29,7 @@ gulp.task('build', shell.task('browserify index.js -o www/index.dist.js -i jquer
         require('request').post({
             url:'http://qili2.com/1/schemas/clientcode?appman='+secret.apiKey,
             formData:{
-                clientcode: require('fs').createReadStream(__dirname+'/www/allin1.html')
+                clientcode: require('fs').createReadStream(__dirname+'/dist/allin1.html')
             },
             headers:{
                 "X-Application-Id":secret.apiKey,
@@ -47,9 +40,6 @@ gulp.task('build', shell.task('browserify index.js -o www/index.dist.js -i jquer
         })
 
     })
-    .task('default', shell.task('restmock'))
-    .task('karma', shell.task('karma start'))
-
     .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=www']))
     .task('cordovaConfig', ['cordovaCreate'], function(){
         var fs=require('fs'),

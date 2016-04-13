@@ -13,7 +13,7 @@
         {
             "path":"/**/index.js",
             "type":"static",
-            "response":"www/index.js"
+            "response":"dist/index.js"
         },        
 		{
 			"path":"/1/login",
@@ -27,32 +27,32 @@
         {
             "path":"/",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
         {
             "path":"/data",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
         {
             "path":"/data/*",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
 		{
             "path":"/cloud",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
         {
             "path":"/log/*",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
         {
             "path":"/app/*",
             "type":"static",
-            "response":"www"
+            "response":"dist"
         },
         {
 			"path":"/1/apps",
