@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
@@ -62,8 +62,7 @@
   "scripts": {
 	"build": "babel src -d lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/qili-app.js",
-	"prepublish": "npm run dist",
-    "publish": "gulp upload",
+	"prepublish": "npm run dist | gulp allin1",
 	
 	"karma": "karma start",
 	

@@ -1,6 +1,6 @@
 import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType,Any} from './components/helper'
 import {initWithUser,failx} from './db/helper'
-import QiliApp from '../lib/main'
+import QiliApp from '../lib/qiliApp'
 import init, {User} from '../lib/db'
 import Account from "../lib/account"
 import Loading from "../lib/components/loading"

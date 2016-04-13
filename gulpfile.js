@@ -7,8 +7,8 @@ function safe(x){
 }
 
 
-gulp.task('upload', function(){
-        var fileName="dist/allin1.html";
+gulp.task("allin1", function(){
+	 var fileName="dist/allin1.html";
         console.log("Starting merge all into "+fileName)
         var fs=require('fs')
 
@@ -24,6 +24,8 @@ gulp.task('upload', function(){
             console.error(error.message)
             return
         }
+	})
+	.task('upload', ['allin1'], function(){
         var secret=require(process.cwd()+"/__secret")
 
         require('request').post({
