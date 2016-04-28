@@ -13,7 +13,7 @@ gulp.task("allin1", function(){
         var fs=require('fs')
 
         var html=fs.readFileSync("dist/index.html", 'utf8')
-		var js=fs.readFileSync("dist/qili-app.js",'utf8')
+		var js=fs.readFileSync("dist/index.js",'utf8')
         try{
             var data=html.split(/<script.*\/script>/i)
             data.splice(1,0,`<script>/*${new Date()}*/${js}</script>`)

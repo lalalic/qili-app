@@ -16,6 +16,8 @@
     "reactable": "^0.10.x"
   },
   "devDependencies": {
+    "babel-polyfill": "^6.7.4",
+    "babel-cli": "^6.6.5",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-transform-object-rest-spread": "^6.6.5",
     "babel-preset-es2015": "^6.6.0",
@@ -61,14 +63,14 @@
   },
   "scripts": {
 	"build": "babel src -d lib --source-maps inline",
-    "dist": "browserify -g uglifyify ./lib/main.js -o dist/qili-app.js",
+    "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
 	"prepublish": "npm run dist | gulp allin1",
-	
+
 	"karma": "karma start",
-	
+
 	"test": "restmock",
-	"test.mock": "watchify -v -d -g uglifyify ./.mock.js -o dist/test.js",
-	"test.mongo": "watchify -v -d -g uglifyify ./.mongo.js -o dist/test.js"
+	"test.mock": "watchify -v -d ./.mock.js -o dist/test.js",
+	"test.mongo": "watchify -v -d ./.mongo.js -o dist/test.js"
   },
   "repository": {
     "type": "git",

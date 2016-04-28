@@ -151,7 +151,7 @@ export default function fix(db){
                 return {
                     fetch: function(success,error){
                         fetcher((data)=>{
-                            success && success(data && data.results)
+                            success && success(typeof(data.results)!='undefined' ? data.results : data)
                         },error)
                     }
                 }
