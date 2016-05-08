@@ -4,6 +4,7 @@ require('../style/index.less')
 
 import {init,Model,User,Role,File,Log} from "./db"
 import React, {Component} from 'react'
+import {Diapatcher} from "flux"
 
 Date.Helper=require('material-ui/lib/utils/date-time')
 
@@ -32,6 +33,8 @@ exports.UI={
     Messager: require('./components/messager'),
 	fileSelector: require('./components/file-selector')
 }
+
+exports.dispatcher=new Dispatcher()
 
 ;(function(_raw){
     var len=(new Date()).toJSON().length,

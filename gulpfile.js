@@ -56,7 +56,7 @@ gulp.task("allin1", function(){
                 'cordova plugin add cordova-plugin-file-transfer',
                 'cordova plugin add https://github.com/litehelpers/Cordova-sqlite-storage',
                 'cordova plugin add cordova-plugin-camera',
-                'cordova plugin add https://github.com/vilic/cordova-plugin-wechat --variable APP_ID=xxxxx'
+                'cordova plugin add cordova-plugin-wechat --variable APP_ID=xxxxx'
             ],{cwd:"cordova"}))
 
 function upload2Qiniu(){

@@ -1,4 +1,5 @@
 var {Service}=require('./service')
+import {dispatcher} from ".."
 
 var server=null,
 	__current=null;

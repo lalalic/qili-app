@@ -33,3 +33,43 @@ Object.assign(MyApp.defaultProps,{
 //to start your application with react-router routes
 MyApp.render(<Route path="/" handler={MyApp}></Route>)
 ```
+
+flux refactor
+=============
+(Action) -> Dispatcher -> Store -> Controller-view -> (Action)
+
+global dispatcher
+
+store {
+    dispatcher.register(function(action){
+        switch(action.type){
+        case xxx:
+        break
+        case xxx:
+        break    
+        }
+    })
+}
+
+controller-view {
+    componentDidMount(){
+        store.addChangeListener(this._onChange)
+    }
+    componentWillUnmount(){
+        store.removeChangeListener(this._onChange)
+    }
+
+    render(){
+        return (
+            ...
+            <button onClick={e=>this.add(a)}>//trigger
+            )
+    }
+
+    add(a){//Action
+        dispatcher.dispatch({
+            type: xxx,
+            data: a
+            })
+    }
+}

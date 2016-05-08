@@ -9,6 +9,7 @@ export default class Account extends Component{
         super(props)
         this.state={user:User.current}
     }
+
     verifyPhone(){
         var phone=this.refs.phone.state.phone,
             code=this.refs.code.getValue();

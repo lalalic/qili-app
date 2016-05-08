@@ -104,6 +104,10 @@ export class Service {
     static on(type,...others){
         __emitter.on(`${this._name ? this._name+'.' :''}${type}`,...others)
     }
+
+    static removeListener(type, ...others){
+        __emitter.removeListener(`${this._name ? this._name+'.' :''}${type}`,...others)
+    }
 }
 
 class BuiltIn extends Service{
