@@ -95,6 +95,10 @@ export default class User extends Service.BuiltIn{
 	static get current(){
 		return __current
 	}
+	
+	static get currentAsAuthor(){
+		return {_id:__current._id, username:__current.username}
+	}
 }
 
 function setCurrent(user){

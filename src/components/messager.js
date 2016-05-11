@@ -6,6 +6,7 @@ import Info from "material-ui/lib/svg-icons/action/info"
 
 var Icons={Error, Warning, Info};
 
+var _instance
 export default class Messager extends Component{
     constructor(props){
         super(props)
@@ -13,6 +14,7 @@ export default class Messager extends Component{
             message:"default",
             level:'Info'
         }
+		_instance=this
     }
 
     render(){
@@ -24,6 +26,10 @@ export default class Messager extends Component{
         this.setState({message,level})
         this.refs.bar.show()
     }
+	
+	static show(message){
+		_instance ? _instance.show(...arguments) : console.warn(message)
+	}
 }
 
 Messager.defaultProps={autoHideDuration:2000, style:{position:"fixed",right:10, bottom:0}}
