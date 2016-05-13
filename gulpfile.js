@@ -42,7 +42,7 @@ gulp.task("allin1", function(){
         })
 
     })
-    .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=www']))
+    .task('cordovaCreate',shell.task(['cordova create cordova lalalic.superdaddy superdaddy --link-to=dist']))
     .task('cordovaConfig', ['cordovaCreate'], function(){
         var fs=require('fs'),
             path="cordova/config.xml"

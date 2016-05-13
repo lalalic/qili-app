@@ -17,7 +17,6 @@ muiTheme.component.floatingActionButton.style={
 export default class App extends Component{
     constructor(props){
         super(props)
-		debugger
         supportTap()
         var {init:initApp, service, appId, width}=this.props
         this.state={

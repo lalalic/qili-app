@@ -29,8 +29,8 @@ function makeEnvReady(){
     (function(window){
         if(typeof(window.cordova)!='undefined' && typeof window.sqlitePlugin!='undefined'){
             window.deleteDatabase=window.sqlitePlugin.deleteDatabase
-            window.openDatabase=function(){
-                var db=window.sqlitePlugin.openDatabase.apply(window.sqlitePlugin,arguments)
+            window.openDatabase=function(name){
+                var db=window.sqlitePlugin.openDatabase({name,location:"default"})
                 db.version=localStorage.dbVersion||""
                 db.changeVersion=function(oldVersion,newVersion,transCallback, error, success){
                     if(this.version!==oldVersion)

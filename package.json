@@ -7,14 +7,12 @@
     "email": "lalalic@139.com"
   },
   "dependencies": {
-    "immutable": "^3.7.5",
     "material-ui": "^0.10.x",
     "minimongo": ">=3.2.13",
     "react": "^0.13.x",
     "react-router": "0.13.x",
     "react-tap-event-plugin": "0.1.6",
-    "reactable": "^0.10.x",
-    "flux": "^2.1.1"
+    "reactable": "^0.10.x"
   },
   "devDependencies": {
     "babel-polyfill": "^6.7.4",
@@ -67,7 +65,7 @@
   "scripts": {
 	"build": "babel src -d lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
-	"prepublish": "npm run dist | gulp allin1",
+	"merge": "npm run dist | gulp allin1",
 
 	"karma": "karma start",
 
