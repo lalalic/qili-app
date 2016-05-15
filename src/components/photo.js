@@ -1,5 +1,6 @@
 var React=require('react'),
     {Component}=React,
+    {Avatar}=require("material-ui"),
     IconCamera=require('material-ui/lib/svg-icons/image/photo-camera'),
     dbFile=require('../db/file'),
     selectFile=require('./file-selector').main;
@@ -24,7 +25,7 @@ export default class Photo extends Component{
         if(url){
             if(overwritable)
                 others.onClick=this.takePhoto.bind(this)
-            return (<img src={url} style={style} {...others}/>)
+            return (<Avatar src={url} style={style} {...others}/>)
         }
 
         var {iconRatio, ...lefts}=others,

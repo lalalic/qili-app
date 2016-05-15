@@ -1,3 +1,5 @@
+require('../style/index.less')
+
 import {init,User,QiliApp,React,Component,Router, UI, Position} from '.'
 import Application from './db/app'
 import App from './app'

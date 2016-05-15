@@ -1,6 +1,4 @@
 require('babel-polyfill')
-require('../style/index.less')
-
 
 import {init,Model,User,Role,File,Log} from "./db"
 import React, {Component} from 'react'
