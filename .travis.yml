@@ -15,6 +15,6 @@ script:
 
 after_success:
  - npm run merge
- - sshpass -p $DEPLOY_PASSWORD scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
- - sshpass -p $DEPLOY_PASSWORD ssh  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "ls -al"
+ - sshpass -p $DEPLOY_PASSWORD scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+ - sshpass -p $DEPLOY_PASSWORD ssh  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no $DEPLOY_USER@$DEPLOY_HOST "ls -al"
  - echo done
