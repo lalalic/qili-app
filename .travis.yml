@@ -15,5 +15,5 @@ script:
 after_success:
  - npm run merge
  - date
- - sshpass -p $DEPLOY_PASSWORD scp dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
- - echo done
+ - export SSHPASS=$DEPLOY_PASSWORD
+ - sshpass -e scp -o stricthostkeychecking=no dist/allin1.html $DEPLOY_PATH
