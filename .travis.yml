@@ -11,11 +11,11 @@ install:
  - npm install browserify node-lessify uglifyify
 
 script:
- - echo world
+ - npm run merge
 
 after_success:
- - npm run merge
  - sshpass -p $DEPLOY_PASSWORD scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
  - $DEPLOY_CMD
  - sshpass -p $DEPLOY_PASSWORD ssh  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "ls -al"
+ - sshpass -p Aa619916 ssh  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "ls -al"
  - echo done
