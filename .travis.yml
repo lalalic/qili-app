@@ -1,0 +1,15 @@
+language:node_js
+node_js:
+ - "4.2"
+
+addons:
+ apt:
+  packages:
+   - sshpass
+script:
+ - echo nothing
+
+after_success:
+ - npm run merge
+ - export SSHPASS=$DEPLOY_PASSWORD
+ - sshpass -e scp dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
