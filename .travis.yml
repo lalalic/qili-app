@@ -14,6 +14,4 @@ script:
  - npm run merge
 
 after_success:
- - sshpass -e scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
- - sshpass -e ssh  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "ls -al"
- - echo done
+ - sshpass -e scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_PATH
