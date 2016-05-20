@@ -6,6 +6,8 @@ addons:
  apt:
   packages:
    - sshpass
+ ssh_known_hosts:
+  - $DEPLOY_HOST
 install:
  - npm install --production
 
@@ -16,4 +18,4 @@ after_success:
  - npm run merge
  - date
  - export SSHPASS=$DEPLOY_PASSWORD
- - sshpass -e scp -o stricthostkeychecking=no dist/allin1.html $DEPLOY_PATH
+ - sshpass -e scp -o stricthostkeychecking=no dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
