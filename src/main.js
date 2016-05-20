@@ -26,7 +26,7 @@ class QiliConsole extends QiliApp{
 };
 
 Object.assign(QiliConsole.defaultProps,{
-    appId:"admin",
+    appId:"qiliAdmin",
     init:()=>Application.init()
 });
 
