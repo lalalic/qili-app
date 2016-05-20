@@ -65,9 +65,9 @@
     "merge": "npm run dist && node scripts/allin1.js",
     "karma": "karma start",
     "test": "restmock",
-    "test.mock": "watchify -v -d ./.mock.js -o dist/test.js",
-    "test.mongo": "watchify -v -d ./.mongo.js -o dist/test.js",
-	
+    "test.mock": "watchify -v -d ./.test.mock.js -o dist/test.js",
+    "test.mongo": "watchify -v -d ./.test.mongo.js -o dist/test.js",
+
 	"cordova":"npm scrips/cordova.js"
   },
   "repository": {
