@@ -6,10 +6,12 @@ addons:
  apt:
   packages:
    - sshpass
+install:
+ - npm install --production
+
 script:
  - echo nothing
 
 after_success:
  - npm run merge
- - export SSHPASS=$DEPLOY_PASSWORD
- - sshpass -e scp dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+ - sshpass -e -o stricthostkeychecking=no scp dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH

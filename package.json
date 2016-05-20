@@ -63,7 +63,7 @@
   "scripts": {
     "build": "babel src -d lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
-    "merge": "npm run dist && node scripts/allin1.js",
+    "merge": "node scripts/allin1.js",
     "karma": "karma start",
     "test": "restmock",
     "test.mock": "watchify -v -d ./.mock.js -o dist/test.js",
