@@ -2,20 +2,14 @@ language: node_js
 node_js:
  - "4.2"
 
-addons:
- apt:
-  packages:
-   - sshpass
-
 install:
  - npm install --production
+ - npm install browserify node-lessify uglifyify
 
 script:
- - echo nothing
+ - echo world
 
 after_success:
  - npm run merge
- - date
- - export SSHPASS=$DEPLOY_PASSWORD
- - $DEPLOY_CMD
-# - sshpass -e scp -o stricthostkeychecking=no dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+ - sshpass -p $DEPLOY_PASSWORD scp  -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+ - echo done

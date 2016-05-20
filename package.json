@@ -31,7 +31,6 @@
     "karma-chrome-launcher": "^0.2.1",
     "karma-jasmine": "^0.3.6",
     "node-lessify": "0.0.10",
-    "qiniu": "^6.1.8",
     "react-stub-context": "^0.4.0",
     "request": "^2.67.0",
     "restmock": "0.1.x",
@@ -63,7 +62,7 @@
   "scripts": {
     "build": "babel src -d lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
-    "merge": "node scripts/allin1.js",
+    "merge": "npm run dist && node scripts/allin1.js",
     "karma": "karma start",
     "test": "restmock",
     "test.mock": "watchify -v -d ./.mock.js -o dist/test.js",
