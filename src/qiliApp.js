@@ -11,7 +11,7 @@ var muiTheme=(new Styles.ThemeManager()).getCurrentTheme(),
     {render, traverseChildren}=React
 
 muiTheme.component.floatingActionButton.style={
-    position:'fixed',top:10,right:10, opacity:0.7, zIndex:9
+   opacity:0.7, zIndex:9
 }
 
 export default class App extends Component{
@@ -20,8 +20,7 @@ export default class App extends Component{
         supportTap()
         var {init:initApp, service, appId, width}=this.props
         this.state={
-            __user:User.current,
-            __wide:window.innerWidth>width
+            __user:User.current
         }
 
         if(!appId)
@@ -29,8 +28,6 @@ export default class App extends Component{
 
         if(!service)
             throw new Error("Please give service url")
-
-        Utils.Events.on(window, 'resize', ()=>this.setState({__wide:window.innerWidth>width}));
     }
 
     componentDidMount(){
@@ -45,18 +42,6 @@ export default class App extends Component{
 
     getChildContext(){
         return {muiTheme}
-    }
-
-    _right(x){
-        var {__wide}=this.state,
-            {width}=this.props
-        return __wide ? (window.innerWidth-width)/2+x : x
-    }
-
-    _rightAsLeft(x){
-        var {__wide}=this.state,
-            {width}=this.props
-        return __wide ? (window.innerWidth+width)/2-x : window.innerWidth-x
     }
 
     render(){
@@ -78,8 +63,12 @@ export default class App extends Component{
                 <div className="withFootbar">
                     <div id="container">
                         {content}
-                        <Messager ref="msg" style={{position:"fixed", right: this._right(10), left:undefined}} />
-                        <Loading ref="loading" top={10} left={10}/>
+                        <div className="sticky bottom left" style={{zIndex:99}}>
+							<Messager ref="msg" style={{display:"inline-block",position:""}}/>
+						</div>
+                        <div className="sticky top left" style={{zIndex:99}}>
+							<Loading ref="loading"  style={{display:"inline-block",position:""}}/>
+						</div>
                     </div>
                 </div>
             )

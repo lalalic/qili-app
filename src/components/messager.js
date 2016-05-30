@@ -32,4 +32,4 @@ export default class Messager extends Component{
 	}
 }
 
-Messager.defaultProps={autoHideDuration:2000, style:{position:"fixed",right:10, bottom:0}}
+Messager.defaultProps={autoHideDuration:2000}

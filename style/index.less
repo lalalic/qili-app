@@ -1,9 +1,11 @@
-@maxWidth:960px!important;
+@maxWidth:960px;
 @footbarHeight:50px;
 @topzIndex:10;
 @background:white;
+@stickyOffset:10px;
 
 *{
+    box-sizing:border-box;
     outline:none;
 }
 
@@ -27,6 +29,12 @@ body{
     display:box;
 
     .vendor(box-orient,@orient)
+}
+
+.sticky(@orient:right, @offset:@stickyOffset){
+	@{orient}: -webkit-calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
+	@{orient}: -moz-calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
+	@{orient}: calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
 }
 
 .grid{
@@ -207,13 +215,43 @@ table{
     }
 }
 
+.sticky{
+	position:fixed;
+	
+	.on(@pos){
+		&.@{pos}{
+			@{pos}: @stickyOffset;
+			
+			&.right{
+				right:@stickyOffset;
+				
+				@media screen and (min-width:@maxWidth){
+					.sticky();
+				}
+			}	
+			
+			&.left{
+				left:@stickyOffset;
+				
+				@media screen and (min-width:@maxWidth){
+					.sticky(left);
+				}
+			}
+		}
+	}
+	
+	.on(top);
+	
+	.on(bottom);
+}
 
-@media screen and (min-width:960px){
+
+@media screen and (min-width:@maxWidth){
     body{
         background-color:lightgray;
 
         #app{
-            width:@maxWidth;
+            width:@maxWidth!important;
             margin:0px auto!important;
             background-color:@background;
         }
@@ -224,18 +262,18 @@ table{
         }
 
         #app>div{
-            width:@maxWidth;
+            width:@maxWidth!important;
             height:100%;
         }
 
         .footbar{
-            width:@maxWidth;
+            width:@maxWidth!important;
         }
 
         .dialog-command{
             .layout{
                 .content{
-                    width:@maxWidth;
+                    width:@maxWidth!important;
                 }
             }
         }

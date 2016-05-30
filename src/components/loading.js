@@ -20,4 +20,4 @@ export default class Loading extends Component{
     }
 }
 
-Loading.defaultProps={size:40,left:10,top:5,style:{zIndex:99},loadingColor:"#FF9800"}
+Loading.defaultProps={size:40,loadingColor:"#FF9800"}
