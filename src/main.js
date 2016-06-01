@@ -37,19 +37,17 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, style={opacity:0.7, zIndex:9}, ...others}=this.props;
+        var {app={name:""}, style={}, ...others}=this.props;
         if(!app._id)
             style.display="hidden"
 
         return(
-            <div className="sticky top right">
-                <FloatingActionButton
-                    onClick={this.change.bind(this)}
-                    style={style}
-                    {...others}>
-                    {app.name}
-                </FloatingActionButton>
-            </div>
+            <FloatingActionButton className="sticky top right"
+                onClick={this.change.bind(this)}
+                style={style}
+                {...others}>
+                {app.name}
+            </FloatingActionButton>
         )
     }
     change(){

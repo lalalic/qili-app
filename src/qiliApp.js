@@ -8,7 +8,7 @@ import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 
 var muiTheme=(new Styles.ThemeManager()).getCurrentTheme(),
-    {render, traverseChildren}=React
+    {render}=React
 
 muiTheme.component.floatingActionButton.style={
    opacity:0.7, zIndex:9
@@ -17,6 +17,7 @@ muiTheme.component.floatingActionButton.style={
 export default class App extends Component{
     constructor(props){
         super(props)
+
         supportTap()
         var {init:initApp, service, appId, width}=this.props
         this.state={
