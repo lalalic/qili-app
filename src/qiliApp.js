@@ -86,6 +86,10 @@ export default class App extends Component{
         }
 
         return Router.run(routes, history, (Handler, state)=>{
+            var style=document.createElement("style")
+            document.getElementsByTagName("head")[0].appendChild(style)
+            style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+
             container.style.height=window.innerHeight+'px'
             render(<Handler params={state.params} query={state.query}/>, container)
         })
