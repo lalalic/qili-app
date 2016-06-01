@@ -14,7 +14,7 @@ export default class Messager extends Component{
             message:"default",
             level:'Info'
         }
-		_instance=this
+		_instance=_instance||this
     }
 
     render(){
@@ -26,7 +26,7 @@ export default class Messager extends Component{
         this.setState({message,level})
         this.refs.bar.show()
     }
-	
+
 	static show(message){
 		_instance ? _instance.show(...arguments) : console.warn(message)
 	}

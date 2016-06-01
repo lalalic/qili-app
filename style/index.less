@@ -3,6 +3,7 @@
 @topzIndex:10;
 @background:white;
 @stickyOffset:10px;
+@spinnerWidth:56px;
 
 *{
     box-sizing:border-box;
@@ -32,9 +33,7 @@ body{
 }
 
 .sticky(@orient:right, @offset:@stickyOffset){
-	@{orient}: -webkit-calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
-	@{orient}: -moz-calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
-	@{orient}: calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset));
+	@{orient}: calc(~"100%/2 - "(@maxWidth)~"/2 + "(@offset))!important;
 }
 
 .grid{
@@ -216,33 +215,72 @@ table{
 }
 
 .sticky{
-	position:fixed;
-	
+	position:fixed!important;
+
 	.on(@pos){
 		&.@{pos}{
-			@{pos}: @stickyOffset;
-			
+			@{pos}: @stickyOffset!important;
+
 			&.right{
-				right:@stickyOffset;
-				
+				right:@stickyOffset!important;
+
 				@media screen and (min-width:@maxWidth){
 					.sticky();
 				}
-			}	
-			
+			}
+
 			&.left{
-				left:@stickyOffset;
-				
+				left:@stickyOffset!important;
+
 				@media screen and (min-width:@maxWidth){
 					.sticky(left);
 				}
 			}
 		}
 	}
-	
+
 	.on(top);
-	
+
 	.on(bottom);
+}
+
+.spinner{
+    width:@spinnerWidth;
+    height:@spinnerWidth;
+    margin:0px;
+
+    z-index: @topzIndex;
+    background-color: #333;
+    border-radius: 100%;
+    &.loading{
+        -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
+        animation: sk-scaleout 1.0s infinite ease-in-out;
+    }
+
+    &.hide{
+        visibility: hidden;
+        -webkit-animation: initial;
+        animation: initial;
+    }
+
+    @-webkit-keyframes sk-scaleout {
+      0% { -webkit-transform: scale(0) }
+      100% {
+        -webkit-transform: scale(1.0);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sk-scaleout {
+      0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+      } 100% {
+        -webkit-transform: scale(1.0);
+        transform: scale(1.0);
+        opacity: 0;
+      }
+    }    
 }
 
 

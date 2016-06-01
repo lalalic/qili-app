@@ -17,8 +17,7 @@ class QiliConsole extends QiliApp{
         var {app}=this.state
         return (
             <div>
-                <CurrentApp app={app}
-                    style={{position:'fixed',top:10,right:this._right(10), opacity:0.7, zIndex:9}}/>
+                <CurrentApp app={app}/>
                 <RouteHandler app={app}/>
             </div>
         )
@@ -38,17 +37,19 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, style={}, ...others}=this.props;
+        var {app={name:""}, style={opacity:0.7, zIndex:9}, ...others}=this.props;
         if(!app._id)
             style.display="hidden"
 
         return(
-            <FloatingActionButton
-                onClick={this.change.bind(this)}
-                style={style}
-                {...others}>
-                {app.name}
-            </FloatingActionButton>
+            <div className="sticky top right">
+                <FloatingActionButton
+                    onClick={this.change.bind(this)}
+                    style={style}
+                    {...others}>
+                    {app.name}
+                </FloatingActionButton>
+            </div>
         )
     }
     change(){

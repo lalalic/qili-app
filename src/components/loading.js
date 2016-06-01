@@ -1,14 +1,15 @@
-var React=require('react'),
-    {Component}=React,
-    {RefreshIndicator}=require('material-ui');
+import React, {Component} from 'react'
 
 export default class Loading extends Component{
     constructor(p){
         super(p)
-        this.state={}
+        this.state={status:this.props.status||"hide"}
     }
     render(){
-        return <RefreshIndicator {...this.props} {...this.state}/>
+        let {className, ...others}=this.props
+        let {status}=this.state
+
+        return <span className={`spinner ${status} ${className}`} {...others}/>
     }
 
     show(){
@@ -19,5 +20,3 @@ export default class Loading extends Component{
         this.setState({status:"hide"})
     }
 }
-
-Loading.defaultProps={size:40,loadingColor:"#FF9800"}

@@ -63,12 +63,9 @@ export default class App extends Component{
                 <div className="withFootbar">
                     <div id="container">
                         {content}
-                        <div className="sticky bottom left" style={{zIndex:99}}>
-							<Messager ref="msg" style={{display:"inline-block",position:""}}/>
-						</div>
-                        <div className="sticky top left" style={{zIndex:99}}>
-							<Loading ref="loading"  style={{display:"inline-block",position:""}}/>
-						</div>
+
+                        <Messager ref="msg" className="sticky bottom left"/>
+                        <Loading ref="loading"  className="sticky top right"/>
                     </div>
                 </div>
             )
