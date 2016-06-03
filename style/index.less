@@ -4,48 +4,18 @@
 @background:white;
 @stickyOffset:10px;
 @spinnerWidth:56px;
+@insetWidth:5px;
 
 *{
     box-sizing:border-box;
     outline:none;
+	margin:0px;
+	padding:0px;
+	border:0px;
 }
 
 svg{
 	box-sizing:initial;
-}
-
-body{
-    margin:0px;
-}
-
-
-h1{
-    height: 100px;
-    background-color:darkorange;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    margin:0px;
-
-    a{
-        text-decoration:none
-    }
-}
-
-h2{
-    height: 80px;
-    background-color:darksalmon;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-}
-
-details{
-	padding: 10px;
-	summary{
-		background-color: #eee;
-		padding: 10px;
-		border-radius: 5px;
-		margin: 5px auto;
-	}
 }
 
 ::-webkit-scrollbar {
@@ -81,7 +51,7 @@ details{
 }
 
 .inset{
-    padding:5px
+    padding:@insetWidth;
 }
 
 .footbar{
@@ -248,6 +218,77 @@ table{
     }
 }
 
+
+article{
+	@headerHeight:100px;
+	
+	figure{
+		
+	}
+	
+	figure:empty{
+		display:none;
+	}
+	
+	img{
+        width:100%;
+        clear:both;
+    }
+	
+	header{
+		height:@headerHeight;
+		background-color:darkorange;
+		
+		h1{
+			.inset;
+			line-height:@headerHeight/2 - 2*@insetWidth;
+		}
+		
+		h1,a,p{
+			text-overflow:ellipsis;
+			white-space:nowrap;
+			overflow:hidden;
+		}
+		
+		a{
+			text-decoration:none;
+		}
+
+		p{
+			.inset;
+			font-size:small;
+			text-align:right;
+			line-height:(@headerHeight/2 - 4*@insetWidth)/2;
+		}
+	}
+	
+	section{
+		.inset;
+	}
+	
+	details{
+		.inset;
+		border-bottom: 1px dotted lightgray;
+		summary{
+			.inset;
+			background-color: #eee;
+			border-radius: @insetWidth;
+		}
+		
+		summary~div{
+			padding: @insetWidth 2*@insetWidth;
+			
+			p{
+				padding: @insetWidth 0px;
+			}
+		}
+	}
+	
+	details:last-child{
+		border-bottom:none;
+	}
+}
+
 .sticky{
 	position:fixed!important;
 
@@ -319,7 +360,7 @@ table{
 
 .li{
     @listHeight:120px;
-    @listHeightWithImage:150px;
+    @listHeightWithImage:160px;
     @titleFont:16px;
     @titleLineHeight:25px;
     @smallFont:10px;
