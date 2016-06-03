@@ -10,10 +10,6 @@ import Account from './account'
 var muiTheme=(new Styles.ThemeManager()).getCurrentTheme(),
     {render}=React
 
-muiTheme.component.floatingActionButton.style={
-   opacity:0.7, zIndex:9
-}
-
 export default class App extends Component{
     constructor(props){
         super(props)
@@ -84,13 +80,13 @@ export default class App extends Component{
             container.id='app'
             document.body.appendChild(container)
         }
+		var style=document.createElement("style")
+		document.getElementsByTagName("head")[0].appendChild(style)
+		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+		container.style.height=window.innerHeight+'px'
+            
 
         return Router.run(routes, history, (Handler, state)=>{
-            var style=document.createElement("style")
-            document.getElementsByTagName("head")[0].appendChild(style)
-            style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-
-            container.style.height=window.innerHeight+'px'
             render(<Handler params={state.params} query={state.query}/>, container)
         })
     }
@@ -108,7 +104,7 @@ App.defaultProps=Object.assign({
     service:"http://qili2.com/1/",
     init(){},
     width:960
-},global.__test)
+})
 
 /**
 *@Todo:

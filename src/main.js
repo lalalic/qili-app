@@ -37,7 +37,7 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, style={}, ...others}=this.props;
+        var {app={name:""}, style={opacity:0.7, position:"absolute"}, ...others}=this.props;
         if(!app._id)
             style.display="hidden"
 
