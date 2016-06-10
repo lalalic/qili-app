@@ -33,7 +33,7 @@ export default class App extends Component{
 
         init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
             .then((__tutorialized=true)=>{
-                    this.setState({__inited:true, __user:false&&User.current, __tutorialized:false})
+                    this.setState({__inited:true, __user:User.current, __tutorialized})
                     User.on('change', ()=>this.setState({__user:User.current}))
                 },
                 (e)=>this.setState({__inited:false,__user:User.current,__initedError:e.message}))
@@ -53,7 +53,7 @@ export default class App extends Component{
             else
                 content= "..."
         }else if(!user){
-            if(!__tutorialized && this.props.tutorial)
+            if(!__tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
                 return (<Tutorial slides={this.props.tutorial} onEnd={e=>this.setState({__tutorialized:true})}/>)
 
             content=(<Account />)
@@ -110,7 +110,7 @@ App.propsTypes={
 App.defaultProps=Object.assign({
     service:"http://qili2.com/1/",
     init(){},
-    tutorial:["images/icon.svg","images/icon.svg"]
+    tutorial:[]
 })
 
 /**
