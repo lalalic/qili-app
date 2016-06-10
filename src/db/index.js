@@ -144,10 +144,13 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
             db=new HybridDb(localDb,new RemoteDb(server+"classes/",{},ajaxRequest));
             fixMinimongo(db)
 
-            Service.init(null,db, ajaxRequest,server, makeLocalStorage(localDb))
+            let localStorage=makeLocalStorage(localDb)
+
+            Service.init(null,db, ajaxRequest,server, localStorage)
             Service.isCurrentApp=function(__appId){
                 return _appId==__appId
             }
+
             User.init().then(function(){
                 Role.init();
                 File.init();
@@ -155,9 +158,9 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
 
                 if(success){
                     User.on('change',()=>success(db))
-                    resolve(User.current ? success(db)||db : db)
+                    resolve(User.current ? Promise.resolve(success(db)||db).then(a=>isTutorialized(localStorage)) : db)
                 }else
-                    resolve(db)
+                    resolve(isTutorialized(localStorage))
 
                 supportWorker(_server, _appId)
 
@@ -232,6 +235,17 @@ function makeLocalStorage(localDb){
                     localDb.__localStorage.remove(key,resolve, reject))
             }
         }
+}
+
+function isTutorialized(localStorage){
+    return localStorage.getItem("__tutorialized")
+        .then(a=>{
+            if(!a){
+                localStorage.setItem("__tutorialized","true")
+                return false
+            }
+            return a
+        })
 }
 
 exports.User=User

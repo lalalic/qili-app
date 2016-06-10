@@ -7,7 +7,7 @@ var React=require('react'),
 export default class Account extends Component{
     constructor(props){
         super(props)
-        this.state={user:User.current}
+        this.state={user:this.props.user}
     }
 
     verifyPhone(){

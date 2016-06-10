@@ -221,35 +221,35 @@ table{
 
 article{
 	@headerHeight:100px;
-	
+
 	figure{
-		
+
 	}
-	
+
 	figure:empty{
 		display:none;
 	}
-	
+
 	img{
         width:100%;
         clear:both;
     }
-	
+
 	header{
 		height:@headerHeight;
 		background-color:darkorange;
-		
+
 		h1{
 			.inset;
 			line-height:@headerHeight/2 - 2*@insetWidth;
 		}
-		
+
 		h1,a,p{
 			text-overflow:ellipsis;
 			white-space:nowrap;
 			overflow:hidden;
 		}
-		
+
 		a{
 			text-decoration:none;
 		}
@@ -261,11 +261,11 @@ article{
 			line-height:(@headerHeight/2 - 4*@insetWidth)/2;
 		}
 	}
-	
+
 	section{
 		.inset;
 	}
-	
+
 	details{
 		.inset;
 		border-bottom: 1px dotted lightgray;
@@ -274,16 +274,16 @@ article{
 			background-color: #eee;
 			border-radius: @insetWidth;
 		}
-		
+
 		summary~div{
 			padding: @insetWidth 2*@insetWidth;
-			
+
 			p{
 				padding: @insetWidth 0px;
 			}
 		}
 	}
-	
+
 	details:last-child{
 		border-bottom:none;
 	}
@@ -498,6 +498,19 @@ article{
                     width:@maxWidth!important;
                 }
             }
+        }
+    }
+}
+
+.tutorial{
+    .flex();
+    .page{
+        width:100%;
+        text-align: center;
+        vertical-align: middle;
+        img{
+            max-width: 80%;
+            max-height: 80%;
         }
     }
 }
