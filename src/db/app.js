@@ -1,9 +1,9 @@
-var {Service}=require('./service'),
-    User=require('./user'),
-    {RemoteDb}=require('minimongo'),
-    Role=require('./role'),
-    File=require('./file'),
-    Log=require('./log');
+import {Service} from './service'
+import User from './user'
+import {RemoteDb} from 'minimongo'
+import Role from './role'
+import File from './file'
+import Log from './log'
 
 var _apps=[],
     _current,

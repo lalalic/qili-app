@@ -1,13 +1,15 @@
-var React=require('react'),
-    {Component, UI:{CommandBar, List, Empty}}=require('.'),
-	{Command, DialogCommand}=CommandBar,
-    {Avatar}=require('material-ui'),
-    App=require('./db/app');
+import React, {Component} from 'react'
+import {UI, User} from '.'
+import {Avatar} from 'material-ui'
+import App from './db/app'
 
-import Data from "material-ui/lib/svg-icons/action/dashboard"
-import Cloud from "material-ui/lib/svg-icons/file/cloud"
-import Log from "material-ui/lib/svg-icons/action/assignment"
-import More from "material-ui/lib/svg-icons/navigation/more-vert"
+import Data from "material-ui/svg-icons/action/dashboard"
+import Cloud from "material-ui/svg-icons/file/cloud"
+import Log from "material-ui/svg-icons/action/assignment"
+import More from "material-ui/svg-icons/navigation/more-vert"
+
+const {CommandBar, List, Empty}=UI
+const {Command, DialogCommand}=CommandBar
 
 export default class Dashboard extends Component{
     componentWillReceiveProps(newProps){
@@ -18,7 +20,7 @@ export default class Dashboard extends Component{
     render(){
         var content, {app}=this.props
         if(!App.all || 0==App.all.length)
-            content=(<Empty text={<a style={{cursor:"cell"}} onClick={()=>this.context.router.transitionTo("app")}>Create first QiLi!</a>}/>)
+            content=(<Empty text={<a style={{cursor:"cell"}} onClick={()=>this.context.router.push("app")}>Create first QiLi!</a>}/>)
         else {
             content=(<Empty icon={<Cloud/>} text="Welcome"/>)
         }
@@ -43,13 +45,13 @@ export default class Dashboard extends Component{
             return;
 		switch(cmd){
 		case 'Data':
-			this.context.router.transitionTo("data")
+			this.context.router.push(`/data`)
 		break
 		case 'Cloud':
-			this.context.router.transitionTo("cloud")
+			this.context.router.push("/cloud")
 		break
 		case 'Log':
-			this.context.router.transitionTo("log")
+			this.context.router.push("/log")
 		break
 		}
 	}
@@ -63,31 +65,33 @@ class MoreActions extends DialogCommand{
 	renderContent(){
         var setting
         if(App.current)
-            setting=(
+            setting=[(
                     <List.Item primaryText="Setting" style={{textAlign:'left'}}
                     leftIcon={<span/>}
-                    onClick={()=>this.context.router.transitionTo("app",App.current)}/>
-                )
+                    key="setting"
+                    onClick={()=>this.context.router.push(`app/${App.current.name}`)}/>
+                ),(<List.Divider key={1} inset={true}/>)]
         return (
             <List>
                 {setting}
 				<List.Item primaryText={`${App.current ? "More" : "First"} QiLi`}
                     style={{textAlign:'left'}}
-                    open={true}
-                    leftAvatar={<Avatar onClick={()=>this.context.router.transitionTo("app",App.current={})}>+</Avatar>}>
-					{
+                    initiallyOpen={true}
+                    insetChildren={true}
+                    leftAvatar={<Avatar onClick={()=>{App.current={};this.context.router.push("app")}}>+</Avatar>}
+					nestedItems={
 						App.all.map((a)=>{
 							return (
 								<List.Item primaryText={a.name} key={`${a._id}`}
 									leftIcon={<span/>} style={{textAlign:'left'}}
-									onClick={()=>this.context.router.transitionTo("app",App.current=a)}/>
+									onClick={()=>this.context.router.push(`app/${(App.current=a).name}`)}/>
 							)
 						})
 					}
-				</List.Item>
+				/>
             </List>
 		)
 	}
 }
 Dashboard.MoreActions=MoreActions
-Dashboard.contextTypes=MoreActions.contextTypes={router:React.PropTypes.func}
+Dashboard.contextTypes=MoreActions.contextTypes={router:React.PropTypes.object}

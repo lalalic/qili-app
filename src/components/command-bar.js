@@ -1,18 +1,15 @@
-var React=require('react'),
-    {Component}=React,
-    {History}=require('react-router'),
-    {SvgIcon,EnhancedButton}=require('material-ui'),
-    RefreshIcon=require("material-ui/lib/svg-icons/navigation/refresh"),
-    DefaultIcon=require("material-ui/lib/svg-icons/action/favorite-border"),
-    HomeIcon=require("material-ui/lib/svg-icons/action/home"),
-    BackIcon=require("material-ui/lib/svg-icons/hardware/keyboard-arrow-left"),
-    CommentIcon=require("material-ui/lib/svg-icons/communication/comment"),
-    ShareIcon=require("material-ui/lib/svg-icons/social/share"),
-    SaveIcon=require("material-ui/lib/svg-icons/content/save"),
-    Overlay=require('material-ui/lib/overlay'),
-    Messager=require('./messager'),
-    enhancedBack=false;
+import React, {Component} from 'react'
+import {SvgIcon,EnhancedButton} from 'material-ui'
+import RefreshIcon from "material-ui/svg-icons/navigation/refresh"
+import DefaultIcon from "material-ui/svg-icons/action/favorite-border"
+import HomeIcon from "material-ui/svg-icons/action/home"
+import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
+import CommentIcon from "material-ui/svg-icons/communication/comment"
+import ShareIcon from "material-ui/svg-icons/social/share"
+import SaveIcon from "material-ui/svg-icons/content/save"
+import Messager from './messager'
 
+var enhancedBack=false;
 var _current;
 
 export default class CommandBar extends Component{
@@ -38,13 +35,8 @@ export default class CommandBar extends Component{
                 if(typeof(command)=='string')
                     command={action:command}
 
-                if((command.action).toLowerCase()=='back'){
-                    if(this.historyLength()<2){
-                        command.action='Home'
-                        command.icon=HomeIcon
-                    }else{
-                        command.icon=BackIcon
-                    }
+                if(command.action.toLowerCase()=='back'){
+                    command.icon=BackIcon
                     command.onSelect=()=>{this.context.router.goBack()}
                 }
 
@@ -70,25 +62,14 @@ export default class CommandBar extends Component{
         var router=this.context.router
         if(enhancedBack || !router)
             return
-
-        ;(function(goBack, histories){
-            router.goBack=function(){
-                if(histories()<2){
-                    this.transitionTo("/")
-                    return true
-                }
-
-                return goBack.call(this,...arguments)
-            }
-        })(router.goBack, this.historyLength);
         enhancedBack=true
     }
 
     historyLength(){
-        return History.length
+        return 2
     }
 }
-CommandBar.contextTypes={router:React.PropTypes.func}
+CommandBar.contextTypes={router:React.PropTypes.object}
 
 
 class Command extends Component{
@@ -119,11 +100,11 @@ class Comment extends Command{
 
     onSelect(){
         var {type:{_name}, model:{_id}}=this.props
-        this.context.router.transitionTo("comment",{type:_name,_id:_id})
+        this.context.router.push(`comment/${_name}/${_id}`)
     }
 }
 CommandBar.Comment=Comment
-Comment.contextTypes={router:React.PropTypes.func}
+Comment.contextTypes={router:React.PropTypes.object}
 Comment.propTypes={
     type:React.PropTypes.func.isRequired,
     model:React.PropTypes.object.isRequired
@@ -156,20 +137,18 @@ class DialogCommand extends Component{
         this.state={open:false}
     }
     render(){
-        var children=this.renderContent()
+        var {open}=this.state
         return (
-            <Overlay
-                className="dialog-command"
-                show={this.state.open}
-                autoLockScrolling={true}
+            <div
+                className={`page overlay dialog-command ${open ? "" : "hide"}`}
                 onTouchTap={()=>this.dismiss()} >
                 <div className="layout">
                     <div className="content"
                         onTouchTap={(e)=>{e.stopPropagation()}}>
-                        {children}
+                        {this.renderContent()}
                     </div>
                 </div>
-            </Overlay>
+            </div>
         )
     }
 
@@ -178,8 +157,13 @@ class DialogCommand extends Component{
         return children
     }
 
+    componentWillUnmount(){
+        if(_current=this)
+            _current=null
+    }
+
     show(){
-        _current && _current.dismiss()
+        _current && (_current!=this) && _current.dismiss()
         this.setState({open:true})
         _current=this
     }

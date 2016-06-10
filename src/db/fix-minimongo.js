@@ -47,7 +47,8 @@ Qili server is not fully aligned with minimongo about
 
 so qili-app doesn't support local upsert
 */
-var {HybridDb, utils}=require('minimongo')
+import {HybridDb, utils} from 'minimongo'
+
 var _fixed=false
 export default function fix(db){
     if(_fixed)

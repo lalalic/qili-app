@@ -1,10 +1,4 @@
 import React, {Component} from 'react'
-import {Snackbar} from 'material-ui'
-import Error from "material-ui/lib/svg-icons/alert/error"
-import Warning from "material-ui/lib/svg-icons/alert/warning"
-import Info from "material-ui/lib/svg-icons/action/info"
-
-var Icons={Error, Warning, Info};
 
 var _instance
 export default class Messager extends Component{
@@ -12,19 +6,34 @@ export default class Messager extends Component{
         super(props)
         this.state={
             message:"default",
-            level:'Info'
+            level:'Info',
+            open: !!this.props.open || false
         }
 		_instance=_instance||this
     }
 
     render(){
-        return <Snackbar ref="bar" {...this.props} message={this.state.message}/>
+        let {className, ...others}=this.props
+        let {open}=this.state
+        return <div className={`snackbar ${className} ${open ? "" : "hide"}`} {...others}>{this.state.message}</div>
+    }
+
+    componentDidUpdate(){
+        var {open}=this.state
+        if(open){
+            this.__timer=setTimeout(a=>{
+                this.setState({open:false})
+                this.__timer && clearTimeout(this.__timer)
+                delete this.__timer
+            },this.props.autoHideDuration)
+        }
     }
 
     show(message,level="Info"){
         if(!message) return;
-        this.setState({message,level})
-        this.refs.bar.show()
+        this.__timer && clearTimeout(this.__timer)
+        delete this.__timer
+        this.setState({message,level, open:true})
     }
 
 	static show(message){

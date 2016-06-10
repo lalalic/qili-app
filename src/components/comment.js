@@ -1,11 +1,9 @@
-var React=require('react'),
-    {Component}=React,
-    {Avatar,ClearFix}=require('material-ui'),
-    {Service}=require('../db/service'),
-    CommandBar=require('./command-bar'),
-    List=require('./list'),
-    User=require('../db/user'),
-    Comment=require('../db/comment');
+import React, {Component} from "react"
+import {Service} from '../db/service'
+import CommandBar from './command-bar'
+import List from './list'
+import User from '../db/user'
+import Comment from '../db/comment'
 
 export default class Main extends Component{
     constructor(props){

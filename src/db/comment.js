@@ -1,4 +1,4 @@
-var {Service}=require('./service')
+import {Service} from './service'
 
 export default class Comment extends Service{
     static of(type){

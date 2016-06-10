@@ -1,22 +1,22 @@
 import React, {Component} from 'react'
+import {findDOMNode} from 'react-dom'
 
 export default class Loading extends Component{
-    constructor(p){
-        super(p)
-        this.state={status:this.props.status||"hide"}
-    }
     render(){
         let {className, ...others}=this.props
-        let {status}=this.state
 
-        return <span className={`spinner ${status} ${className}`} {...others}/>
+        return <span className={`spinner hide ${className}`} {...others}/>
     }
 
     show(){
-        this.setState({status:"loading"})
+        const classes=findDOMNode(this).classList
+        classes.remove("hide")
+        classes.add("loading")
     }
 
     close(){
-        this.setState({status:"hide"})
+        const classes=findDOMNode(this).classList
+        classes.remove("loading")
+        classes.add("hide")
     }
 }

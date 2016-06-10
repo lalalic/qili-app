@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import AsyncComponent from "./async"
-import {List,ListDivider,ListItem} from 'material-ui'
+import {List,Divider,ListItem} from 'material-ui'
 import {Table} from 'reactable'
 
 export default class Main extends AsyncComponent{
@@ -57,7 +57,7 @@ class AsyncTable extends AsyncComponent{
 }
 
 Main.Table=AsyncTable
-Main.Divider=ListDivider
+Main.Divider=Divider
 Main.Item=ListItem
 
 Main.defaultProps={

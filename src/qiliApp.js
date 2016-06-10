@@ -1,15 +1,14 @@
 import React, {Component} from "react"
 import {init,User} from "./db"
-import Router from "react-router"
 import Messager from "./components/messager"
 import Loading from "./components/loading"
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
-
-var muiTheme=(new Styles.ThemeManager()).getCurrentTheme(),
-    {render}=React
+import ReactDOM, {render} from "react-dom"
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 
 export default class App extends Component{
     constructor(props){
@@ -40,7 +39,7 @@ export default class App extends Component{
     }
 
     getChildContext(){
-        return {muiTheme}
+        return {muiTheme: getMuiTheme(lightBaseTheme)}
     }
 
     render(){
@@ -79,8 +78,7 @@ export default class App extends Component{
         //inherits should return component
     }
 
-    static render(routes){
-        var history=App.history || Router.HashLocation
+    static render(routes, props={}){
         var container=document.getElementById('app')
         if(!container){
             container=document.createElement('div')
@@ -92,14 +90,19 @@ export default class App extends Component{
 		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
 		container.style.height=window.innerHeight+'px'
 
+        if(!props.history)
+            props.history=hashHistory
 
-        return Router.run(routes, history, (Handler, state)=>{
-            render(<Handler params={state.params} query={state.query}/>, container)
-        })
+        return render((
+                <Router {...props}>
+                    {routes}
+                </Router>
+            ),container)
     }
 };
+import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
-App.childContextTypes={muiTheme:React.PropTypes.object}
+App.childContextTypes={muiTheme:React.PropTypes.object.isRequired}
 
 App.propsTypes={
     service: React.PropTypes.string.isRequired,

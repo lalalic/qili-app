@@ -1,10 +1,10 @@
 import {React, Component, UI} from "."
 import {TextField} from 'material-ui'
 import App from "./db/app"
-import Upload from "material-ui/lib/svg-icons/file/file-upload"
-import Download from "material-ui/lib/svg-icons/file/file-download"
-import Save from "material-ui/lib/svg-icons/content/save"
-import Remove from "material-ui/lib/svg-icons/action/delete"
+import Upload from "material-ui/svg-icons/file/file-upload"
+import Download from "material-ui/svg-icons/file/file-download"
+import Save from "material-ui/svg-icons/content/save"
+import Remove from "material-ui/svg-icons/action/delete"
 
 export default class AppInfo extends Component{
     constructor(props){
@@ -54,13 +54,12 @@ export default class AppInfo extends Component{
                 <TextField ref="name"
                     floatingLabelText="application name"
                     fullWidth={true}
-                    defaultValue={app.name}
                     value={app.name}
                     disabled={!removable}
                     onChange={(e)=>this.setState({app:Object.assign(app,{name:e.target.value})})}
                     onBlur={()=>{
                         if(app._id && app.name!=this.refs.name.props.defaultValue)
-                            App.upsert(app).then(()=>this.context.router.replaceWith("app",app))
+                            App.upsert(app).then(()=>this.context.router.replace(`app/${app.name}`))
                     }}/>
 
                 <TextField ref="uname"
@@ -106,11 +105,11 @@ export default class AppInfo extends Component{
         case "Remove":
             var name=prompt("Please make sure you know what you are doing by giving this app name")
             if(name==app.name){
-                App.remove(app._id,()=>this.context.router.replaceWith("/"))
+                App.remove(app._id,()=>this.context.router.replace("/"))
 
             }
         break
         }
     }
 }
-AppInfo.contextTypes={router:React.PropTypes.func}
+AppInfo.contextTypes={router:React.PropTypes.object}

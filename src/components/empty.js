@@ -1,5 +1,4 @@
-var React=require('react'),
-    {Component}=React
+import React, {Component} from 'react'
 
 export default class Empty extends Component{
     render(){

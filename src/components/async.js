@@ -1,9 +1,8 @@
-var React=require('react'),
-    {Component}=React,
-    Empty=require('./empty'),
-    Loading=require('./loading');
+import React, {Component} from 'react'
+import Empty from './empty'
+import Loading from './loading'
 
-import Error from "material-ui/lib/svg-icons/alert/error"
+import Error from "material-ui/svg-icons/alert/error"
 
 export default class Async extends Component{
 	constructor(props){

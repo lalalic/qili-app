@@ -1,8 +1,9 @@
-var React=require('react'),
-    {Component}=React,
-    {TextField,FlatButton, RaisedButton}=require('material-ui'),
-    User=require('./db/user'),
-    Messager=require('./components/messager');
+import React, {Component} from 'react'
+import {TextField,FlatButton, RaisedButton} from 'material-ui'
+import User from './db/user'
+import Messager from './components/messager'
+
+const ENTER=13
 
 export default class Account extends Component{
     constructor(props){
@@ -90,7 +91,7 @@ export default class Account extends Component{
                 <SMSRequest ref="phone"/>
                 <TextField ref="code" hintText="verification code you just received"
                     fullWidth={true}
-                    onEnterKeyDown={this.verifyPhone.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.verifyPhone()}}
                     errorText={this.state.phoneVerifiedError}/>
                 <center>
                     <RaisedButton label="verify" primary={true}
@@ -113,17 +114,17 @@ export default class Account extends Component{
             <div className="form" key="signup">
                 <TextField ref="username" hintText="login name"
                     fullWidth={true}
-                    onEnterKeyDown={this.signup.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.signup()}}
                     errorText={this.state.signupError}/>
 
                 <TextField ref="password"
                     fullWidth={true}
-                    onEnterKeyDown={this.signup.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.signup()}}
                     type="password" hintText="password"/>
 
                 <TextField ref="password2"
                     fullWidth={true}
-                    onEnterKeyDown={this.signup.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.signup()}}
                     type="password" hintText="password again"/>
 
                 <center>
@@ -147,11 +148,11 @@ export default class Account extends Component{
             <div className="form" key="signin">
                 <TextField ref="username"
                     hintText="login name or phone number"
-                    onEnterKeyDown={this.signin.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.signin()}}
                     fullWidth={true}
                     errorText={this.state.signinError}/>
                 <TextField ref="password"
-                        onEnterKeyDown={this.signin.bind(this)}
+                        onKeyDown={e=>{e.keyCode==ENTER && this.signin()}}
                         fullWidth={true}
                         type="password" hintText="password"/>
                 <center>
@@ -175,7 +176,7 @@ export default class Account extends Component{
         return (
             <div className="form" key="forgetPwd">
                 <TextField ref="contact"
-                    onEnterKeyDown={this.forgetPassword.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.forgetPassword()}}
                     fullWidth={true} hintText="phone number or email"/>
 
                 <center>
@@ -198,17 +199,17 @@ export default class Account extends Component{
             <div className="form" key="reset">
                 <TextField ref="oldPassword" hintText="old password"
                     fullWidth={true}
-                    onEnterKeyDown={this.resetPassword.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.resetPassword()}}
                     errorText={this.state.resetError}/>
 
                 <TextField ref="password"
                     fullWidth={true}
-                    onEnterKeyDown={this.resetPassword.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.resetPassword()}}
                     type="password" hintText="password"/>
 
                 <TextField ref="password2"
                     fullWidth={true}
-                    onEnterKeyDown={this.resetPassword.bind(this)}
+                    onKeyDown={e=>{e.keyCode==ENTER && this.resetPassword()}}
                     type="password" hintText="password again"/>
 
                 <center>
@@ -264,6 +265,7 @@ class SMSRequest extends Component{
 
     render(){
         var button
+            ,{phone}=this.state
         if(SMSRequest.isPhone(this.state.phone)){
             if(this.state.tick)
                 button=(<FlatButton label={this.state.tick} disabled={true}/>)
@@ -275,7 +277,7 @@ class SMSRequest extends Component{
         return (
             <div className="smsrequest">
                 <TextField ref="phone" hintText="phone number (default +86)"
-                    value={this.state.phone}
+                    value={phone||""}
                     onChange={(e)=>this.changePhone(e)}/>
                 {button}
             </div>

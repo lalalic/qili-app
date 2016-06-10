@@ -1,19 +1,21 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
   "dependencies": {
-    "material-ui": "^0.10.x",
+    "babel-polyfill": "^6.7.4",
+    "material-ui": "^0.15.0",
     "minimongo": ">=3.2.13",
-    "react": "^0.13.x",
-    "react-router": "0.13.x",
-    "react-tap-event-plugin": "0.1.6",
-    "reactable": "^0.10.x",
-	"babel-polyfill": "^6.7.4"
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-router": "^2.4.1",
+    "react-tap-event-plugin": "^1.0.0",
+    "reactable": "^0.13.2",
+    "moment":"^2.13.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
@@ -31,7 +33,7 @@
     "karma-chrome-launcher": "^0.2.1",
     "karma-jasmine": "^0.3.6",
     "node-lessify": "0.0.10",
-    "react-stub-context": "^0.4.0",
+    "react-stub-context": "^0.7.0",
     "request": "^2.67.0",
     "restmock": "0.1.x",
     "through2": "^2.0.0",
@@ -67,8 +69,7 @@
     "test": "restmock",
     "test.mock": "watchify -v -d ./.test.mock.js -o dist/test.js",
     "test.mongo": "watchify -v -d ./.test.mongo.js -o dist/test.js",
-
-	"cordova":"cordova create cordova --link-to=dist"
+    "cordova": "cordova create cordova --link-to=dist"
   },
   "repository": {
     "type": "git",

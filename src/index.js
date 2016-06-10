@@ -1,14 +1,13 @@
-require('babel-polyfill')
+import 'babel-polyfill'
 
 import {init,Model,User,Role,File,Log} from "./db"
 import React, {Component} from 'react'
 
-Date.Helper=require('material-ui/lib/utils/date-time')
+Date.Helper=require('moment')
 
 exports.React=React
 exports.Component=Component
 exports.AsyncComponent=require('./components/async')
-exports.Router=require('react-router')
 
 exports.init=init
 exports.Model=Model

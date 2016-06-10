@@ -1,9 +1,9 @@
-var React=require('react'),
-    {Component}=React,
-    {Avatar}=require("material-ui"),
-    IconCamera=require('material-ui/lib/svg-icons/image/photo-camera'),
-    dbFile=require('../db/file'),
-    selectFile=require('./file-selector').main;
+import React, {Component} from 'react'
+import {Avatar} from "material-ui"
+import IconCamera from 'material-ui/svg-icons/image/photo-camera'
+import dbFile from '../db/file'
+import {main} from './file-selector'
+const {selectFile}=main
 
 export default class Photo extends Component{
     constructor(props){

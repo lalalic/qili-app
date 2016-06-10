@@ -10,20 +10,22 @@ import {EventEmitter} from 'events'
     }
 })(EventEmitter.prototype.emit);
 
-var User=require('./user'),
-    Role=require('./role'),
-    Log=require('./log'),
-    File=require('./file'),
-    {Service}=require('./service'),
-    __worker;
+import User from './user'
+import Role from './role'
+import Log from './log'
+import File from './file'
+import {Service} from './service'
 
-var {RemoteDb, HybridDb, utils}=require('minimongo'),
-    db,dbPromise;
+import {RemoteDb, HybridDb, utils} from 'minimongo'
 
-var appId,
-    server,
-    gHttpErrorHandler,
-    loadingHandler;
+
+var __worker
+    ,appId
+    ,server
+    ,gHttpErrorHandler
+    ,db
+    ,dbPromise
+    ,loadingHandler;
 
 function makeEnvReady(){
     (function(window){
@@ -173,7 +175,7 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
 
 function supportWorker(server, appId){/*
     return false
-    __worker=require('webworkify')(require('./worker.js'))
+    __worker from 'webworkify')(require('./worker.js'))
     ;(function(postMessage){
         __worker.postMessage=function(m, ...data){
             postMessage.call(__worker, {type:m, args:JSON.stringify(data)})

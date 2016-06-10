@@ -1,8 +1,11 @@
-var {React, Component, UI:{CommandBar, fileSelector}}=require('.'),
-    App=require('./db/app');
+import React, {Component} from "react"
+import {UI} from '.'
+import App from './db/app'
 
-import Upload from "material-ui/lib/svg-icons/file/file-upload"
-import Save from "material-ui/lib/svg-icons/content/save"
+import Upload from "material-ui/svg-icons/file/file-upload"
+import Save from "material-ui/svg-icons/content/save"
+
+const {CommandBar, fileSelector}=UI
 
 export default class Cloud extends Component{
     constructor(props){

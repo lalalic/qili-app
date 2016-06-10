@@ -1,11 +1,12 @@
-var React=require('react'),
-    {Component, User, UI: {List, Loading, Empty, CommandBar, fileSelector}}=require('.'),
-    App=require("./db/app"),
-    {Tabs, Tab}=require('material-ui');
+import React, {Component} from 'react'
+import {User, UI} from '.'
+import App from "./db/app"
+import {Tabs, Tab} from 'material-ui'
 
-import Upload from "material-ui/lib/svg-icons/file/file-upload"
-import More from "material-ui/lib/svg-icons/navigation/more-vert"
+import Upload from "material-ui/svg-icons/file/file-upload"
+import More from "material-ui/svg-icons/navigation/more-vert"
 
+const {List, Loading, Empty, CommandBar, fileSelector}=UI
 export default class Data extends Component{
     constructor(props){
         super(props)
@@ -13,6 +14,10 @@ export default class Data extends Component{
             {name:collectionName=User._name}=params;
 
         this.state={col:collectionName}
+    }
+
+    componentDidMount(){
+        var {col:collectionName}=this.state
         this._data= App.collectionData(collectionName)
         this._index=App.collectionIndexes(collectionName)
         this._schema=App.schema
@@ -55,12 +60,12 @@ export default class Data extends Component{
                         {action:"Upload Data", label:"Data", icon:Upload},
                         {action:"Collection", icon:More, onSelect:()=>this.refs.names.show()}
 						]}/>
-                <Names ref="names" model={this._schema}
+                {/*<Names ref="names" model={this._schema}
                     onItemClick={(a)=>{
                         this.refs.names.dismiss();
                         this.setState({col:a.name})
-                        this.context.router.replaceWith("data",{name:a.name})
-                    }}/>
+                        this.context.router.replace(`data/${a.name}`)
+                    }}/>*/}
 			</div>
         )
     }
@@ -89,7 +94,7 @@ export default class Data extends Component{
 	}
 }
 
-Data.contextTypes={router:React.PropTypes.func}
+Data.contextTypes={router:React.PropTypes.object}
 
 class IndexItem extends Component{
 	render(){

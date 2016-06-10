@@ -2,12 +2,12 @@ var {React, Component, UI:{CommandBar, List, Empty}}=require('.'),
     App=require('./db/app'),
     {FontIcon}=require('material-ui');
 
-import Http from "material-ui/lib/svg-icons/action/http"
-import Error from "material-ui/lib/svg-icons/alert/error"
-import Warning from "material-ui/lib/svg-icons/alert/warning"
-import All from "material-ui/lib/svg-icons/action/assignment"
+import Http from "material-ui/svg-icons/action/http"
+import Error from "material-ui/svg-icons/alert/error"
+import Warning from "material-ui/svg-icons/alert/warning"
+import All from "material-ui/svg-icons/action/assignment"
 
-var levels={
+const levels={
     	warning:2,
     	error:3,
     	http:9,
@@ -16,11 +16,16 @@ var levels={
         "3":"error",
         "2":"warning",
         "1":"info"
-    },
-    Icons={Http, Error, Warning, All}
+    }
+const Icons={Http, Error, Warning, All}
+
 export default class Log extends Component{
     constructor(p){
         super(p)
+        this.state={logs:null}
+    }
+
+    componentDidMount(){
         this.state={logs:App.getLog(this._level())}
     }
 
@@ -46,7 +51,7 @@ export default class Log extends Component{
         return(
             <div>
                 <List model={this.state.logs}
-                    empty={<Empty icon={<Icon/>} text=""/>} 
+                    empty={<Empty icon={<Icon/>} text=""/>}
                     template={ALog}/>
 
                 <CommandBar className="footbar" style={{textAlign:'left'}}
@@ -63,11 +68,11 @@ export default class Log extends Component{
     }
 
     onSelect(level){
-        this.context.router.replaceWith("log",{level:level.toLowerCase()})
+        this.context.router.replace(`log/${level.toLowerCase()}`)
     }
 }
 
-Log.contextTypes={router: React.PropTypes.func}
+Log.contextTypes={router:React.PropTypes.object}
 
 class ALog extends Component{
     render(){

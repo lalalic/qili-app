@@ -1,6 +1,7 @@
 require('../style/index.less')
 
-import {init,User,QiliApp,React,Component,Router, UI, Position} from '.'
+import {init,User,QiliApp,React,Component, UI, Position} from '.'
+import {Router, Route, IndexRoute, hashHistory, Redirect} from "react-router"
 import Application from './db/app'
 import App from './app'
 import {FloatingActionButton} from 'material-ui'
@@ -9,7 +10,7 @@ import {FloatingActionButton} from 'material-ui'
 class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
-        Object.assign(this.state,{app:Application.current})
+        Object.assign(this.state,{app:this.props.app})
         Application.on('change',()=>this.setState({app:Application.current}))
     }
 
@@ -18,7 +19,7 @@ class QiliConsole extends QiliApp{
         return (
             <div>
                 <CurrentApp app={app}/>
-                <RouteHandler app={app}/>
+                {this.props.children}
             </div>
         )
     }
@@ -63,16 +64,24 @@ class CurrentApp extends Component{
     }
 }
 
-
-var {Route, RouteHandler,  DefaultRoute} = Router;
 module.exports=QiliApp.render(
-    <Route path="/" handler={QiliConsole}>
-    	<Route name="app" path="app/:name?" handler={require('./app')}/>
-    	<Route name="cloud" path="cloud/" handler={require('./cloud')}/>
-    	<Route name="data" path="data/:name?" handler={require('./data')}/>
-        <Route name="log" path="log/:level?" handler={require('./log')}/>
-    	<DefaultRoute handler={require('./dashboard')}/>
-    </Route>
+    (<Route path="/" component={QiliConsole}>
+        <IndexRoute component={require('./dashboard')}/>
+
+        <Route path="app/:name" component={require('./app')}/>
+        <Route path="app" component={require('./app')}/>
+
+        <Route path="cloud" component={require('./cloud')}/>
+        <Route path="data/:name" component={require('./data')}/>
+        <Redirect from="data" to={`data/${User._name}`}/>
+
+        <Route path="log/:level" component={require('./log')}/>
+        <Redirect from="log" to="log/all" />
+    </Route>),{
+        createElement(Component,props){
+            return <Component app={Application.current} {...props}/>
+        }
+    }
 )
 
 

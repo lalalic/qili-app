@@ -14,7 +14,7 @@
             "path":"/**/index.js",
             "type":"static",
             "response":"dist/index.js"
-        },        
+        },
 		{
 			"path":"/1/login",
 			"type":"get",
@@ -104,7 +104,7 @@
             ]
 		},
 		{
-			"path":"/1/indexes",
+			"path":"/1/schemas/indexes",
 			"type":"get",
 			"response":{
 			}
@@ -131,7 +131,7 @@
             ]
         },
 		{
-            "path":"/1/logs",
+            "path":"/1/schemas/logs",
             "type":"get",
             "response":[
                 {
