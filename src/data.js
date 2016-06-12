@@ -13,57 +13,54 @@ export default class Data extends Component{
         this.state={col:null}
     }
 
-    componentDidMount(){
-        var {params={}}=this.props,
-            {name:collectionName}=params
-			
-        this._data= App.collectionData(collectionName)
-        this._index=App.collectionIndexes(collectionName)
-        this._schema=App.schema
-		this.setState({col:collectionName})
+    componentWillMount(){
+        var {name:collectionName}=this.props.params||{}
+
+        this.setState({
+            schema:App.schema,
+            col:collectionName,
+            data:App.collectionData(collectionName),
+            index:App.collectionIndexes(collectionName)
+        })
     }
 
-    shouldComponentUpdate(nextProps, nextState){
-        if(this.props.app!=nextProps.app){
-            this._data= App.collectionData(this.state.col)
-            this._index=App.collectionIndexes(this.state.col)
-            this._schema=App.schema
-            return true
-        }
-
-        var {col:nextCol}=nextState, {col}=this.state
-        if(nextCol!=col){
-            this._data= App.collectionData(nextCol)
-            this._index=App.collectionIndexes(nextCol)
-            return true
-        }
-        return false
+    componentWillReceiveProps(nextProps){
+        if(this.props.app!=nextProps.app)
+            this.setState({
+                schema:App.schema,
+                data:App.collectionData(this.state.col),
+                index:App.collectionIndexes(this.state.col)
+            })
     }
 
     render(){
-		var {col:colName}=this.state
+		var {col:colName, data, index, schema}=this.state
         return (
 			<div>
 				<Tabs>
 					<Tab label={colName}>
-						<List.Table className="data" model={this._data} key={colName}/>
+						<List.Table className="data" model={data} key={colName}/>
 					</Tab>
 					<Tab label="Indexes">
-						{<List model={this._index} template={IndexItem} key={colName}/>}
+						{<List model={index} template={IndexItem} key={colName}/>}
 					</Tab>
 				</Tabs>
 				<CommandBar className="footbar" style={{textAlign:'left'}}
-					onSelect={this.onSelect.bind(this)}
+					onSelect={cmd=>this.onSelect(cmd)}
 					items={[
                         {action:"Back"},
                         {action:"Upload Schema", label:"Schema", icon:Upload},
                         {action:"Upload Data", label:"Data", icon:Upload},
                         {action:"Collection", icon:More, onSelect:()=>this.refs.names.show()}
 						]}/>
-                {<Names ref="names" model={this._schema}
+                {<Names ref="names" model={schema}
                     onItemClick={(a)=>{
                         this.refs.names.dismiss();
-                        this.setState({col:a.name})
+                        this.setState({
+                            col:a.name,
+                            data:App.collectionData(a.name),
+                            index:App.collectionIndexes(a.name)
+                        })
                         this.context.router.replace(`data/${a.name}`)
                     }}/>}
 			</div>
@@ -92,7 +89,7 @@ export default class Data extends Component{
 		break
         }
 	}
-} 
+}
 
 Data.contextTypes={router:React.PropTypes.object}
 

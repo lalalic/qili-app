@@ -12,9 +12,8 @@ const {CommandBar, List, Empty}=UI
 const {Command, DialogCommand}=CommandBar
 
 export default class Dashboard extends Component{
-    componentWillReceiveProps(newProps){
-        if(this.props.app!=newProps.app)
-            this.forceUpdate()
+    shouldComponentUpdate(newProps){
+        return this.props.app!=newProps.app
     }
 
     render(){
@@ -45,13 +44,13 @@ export default class Dashboard extends Component{
             return;
 		switch(cmd){
 		case 'Data':
-			this.context.router.push(`/data`)
+			this.context.router.push(`data`)
 		break
 		case 'Cloud':
-			this.context.router.push("/cloud")
+			this.context.router.push("cloud")
 		break
 		case 'Log':
-			this.context.router.push("/log")
+			this.context.router.push("log")
 		break
 		}
 	}

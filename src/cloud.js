@@ -17,12 +17,12 @@ export default class Cloud extends Component{
             <div>
                 <textarea ref="cloudCode"
                     value={this.state.cloudCode}
-                    onChange={(e)=>this.setState({cloudCode:e.target.value})}
+                    onBlur={(e)=>this.setState({cloudCode:e.target.value})}
                     placeholder="Cloud code"
                     style={{position:'absolute', height: '100%', top:0,lineHeight:'2em',
                         margin:0,width:'100%', padding:10, paddingBottom:51,border:0}}/>
                 <CommandBar className="footbar"
-                    onSelect={this.onSelect.bind(this)}
+                    onSelect={cmd=>this.onSelect(cmd)}
                     items={[
                         {action:"Back"},
                         {action:"Upload", icon:Upload},

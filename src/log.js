@@ -25,7 +25,7 @@ export default class Log extends Component{
         this.state={logs:null}
     }
 
-    componentDidMount(){
+    componentWillMount(){
         this.setState({logs:App.getLog(this._level())})
     }
 

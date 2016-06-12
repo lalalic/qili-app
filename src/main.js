@@ -11,9 +11,7 @@ class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
         Object.assign(this.state,{app:this.props.app})
-        Application.on('change',a=>{
-			this.setState({app:Application.current})
-		})
+        Application.on('change',app=>this.setState({app}))
     }
 
     renderContent(){

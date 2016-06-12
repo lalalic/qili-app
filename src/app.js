@@ -16,10 +16,7 @@ export default class AppInfo extends Component{
 			return true
 		}
 
-		if(this.props.app!=newProps.app)
-			return true
-
-		return false
+		return this.props.app!=newProps.app
     }
 
     componentWillUnmount(){
