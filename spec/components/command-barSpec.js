@@ -124,9 +124,7 @@ describe("command bar", ()=>{
 
     it("dialog command",()=>{
         let DialogCommand=injectTheme(MyComponent.DialogCommand)
-        let Overlay=require('material-ui/lib/overlay')
         let render=TestUtils.renderIntoDocument(<DialogCommand/>)
-        let overlay=TestUtils.findRenderedComponentWithType(render,Overlay)
 
         /*
         //@TODO:hide when click
@@ -134,10 +132,6 @@ describe("command bar", ()=>{
         TestUtils.Simulate.click(overlay)
         expect(render.state.open).toBe(false)
         */
-
-        render=TestUtils.renderIntoDocument(<DialogCommand><Any/></DialogCommand>)
-        overlay=TestUtils.findRenderedComponentWithType(render,Overlay)
-        TestUtils.findRenderedComponentWithType(overlay,Any)
     })
 
     it("comment dialog",()=>{

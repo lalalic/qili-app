@@ -78,7 +78,7 @@ class MoreActions extends DialogCommand{
                     style={{textAlign:'left'}}
                     initiallyOpen={true}
                     insetChildren={true}
-                    leftAvatar={<Avatar onClick={()=>{App.current={};this.context.router.push("app")}}>+</Avatar>}
+                    leftAvatar={<Avatar onClick={a=>this.context.router.push("app")}>+</Avatar>}
 					nestedItems={
 						App.all.map((a)=>{
 							return (

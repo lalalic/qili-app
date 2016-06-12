@@ -11,15 +11,22 @@ class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
         Object.assign(this.state,{app:this.props.app})
-        Application.on('change',()=>this.setState({app:Application.current}))
+        Application.on('change',a=>{
+			this.setState({app:Application.current})
+		})
     }
 
     renderContent(){
         var {app}=this.state
         return (
             <div>
-                <CurrentApp app={app}/>
-                {this.props.children}
+                <CurrentApp app={app} onChange={target=>{
+					if(this.props.children.props.route.name=="app")
+						this.context.router.push(`app/${target.name}`)
+					else
+						Application.current=target
+				}}/>
+                {React.cloneElement(this.props.children,{app})}
             </div>
         )
     }
@@ -38,13 +45,13 @@ class CurrentApp extends Component{
     }
 
     render(){
-        var {app={name:""}, style={opacity:0.7, position:"absolute"}, ...others}=this.props;
+        var {app={name:""}, style={}, ...others}=this.props;
         if(!app._id)
-            style.display="hidden"
+            style.display="none"
 
         return(
             <FloatingActionButton className="sticky top right"
-                onClick={this.change.bind(this)}
+                onClick={e=>this.change()}
                 style={style}
                 {...others}>
                 {app.name}
@@ -52,15 +59,14 @@ class CurrentApp extends Component{
         )
     }
     change(){
-        var {app}=this.props,
+        var {app, onChange=a=>a}=this.props,
             apps=Application.all,
             len=apps.length;
         if(len<2)
             return;
 
-        var index=-1
-        apps.find((a)=>(index++,a._id==app._id))
-        Application.current=apps[(index+1) % len]
+        var index=apps.findIndex(a=>a._id==app._id)
+        onChange(apps[(index+1) % len])
     }
 }
 
@@ -68,8 +74,17 @@ module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
         <IndexRoute component={require('./dashboard')}/>
 
-        <Route path="app/:name" component={require('./app')}/>
-        <Route path="app" component={require('./app')}/>
+        <Route path="app/:name" name="app" component={require('./app')}/>
+		
+        <Route path="app" component={require('./app')}
+			onEnter={(nextState, replace, callback)=>{
+				Application.current={}
+				callback()
+			}}
+			onLeave={a=>{
+				if(!Application.current._id)
+					Application.current=Application.last
+			}}/>
 
         <Route path="cloud" component={require('./cloud')}/>
         <Route path="data/:name" component={require('./data')}/>
@@ -78,10 +93,17 @@ module.exports=QiliApp.render(
         <Route path="log/:level" component={require('./log')}/>
         <Redirect from="log" to="log/all" />
     </Route>),{
-        createElement(Component,props){
-            return <Component app={Application.current} {...props}/>
-        }
-    }
+		createElement(Component, props){
+			if(Component==QiliConsole){
+				let child=props.children
+					,{route,params}=child.props
+					
+				if(route.name=="app")
+					props.init=a=>Application.init(params.name)
+			}
+			return <Component {...props}/>
+		}
+	}
 )
 
 

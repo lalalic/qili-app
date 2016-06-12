@@ -7,33 +7,23 @@ import Save from "material-ui/svg-icons/content/save"
 import Remove from "material-ui/svg-icons/action/delete"
 
 export default class AppInfo extends Component{
-    constructor(props){
-        super(props)
-        var {app, params={}}=this.props,
-            {name}=params
-        if(app.name==name)
-            ;
-        else if(name){
-            app=App.all.filter((a)=>a.name==name)[0]
-            if(app)
-                App.current=app
-            else
-                throw new Error("you should not be here")
-        }
-        this.state={app}
-    }
-    componentWillUnmount(){
-        if(!this.props.app._id)
-            App.current=App.last
-    }
-
-    componentWillReceiveProps(newProps){
-        if(this.state.app!=newProps.app)
-            this.setState({app:newProps.app})
+    shouldComponentUpdate (newProps){
+		if(this.removing)
+			return false
+		
+		if(this.props.params.name!=newProps.params.name){
+			App.current=newProps.params.name
+			return true
+		}
+		
+		if(this.props.app!=newProps.app)
+			return true
+		
+		return false
     }
 
     render(){
-        var app=this.state.app,
+        var app=this.props.app,
             removable=App.isRemovable(app),
             commands;
 
@@ -54,23 +44,22 @@ export default class AppInfo extends Component{
                 <TextField ref="name"
                     floatingLabelText="application name"
                     fullWidth={true}
-                    value={app.name}
                     disabled={!removable}
-                    onChange={(e)=>this.setState({app:Object.assign(app,{name:e.target.value})})}
-                    onBlur={()=>{
-                        if(app._id && app.name!=this.refs.name.props.defaultValue)
+					value={app.name}
+                    onBlur={e=>{
+						app.name=e.target.value.trim()
+                        if(app._id && app.name!=this.refs.name.props.value)
                             App.upsert(app).then(()=>this.context.router.replace(`app/${app.name}`))
                     }}/>
 
                 <TextField ref="uname"
                     floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
                     fullWidth={true}
-                    value={app.uname}
-                    rawValue={app.uname}
                     disabled={!removable}
-                    onChange={(e)=>this.setState({app:Object.assign(app,{uname:e.target.value})})}
-                    onBlur={()=>{
-                        if(app._id && this.refs.uname.props.rawValue!=app.uname)
+                    value={app.uname}
+                    onBlur={e=>{
+						app.uname=e.target.value.trim()
+                        if(app._id && this.refs.uname.props.value!=app.uname)
                             App.upsert(app)
                     }}/>
 
@@ -97,16 +86,18 @@ export default class AppInfo extends Component{
         let app=this.props.app
         switch(command){
         case "Save":
-            App.upsert(app,()=>this.setState({app}))
+            App.upsert(app)
+				.then(a=>this.context.router.replace(`app/${app.name}`))
         break
         case "Upload":
-            UI.selectFile('raw').then((app)=>App.upload(app))
+            UI.selectFile('raw').then(app=>App.upload(app))
         break
         case "Remove":
             var name=prompt("Please make sure you know what you are doing by giving this app name")
             if(name==app.name){
-                App.remove(app._id,()=>this.context.router.replace("/"))
-
+				this.removing=true
+                App.remove(app._id)
+					.then(a=>this.context.router.replace("/"))
             }
         break
         }

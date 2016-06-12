@@ -6,20 +6,21 @@ import File from './file'
 import Log from './log'
 
 var _apps=[],
-    _current,
-    _last,
+    _current=null,
+    _last=null,
     schemas={},
 	indexes={},
     dataDB;
 
 export default class Application extends Service.BuiltIn{
-    static init(){
+    static init(name){
         this.super('init')()
         return new Promise((resolve,reject)=>{
             this.find({},{interim:false}).fetch((d)=>{
                 _apps=d
                 resolve()
-                Application.current=_apps[0];
+				if(!_current)
+					Application.current=name ? d.find(a=>a.name==name) : _apps[0];
             },reject)
 
             dataDB=new RemoteDb(this.server+'classes/',{},function(method, url, params, data, success, error){
@@ -55,14 +56,16 @@ export default class Application extends Service.BuiltIn{
         return _current
     }
     static set current(v){
-        if (!old && !v)
-            return _current=v
-
-        var {_id:old}=_current||{},
-            {_id:next}=v;
-        _last=_current
-        _current=v
-        this.emit('change',_current,_last)
+		if(typeof(v)=='string')
+			v=_apps.find(a=>a.name==v)
+		
+		v=v || null
+		
+        if(v!=_current){
+			_last=_current
+			_current=v
+			this.emit('change',_current,_last)
+		}
         return _current
     }
 

@@ -26,12 +26,12 @@ export default class Log extends Component{
     }
 
     componentDidMount(){
-        this.state={logs:App.getLog(this._level())}
+        this.setState({logs:App.getLog(this._level())})
     }
 
     _level(props){
         var {level}=(props||this.props)['params']
-		return levels[level||'all']
+		return levels[level]
     }
 
     componentWillReceiveProps(nextProps){
@@ -45,7 +45,7 @@ export default class Log extends Component{
     }
 
     render(){
-        var {level="All"}=this.props.params
+        var {level}=this.props.params
         level=level.charAt(0).toUpperCase()+level.substr(1)
         var Icon=Icons[level]
         return(

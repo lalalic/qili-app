@@ -70,7 +70,8 @@ function main(type="json", width, height){
     			reader.readAsText(file)
     		}
         }
-        setTimeout(()=>input.click(), 100)
+		
+		input.click()
     })
 }
 

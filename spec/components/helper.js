@@ -1,13 +1,13 @@
 require('babel-polyfill')
 
-import React, {addons} from 'react/addons'
-import {Styles} from 'material-ui'
+import React from "react"
+import TestUtils from 'react-addons-test-utils'
 import stubContext from 'react-stub-context'
 
-var {TestUtils}=addons,
-    _now=Date.now(),
-    {ThemeManager}=Styles;
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 
+var _now=Date.now()
 
 class Any extends React.Component{
     constructor(){
@@ -18,7 +18,11 @@ class Any extends React.Component{
     }
 }
 
-const Manager = new ThemeManager();
+const Manager = {
+	getCurrentTheme(){
+		return getMuiTheme(lightBaseTheme)
+	}
+}
 
 module.exports={
     React,

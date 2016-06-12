@@ -3,6 +3,9 @@ import AsyncComponent from "./async"
 import {List,Divider,ListItem} from 'material-ui'
 import {Table} from 'reactable'
 
+
+
+
 export default class Main extends AsyncComponent{
     renderContent(loadingOrError){
         var {children=[], template, onItemClick, ...others}=this.props,
@@ -33,35 +36,36 @@ export default class Main extends AsyncComponent{
         )
 
     }
+	
+	static Table=class extends AsyncComponent{
+		renderContent(loadingOrError){
+			var {data}=this.state,
+				{rowData=data, model, ...others}=this.props;
+
+			return (
+				<div>
+					{loadingOrError}
+					<Table data={rowData} {...others}/>
+				</div>
+			)//Table must be in a container
+		}
+	}
+	
+	static Divider=Divider
+	
+	static Item=ListItem
+	
+	static defaultProps={
+		template:class extends Component{
+			render(){
+				var {model, ...others}=this.props;
+				return (<ListItem key={model._id} {...others}>{model.name||model.title||model._id}</ListItem>)
+			}
+		},
+		empty: null,
+		loading: null
+	}
+
+	
 }
 
-class Item extends Component{
-    render(){
-        var {model, ...others}=this.props;
-        return (<ListItem key={model._id} {...others}>{model.name||model.title||model._id}</ListItem>)
-    }
-}
-
-class AsyncTable extends AsyncComponent{
-    renderContent(loadingOrError){
-        var {data}=this.state,
-			{rowData=data, model, ...others}=this.props;
-
-		return (
-            <div>
-                {loadingOrError}
-                <Table data={rowData} {...others}/>
-            </div>
-        )//Table must be in a container
-    }
-}
-
-Main.Table=AsyncTable
-Main.Divider=Divider
-Main.Item=ListItem
-
-Main.defaultProps={
-    template:Item,
-    empty: null,
-    loading: null
-}

@@ -3,8 +3,6 @@ import 'babel-polyfill'
 import {init,Model,User,Role,File,Log} from "./db"
 import React, {Component} from 'react'
 
-Date.Helper=require('moment')
-
 exports.React=React
 exports.Component=Component
 exports.AsyncComponent=require('./components/async')

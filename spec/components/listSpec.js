@@ -2,7 +2,7 @@ import {React, Component, TestUtils, newPromise,uuid, injectTheme,expectHasType}
 import MyList from '../../lib/components/list'
 import {Table as RawTable} from 'reactable'
 
-describe("List", function(){
+fdescribe("List", function(){
     class Item extends Component{
         constructor(){
             super(...arguments)

@@ -24,8 +24,12 @@ export default class Async extends Component{
 
     __resolveModel(model){
         if(!model) return;
-        var success=(data)=>this.setState({data,loadError:undefined,loading:undefined}),
-            fail=(e)=>this.setState({loadError:e.message,loading:undefined});
+        var success=(data)=>{
+				this.setState({data,loadError:undefined,loading:undefined})
+			},
+            fail=(e)=>{
+				this.setState({loadError:e.message,loading:undefined})
+			}
 
         if(typeof(model.fetch)!='undefined'){//minimongoo @Todo: remove and always with Promise
             model.fetch(success,fail)

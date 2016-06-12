@@ -10,17 +10,17 @@ const {List, Loading, Empty, CommandBar, fileSelector}=UI
 export default class Data extends Component{
     constructor(props){
         super(props)
-        var {params={}}=this.props,
-            {name:collectionName=User._name}=params;
-
-        this.state={col:collectionName}
+        this.state={col:null}
     }
 
     componentDidMount(){
-        var {col:collectionName}=this.state
+        var {params={}}=this.props,
+            {name:collectionName}=params
+			
         this._data= App.collectionData(collectionName)
         this._index=App.collectionIndexes(collectionName)
         this._schema=App.schema
+		this.setState({col:collectionName})
     }
 
     shouldComponentUpdate(nextProps, nextState){
@@ -60,12 +60,12 @@ export default class Data extends Component{
                         {action:"Upload Data", label:"Data", icon:Upload},
                         {action:"Collection", icon:More, onSelect:()=>this.refs.names.show()}
 						]}/>
-                {/*<Names ref="names" model={this._schema}
+                {<Names ref="names" model={this._schema}
                     onItemClick={(a)=>{
                         this.refs.names.dismiss();
                         this.setState({col:a.name})
                         this.context.router.replace(`data/${a.name}`)
-                    }}/>*/}
+                    }}/>}
 			</div>
         )
     }
@@ -92,7 +92,7 @@ export default class Data extends Component{
 		break
         }
 	}
-}
+} 
 
 Data.contextTypes={router:React.PropTypes.object}
 

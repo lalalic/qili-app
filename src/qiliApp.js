@@ -26,6 +26,10 @@ export default class App extends Component{
         if(!service)
             throw new Error("Please give service url")
     }
+	
+	inited(){
+		console.log(`inited`)
+	}
 
     componentDidMount(){
         var {init:initApp, service, appId}=this.props
@@ -34,6 +38,7 @@ export default class App extends Component{
             .then((__tutorialized=true)=>{
                     this.setState({__inited:true, __user:User.current, __tutorialized})
                     User.on('change', ()=>this.setState({__user:User.current}))
+					this.inited()
                 },
                 (e)=>this.setState({__inited:false,__user:User.current,__initedError:e.message}))
     }
@@ -103,6 +108,7 @@ export default class App extends Component{
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
 App.childContextTypes={muiTheme:React.PropTypes.object.isRequired}
+App.contextTypes={router: React.PropTypes.object}
 
 App.propsTypes={
     service: React.PropTypes.string.isRequired,
