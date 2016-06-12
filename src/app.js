@@ -10,16 +10,21 @@ export default class AppInfo extends Component{
     shouldComponentUpdate (newProps){
 		if(this.removing)
 			return false
-		
+
 		if(this.props.params.name!=newProps.params.name){
 			App.current=newProps.params.name
 			return true
 		}
-		
+
 		if(this.props.app!=newProps.app)
 			return true
-		
+
 		return false
+    }
+
+    componentWillUnmount(){
+        if(!this.props.app._id)
+            App.current=App.last
     }
 
     render(){

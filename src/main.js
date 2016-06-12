@@ -1,7 +1,7 @@
 require('../style/index.less')
 
 import {init,User,QiliApp,React,Component, UI, Position} from '.'
-import {Router, Route, IndexRoute, hashHistory, Redirect} from "react-router"
+import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect} from "react-router"
 import Application from './db/app'
 import App from './app'
 import {FloatingActionButton} from 'material-ui'
@@ -74,30 +74,33 @@ module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
         <IndexRoute component={require('./dashboard')}/>
 
-        <Route path="app/:name" name="app" component={require('./app')}/>
-		
-        <Route path="app" component={require('./app')}
-			onEnter={(nextState, replace, callback)=>{
-				Application.current={}
-				callback()
-			}}
-			onLeave={a=>{
-				if(!Application.current._id)
-					Application.current=Application.last
-			}}/>
+        <Route path="app" name="app" component={require('./app')}>
+            <IndexRoute onEnter={(nextState, replace, callback)=>{
+    				Application.current={}
+    				callback()
+    			}}/>
+
+            <Route path=":name"/>
+        </Route>
 
         <Route path="cloud" component={require('./cloud')}/>
-        <Route path="data/:name" component={require('./data')}/>
-        <Redirect from="data" to={`data/${User._name}`}/>
 
-        <Route path="log/:level" component={require('./log')}/>
+        <Route path="data" component={require('./data')}>
+            <IndexRedirect to={`${User._name}`}/>
+            <Route path=":name"/>
+        </Route>
+
+        <Route path="log" component={require('./log')}>
+            <IndexRedirect to="all"/>
+            <Route path=":level"/>
+        </Route>
         <Redirect from="log" to="log/all" />
     </Route>),{
 		createElement(Component, props){
 			if(Component==QiliConsole){
 				let child=props.children
 					,{route,params}=child.props
-					
+
 				if(route.name=="app")
 					props.init=a=>Application.init(params.name)
 			}
