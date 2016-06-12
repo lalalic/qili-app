@@ -16,15 +16,17 @@ class QiliConsole extends QiliApp{
 
     renderContent(){
         var {app}=this.state
+            ,{children:child}=this.props
+            ,{route}=child.props
         return (
             <div>
                 <CurrentApp app={app} onChange={target=>{
-					if(this.props.children.props.route.name=="app")
+					if(route.name=="app")
 						this.context.router.push(`app/${target.name}`)
 					else
 						Application.current=target
 				}}/>
-                {React.cloneElement(this.props.children,{app})}
+                {React.cloneElement(child,{app})}
             </div>
         )
     }
