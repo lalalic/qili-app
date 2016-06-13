@@ -1,11 +1,13 @@
 import React, {Component} from "react"
+import ReactDOM from "react-dom"
+
 import {Service} from '../db/service'
 import CommandBar from './command-bar'
 import List from './list'
 import User from '../db/user'
 import Comment from '../db/comment'
 
-export default class Main extends Component{
+export default class CommentUI extends Component{
     constructor(props){
         super(props)
         var {type, _id}=props.params;
@@ -48,7 +50,7 @@ export default class Main extends Component{
         )
     }
     save(){
-        var {value:content=""}=this.refs.comment.getDOMNode()
+        var {value:content=""}=ReactDOM.getDOMNode(this.refs.comment)
         if(content.trim().length==0)
             return
 
@@ -62,7 +64,7 @@ export default class Main extends Component{
         this.db.upsert(comment,(updated)=>{
             var{list, comment:commenter}=this.refs
             list.setState({data: new Array(...list.state.data,updated)})
-            commenter.getDOMNode().value=""
+            ReactDOM.getDOMNode(commenter).value=""
         })
     }
 }
@@ -90,11 +92,11 @@ class Template extends Component{
                 disableTouchTap={true}>
                 {name}
 
-                <ClearFix style={{paddingRight:5}}>
+                <div style={{paddingRight:5}}>
                     <p className={`content ${isOwner?"owner":""}`}>
                         <span>{model.content}</span>
                     </p>
-                </ClearFix>
+                </div>
             </List.Item>
         )
     }

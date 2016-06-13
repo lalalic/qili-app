@@ -74,14 +74,12 @@ module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
         <IndexRoute component={require('./dashboard')}/>
 
-        <Route path="app" name="app" component={require('./app')}>
-            <IndexRoute onEnter={(nextState, replace, callback)=>{
-    				Application.current={}
-    				callback()
-    			}}/>
-
-            <Route path=":name"/>
-        </Route>
+        <Route path="app/:name" name="app" component={require('./app')}/>
+		<Route path="app" component={require('./app')}
+			onEnter={(nextState, replace, callback)=>{
+				Application.current={}
+				callback()
+			}}/>
 
         <Route path="cloud" component={require('./cloud')}/>
 
