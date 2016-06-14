@@ -143,6 +143,10 @@ svg{
     }
 }
 
+.hide{
+    display: none;
+}
+
 .empty{
     text-align:center;
     padding:200px 50px;
@@ -161,23 +165,22 @@ svg{
     }
 }
 
-.overlay{
-    position: absolute;
-    top:0px;
-    z-index:8;
-    opacity: 0.7;
-    background-color: white;
-    width:100%;
 
-    &.hide{
-        display: none;
-    }
-}
 .dialog-command{
+    .overlay{
+        position: absolute;
+        top:-@footbarHeight;
+        z-index:@topzIndex;
+        opacity: 0.7;
+        background-color: black;
+        width:100%;
+    }
+
     .layout{
         position: absolute;
         bottom:@footbarHeight;
         width:100%;
+        z-index: @topzIndex+1;
 
         .content{
             background-color: lightgray;
@@ -539,7 +542,4 @@ article{
     }
 
     z-index: @topzIndex;
-    &.hide{
-        display: none;
-    }
 }

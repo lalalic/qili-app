@@ -68,8 +68,9 @@ export default class CommandBar extends Component{
             var {open}=this.state
             return (
                 <div
-                    className={`page overlay dialog-command ${open ? "" : "hide"}`}
+                    className={`page dialog-command ${open ? "" : "hide"}`}
                     onTouchTap={()=>this.dismiss()} >
+                    <div className="page overlay"/>
                     <div className="layout">
                         <div className="content"
                             onTouchTap={(e)=>{e.stopPropagation()}}>

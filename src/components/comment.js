@@ -27,8 +27,7 @@ export default class CommentUI extends Component{
     }
 
     render(){
-        var {params:{_id}, template=Template}=this.props
-
+        var {params:{_id}, template}=this.props
         return (
             <div className="comment">
 
@@ -67,41 +66,39 @@ export default class CommentUI extends Component{
             ReactDOM.getDOMNode(commenter).value=""
         })
     }
-}
 
-class Template extends Component{
-    render(){
-        var {model}=this.props,
-            name, left, right, text,
-            isOwner=model.author._id==User.current._id;
-        if(isOwner){
-            left=(<span/>)
-            right=(<Avatar src={User.current.thumbnail}/>)
-        }else{
-            name=(<span style={{fontSize:'x-small'}}>{model.author.name}</span>)
-            left=(<Avatar src={model.thumbnail}/>)
-            right=(<span/>)
+    static defaultProps={
+        template: class extends Component{
+            render(){
+                var {model}=this.props,
+                    name, left, right, text,
+                    isOwner=model.author._id==User.current._id;
+                if(isOwner){
+                    left=(<span/>)
+                    right=(<Avatar src={User.current.thumbnail}/>)
+                }else{
+                    name=(<span style={{fontSize:'x-small'}}>{model.author.name}</span>)
+                    left=(<Avatar src={model.thumbnail}/>)
+                    right=(<span/>)
+                }
+
+                return (
+                    <List.Item
+                        key={model._id}
+                        style={{paddingTop:10,paddingLeft:62}}
+                        leftAvatar={left}
+                        rightAvatar={right}
+                        disableTouchTap={true}>
+                        {name}
+
+                        <div style={{paddingRight:5}}>
+                            <p className={`content ${isOwner?"owner":""}`}>
+                                <span>{model.content}</span>
+                            </p>
+                        </div>
+                    </List.Item>
+                )
+            }
         }
-
-        return (
-            <List.Item
-                key={model._id}
-                style={{paddingTop:10,paddingLeft:62}}
-                leftAvatar={left}
-                rightAvatar={right}
-                disableTouchTap={true}>
-                {name}
-
-                <div style={{paddingRight:5}}>
-                    <p className={`content ${isOwner?"owner":""}`}>
-                        <span>{model.content}</span>
-                    </p>
-                </div>
-            </List.Item>
-        )
     }
-}
-
-Main.defaultProps={
-    template:Template
 }
