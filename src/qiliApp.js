@@ -9,6 +9,8 @@ import Tutorial from "./components/tutorial"
 import ReactDOM, {render} from "react-dom"
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
+import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
+
 
 export default class App extends Component{
     constructor(props){
@@ -26,7 +28,7 @@ export default class App extends Component{
         if(!service)
             throw new Error("Please give service url")
     }
-	
+
 	inited(){
 		console.log(`inited`)
 	}
@@ -71,6 +73,12 @@ export default class App extends Component{
                 <div className="withFootbar">
                     <div id="container" style={{overflowY:"scroll"}}>
                         {content}
+                        <FloatingActionButton mini={true}
+                            onClick={a=>this.context.router.goBack()}
+                            className="sticky top left"
+                            style={{opacity:0.2}}>
+                            <BackIcon/>
+                        </FloatingActionButton>
 
                         <Messager ref="msg" className="sticky bottom left"/>
                         <Loading ref="loading"  className="sticky top right"/>
