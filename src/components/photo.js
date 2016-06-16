@@ -2,15 +2,11 @@ import React, {Component} from 'react'
 import {Avatar} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import dbFile from '../db/file'
-import {main} from './file-selector'
-const {selectFile}=main
+import {selectImageFile} from './file-selector'
 
 export default class Photo extends Component{
-    constructor(props){
-        super(props)
-        var {src}=this.props
-        this.state={url:src}
-    }
+    state={url:this.props.src}
+
     render(){
         var {url}=this.state,
             {width, height, iconSize, style={}, cameraOptions, overwritable, ...others}=this.props;
@@ -43,50 +39,54 @@ export default class Photo extends Component{
 
     selectPhoto(){
         var {onPhoto, onFail, width, height, autoUpload}=this.props
-        selectFile('image', width, height).
-            then(function({url,binary}){
-                this.setState({url:url})
-                if(autoUpload)
+        selectImageFile(width, height).
+            then(({url,binary})=>{
+                this.setState({url})
+                if(autoUpload){
                     dbFile.upload(binary)
-                        .then(function(url){
+                        .then(url=>{
                             onPhoto && onPhoto(url)
                         })
-                else {
+                }else {
                     onPhoto && onPhoto(url)
                 }
-            }.bind(this), onFail)
+            }, onFail)
     }
 
     takePhoto(){
         var {onPhoto, onFail, width, height, cameraOptions, autoUpload}=this.props
         cameraOptions.targetWidth=width
         cameraOptions.targetHeight=height
-        navigator.camera.getPicture(function(url){
-                this.setState({url:url});
-                if(autoUpload)
+        navigator.camera.getPicture(url=>{
+                this.setState({url})
+                if(autoUpload){
                     dbFile.upload(url)
-                        .then(function(url){
+                        .then(url=>{
                             onPhoto && onPhoto(url)
                         })
-                else {
+                } else {
                     onPhoto && onPhoto(url)
                 }
-            }.bind(this), onFail, cameraOptions)
+            }, onFail, cameraOptions)
     }
-}
 
-Photo.propTypes={
-    cameraOptions: React.PropTypes.object,
-    onPhoto: React.PropTypes.func,
-    onFail: React.PropTypes.func
-}
+    getValue(){
+        return this.state.url
+    }
+    static propTypes={
+        cameraOptions: React.PropTypes.object,
+        onPhoto: React.PropTypes.func,
+        onFail: React.PropTypes.func
+    }
 
-Photo.defaultProps={
-    width:1024,
-    height:1024,
-    iconRatio:0.5,
-    overwritable:false,
-    autoUpload:false
+    static defaultProps={
+        width:1024,
+        height:1024,
+        iconRatio:0.5,
+        overwritable:false,
+        autoUpload:true
+    }
+
 }
 
 typeof(Camera)!='undefined' && (

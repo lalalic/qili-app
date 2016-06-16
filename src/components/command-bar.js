@@ -150,15 +150,12 @@ export default class CommandBar extends Component{
 
         onSelect(){
             var {message}=this.props
-            debugger
             if(typeof(message)=='function')
                 message=message()
             WeChat.share(message,null,function(reason){
                 Messager.error(reason)
             })
         }
-        static propTypes={
-            message:React.PropTypes.oneOfType(React.PropTypes.object,React.PropTypes.func)
-        }
+        static propTypes={message:React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.func])}
     }
 }
