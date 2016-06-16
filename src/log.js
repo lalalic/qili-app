@@ -20,63 +20,49 @@ const levels={
 const Icons={Http, Error, Warning, All}
 
 export default class Log extends Component{
-    constructor(p){
-        super(p)
-        this.state={logs:null}
-    }
-
-    componentWillMount(){
-        this.setState({logs:App.getLog(this._level())})
-    }
-
-    _level(props){
-        var {level}=(props||this.props)['params']
-		return levels[level]
+    state={logs:null}
+    
+	getData(level){
+		this.setState({logs:App.getLog(levels[level])})
+	}
+	
+    componentDidMount(){
+        this.getData(this.props.params.level)
     }
 
     componentWillReceiveProps(nextProps){
-        if(this.props.app!=nextProps.app)
-            return this.setState({logs:App.getLog(this._level())})
-
-        var {level:nextLevel}=nextProps.params,
-            {level}=this.props.params
-        if(level!=nextLevel)
-            this.setState({logs:App.getLog(this._level(nextProps))})
+		if(this.props.app!=nextProps.app)
+			this.getData(this.props.params.level)
+		else if(this.props.params.level!=nextProps.params.levle)
+			this.getData(nextProps.params.level)
     }
 
     render(){
-        var {level}=this.props.params
-        level=level.charAt(0).toUpperCase()+level.substr(1)
-        var Icon=Icons[level]
         return(
             <div>
-                <List model={this.state.logs}
-                    empty={<Empty icon={<Icon/>} text=""/>}
-                    template={ALog}/>
+                <List model={this.state.logs} template={this.constructor.ALog}/>
 
-                <CommandBar className="footbar" style={{textAlign:'left'}}
-                    onSelect={(a)=>this.onSelect(a)}
-                    primary={level}
-                    items={[{action:"Back"},
-                        {action:"Http", icon:Http},
-                        {action:"Error", icon:Error},
-                        {action:"Warning", icon:Warning},
-                        {action:"All", icon:All}
+                <CommandBar className="footbar"
+                    onSelect={level=>this.context.router.push(`log/${level}`)}
+                    primary={this.props.params.level}
+                    items={[
+                        {action:"http", icon:Http},
+                        {action:"error", icon:Error},
+                        {action:"warning", icon:Warning},
+                        {action:"all", icon:All}
                     ]}/>
             </div>
         )
     }
-
-    onSelect(level){
-        this.context.router.replace(`log/${level.toLowerCase()}`)
-    }
+	
+	static contextTypes={router:React.PropTypes.object}
+	
+	static ALog=class extends Component{
+		render(){
+			var {model:log}=this.props
+			return (<List.Item primaryText={`${levels[log.level+""]} on ${log.createdAt}`} secondaryText={log.message}/>)
+		}
+	}
 }
 
-Log.contextTypes={router:React.PropTypes.object}
 
-class ALog extends Component{
-    render(){
-        var {model:log}=this.props
-        return (<List.Item primaryText={`${levels[log.level+""]} on ${log.createdAt}`} secondaryText={log.message}/>)
-    }
-}

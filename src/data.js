@@ -5,63 +5,60 @@ import {Tabs, Tab} from 'material-ui'
 
 import Upload from "material-ui/svg-icons/file/file-upload"
 import More from "material-ui/svg-icons/navigation/more-vert"
+import IconCol from "material-ui/svg-icons/device/storage"
 
 const {List, Loading, Empty, CommandBar, fileSelector}=UI
 export default class Data extends Component{
-    constructor(props){
-        super(props)
-        this.state={col:null}
+    state={data:null, index:null, schema:null}
+	
+	getData(col, app){
+		let state={
+			data:App.collectionData(col),
+			index:App.collectionIndexes(col)
+		}
+		app && (state.schema=App.schema);
+			
+		this.setState(state)
+	}
+
+    componentDidMount(){
+		let {params:{name}, app}=this.props
+        this.getData(name, app)
     }
-
-    componentWillMount(){
-        var {name:collectionName}=this.props.params||{}
-
-        this.setState({
-            schema:App.schema,
-            col:collectionName,
-            data:App.collectionData(collectionName),
-            index:App.collectionIndexes(collectionName)
-        })
-    }
-
-    componentWillReceiveProps(nextProps){
+	
+	componentWillReceiveProps(nextProps){
         if(this.props.app!=nextProps.app)
-            this.setState({
-                schema:App.schema,
-                data:App.collectionData(this.state.col),
-                index:App.collectionIndexes(this.state.col)
-            })
+			this.getData(this.props.params.name, nextProps.app)
+		else if(this.props.params.name!=nextProps.params.name)
+			this.getData(nextProps.params.name)
     }
 
     render(){
-		var {col:colName, data, index, schema}=this.state
+		let {data, index, schema}=this.state
+		let {name}=this.props.params
+		const {IndexItem, Names}=this.constructor
         return (
 			<div>
 				<Tabs>
-					<Tab label={colName}>
-						<List.Table className="data" model={data} key={colName}/>
+					<Tab label={name}>
+						<List.Table className="data" model={data} key={name}/>
 					</Tab>
 					<Tab label="Indexes">
-						{<List model={index} template={IndexItem} key={colName}/>}
+						{<List model={index} template={IndexItem} key={name}/>}
 					</Tab>
 				</Tabs>
-				<CommandBar className="footbar" style={{textAlign:'left'}}
+				<CommandBar className="footbar"
 					onSelect={cmd=>this.onSelect(cmd)}
 					items={[
-                        {action:"Back"},
                         {action:"Upload Schema", label:"Schema", icon:Upload},
-                        {action:"Upload Data", label:"Data", icon:Upload},
-                        {action:"Collection", icon:More, onSelect:()=>this.refs.names.show()}
+                        {action:"Upload Data", label:"Data:[colName].js", icon:Upload},
+                        {action:"Collections", icon:More, onSelect:a=>this.refs.names.show()}
 						]}/>
+						
                 {<Names ref="names" model={schema}
                     onItemClick={(a)=>{
-                        this.refs.names.dismiss();
-                        this.setState({
-                            col:a.name,
-                            data:App.collectionData(a.name),
-                            index:App.collectionIndexes(a.name)
-                        })
-                        this.context.router.replace(`data/${a.name}`)
+                        this.refs.names.dismiss()
+                        this.context.router.push(`data/${a.name}`)
                     }}/>}
 			</div>
         )
@@ -74,7 +71,7 @@ export default class Data extends Component{
                     if(!schema || schema.length==0)
 						return;
 					App.setSchema(schema)
-                        .then(()=>this.forceUpdate())
+                        .then(a=>this.setState({schema}))
 				})
 		break
 		case "Upload Data":
@@ -84,41 +81,43 @@ export default class Data extends Component{
 						return;
 					var kind=name.split(/[\/\\]/).pop().split('.')[0]
 					App.collectionData(kind, data)
-                        .then(()=>this.forceUpdate())
+                        .then(a=>{
+							let path=`data/${kind}`
+							if(this.context.router.isActive(path))
+								this.setState({data:App.collectionData(kind)})
+							else
+								this.context.router.push(`data/${kind}`)
+						})
 				})
 		break
         }
 	}
-}
+	
+	static contextTypes={router:React.PropTypes.object}
+	
+	static Names=class  extends CommandBar.DialogCommand{
+		renderContent(){
+			return (<List {...this.props} template={this.constructor.NameItem}/>)
+		}
+		
+		static NameItem=class extends Component{
+			render(){
+				let {model,...others}=this.props
+				return (<List.Item primaryText={model.name} leftIcon={<IconCol/>}  {...others}/>)
+			}
+		}
+	}
+	
+	static IndexItem=class extends Component{
+		render(){
+			let {model}=this.props,
+				{$option={}}=model,
+				keys=Object.keys(model).filter((a)=>a!='$option'),
+				text=keys.map((a)=>` ${a}${model[a]==1 ? ' asc' : ' desc'}`).join(', '),
+				{unique, sparse, name=keys.join(',')}=$option;
 
-Data.contextTypes={router:React.PropTypes.object}
-
-class IndexItem extends Component{
-	render(){
-		var {model}=this.props,
-			{$option={}}=model,
-			keys=Object.keys(model).filter((a)=>a!='$option'),
-			text=keys.map((a)=>` ${a}${model[a]==1 ? ' asc' : ' desc'}`).join(', '),
-			{unique, sparse, name=keys.join(',')}=$option;
-
-		return (<List.Item primaryText={name} secondaryText={`${unique?'unique ':''}${sparse?'sparse ':''}${text}`}/>)
+			return (<List.Item primaryText={name} 
+						secondaryText={`${unique?'unique ':''}${sparse?'sparse ':''}${text}`}/>)
+		}
 	}
 }
-class Names extends CommandBar.DialogCommand{
-    renderContent(){
-        return (<List {...this.props} template={NameItem}/>)
-    }
-}
-
-class NameItem extends Component{
-	render(){
-		var{model,...others}=this.props
-		return (
-			<List.Item primaryText={model.name} leftIcon={<span/>}  {...others}/>
-		)
-	}
-}
-
-
-Data.NameItem=NameItem
-Data.IndexItem=IndexItem

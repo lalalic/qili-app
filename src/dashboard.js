@@ -7,6 +7,9 @@ import Data from "material-ui/svg-icons/action/dashboard"
 import Cloud from "material-ui/svg-icons/file/cloud"
 import Log from "material-ui/svg-icons/action/assignment"
 import More from "material-ui/svg-icons/navigation/more-vert"
+import IconSettings from "material-ui/svg-icons/action/settings"
+import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
+import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 const {CommandBar, List, Empty}=UI
 const {Command, DialogCommand}=CommandBar
@@ -17,16 +20,10 @@ export default class Dashboard extends Component{
     }
 
     render(){
-        var content, {app}=this.props
-        if(!App.all || 0==App.all.length)
-            content=(<Empty text={<a style={{cursor:"cell"}} onClick={()=>this.context.router.push("app")}>Create first QiLi!</a>}/>)
-        else {
-            content=(<Empty icon={<Cloud/>} text="Welcome"/>)
-        }
         return (
 			<div>
-                {content}
-				<CommandBar  className="footbar" onSelect={this.onSelect.bind(this)}
+                <Empty icon={<Cloud/>} text="Welcome"/>
+				<CommandBar  className="footbar" onSelect={cmd=>this.context.router.push(cmd.toLowerCase())}
 					items={[
                         {action:"Data", icon:Data},
                         {action:"Cloud", icon:Cloud},
@@ -34,63 +31,48 @@ export default class Dashboard extends Component{
                         {action:"More", icon:More, onSelect:()=>this.refs.more.show()}
                         ]}
 					/>
-                <MoreActions ref="more" app={this.props.app}/>
+                <Dashboard.MoreActions ref="more" app={this.props.app}/>
 			</div>
 		)
     }
-
-	onSelect(cmd){
-        if(!App.current)
-            return;
-		switch(cmd){
-		case 'Data':
-			this.context.router.push(`data`)
-		break
-		case 'Cloud':
-			this.context.router.push("cloud")
-		break
-		case 'Log':
-			this.context.router.push("log")
-		break
+	
+	static contextTypes={router:React.PropTypes.object}
+	
+	static MoreActions=class  extends DialogCommand{
+		shouldComponentUpdate(){
+			return true
 		}
+
+		renderContent(){
+			return (
+				<List>
+					<List.Item primaryText="Setting" style={{textAlign:'left'}}
+						leftIcon={<IconSettings/>}
+						key="setting"
+						onClick={()=>this.context.router.push(`app/${this.props.app.name}`)}/>
+					
+					<List.Divider key={1} inset={true}/>
+					
+					<List.Item 
+						primaryText="create more qili app"
+						initiallyOpen={true}
+						autoGenerateNestedIndicator={false}
+						onTouchTap={a=>this.context.router.push("app")}
+						leftIcon={<IconAdd/>}
+						nestedItems={
+							App.all.map(a=>{
+								return (
+									<List.Item primaryText={a.name} key={`${a._id}`}
+										leftIcon={<span/>}
+										rightIcon={<IconItem/>}
+										onClick={()=>this.context.router.push(`app/${(App.current=a).name}`)}/>
+								)
+							})
+						}
+					/>
+				</List>
+			)
+		}
+		static contextTypes={router:React.PropTypes.object}
 	}
 }
-
-class MoreActions extends DialogCommand{
-    componentWillReceiveProps(newProps){
-        this.forceUpdate()
-    }
-
-	renderContent(){
-        var setting
-        if(App.current)
-            setting=[(
-                    <List.Item primaryText="Setting" style={{textAlign:'left'}}
-                    leftIcon={<span/>}
-                    key="setting"
-                    onClick={()=>this.context.router.push(`app/${App.current.name}`)}/>
-                ),(<List.Divider key={1} inset={true}/>)]
-        return (
-            <List>
-                {setting}
-				<List.Item primaryText={`${App.current ? "More" : "First"} QiLi`}
-                    style={{textAlign:'left'}}
-                    initiallyOpen={true}
-                    insetChildren={true}
-                    leftAvatar={<Avatar onClick={a=>this.context.router.push("app")}>+</Avatar>}
-					nestedItems={
-						App.all.map((a)=>{
-							return (
-								<List.Item primaryText={a.name} key={`${a._id}`}
-									leftIcon={<span/>} style={{textAlign:'left'}}
-									onClick={()=>this.context.router.push(`app/${(App.current=a).name}`)}/>
-							)
-						})
-					}
-				/>
-            </List>
-		)
-	}
-}
-Dashboard.MoreActions=MoreActions
-Dashboard.contextTypes=MoreActions.contextTypes={router:React.PropTypes.object}

@@ -1,32 +1,43 @@
 require('../style/index.less')
 
 import {init,User,QiliApp,React,Component, UI, Position} from '.'
-import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect} from "react-router"
-import Application from './db/app'
-import App from './app'
+import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton} from 'material-ui'
 
+import Application from './db/app'
+import App from './app'
+import Logo from './icons/logo'
+
+const {Empty}=UI
 
 class QiliConsole extends QiliApp{
     constructor(props){
         super(props)
-        Object.assign(this.state,{app:this.props.app})
+        Object.assign(this.state,{app:null})
         Application.on('change',app=>this.setState({app}))
     }
+	
+	shouldComponentUpdate(nextProps, nextState){
+		if(this.props.children.props.route.name=='app' 
+			&& nextState.app!=this.state.app
+			&& !this.context.router.isActive(`app/${nextState.app.name}`)){
+			this.context.router.push(`app/${nextState.app.name}`)
+			return false
+		}
+		return true
+	}
 
     renderContent(){
         var {app}=this.state
-            ,{children:child}=this.props
-            ,{route}=child.props
+		if(!app)
+			return (<Empty icon={<Logo/>}><Link to="app">click to create your first qili app</Link></Empty>)
+		
         return (
             <div>
-                <CurrentApp app={app} onChange={target=>{
-					if(route.name=="app")
-						this.context.router.push(`app/${target.name}`)
-					else
-						Application.current=target
-				}}/>
-                {React.cloneElement(child,{app})}
+				{this.props.children.props.route.contextual!==false 
+					&& (<CurrentApp key="context" app={app} name={app.name}/>)}
+					
+                {React.cloneElement(this.props.children,{app})}
             </div>
         )
     }
@@ -39,60 +50,60 @@ Object.assign(QiliConsole.defaultProps,{
 
 class CurrentApp extends Component{
     shouldComponentUpdate(nextProps, nextState){
-        var {name:nextName}=nextProps.app||{},
-            {name}=this.props.app||{};
-        return nextName!=name
+        return nextProps.name!=this.props.name
     }
 
     render(){
-        var {app={name:""}, style={}, ...others}=this.props;
-        if(!app._id)
-            style.display="none"
-
-        return(
+        var {name, style={fontSize:"xx-small"}, ...others}=this.props;
+        
+		return(
             <FloatingActionButton className="sticky top right"
                 onClick={e=>this.change()}
+				mini={true}
                 style={style}
                 {...others}>
-                {app.name}
+                {name}
             </FloatingActionButton>
         )
     }
     change(){
-        var {app, onChange=a=>a}=this.props,
+        var {app, onChange}=this.props,
             apps=Application.all,
             len=apps.length;
         if(len<2)
             return;
 
         var index=apps.findIndex(a=>a._id==app._id)
-        onChange(apps[(index+1) % len])
+			,target=apps[(index+1) % len]
+        onChange ? onChange(target) : (Application.current=target)
     }
 }
 
+import Dashboard from './dashboard'
+import AppUI, {Creator} from './app'
+import CloudUI from './cloud'
+import DataUI from './data'
+import LogUI from './log'
+
 module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
-        <IndexRoute component={require('./dashboard')}/>
+        <IndexRoute component={Dashboard}/>
 
-        <Route path="app/:name" name="app" component={require('./app')}/>
-		<Route path="app" component={require('./app')}
-			onEnter={(nextState, replace, callback)=>{
-				Application.current={}
-				callback()
-			}}/>
+        <Route path="app/:name" name="app" component={AppUI}/>
+		<Route path="app" contextual={false} component={Creator}/>
 
-        <Route path="cloud" component={require('./cloud')}/>
+        <Route path="cloud" component={CloudUI}/>
 
-        <Route path="data" component={require('./data')}>
+        <Route path="data" component={DataUI}>
             <IndexRedirect to={`${User._name}`}/>
             <Route path=":name"/>
         </Route>
 
-        <Route path="log" component={require('./log')}>
+        <Route path="log" component={LogUI}>
             <IndexRedirect to="all"/>
             <Route path=":level"/>
         </Route>
-        <Redirect from="log" to="log/all" />
+		
     </Route>),{
 		createElement(Component, props){
 			if(Component==QiliConsole){

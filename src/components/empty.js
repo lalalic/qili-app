@@ -6,13 +6,9 @@ export default class Empty extends Component{
         return (
             <div className="empty" {...others}>
                 {icon}
-                <p>{text}</p>
+                <p>{this.props.children||text}</p>
             </div>
             )
     }
-}
-
-Empty.defaultProps={
-    icon:null,
-    text:'Empty'
+	static defaultProps={icon:null,text:'Empty'}
 }
