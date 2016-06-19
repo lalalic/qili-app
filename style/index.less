@@ -173,7 +173,7 @@ figure{
         font-size:x-large;
         line-height:1.5;
     }
-	
+
 	a{
 		text-decoration:none;
 		color:lightgray;
@@ -396,11 +396,15 @@ article{
     @smallLineHeight:15px;
     @imageWidth:120px;
     @imageHeight:100px;
+    @margin:10px;
 
     @media screen and (min-width:@maxWidth){
 
     }
 
+    margin: @margin;
+    border-radius: @margin;
+    background-color: lightblue;
 
     height: @listHeight;
     overflow: hidden;
@@ -458,13 +462,16 @@ article{
     }
 
     &.photo1{
-        .grid;
-        >:last-child{
-            width:33.3%;
-            vertical-align: top;
-        }
-        >:first-child{
-            vertical-align: top;
+        .layout{
+            .grid;
+            
+            >:last-child{
+                width:33.3%;
+                vertical-align: top;
+            }
+            >:first-child{
+                vertical-align: top;
+            }
         }
 
         .title{
