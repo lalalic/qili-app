@@ -13,16 +13,16 @@ export default class AppInfo extends Component{
 		if(this.state.frozen)
 			return false
 		
-		return this.props.app!=newProps.app
+		return true
     }
 	
-	componentWillReceiveProps(nextProps){
+	componentWillReceiveProps(nextProps, nextContext){
 		if(this.props.params.name!=nextProps.params.name)
 			dbApplication.current=nextProps.params.name
 	}
 
     render(){
-        var app=this.props.app, 
+        var app=this.context.app, 
 			removable=dbApplication.isRemovable(app)
 			
         return (
@@ -33,9 +33,11 @@ export default class AppInfo extends Component{
                     disabled={!removable}
 					value={app.name}
                     onBlur={e=>{
-						app.name=e.target.value.trim()
-                        if(app.name!=this.refs.name.props.value)
-                            dbApplication.upsert(app).then(()=>this.context.router.replace(`app/${app.name}`))
+						let value=e.target.value.trim()
+                        if(app.name!=value){
+                            app.name=value
+							dbApplication.upsert(app).then(a=>this.context.router.replace(`app/${app.name}`))
+						}
                     }}/>
 
                 <TextField ref="uname"
@@ -44,9 +46,11 @@ export default class AppInfo extends Component{
                     disabled={!removable}
                     value={app.uname}
                     onBlur={e=>{
-						app.uname=e.target.value.trim()
-                        if(this.refs.uname.props.value!=app.uname)
-                            dbApplication.upsert(app)
+						let value=e.target.value.trim()
+                        if(value!=app.uname){
+                            app.uname=value
+							dbApplication.upsert(app)
+						}
                     }}/>
 
                 <TextField
@@ -62,11 +66,12 @@ export default class AppInfo extends Component{
                     value={app.apiKey ? `http://qili2.com/1/${app.apiKey}/wechat` : ""}/>
 
 				{
-					removable && 
-					(<UI.CommandBar className="footbar" primary="Upload"
-						items={[{action:"Upload", icon:Upload},{action:"Remove",icon:Remove}]}
-						onSelect={cmd=>this.onSelect(cmd)}
-						/>)
+					removable ? 
+						(<UI.CommandBar className="footbar" primary="Upload"
+							items={[{action:"Back"},{action:"Upload", icon:Upload},{action:"Remove",icon:Remove}]}
+							onSelect={cmd=>this.onSelect(cmd)}
+							/>) :
+						(<UI.CommandBar className="footbar" items={[{action:"Back"}]}/>)
 				}
             </div>
         )
@@ -87,7 +92,10 @@ export default class AppInfo extends Component{
         break
         }
     }
-	static contextTypes={router:React.PropTypes.object}
+	static contextTypes={
+		router:React.PropTypes.object,
+		app: React.PropTypes.object
+	}
 	
 	static Creator=class extends Component{
 		shouldComponentUpdate(nextProps){

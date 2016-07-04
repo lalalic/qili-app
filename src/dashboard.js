@@ -15,14 +15,10 @@ const {CommandBar, List, Empty}=UI
 const {Command, DialogCommand}=CommandBar
 
 export default class Dashboard extends Component{
-    shouldComponentUpdate(newProps){
-        return this.props.app!=newProps.app
-    }
-
     render(){
         return (
 			<div>
-                <Empty icon={<Cloud/>} text="Welcome"/>
+                <Empty icon={<Cloud/>} text="Welcome to Qili"/>
 				<CommandBar  className="footbar" onSelect={cmd=>this.context.router.push(cmd.toLowerCase())}
 					items={[
                         {action:"Data", icon:Data},
@@ -31,7 +27,7 @@ export default class Dashboard extends Component{
                         {action:"More", icon:More, onSelect:()=>this.refs.more.show()}
                         ]}
 					/>
-                <Dashboard.MoreActions ref="more" app={this.props.app}/>
+                <Dashboard.MoreActions ref="more"/>
 			</div>
 		)
     }
@@ -39,17 +35,13 @@ export default class Dashboard extends Component{
 	static contextTypes={router:React.PropTypes.object}
 	
 	static MoreActions=class  extends DialogCommand{
-		shouldComponentUpdate(){
-			return true
-		}
-
 		renderContent(){
 			return (
 				<List>
 					<List.Item primaryText="Setting" style={{textAlign:'left'}}
 						leftIcon={<IconSettings/>}
 						key="setting"
-						onClick={()=>this.context.router.push(`app/${this.props.app.name}`)}/>
+						onClick={()=>this.context.router.push(`app/${this.context.app.name}`)}/>
 					
 					<List.Divider key={1} inset={true}/>
 					
@@ -73,6 +65,9 @@ export default class Dashboard extends Component{
 				</List>
 			)
 		}
-		static contextTypes={router:React.PropTypes.object}
+		static contextTypes={
+			router:React.PropTypes.object,
+			app: React.PropTypes.object
+		}
 	}
 }

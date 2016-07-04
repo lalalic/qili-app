@@ -22,13 +22,13 @@ export default class Data extends Component{
 	}
 
     componentDidMount(){
-		let {params:{name}, app}=this.props
-        this.getData(name, app)
+		let {params:{name}}=this.props
+        this.getData(name, this.context.app)
     }
 	
-	componentWillReceiveProps(nextProps){
-        if(this.props.app!=nextProps.app)
-			this.getData(this.props.params.name, nextProps.app)
+	componentWillReceiveProps(nextProps, nextContext){
+        if(this.context.app!=nextContext.app)
+			this.getData(this.props.params.name, nextContext.app)
 		else if(this.props.params.name!=nextProps.params.name)
 			this.getData(nextProps.params.name)
     }
@@ -49,7 +49,7 @@ export default class Data extends Component{
 				</Tabs>
 				<CommandBar className="footbar"
 					onSelect={cmd=>this.onSelect(cmd)}
-					items={[
+					items={[{action:"Back"},
                         {action:"Upload Schema", label:"Schema", icon:Upload},
                         {action:"Upload Data", label:"Data:[colName].js", icon:Upload},
                         {action:"Collections", icon:More, onSelect:a=>this.refs.names.show()}
@@ -93,7 +93,10 @@ export default class Data extends Component{
         }
 	}
 	
-	static contextTypes={router:React.PropTypes.object}
+	static contextTypes={
+		router:React.PropTypes.object,
+		app: React.PropTypes.object
+	}
 	
 	static Names=class  extends CommandBar.DialogCommand{
 		renderContent(){

@@ -30,8 +30,8 @@ export default class Log extends Component{
         this.getData(this.props.params.level)
     }
 
-    componentWillReceiveProps(nextProps){
-		if(this.props.app!=nextProps.app)
+    componentWillReceiveProps(nextProps, nextContext){
+		if(this.context.app!=nextContext.app)
 			this.getData(this.props.params.level)
 		else if(this.props.params.level!=nextProps.params.levle)
 			this.getData(nextProps.params.level)
@@ -46,6 +46,7 @@ export default class Log extends Component{
                     onSelect={level=>this.context.router.push(`log/${level}`)}
                     primary={this.props.params.level}
                     items={[
+						{action:"Back"},
                         {action:"http", icon:Http},
                         {action:"error", icon:Error},
                         {action:"warning", icon:Warning},
@@ -55,7 +56,10 @@ export default class Log extends Component{
         )
     }
 	
-	static contextTypes={router:React.PropTypes.object}
+	static contextTypes={
+		router:React.PropTypes.object,
+		app: React.PropTypes.object
+	}
 	
 	static ALog=class extends Component{
 		render(){

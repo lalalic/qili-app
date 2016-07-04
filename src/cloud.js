@@ -9,7 +9,7 @@ const {CommandBar, fileSelector, Messager}=UI
 
 export default class Cloud extends Component{
 	
-	state={cloudCode:this.props.app.cloudCode}
+	state={cloudCode:this.context.app.cloudCode}
 
     render(){
         return(
@@ -23,19 +23,20 @@ export default class Cloud extends Component{
                 <CommandBar className="footbar"
                     onSelect={cmd=>this.onSelect(cmd)}
                     items={[
+						{action:"Back"},
                         {action:"Upload", icon:Upload},
                         {action:"Save",icon:Save}]}/>
             </div>
         )
     }
 
-    componentWillReceiveProps(newProps){
-        if(this.props.app!=newProps.app)
-            this.setState({cloudCode:newProps.app.cloudCode})
+    componentWillReceiveProps(nextProps, nextContext){
+        if(this.context.app!=nextContext.app)
+            this.setState({cloudCode:nextContext.app.cloudCode})
     }
 
     onSelect(cmd){
-		var app=this.props.app
+		var app=this.context.app
         switch(cmd){
         case 'Upload':
 			fileSelector.selectTextFile().then(({data:cloudCode})=>{
@@ -60,4 +61,6 @@ export default class Cloud extends Component{
     checkCode(code){
 		new Function("Cloud",code)
     }
+	
+	static contextTypes={app: React.PropTypes.object}
 }

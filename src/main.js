@@ -35,12 +35,22 @@ class QiliConsole extends QiliApp{
         return (
             <div>
 				{this.props.children.props.route.contextual!==false 
-					&& (<CurrentApp key="context" app={app} name={app.name}/>)}
+					&& (<CurrentApp key="context" name={app.name}/>)}
 					
-                {React.cloneElement(this.props.children,{app})}
+                {this.props.children}
             </div>
         )
     }
+	
+	static childContextTypes=Object.assign({
+		app: React.PropTypes.object
+	}, QiliApp.childContextTypes)
+	
+	getChildContext(){
+		return Object.assign(super.getChildContext(),{
+			app: this.state.app
+		})
+	}
 };
 
 Object.assign(QiliConsole.defaultProps,{
@@ -49,25 +59,19 @@ Object.assign(QiliConsole.defaultProps,{
 });
 
 class CurrentApp extends Component{
-    shouldComponentUpdate(nextProps, nextState){
-        return nextProps.name!=this.props.name
-    }
-
     render(){
-        var {name, style={fontSize:"xx-small"}, ...others}=this.props;
-        
+        var {name}=this.props
 		return(
             <FloatingActionButton className="sticky top right"
                 onClick={e=>this.change()}
 				mini={true}
-                style={style}
-                {...others}>
+                style={{fontSize:"xx-small"}}>
                 {name}
             </FloatingActionButton>
         )
     }
     change(){
-        var {app, onChange}=this.props,
+        var {app}=this.context,
             apps=Application.all,
             len=apps.length;
         if(len<2)
@@ -75,8 +79,11 @@ class CurrentApp extends Component{
 
         var index=apps.findIndex(a=>a._id==app._id)
 			,target=apps[(index+1) % len]
-        onChange ? onChange(target) : (Application.current=target)
+			
+        Application.current=target
     }
+	
+	static contextTypes={app: React.PropTypes.object}
 }
 
 import Dashboard from './dashboard'

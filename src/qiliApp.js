@@ -68,13 +68,6 @@ export default class App extends Component{
                 <div className="withFootbar">
                     <div id="container" style={{overflowY:"scroll"}}>
                         {content}
-                        <FloatingActionButton mini={true}
-                            onClick={a=>this.context.router.goBack()}
-                            className="sticky top left"
-                            style={{opacity:0.2}}>
-                            <BackIcon/>
-                        </FloatingActionButton>
-
                         <Messager ref="msg" className="sticky bottom left"/>
                         <Loading ref="loading"  className="sticky top right"/>
                     </div>
