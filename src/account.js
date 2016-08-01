@@ -257,28 +257,30 @@ class SMSRequest extends Component{
         if(this._t)
             clearInterval(this._t)
     }
-    changePhone(e){
-        var phone=e.target.value
+    changePhone(){
+        var phone=this.refs.phone.getValue()
         if(SMSRequest.isPhone(phone))
             this.setState({phone:phone})
+		else
+			this.setState({phone:undefined})
     }
 
     render(){
         var button
-            ,{phone}=this.state
+            ,{phone, tick}=this.state
         if(SMSRequest.isPhone(this.state.phone)){
             if(this.state.tick)
-                button=(<FlatButton label={this.state.tick} disabled={true}/>)
+                button=(<FlatButton label={tick} disabled={true}/>)
             else
-                button=(<FlatButton label={this.state.tick===0 ? "resend" : "send"}
+                button=(<FlatButton label={tick===0 ? "resend" : "send"}
                     onClick={()=>this.requestVerification()}/>)
         }
 
         return (
             <div className="smsrequest">
                 <TextField ref="phone" hintText="phone number (default +86)"
-                    value={phone||""}
-                    onChange={(e)=>this.changePhone(e)}/>
+					disabled={!!tick}
+                    onChange={(e)=>this.changePhone()}/>
                 {button}
             </div>
         )

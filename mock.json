@@ -10,6 +10,11 @@
 				"sessionToken":"lalalic"
 			}
 		},
+		{
+			"path":"/1/verifyPhone",
+			"type":"get",
+			"response":{}
+		},
         {
             "path":"/**/index.js",
             "type":"static",

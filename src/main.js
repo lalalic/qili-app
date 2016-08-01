@@ -51,6 +51,8 @@ class QiliConsole extends QiliApp{
 			app: this.state.app
 		})
 	}
+	
+	
 };
 
 Object.assign(QiliConsole.defaultProps,{
@@ -91,6 +93,9 @@ import AppUI, {Creator} from './app'
 import CloudUI from './cloud'
 import DataUI from './data'
 import LogUI from './log'
+import MyUI from "./my"
+import SettingUI from "./setting"
+import ProfileUI from "./user-profile"
 
 module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
@@ -110,6 +115,13 @@ module.exports=QiliApp.render(
             <IndexRedirect to="all"/>
             <Route path=":level"/>
         </Route>
+		
+		<Route path="my">
+			<IndexRoute component={MyUI} contextual={false}/>
+			<Route path="setting" component={SettingUI} />
+			<Route path="profile" component={ProfileUI} contextual={false}/>
+		</Route>
+		
 		
     </Route>),{
 		createElement(Component, props){
