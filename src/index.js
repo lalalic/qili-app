@@ -24,7 +24,8 @@ exports.UI={
     CommandBar: require('./components/command-bar'),
     Photo: require('./components/photo'),
     Messager: require('./components/messager'),
-	fileSelector: require('./components/file-selector')
+	fileSelector: require('./components/file-selector'),
+	Account: require("./components/account")
 }
 
 ;(function(_raw){

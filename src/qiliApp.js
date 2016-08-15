@@ -1,15 +1,19 @@
 import React, {Component} from "react"
-import {init,User} from "./db"
-import Messager from "./components/messager"
-import Loading from "./components/loading"
-import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
-import supportTap from 'react-tap-event-plugin'
-import Account from './account'
-import Tutorial from "./components/tutorial"
 import ReactDOM, {render} from "react-dom"
+
+import {Router, Route, IndexRoute, hashHistory} from "react-router"
+
+import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
+
+import {init,User} from "./db"
+import Messager from "./components/messager"
+import Loading from "./components/loading"
+import supportTap from 'react-tap-event-plugin'
+import Account from './account'
+import Tutorial from "./components/tutorial"
 
 
 export default class App extends Component{
@@ -30,7 +34,9 @@ export default class App extends Component{
     }
 
     componentDidMount(){
-        var {init:initApp, service, appId}=this.props
+        var {init:initApp, service, appId, title}=this.props
+		if(title)
+			document.title=title
 
         init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
             .then((__tutorialized=true)=>{
@@ -76,7 +82,7 @@ export default class App extends Component{
     }
 
     renderContent(){
-        //inherits should return component
+		return this.props.children
     }
 
     static render(routes, props={}){
@@ -100,28 +106,27 @@ export default class App extends Component{
                 </Router>
             ),container)
     }
-};
-import {Router, Route, IndexRoute, hashHistory} from "react-router"
-
-App.childContextTypes={muiTheme:React.PropTypes.object.isRequired}
-App.contextTypes={router: React.PropTypes.object}
-
-App.propsTypes={
-    service: React.PropTypes.string.isRequired,
-    appId:React.PropTypes.string.isRequired,
-    init:React.PropTypes.func,
-    tutorial:React.PropTypes.array
+	
+	static defaultProps={
+		service:"http://qili2.com/1/",
+		init(){},
+		tutorial:[]
+	}
+	
+	static propsTypes={
+		service: React.PropTypes.string.isRequired,
+		appId:React.PropTypes.string.isRequired,
+		init:React.PropTypes.func,
+		tutorial:React.PropTypes.array,
+		title: React.PropTypes.string
+	}
+	
+	static childContextTypes={
+		muiTheme:React.PropTypes.object.isRequired
+	}
+	
+	static contextTypes={
+		router: React.PropTypes.object
+	}
 }
-App.defaultProps=Object.assign({
-    service:"http://qili2.com/1/",
-    init(){},
-    tutorial:[]
-})
 
-/**
-*@Todo:
-* positioning in big screen
-    * FloatingActionButton : fixed position
-    * Loading: cover FloatingActionButton
-    * Messager: fixed bottom
-*/
