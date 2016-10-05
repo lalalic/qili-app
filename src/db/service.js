@@ -73,8 +73,13 @@ export class Service {
         }
 
         if(this._name){
-            _db.addCollection(this._name,opt)
-            this._cols=_db[this._name]
+            if(opt===true){//local only
+                _db.localDb.addCollection(this._name)
+                this._cols=_db.localDb[this._name]
+            }else{
+                _db.addCollection(this._name,opt)
+                this._cols=_db[this._name]
+            }
         }
     }
 
