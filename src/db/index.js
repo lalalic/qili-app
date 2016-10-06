@@ -224,9 +224,10 @@ function supportWorker(server, appId){/*
 function makeLocalStorage(localDb){
     localDb.addCollection("__localStorage")
     return {
-            getItem(key){
+            getItem(key,defaultValue){
                 return new Promise((resolve, reject)=>
-                    localDb.__localStorage.findOne({_id:key},(a)=>resolve(a && a.value), reject))
+                    localDb.__localStorage.findOne({_id:key},a=>resolve(a && a.value),
+                        typeof(defaultValue)=='undefined' ? reject : e=>resolve(defaultValue)))
             },
             setItem(key, value){
                 return new Promise((resolve, reject)=>
