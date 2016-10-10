@@ -32,7 +32,7 @@ exports.UI={
     var r=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,ds
     JSON.parse=(a,reviver)=>{
         return _raw.call(JSON,a,(k,v)=>{
-            if(typeof(v)=='string' && v[v.length-1]=='Z' && v[8]=='T' && (ds=r.exec(v)))
+            if(typeof(v)=='string' && v[v.length-1]=='Z' && v[10]=='T' && (ds=r.exec(v)))
                 return new Date(Date.UTC(+ds[1], +ds[2] - 1, +ds[3], +ds[4],  +ds[5], +ds[6]));
             return reviver ? reviver(k,v) : v
         })
