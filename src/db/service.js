@@ -13,7 +13,7 @@ export class Service {
     }
 
     static upsert(doc,base, success, error){
-        if(Array.isArray(doc))
+        if(Array.isArray(doc) && !this._localOnly)
             throw new Error("upsert doesn't support array")
         return this.cols.upsert(doc,base,success,error)
             .then(function(updated){
@@ -76,6 +76,7 @@ export class Service {
             if(opt===true){//local only
                 _db.localDb.addCollection(this._name)
                 this._cols=_db.localDb[this._name]
+				this._localOnly=true
             }else{
                 _db.addCollection(this._name,opt)
                 this._cols=_db[this._name]
