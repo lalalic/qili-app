@@ -10,7 +10,6 @@ export default class Photo extends Component{
     render(){
         var {url}=this.state,
             {width, height, iconSize, style={}, cameraOptions, overwritable, ...others}=this.props;
-        var onPhoto=typeof(navigator.camera)!='undefined' ? this.takePhoto.bind(this) : this.selectPhoto.bind(this)
         if(!iconSize){
             style.width=width
             style.height=height
@@ -34,7 +33,11 @@ export default class Photo extends Component{
                 style={style}
                 color="lightgray"
                 hoverColor="lightblue"
-                onClick={onPhoto}/>)
+                onClick={e=>this.doPhoto()}/>)
+    }
+
+    doPhoto(){
+        typeof(navigator.camera)!='undefined' ? this.takePhoto() : this.selectPhoto()
     }
 
     selectPhoto(){

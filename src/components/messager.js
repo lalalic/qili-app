@@ -13,7 +13,7 @@ export default class Messager extends Component{
     }
 
     render(){
-        let {className, ...others}=this.props
+        let {className, autoHideDuration, ...others}=this.props
         let {open}=this.state
         return <div className={`snackbar ${className} ${open ? "" : "hide"}`} {...others}>{this.state.message}</div>
     }
@@ -35,10 +35,6 @@ export default class Messager extends Component{
         delete this.__timer
         this.setState({message,level, open:true})
     }
-
-	static show(message){
-		_instance ? _instance.show(...arguments) : console.warn(message)
-	}
 }
 
 Messager.defaultProps={autoHideDuration:2000}

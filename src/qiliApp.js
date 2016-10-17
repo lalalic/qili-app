@@ -47,7 +47,16 @@ export default class App extends Component{
     }
 
     getChildContext(){
-        return {muiTheme: getMuiTheme(lightBaseTheme)}
+        let self=this
+        return {
+            muiTheme: getMuiTheme(lightBaseTheme)
+            ,showMessage(){
+                self.refs.msg.show(...arguments)
+            }
+            ,loading(open){
+                self.refs.loading[open ? "show" : "close"]()
+            }
+        }
     }
 
     render(){
@@ -106,13 +115,13 @@ export default class App extends Component{
                 </Router>
             ),container)
     }
-	
+
 	static defaultProps={
 		service:"http://qili2.com/1/",
 		init(){},
 		tutorial:[]
 	}
-	
+
 	static propsTypes={
 		service: React.PropTypes.string.isRequired,
 		appId:React.PropTypes.string.isRequired,
@@ -120,13 +129,14 @@ export default class App extends Component{
 		tutorial:React.PropTypes.array,
 		title: React.PropTypes.string
 	}
-	
+
 	static childContextTypes={
-		muiTheme:React.PropTypes.object.isRequired
+		muiTheme:React.PropTypes.object.isRequired,
+        showMessage: React.PropTypes.func,
+        loading: React.PropTypes.func
 	}
-	
+
 	static contextTypes={
 		router: React.PropTypes.object
 	}
 }
-
