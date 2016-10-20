@@ -13,8 +13,6 @@ export class Service {
     }
 
     static upsert(doc,base, success, error){
-        if(Array.isArray(doc) && !this._localOnly)
-            throw new Error("upsert doesn't support array")
         return this.cols.upsert(doc,base,success,error)
             .then(function(updated){
                 this.emit('upserted',updated,base, error)

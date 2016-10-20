@@ -87,12 +87,19 @@ export default function fix(db){
                     error && error(e)
                     reject(e)
                 }
-                this.remoteCol.upsert(doc,base,(result)=>{
-                    result=Object.assign(doc,result)
-                    this.localCol.cacheOne(result, ()=>{
-                        success&&success(result)
-                        resolve(result)
-                    },fail)
+                this.remoteCol.upsert(doc,base,result=>{
+                    if(Array.isArray(doc)){
+                        this.localCol.cache(result,{_id:"neverRemoveFromCache when upserting"},null,()=>{
+                            success && success(result)
+                            resolve(result)
+                        },error)
+                    }else{
+                        result=Object.assign(doc,result)
+                        this.localCol.cacheOne(result, ()=>{
+                            success&&success(result)
+                            resolve(result)
+                        },fail)
+                    }
                 },fail)
             })
         }
