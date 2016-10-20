@@ -9,7 +9,10 @@ export default class Photo extends Component{
 
     render(){
         var {url}=this.state,
-            {width, height, iconSize, style={}, cameraOptions, overwritable, ...others}=this.props;
+            {width, height, iconSize, style={}, 
+				cameraOptions, overwritable, 
+				onPhoto, autoUpload,
+				...others}=this.props;
         if(!iconSize){
             style.width=width
             style.height=height

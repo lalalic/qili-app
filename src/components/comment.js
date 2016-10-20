@@ -1,5 +1,5 @@
 import React, {Component} from "react"
-import ReactDOM from "react-dom"
+import {Avatar} from "material-ui"
 
 import {Service} from '../db/service'
 import CommandBar from './command-bar'
@@ -27,8 +27,8 @@ export default class CommentUI extends Component{
     }
 
     render(){
-        var {params:{_id}, template}=this.props
-        return (
+        const {params:{_id}, template}=this.props
+		return (
             <div className="comment">
 
                 <List ref="list"
@@ -49,7 +49,7 @@ export default class CommentUI extends Component{
         )
     }
     save(){
-        var {value:content=""}=ReactDOM.getDOMNode(this.refs.comment)
+        var {value:content=""}=this.refs.comment
         if(content.trim().length==0)
             return
 
@@ -61,9 +61,9 @@ export default class CommentUI extends Component{
                 content:content
             };
         this.db.upsert(comment,(updated)=>{
-            var{list, comment:commenter}=this.refs
+            const {list}=this.refs
             list.setState({data: new Array(...list.state.data,updated)})
-            ReactDOM.getDOMNode(commenter).value=""
+            this.refs.comment.value=""
         })
     }
 
