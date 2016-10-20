@@ -151,8 +151,10 @@ export default function fix(db){
                 var fetcher=find.call(this,selector,options).fetch
                 return {
                     fetch: function(success,error){
-                        fetcher((data)=>{
-                            success && success(typeof(data.results)!='undefined' ? data.results : data)
+                        fetcher(data=>{
+							if(success){
+								success(typeof(data.results)!='undefined' ? data.results : (Array.isArray(data) ? data : [data]))
+							}
                         },error)
                     }
                 }
