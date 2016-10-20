@@ -76,7 +76,7 @@ export default function fix(db){
             LocalCollection=localDb[tempColName].constructor,
             RemoteCollection=remoteDb[tempColName].constructor;
 
-        HybridCollection.prototype.upsert=function(doc,base,success,error){
+        HybridCollection.prototype.upsert=function(doc,base,success,error,batchMode){
             if(typeof(base)=='function'){
                 base=null
                 success=arguments[1]
@@ -87,20 +87,39 @@ export default function fix(db){
                     error && error(e)
                     reject(e)
                 }
-                this.remoteCol.upsert(doc,base,result=>{
-                    if(Array.isArray(doc)){
-                        this.localCol.cache(result,{_id:"neverRemoveFromCache when upserting"},null,()=>{
-                            success && success(result)
-                            resolve(result)
-                        },error)
-                    }else{
-                        result=Object.assign(doc,result)
-                        this.localCol.cacheOne(result, ()=>{
-                            success&&success(result)
-                            resolve(result)
-                        },fail)
-                    }
-                },fail)
+                if(Array.isArray(doc) && batchMode){
+                    console.warn("you are batch upserting, while server side will only return the NUMBER of changed")
+                    let params= {
+                         client: this.client
+                       };
+                   if ((typeof navigator !== "undefined" && navigator !== null) && navigator.userAgent.toLowerCase().indexOf('android 2.3') !== -1) {
+                     params._ = new Date().getTime();
+                   }
+                    this.httpclient("POST",this.url,params, doc,
+                        n=>{
+                            success && success (n)
+                            resolve(n)
+                        }, e=>{
+                            error && error(e)
+                            reject(e)
+                        })
+                }else{
+                    this.remoteCol.upsert(doc,base,result=>{
+                        if(Array.isArray(doc)){
+                            this.localCol.cache(result,{_id:"neverRemoveFromCache when upserting"},{},()=>{
+                                success && success(result)
+                                resolve(result)
+                            },error)
+                        }else{
+                            result=Object.assign(doc,result)
+                            this.localCol.cacheOne(result, ()=>{
+                                success&&success(result)
+                                resolve(result)
+                            },fail)
+                        }
+                    },fail)
+                }
+
             })
         }
 
