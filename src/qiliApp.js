@@ -51,13 +51,18 @@ export default class App extends Component{
         return {
             muiTheme: getMuiTheme(lightBaseTheme)
             ,showMessage(){
-                self.refs.msg.show(...arguments)
+                self.showMessage(...arguments)
             }
             ,loading(open){
                 self.refs.loading[open ? "show" : "close"]()
             }
         }
     }
+	
+	showMessage(){
+		this.refs.msg.show(...arguments)
+	}
+	
 
     render(){
         var content,

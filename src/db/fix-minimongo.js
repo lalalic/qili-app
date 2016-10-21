@@ -95,8 +95,8 @@ export default function fix(db){
                    if ((typeof navigator !== "undefined" && navigator !== null) && navigator.userAgent.toLowerCase().indexOf('android 2.3') !== -1) {
                      params._ = new Date().getTime();
                    }
-                    this.httpclient("POST",this.url,params, doc,
-                        n=>{
+                    this.remoteCol.httpClient("POST",this.remoteCol.url,params, doc,
+                        ({affected:n})=>{
                             success && success (n)
                             resolve(n)
                         }, e=>{
