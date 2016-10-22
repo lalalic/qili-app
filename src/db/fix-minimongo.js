@@ -81,6 +81,7 @@ export default function fix(db){
                 base=null
                 success=arguments[1]
                 error=arguments[2]
+                batchMode=arguments[3]
             }
             return new Promise((resolve, reject)=>{
                 var fail=(e)=>{

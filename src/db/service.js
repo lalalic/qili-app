@@ -13,7 +13,7 @@ export class Service {
     }
 
     static upsert(doc,base, success, error){
-        return this.cols.upsert(doc,base,success,error)
+        return this.cols.upsert(...arguments)
             .then(function(updated){
                 this.emit('upserted',updated,base, error)
                 return updated
