@@ -3,6 +3,9 @@ import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
+import {createStore,combineReducers} from "redux"
+import {Provider, connect} from "react-redux"
+
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
@@ -15,16 +18,18 @@ import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
 
+import {INIT_APP, USER_CHANGED} from "./action/app"
+import APP_Reducer from "./reducer/app"
 
-export default class App extends Component{
+const muiTheme=getMuiTheme(lightBaseTheme)
+
+class App extends Component{
     constructor(props){
         super(props)
 
         supportTap()
-        var {init:initApp, service, appId}=this.props
-        this.state={
-            __user:User.current
-        }
+
+        const {service, appId}=this.props
 
         if(!appId)
             throw new Error("Please give application key")
@@ -34,22 +39,22 @@ export default class App extends Component{
     }
 
     componentDidMount(){
-        var {init:initApp, service, appId, title}=this.props
+        var {init:initApp, service, appId, title, dispatch}=this.props
 		if(title)
 			document.title=title
 
         init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
             .then((__tutorialized=true)=>{
-                    this.setState({__inited:true, __user:User.current, __tutorialized})
-                    User.on('change', ()=>this.setState({__user:User.current}))
+                    dispatch(INIT_APP(null,__tutorialized))
+                    User.on('change', ()=>dispatch(USER_CHNAGED))
                 },
-                (e)=>this.setState({__inited:false,__user:User.current,__initedError:e.message}))
+                (e)=>dispatch(INIT_APP(e.message)))
     }
 
     getChildContext(){
         let self=this
         return {
-            muiTheme: getMuiTheme(lightBaseTheme)
+            muiTheme
             ,showMessage(){
                 self.showMessage(...arguments)
             }
@@ -58,15 +63,15 @@ export default class App extends Component{
             }
         }
     }
-	
+
 	showMessage(){
 		this.refs.msg.show(...arguments)
 	}
-	
+
 
     render(){
         var content,
-            {__inited:inited, __initedError:initedError, __user:user, __tutorialized}=this.state
+            {__inited:inited, __initedError:initedError, __user:user, __tutorialized}=this.props
 
         if(!inited){
             if(initedError)
@@ -99,7 +104,7 @@ export default class App extends Component{
 		return this.props.children
     }
 
-    static render(routes, props={}){
+    static render(routes, props={}, reducer={}){
         var container=document.getElementById('app')
         if(!container){
             container=document.createElement('div')
@@ -115,9 +120,11 @@ export default class App extends Component{
             props.history=hashHistory
 
         return render((
-                <Router {...props}>
-                    {routes}
-                </Router>
+                <Provider store={createStore(combineReducers(Object.assign({__:APP_Reducer},reducer)))}>
+                    <Router {...props}>
+                        {routes}
+                    </Router>
+                </Provider>
             ),container)
     }
 
@@ -145,3 +152,8 @@ export default class App extends Component{
 		router: React.PropTypes.object
 	}
 }
+
+export default App=connect(state=>{
+        const {__inited, __initedError, __user, __tutorialized}=state.__
+        return {__inited, __initedError, __user, __tutorialized}
+    })(App)

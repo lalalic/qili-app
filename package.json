@@ -8,13 +8,16 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.7.4",
+    "immutable.js": "^1.1.2",
     "material-ui": "^0.15.0",
     "minimongo": ">=3.2.13",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
     "react-tap-event-plugin": "^1.0.0",
-    "reactable": "^0.13.2"
+    "reactable": "^0.13.2",
+    "redux": "^3.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
@@ -63,7 +66,7 @@
   },
   "scripts": {
     "build": "babel src -d lib --source-maps inline",
-	"build1": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
+    "build1": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
     "merge": "npm run dist && node scripts/allin1.js",
     "karma": "karma start",
