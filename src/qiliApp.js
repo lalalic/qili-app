@@ -18,8 +18,8 @@ import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
 
-import {INIT_APP, USER_CHANGED} from "./action/app"
-import APP_Reducer from "./reducer/app"
+import {INIT_APP, USER_CHANGED} from "./action/qiliApp"
+import QILI_APP from "./reducer/qiliApp"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
 
@@ -120,7 +120,7 @@ class App extends Component{
             props.history=hashHistory
 
         return render((
-                <Provider store={createStore(combineReducers(Object.assign({__:APP_Reducer},reducer)))}>
+                <Provider store={createStore(combineReducers(Object.assign({__:QILI_APP},reducer)))}>
                     <Router {...props}>
                         {routes}
                     </Router>
