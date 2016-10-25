@@ -3,7 +3,7 @@ import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
-import {createStore,combineReducers} from "redux"
+import {createStore,combineReducers, applyMiddleware} from "redux"
 import {Provider, connect} from "react-redux"
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
@@ -45,10 +45,10 @@ class App extends Component{
 
         init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
             .then((__tutorialized=true)=>{
-                    dispatch(INIT_APP(null,__tutorialized))
-                    User.on('change', ()=>dispatch(USER_CHNAGED))
+                    dispatch(ACTION.INIT_APP(null,!!__tutorialized))
+                    User.on('change', ()=>dispatch(ACTION.USER_CHANGED))
                 },
-                (e)=>dispatch(INIT_APP(e.message)))
+                (e)=>dispatch(ACTION.INIT_APP(e.message)))
     }
 
     getChildContext(){
@@ -104,14 +104,14 @@ class App extends Component{
 		return this.props.children
     }
 
-    static render(routes, props={}, reducer={}){
-        var container=document.getElementById('app')
+    static render(routes, props={}, reducers={}, ...middlewars){
+        let container=document.getElementById('app')
         if(!container){
             container=document.createElement('div')
             container.id='app'
             document.body.appendChild(container)
         }
-		var style=document.createElement("style")
+		let style=document.createElement("style")
 		document.getElementsByTagName("head")[0].appendChild(style)
 		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
 		container.style.height=window.innerHeight+'px'
@@ -120,7 +120,7 @@ class App extends Component{
             props.history=hashHistory
 
         return render((
-                <Provider store={createStore(combineReducers(Object.assign({__:QILI_APP},reducer)))}>
+                <Provider store={createStore(combineReducers(Object.assign({__:REDUCER},reducers)), applyMiddleware(...middlewars))}>
                     <Router {...props}>
                         {routes}
                     </Router>
@@ -153,7 +153,47 @@ class App extends Component{
 	}
 }
 
-export default App=connect(state=>{
-        const {__inited, __initedError, __user, __tutorialized}=state.__
-        return {__inited, __initedError, __user, __tutorialized}
-    })(App)
+const REDUCER=(state={__inited:false, __user:User.current},action)=>{
+    switch(action.type){
+    case 'inited':
+        return {
+            __inited:true
+            ,__user:User.current
+            ,__tutorialized:action.__tutorialized
+        }
+    break
+    case 'initedError':
+        return {
+            __inited:false
+            ,__user:User.current
+            ,__initedError:action.error
+        }
+    break
+    case 'user.changed':
+        return Object.assign({},state,{__user:User.current})
+    default:
+        return state
+    }
+}
+
+const ACTION={
+	INIT_APP(error,__tutorialized){
+		if(!!error){
+			return {
+				type:"initedError"
+				,user
+				,error
+			}
+		}else{
+			return {
+				type:"inited"
+				,__tutorialized
+			}
+		}
+	}
+	,USER_CHANGED:{
+		type:"user.changed"
+	}
+}
+
+export default connect(state=>state.__)(App)
