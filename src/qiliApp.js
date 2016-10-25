@@ -18,9 +18,6 @@ import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
 
-import {INIT_APP, USER_CHANGED} from "./action/qiliApp"
-import QILI_APP from "./reducer/qiliApp"
-
 const muiTheme=getMuiTheme(lightBaseTheme)
 
 class App extends Component{
@@ -104,29 +101,7 @@ class App extends Component{
 		return this.props.children
     }
 
-    static render(routes, props={}, reducers={}, ...middlewars){
-        let container=document.getElementById('app')
-        if(!container){
-            container=document.createElement('div')
-            container.id='app'
-            document.body.appendChild(container)
-        }
-		let style=document.createElement("style")
-		document.getElementsByTagName("head")[0].appendChild(style)
-		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-		container.style.height=window.innerHeight+'px'
 
-        if(!props.history)
-            props.history=hashHistory
-
-        return render((
-                <Provider store={createStore(combineReducers(Object.assign({__:REDUCER},reducers)), applyMiddleware(...middlewars))}>
-                    <Router {...props}>
-                        {routes}
-                    </Router>
-                </Provider>
-            ),container)
-    }
 
 	static defaultProps={
 		service:"http://qili2.com/1/",
@@ -151,32 +126,62 @@ class App extends Component{
 	static contextTypes={
 		router: React.PropTypes.object
 	}
-}
 
-const REDUCER=(state={__inited:false, __user:User.current},action)=>{
-    switch(action.type){
-    case 'inited':
-        return {
-            __inited:true
-            ,__user:User.current
-            ,__tutorialized:action.__tutorialized
+    static render(routes, props={}, reducers={}, ...middlewars){
+        let container=document.getElementById('app')
+        if(!container){
+            container=document.createElement('div')
+            container.id='app'
+            document.body.appendChild(container)
         }
-    break
-    case 'initedError':
-        return {
-            __inited:false
-            ,__user:User.current
-            ,__initedError:action.error
-        }
-    break
-    case 'user.changed':
-        return Object.assign({},state,{__user:User.current})
-    default:
-        return state
+        let style=document.createElement("style")
+        document.getElementsByTagName("head")[0].appendChild(style)
+        style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+        container.style.height=window.innerHeight+'px'
+
+        if(!props.history)
+            props.history=hashHistory
+
+        return render((
+                <Provider store={createStore(combineReducers(Object.assign({},REDUCER,reducers)), applyMiddleware(...middlewars))}>
+                    <Router {...props}>
+                        {routes}
+                    </Router>
+                </Provider>
+            ),container)
     }
 }
 
-const ACTION={
+export const REDUCER={
+    __:(state={__inited:false, __user:User.current},action)=>{
+        switch(action.type){
+        case 'inited':
+            return {
+                __inited:true
+                ,__user:User.current
+                ,__tutorialized:action.__tutorialized
+            }
+        break
+        case 'initedError':
+            return {
+                __inited:false
+                ,__user:User.current
+                ,__initedError:action.error
+            }
+        break
+        case 'user.changed':
+            return {
+                __inited:true
+                ,__user:User.current
+                ,__tutorialized:state.__tutorialized
+            }
+        default:
+            return state
+        }
+    }
+}
+
+export const ACTION={
 	INIT_APP(error,__tutorialized){
 		if(!!error){
 			return {
@@ -196,4 +201,8 @@ const ACTION={
 	}
 }
 
-export default connect(state=>state.__)(App)
+const ReduxApp=connect(state=>state.__)(App)
+
+console.dir(ReduxApp)
+
+export default ReduxApp

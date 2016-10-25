@@ -1,5 +1,4 @@
-import {reducer as account} from "../account"
+import {REDUCER as account} from "../account"
 
-export default {
-	account
-}
+const reducer=Object.assign({}, account)
+export default reducer

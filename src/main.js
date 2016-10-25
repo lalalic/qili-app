@@ -10,17 +10,15 @@ import Logo from './icons/logo'
 
 const {Empty}=UI
 
-import {APP_CHANGED} from "./action"
-
 class QiliConsole extends Component{
     constructor(props){
         super(props)
 		const {dispatch}=this.props
         Application.on('change',app=>dispatch(APP_CHANGED(app)))
     }
-	
+
 	shouldComponentUpdate(nextProps, nextState){
-		if(this.props.children.props.route.name=='app' 
+		if(this.props.children.props.route.name=='app'
 			&& nextProps.app!=this.props.app
 			&& !this.context.router.isActive(`app/${nextProps.app.name}`)){
 			this.context.router.push(`app/${nextProps.app.name}`)
@@ -41,29 +39,29 @@ class QiliConsole extends Component{
 				</QiliApp>
 			)
 		}
-			
-		
+
+
         return (
             <QiliApp {...props}>
-				{this.props.children.props.route.contextual!==false 
+				{this.props.children.props.route.contextual!==false
 					&& (<CurrentApp key="context" name={app.name}/>)}
-					
+
                 {this.props.children}
             </QiliApp>
         )
     }
-	
+
 	static childContextTypes={
 		app: React.PropTypes.object
 	}
-	
+
 	getChildContext(){
 		return {
 			app: this.props.app
 		}
 	}
-	
-	
+
+
 }
 
 class CurrentApp extends Component{
@@ -87,10 +85,10 @@ class CurrentApp extends Component{
 
         var index=apps.findIndex(a=>a._id==app._id)
 			,target=apps[(index+1) % len]
-			
+
         Application.current=target
     }
-	
+
 	static contextTypes={app: React.PropTypes.object}
 }
 
@@ -103,7 +101,7 @@ import MyUI from "./my"
 import SettingUI from "./setting"
 import ProfileUI from "./user-profile"
 
-import QILI_CONSOLE from "./reducer"
+import Reducer from "./reducer"
 import {connect} from "react-redux"
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
@@ -128,14 +126,14 @@ module.exports=QiliApp.render(
             <IndexRedirect to="all"/>
             <Route path=":level"/>
         </Route>
-		
+
 		<Route path="my">
 			<IndexRoute component={MyUI} contextual={false}/>
 			<Route path="setting" component={SettingUI} />
 			<Route path="profile" component={ProfileUI} contextual={false}/>
 		</Route>
-		
-		
+
+
     </Route>),{
 		createElement(Component, props){
 			if(Component==QiliConsoleApp){
@@ -148,7 +146,7 @@ module.exports=QiliApp.render(
 			return <Component {...props}/>
 		}
 	}
-	,QILI_CONSOLE
+	,Reducer
 	,thunk
 	,createLogger()
 )
