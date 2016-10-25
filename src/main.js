@@ -1,9 +1,9 @@
 require('../style/index.less')
-
-import {init,User,QiliApp,React,Component, UI, Position} from '.'
+import React, {Component} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton} from 'material-ui'
 
+import {init,User,QiliApp, UI, Position} from '.'
 import Application from './db/app'
 import App from './app'
 import Logo from './icons/logo'

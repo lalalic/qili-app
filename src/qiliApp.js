@@ -201,8 +201,6 @@ export const ACTION={
 	}
 }
 
-const ReduxApp=connect(state=>state.__)(App)
+export const QiliApp=connect(state=>state.__)(App)
 
-console.dir(ReduxApp)
-
-export default ReduxApp
+export default QiliApp

@@ -1,4 +1,5 @@
-import {React, Component, UI} from "."
+import React,{Component} from "react"
+import {UI} from "."
 import {TextField} from 'material-ui'
 import dbApplication from "./db/app"
 import Upload from "material-ui/svg-icons/file/file-upload"
@@ -8,23 +9,23 @@ import Remove from "material-ui/svg-icons/action/delete"
 
 export default class AppInfo extends Component{
 	state={}
-	
+
     shouldComponentUpdate (newProps){
 		if(this.state.frozen)
 			return false
-		
+
 		return true
     }
-	
+
 	componentWillReceiveProps(nextProps, nextContext){
 		if(this.props.params.name!=nextProps.params.name)
 			dbApplication.current=nextProps.params.name
 	}
 
     render(){
-        var app=this.context.app, 
+        var app=this.context.app,
 			removable=dbApplication.isRemovable(app)
-			
+
         return (
             <div className="form">
                 <TextField ref="name"
@@ -66,7 +67,7 @@ export default class AppInfo extends Component{
                     value={app.apiKey ? `http://qili2.com/1/${app.apiKey}/wechat` : ""}/>
 
 				{
-					removable ? 
+					removable ?
 						(<UI.CommandBar className="footbar" primary="Upload"
 							items={[{action:"Back"},{action:"Upload", icon:Upload},{action:"Remove",icon:Remove}]}
 							onSelect={cmd=>this.onSelect(cmd)}
@@ -96,7 +97,7 @@ export default class AppInfo extends Component{
 		router:React.PropTypes.object,
 		app: React.PropTypes.object
 	}
-	
+
 	static Creator=class extends Component{
 		shouldComponentUpdate(nextProps){
 			return false

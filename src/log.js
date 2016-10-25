@@ -1,12 +1,15 @@
-var {React, Component, UI:{CommandBar, List, Empty}}=require('.'),
-    App=require('./db/app'),
-    {FontIcon}=require('material-ui');
+import React,{Component} from "react"
+import {FontIcon} from 'material-ui'
 
 import Http from "material-ui/svg-icons/action/http"
 import Error from "material-ui/svg-icons/alert/error"
 import Warning from "material-ui/svg-icons/alert/warning"
 import All from "material-ui/svg-icons/action/assignment"
 
+import {UI} from "."
+import App from './db/app'
+
+const {CommandBar, List, Empty}=UI
 const levels={
     	warning:2,
     	error:3,
@@ -21,11 +24,11 @@ const Icons={Http, Error, Warning, All}
 
 export default class Log extends Component{
     state={logs:null}
-    
+
 	getData(level){
 		this.setState({logs:App.getLog(levels[level])})
 	}
-	
+
     componentDidMount(){
         this.getData(this.props.params.level)
     }
@@ -55,12 +58,12 @@ export default class Log extends Component{
             </div>
         )
     }
-	
+
 	static contextTypes={
 		router:React.PropTypes.object,
 		app: React.PropTypes.object
 	}
-	
+
 	static ALog=class extends Component{
 		render(){
 			var {model:log}=this.props
@@ -68,5 +71,3 @@ export default class Log extends Component{
 		}
 	}
 }
-
-

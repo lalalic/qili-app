@@ -1,22 +1,8 @@
 import 'babel-polyfill'
 
-import {init,Model,User,Role,File,Log} from "./db"
-import React, {Component} from 'react'
-
-exports.React=React
-exports.Component=Component
-exports.AsyncComponent=require('./components/async')
-
-exports.init=init
-exports.Model=Model
-exports.User=User
-exports.Role=Role
-exports.File=File
-exports.Log=Log
-
-exports.QiliApp=require('./qiliApp')
-
-exports.UI={
+export {init,Model,User,Role,File,Log} from "./db"
+export {QiliApp} from "./qiliApp"
+export const UI={
     Empty:require('./components/empty'),
     Loading:require('./components/loading'),
     List: require('./components/list'),
