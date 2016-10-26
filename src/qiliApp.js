@@ -3,7 +3,7 @@ import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
-import {createStore,combineReducers, applyMiddleware} from "redux"
+import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
@@ -15,7 +15,7 @@ import {init,User} from "./db"
 import Messager from "./components/messager"
 import Loading from "./components/loading"
 import supportTap from 'react-tap-event-plugin'
-import Account from './account'
+import Account, {REDUCER as accountReducer} from './account'
 import Tutorial from "./components/tutorial"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
@@ -41,8 +41,8 @@ class App extends Component{
 			document.title=title
 
         init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
-            .then((__tutorialized=true)=>{
-                    dispatch(ACTION.INIT_APP(null,!!__tutorialized))
+            .then((tutorialized=true)=>{
+                    dispatch(ACTION.INIT_APP(null,!!tutorialized))
                     User.on('change', ()=>dispatch(ACTION.USER_CHANGED))
                 },
                 (e)=>dispatch(ACTION.INIT_APP(e.message)))
@@ -67,17 +67,17 @@ class App extends Component{
 
 
     render(){
-        var content,
-            {__inited:inited, __initedError:initedError, __user:user, __tutorialized}=this.props
-
+        const {inited, initedError, user, tutorialized, dispatch}=this.props
+		let content
+        
         if(!inited){
             if(initedError)
                 content= `Initializing Error: ${initedError}`
             else
-                content= "..."
+                content= "initializing..."
         }else if(!user){
-            if(!__tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
-                return (<Tutorial slides={this.props.tutorial} onEnd={e=>this.setState({__tutorialized:true})}/>)
+            if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
+                return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
 
             content=(<Account />)
         }else if(!user.sessionToken){
@@ -141,10 +141,18 @@ class App extends Component{
 
         if(!props.history)
             props.history=hashHistory
+		
+		const defaultCreateElement=(Component,props)=>{
+			const {history,params}=props
+			return (<Component router={history} {...params} {...props}/>)
+		}
 
+		const allReducers=combineReducers(Object.assign({},REDUCER,reducers))
+		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+		
         return render((
-                <Provider store={createStore(combineReducers(Object.assign({},REDUCER,reducers)), applyMiddleware(...middlewars))}>
-                    <Router {...props}>
+                <Provider store={createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))}>
+                    <Router createElement={defaultCreateElement} {...props}>
                         {routes}
                     </Router>
                 </Provider>
@@ -153,36 +161,40 @@ class App extends Component{
 }
 
 export const REDUCER={
-    __:(state={__inited:false, __user:User.current},action)=>{
+    __:(state={inited:false, user:User.current},action)=>{
         switch(action.type){
         case 'inited':
             return {
-                __inited:true
-                ,__user:User.current
-                ,__tutorialized:action.__tutorialized
+                inited:true
+                ,user:User.current
+                ,tutorialized:action.tutorialized
             }
         break
         case 'initedError':
             return {
-                __inited:false
-                ,__user:User.current
-                ,__initedError:action.error
+                inited:false
+                ,user:User.current
+                ,initedError:action.error
             }
         break
-        case 'user.changed':
+        case 'USER_CHANGED':
             return {
-                __inited:true
-                ,__user:User.current
-                ,__tutorialized:state.__tutorialized
+                inited:!!User.current
+                ,user:User.current
+                ,tutorialized:state.tutorialized
             }
+		case 'TUTORIALIZED':
+			state.tutorialized=true
+			return state
         default:
             return state
         }
-    }
+    },
+	account: accountReducer
 }
 
 export const ACTION={
-	INIT_APP(error,__tutorialized){
+	INIT_APP(error,tutorialized){
 		if(!!error){
 			return {
 				type:"initedError"
@@ -192,12 +204,14 @@ export const ACTION={
 		}else{
 			return {
 				type:"inited"
-				,__tutorialized
+				,tutorialized
 			}
 		}
 	}
 	,USER_CHANGED:{
-		type:"user.changed"
+		type:"USER_CHANGED"
+	},TUTORIALIZED:{
+		type:"TUTORIALIZED"
 	}
 }
 

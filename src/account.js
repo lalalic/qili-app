@@ -61,11 +61,6 @@ export const ACTION={
 export const REDUCER={
 	account:(state={},action)=>{
 		switch(action.type){
-		case 'SIGNUP':
-			return {}
-		case 'SIGNIN':
-			return {user}
-
 		case 'SIGNUP_UI':
 		case 'SIGNIN_UI':
 		case 'FORGET_PASSWORD_UI':

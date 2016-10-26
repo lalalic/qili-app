@@ -10,26 +10,30 @@ import Logo from './icons/logo'
 
 const {Empty}=UI
 
+const ACTION={
+	APP_CHANGED:app=>{
+		return {type:"APP_CHANGED",app}
+	}
+}
+
 class QiliConsole extends Component{
     constructor(props){
         super(props)
-		const {dispatch}=this.props
-        Application.on('change',app=>dispatch(APP_CHANGED(app)))
+		Application.on('change',app=>{
+			const {dispatch,routes,params, router}=this.props
+			if(routes[1] && routes[1].name=='app' && params.name!=app.name)
+				router.push(`app/${app.name}`)
+			dispatch(ACTION.APP_CHANGED(app))
+		})
     }
 
-	shouldComponentUpdate(nextProps, nextState){
-		if(this.props.children.props.route.name=='app'
-			&& nextProps.app!=this.props.app
-			&& !this.context.router.isActive(`app/${nextProps.app.name}`)){
-			this.context.router.push(`app/${nextProps.app.name}`)
-			return false
-		}
-		return true
-	}
-
     render(){
-        const {app}=this.props
-		let props={appId: "qiliAdmin", init:a=>Application.init(), service:"http://localhost:9080/1/"}
+        const {app, initAppName, children}=this.props
+		let props={
+			appId: "qiliAdmin"
+			, init:a=>Application.init(initAppName)
+			, service:"http://localhost:9080/1/"
+		}
 		if(!app){
 			return (
 				<QiliApp {...props}>
@@ -43,13 +47,16 @@ class QiliConsole extends Component{
 
         return (
             <QiliApp {...props}>
-				{this.props.children.props.route.contextual!==false
-					&& (<CurrentApp key="context" name={app.name}/>)}
-
-                {this.props.children}
+				<CurrentApp name={app.name} app={app} open={!!app && this.contextual()}/>
+				{children}
             </QiliApp>
         )
     }
+	
+	contextual(){
+		const {routes}=this.props
+		return !!!routes.find(a=>a.contextual===false)
+	}
 
 	static childContextTypes={
 		app: React.PropTypes.object
@@ -61,39 +68,29 @@ class QiliConsole extends Component{
 		}
 	}
 
-
+	static defaultProps={
+		initAppName:null
+	}
 }
 
-class CurrentApp extends Component{
-    render(){
-        var {name}=this.props
-		return(
-            <FloatingActionButton className="sticky top right"
-                onClick={e=>this.change()}
-				mini={true}
-                style={{fontSize:"xx-small"}}>
-                {name}
-            </FloatingActionButton>
-        )
-    }
-    change(){
-        var {app}=this.context,
-            apps=Application.all,
-            len=apps.length;
-        if(len<2)
-            return;
+const CurrentApp=({name, app, open})=>(
+	<FloatingActionButton className="sticky top right" mini={true} 
+		style={{fontSize:"xx-small", display:open ? undefined : "none" }}
+		onClick={e=>{
+			let apps=Application.all, len=apps.length
+			if(len>1){
+				let index=apps.findIndex(a=>a._id==app._id)
+				let target=apps[(index+1) % len]
 
-        var index=apps.findIndex(a=>a._id==app._id)
-			,target=apps[(index+1) % len]
-
-        Application.current=target
-    }
-
-	static contextTypes={app: React.PropTypes.object}
-}
+				Application.current=target
+			}
+		}}>
+		{name}
+	</FloatingActionButton>
+)
 
 import Dashboard from './dashboard'
-import AppUI, {Creator} from './app'
+import AppUI, {Creator, REDUCER as appUIReducer} from './app'
 import CloudUI from './cloud'
 import DataUI from './data'
 import LogUI from './log'
@@ -101,18 +98,37 @@ import MyUI from "./my"
 import SettingUI from "./setting"
 import ProfileUI from "./user-profile"
 
-import Reducer from "./reducer"
 import {connect} from "react-redux"
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 
-const QiliConsoleApp=connect(({app})=>({app}))(QiliConsole)
+const REDUCER={
+	qiliConsole: (state={},{type,app})=>{
+		switch(type){
+		case "APP_CHANGED":
+			return {app}
+		default:
+			return state
+		}
+	}
+}
+
+const QiliConsoleApp=connect(state=>({app:state.qiliConsole.app}))(QiliConsole)
 
 module.exports=QiliApp.render(
     (<Route path="/" component={QiliConsoleApp}>
-        <IndexRoute component={()=>"Hello"}/>
+        <IndexRoute component={Dashboard}/>
 
-        <Route path="app/:name" name="app" component={AppUI}/>
+        <Route path="app/:name" name="app" component={AppUI}
+			onEnter={({params:{name}})=>{
+				if(!Application.current){
+					QiliConsole.defaultProps.initAppName=name
+				}
+			}}
+			onChange={(prev, next)=>{
+				if(prev.params.name!=next.params.name)
+					Application.current=next.params.name
+			}}/>
 		<Route path="app" contextual={false} component={Creator}/>
 
         <Route path="cloud" component={CloudUI}/>
@@ -135,18 +151,9 @@ module.exports=QiliApp.render(
 
 
     </Route>),{
-		createElement(Component, props){
-			if(Component==QiliConsoleApp){
-				let child=props.children
-					,{route,params}=child.props
-
-				if(route.name=="app")
-					props.init=a=>Application.init(params.name)
-			}
-			return <Component {...props}/>
-		}
+		
 	}
-	,Reducer
+	,Object.assign({},REDUCER,appUIReducer)
 	,thunk
 	,createLogger()
 )
