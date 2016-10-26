@@ -12,15 +12,70 @@ import {UI} from "."
 import dbApplication from "./db/app"
 
 const ENTER=13
+const DOMAIN="ui.app"
+export const ACTION={
+	CREATE: (name, uname)=>{
+		let nameError, unameError
+		if(!name)
+			nameError="name is required"
+		if(nameError){
+			return dispatch=>{
+				dispatch({domain:DOMAIN, type:"error", nameError})
+				return Promise.reject()
+			}
+		}
 
-const App=({app, router,dispatch, nameError, unameError})=>{
+		return dispatch=>dbApplication.upsert({name,uname})
+			.then(app=>{
+				dispatch({domain:DOMAIN,type:"created"})
+				return dbApplication.current=app
+			})
+	}
+	,CHANGE: (key,value)=>{
+		const app=dbApplication.current
+		app[key]=value
+		return dispatch=>dbApplication.upsert(app)
+			.then(app=>{
+				dispatch({domain:DOMAIN, type:"updated"})
+				return dbApplication.current=app
+			})
+	}
+	,REMOVE: id=>dispatch=>dbApplication.remove(id).then(a=>dispatch({domain:DOMAIN, type:"removed"}))
+
+	,UPLOAD: a=>displatch=>UI.selectFile('raw')
+			.then(app=>dbApplication.upload(app))
+			.then(app=>{
+				dispatch({domain:DOMAIN, type:"uploaded"})
+				return dbApplication.current=app
+			})
+}
+
+export const REDUCER={
+	[DOMAIN]: (state={},{domain, type, nameError, unameError})=>{
+		if(domain==DOMAIN){
+			switch(type){
+			case 'error':
+				return {nameError, unameError}
+			case 'uploaded':
+			case 'removed':
+			case 'created':
+			case 'updated':
+				return {}
+			}
+		}
+		return state
+	}
+}
+
+export const App=connect(state=>({app:dbApplication.current, ...state[DOMAIN]}))(
+({app, router,dispatch, nameError, unameError})=>{
 	let removable=dbApplication.isRemovable(app)
 	let commandBar
 	if(removable)
 		commandBar=(<UI.CommandBar className="footbar" primary="Upload"
 			items={[
 					{action:"Back"}
-					
+
 					,{action:"Upload"
 						,icon:Upload
 						,onSelect:e=>dispatch(ACTION.UPLOAD())
@@ -43,23 +98,26 @@ const App=({app, router,dispatch, nameError, unameError})=>{
 
 	const changeName=value=>value!=app.name && dispatch(ACTION.CHANGE("name",value)).then(({name})=>router.replace(`app/${name}`))
 	const changeUName=value=>value!=app.uname && dispatch(ACTION.CHANGE("uname",value))
+	let refName, refUname
 	return (
 		<div className="form">
-			<TextField 
+			<TextField ref={a=>refName}
 				floatingLabelText="application name"
 				fullWidth={true}
 				disabled={!removable}
-				defaultValue={app.name}
+				value={app.name}
 				errorText={nameError}
+				onChange={({target:{value}})=>refName.value=value}
 				onKeyDown={e=>e.keyCode==ENTER && changeName(e.target.value.trim())}
 				onBlur={({target:{value}})=>changeName(value.trim())}/>
 
-			<TextField 
+			<TextField ref={a=>refUname}
 				floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 				fullWidth={true}
 				disabled={!removable}
-				defaultValue={app.uname}
+				value={app.uname}
 				errorText={unameError}
+				onChange={({target:{value}})=>refUname.value=value}
 				onKeyDown={e=>e.keyCode==ENTER && changeUName(e.target.value.trim())}
 				onBlur={({target:{value}})=>changeUName(value.trim())}/>
 
@@ -78,11 +136,10 @@ const App=({app, router,dispatch, nameError, unameError})=>{
 			{commandBar}
 		</div>
 	)
-}
+})
 
-export default connect(state=>({app:state.qiliConsole.app, ...state.appUI}))(App)
-
-export const Creator=connect(state=>state.appUI)(({router,dispatch, nameError})=>{
+export const Creator=connect(state=>state[DOMAIN])(
+({router,dispatch, nameError})=>{
 	let refName,refUname
 	return (
 		<div className="form">
@@ -93,16 +150,6 @@ export const Creator=connect(state=>state.appUI)(({router,dispatch, nameError})=
 
 			<TextField ref={a=>refUname=a}
 				floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
-				fullWidth={true}/>
-
-			<TextField
-				floatingLabelText="API key: value of http header 'x-application-id'"
-				disabled={true}
-				fullWidth={true}/>
-
-			<TextField
-				floatingLabelText="wechat url: use it to accept message from wechat"
-				disabled={true}
 				fullWidth={true}/>
 
 			<UI.CommandBar className="footbar"
@@ -118,41 +165,4 @@ export const Creator=connect(state=>state.appUI)(({router,dispatch, nameError})=
 	)
 })
 
-
-const ACTION={
-	CREATE: (name, uname)=>{
-		let nameError, unameError
-		if(!name)
-			nameError="name is required"
-		if(nameError || unameError)
-			return dispatch=>{
-				dispatch({type:"error", nameError, unameError})
-				return Promise.reject()
-			}
-		
-		return dispatch=>dbApplication.upsert({name,uname})
-			.then(app=>dbApplication.current=app)
-	}
-	,CHANGE: (key,value)=>{
-		const app=dbApplication.current
-		app[key]=value
-		return dispatch=>dbApplication.upsert(app)
-			.then(app=>dbApplication.current=app)
-	}
-	,REMOVE: id=>dispatch=>dbApplication.remove(id)
-	
-	,UPLOAD: a=>displatch=>UI.selectFile('raw')
-			.then(app=>dbApplication.upload(app))
-			.then(app=>dbApplication.current=app)
-}
-
-export const REDUCER={
-	appUI: (state={},{type,nameError, unameError})=>{
-		switch(type){
-		case 'error':
-			return {nameError, unameError}
-		default:
-			return state
-		}
-	}
-}
+export default App

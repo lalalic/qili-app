@@ -4,6 +4,7 @@ import User from './db/user'
 import {connect} from "react-redux"
 
 const ENTER=13
+const DOMAIN="ui.account"
 
 export const ACTION={
 	SIGNUP:user=>dispatch=>{
@@ -17,11 +18,14 @@ export const ACTION={
 		if(password!=password2)
 			password2Error="password doesn't match"
 
-		if(usernameError || passwordError||password2Error)
-			return dispatch({type:"SIGNUP_UI", passwordError, usernameError,password2Error})
+		if(usernameError || passwordError||password2Error){
+			dispatch({domain:DOMAIN,type:"SIGNUP_UI", passwordError, usernameError,password2Error})
+			return Promise.reject()
+		}
 
 		return User.signup({username,password})
-			.catch(({message})=>dispatch({type:"SIGNUP_UI", usernameError:message}))
+			.then(a=>{dispatch({domain:DOMAIN,type:"signup.ok"});return a})
+			.catch(({message})=>dispatch({domain:DOMAIN,type:"SIGNUP_UI", usernameError:message}))
 	}
 	,SIGNIN:user=>dispatch=>{
 		const {username, password}=user
@@ -31,49 +35,58 @@ export const ACTION={
 		if(!password)
 			passwordError="password is required"
 
-		if(usernameError || passwordError)
-			return dispatch({type:"SIGNIN_UI",usernameError, passwordError})
+		if(usernameError || passwordError){
+			dispatch({domain:DOMAIN,type:"SIGNIN_UI",usernameError, passwordError})
+			return Promise.reject()
+		}
 
 		return User.signin({username,password})
-			.catch(({message})=>dispatch({type:"SIGNIN_UI",usernameError:message}))
+			.then(a=>{dispatch({domain:DOMAIN,type:"signin.ok"});return a})
+			.catch(({message})=>dispatch({domain:DOMAIN,type:"SIGNIN_UI",usernameError:message}))
 	}
 	,PHONE_VERIFY_REQUEST:phone=>{
 		User.requestVerification(phone)
-		return {type:"PHONE_VERIFY_REQUEST"}
+		return {domain:DOMAIN,type:"PHONE_VERIFY_REQUEST"}
 	}
 	,PHONE_VERIFY:(phone,code)=>dispatch=>User.verifyPhone(phone,code).then(a=>dispatch(ACTION.SIGNUP_UI))
 
 	,FORGET_PASSWORD: contact=>dispatch=>{
-		if(!contact)
-			return dispatch({type:"FORGET_PASSWORD_UI",contactError:"a phone number or email must be given to reset password"})
+		if(!contact){
+			dispatch({domain:DOMAIN,type:"FORGET_PASSWORD_UI",contactError:"a phone number or email must be given to reset password"})
+			return Promise.reject()
+		}
 
 		return User.requestPasswordReset(contact)
 			.then(a=>alert(`reset email/sms sent to ${contact}, please follow the instruction to reset your password`))
 	}
 
-	,SIGNUP_UI:{type:"SIGNUP_UI"}
-	,SIGNIN_UI:{type:"SIGNIN_UI"}
-	,FORGET_PASSWORD_UI:{type:"FORGET_PASSWORD_UI"}
-	,RESET_PASSWORD_UI:{type:"RESET_PASSWORD_UI"}
-	,PHONE_VERIFY_UI:({type:"PHONE_VERIFY_UI"})
+	,SIGNUP_UI:{domain:DOMAIN,type:"SIGNUP_UI"}
+	,SIGNIN_UI:{domain:DOMAIN,type:"SIGNIN_UI"}
+	,FORGET_PASSWORD_UI:{domain:DOMAIN,type:"FORGET_PASSWORD_UI"}
+	,RESET_PASSWORD_UI:{domain:DOMAIN,type:"RESET_PASSWORD_UI"}
+	,PHONE_VERIFY_UI:({domain:DOMAIN,type:"PHONE_VERIFY_UI"})
 }
 
 export const REDUCER={
-	account:(state={},action)=>{
-		switch(action.type){
-		case 'SIGNUP_UI':
-		case 'SIGNIN_UI':
-		case 'FORGET_PASSWORD_UI':
-		case 'RESET_PASSWORD_UI':
-		case 'PHONE_VERIFY_UI':
-			return action
-		default:
-			return state
+	[DOMAIN]:(state={},action)=>{
+		if(action.domain==DOMAIN){
+			switch(action.type){
+			case 'signin.ok':
+			case 'signup.ok':
+				return {}
+			case 'SIGNUP_UI':
+			case 'SIGNIN_UI':
+			case 'FORGET_PASSWORD_UI':
+			case 'RESET_PASSWORD_UI':
+			case 'PHONE_VERIFY_UI':
+				return action
+			}
 		}
+		return state
 	}
 }
 
-export const Account=connect(state=>state.account)(({user,type, dispatch})=>{
+export const Account=connect(state=>state.account)(({user,type,dispatch})=>{
 	if(!type){
 		if(user)
 			type='SIGNIN_UI'

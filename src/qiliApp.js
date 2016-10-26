@@ -20,7 +20,69 @@ import Tutorial from "./components/tutorial"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
 
-class App extends Component{
+const DOMAIN="__"
+
+export const ACTION={
+	INIT_APP(error,tutorialized){
+		if(!!error){
+			return {
+                domain:DOMAIN
+				,type:"initedError"
+				,user
+				,error
+			}
+		}else{
+			return {
+                domain:DOMAIN
+				,type:"inited"
+				,tutorialized
+			}
+		}
+	}
+	,USER_CHANGED:{
+        domain:DOMAIN
+        ,type:"USER_CHANGED"
+	},TUTORIALIZED:{
+        domain:DOMAIN
+        ,type:"TUTORIALIZED"
+	}
+}
+
+export const REDUCER={
+    [DOMAIN]:(state={},action)=>{
+        if(action.domain==DOMAIN){
+            switch(action.type){
+            case 'inited':
+                return {
+                    inited:true
+                    ,user:User.current
+                    ,tutorialized:action.tutorialized
+                }
+            break
+            case 'initedError':
+                return {
+                    inited:false
+                    ,user:User.current
+                    ,initedError:action.error
+                }
+            break
+            case 'USER_CHANGED':
+                return {
+                    inited:!!User.current
+                    ,user:User.current
+                    ,tutorialized:state.tutorialized
+                }
+    		case 'TUTORIALIZED':
+    			state.tutorialized=true
+    			return state
+            }
+        }
+        return state
+    }
+}
+
+export const QiliApp=connect(state=>state.__)(
+class extends Component{
     constructor(props){
         super(props)
 
@@ -69,7 +131,7 @@ class App extends Component{
     render(){
         const {inited, initedError, user, tutorialized, dispatch}=this.props
 		let content
-        
+
         if(!inited){
             if(initedError)
                 content= `Initializing Error: ${initedError}`
@@ -141,15 +203,15 @@ class App extends Component{
 
         if(!props.history)
             props.history=hashHistory
-		
+
 		const defaultCreateElement=(Component,props)=>{
 			const {history,params}=props
 			return (<Component router={history} {...params} {...props}/>)
 		}
 
-		const allReducers=combineReducers(Object.assign({},REDUCER,reducers))
+		const allReducers=combineReducers(Object.assign({},REDUCER,accountReducer, reducers))
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		
+
         return render((
                 <Provider store={createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))}>
                     <Router createElement={defaultCreateElement} {...props}>
@@ -158,63 +220,6 @@ class App extends Component{
                 </Provider>
             ),container)
     }
-}
-
-export const REDUCER={
-    __:(state={inited:false, user:User.current},action)=>{
-        switch(action.type){
-        case 'inited':
-            return {
-                inited:true
-                ,user:User.current
-                ,tutorialized:action.tutorialized
-            }
-        break
-        case 'initedError':
-            return {
-                inited:false
-                ,user:User.current
-                ,initedError:action.error
-            }
-        break
-        case 'USER_CHANGED':
-            return {
-                inited:!!User.current
-                ,user:User.current
-                ,tutorialized:state.tutorialized
-            }
-		case 'TUTORIALIZED':
-			state.tutorialized=true
-			return state
-        default:
-            return state
-        }
-    },
-	account: accountReducer
-}
-
-export const ACTION={
-	INIT_APP(error,tutorialized){
-		if(!!error){
-			return {
-				type:"initedError"
-				,user
-				,error
-			}
-		}else{
-			return {
-				type:"inited"
-				,tutorialized
-			}
-		}
-	}
-	,USER_CHANGED:{
-		type:"USER_CHANGED"
-	},TUTORIALIZED:{
-		type:"TUTORIALIZED"
-	}
-}
-
-export const QiliApp=connect(state=>state.__)(App)
+})
 
 export default QiliApp

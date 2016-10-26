@@ -29,3 +29,5 @@ node_modules
 
 dist/test.js
 dist/allin1.html
+
+lib

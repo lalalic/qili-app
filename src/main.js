@@ -10,13 +10,28 @@ import Logo from './icons/logo'
 
 const {Empty}=UI
 
+const DOMAIN="main"
+
 const ACTION={
 	APP_CHANGED:app=>{
-		return {type:"APP_CHANGED",app}
+		return {domain:DOMAIN, type:"APP_CHANGED",app}
 	}
 }
 
-class QiliConsole extends Component{
+const REDUCER={
+	[DOMAIN]: (state={},{domain, type,app})=>{
+		if(domain==DOMAIN){
+			switch(type){
+			case "APP_CHANGED":
+				return {app}
+			}
+		}
+		return state
+	}
+}
+
+const QiliConsole=connect(state=>({app:state[DOMAIN].app}))(
+class _QiliConsole extends Component{
     constructor(props){
         super(props)
 		Application.on('change',app=>{
@@ -52,7 +67,7 @@ class QiliConsole extends Component{
             </QiliApp>
         )
     }
-	
+
 	contextual(){
 		const {routes}=this.props
 		return !!!routes.find(a=>a.contextual===false)
@@ -71,10 +86,10 @@ class QiliConsole extends Component{
 	static defaultProps={
 		initAppName:null
 	}
-}
+})
 
 const CurrentApp=({name, app, open})=>(
-	<FloatingActionButton className="sticky top right" mini={true} 
+	<FloatingActionButton className="sticky top right" mini={true}
 		style={{fontSize:"xx-small", display:open ? undefined : "none" }}
 		onClick={e=>{
 			let apps=Application.all, len=apps.length
@@ -102,27 +117,14 @@ import {connect} from "react-redux"
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 
-const REDUCER={
-	qiliConsole: (state={},{type,app})=>{
-		switch(type){
-		case "APP_CHANGED":
-			return {app}
-		default:
-			return state
-		}
-	}
-}
-
-const QiliConsoleApp=connect(state=>({app:state.qiliConsole.app}))(QiliConsole)
-
 module.exports=QiliApp.render(
-    (<Route path="/" component={QiliConsoleApp}>
+    (<Route path="/" component={QiliConsole}>
         <IndexRoute component={Dashboard}/>
 
         <Route path="app/:name" name="app" component={AppUI}
 			onEnter={({params:{name}})=>{
 				if(!Application.current){
-					QiliConsole.defaultProps.initAppName=name
+					QiliConsole.WrappedComponent.defaultProps.initAppName=name
 				}
 			}}
 			onChange={(prev, next)=>{
@@ -150,9 +152,7 @@ module.exports=QiliApp.render(
 		</Route>
 
 
-    </Route>),{
-		
-	}
+    </Route>),{}
 	,Object.assign({},REDUCER,appUIReducer)
 	,thunk
 	,createLogger()
