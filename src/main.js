@@ -37,7 +37,7 @@ class _QiliConsole extends Component{
 		Application.on('change',app=>{
 			const {dispatch,routes,params, router}=this.props
 			if(routes[1] && routes[1].name=='app' && params.name!=app.name)
-				router.push(`app/${app.name}`)
+				router.replace(`app/${app.name}`)
 			dispatch(ACTION.APP_CHANGED(app))
 		})
     }

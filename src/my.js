@@ -7,30 +7,24 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 import Account from "./components/account"
 import App from "./db/app"
 
-export const My=(props,{router})=>(
+export const My=({router})=>(
 	<Account>
-		<ListItem 
+		<ListItem
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
 			autoGenerateNestedIndicator={false}
 			onTouchTap={a=>router.push("app")}
 			leftIcon={<IconAdd/>}
 			nestedItems={
-				App.all.map(a=>{
-					return (
+				App.all.map(a=>(
 						<ListItem primaryText={a.name} key={a._id}
 							leftIcon={<span/>}
 							rightIcon={<IconItem/>}
 							onClick={e=>router.push(`app/${(App.current=a).name}`)}/>
-					)
-				})
+				))
 			}
 		/>
 	</Account>
 )
-
-My.contextTypes={
-	router:PropTypes.object
-}
 
 export default My
