@@ -15,8 +15,10 @@ export const DOMAIN="cloudCode"
 export const ACTION={
 	UPDATE: code=>dispatch=>{
 		try{
-			new Function("Cloud",code)
 			let app=App.current
+			if(code===app.cloudCode)
+				return Promise.resolve()
+			new Function("Cloud",code)
 			app.cloudCode=code
 			return App.upsert(app)
 				.then(a=>dispatch({type:`@@${DOMAIN}/updated`}))
@@ -65,3 +67,5 @@ export const Cloud=connect(state=>{cloudCode:App.current.cloudCode})(
 		)
 	}
 )
+
+export default Cloud
