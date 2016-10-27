@@ -2,6 +2,7 @@ import React, {Component} from "react"
 import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
+import {syncHistoryWithStore, routerReducer, LOCATION_CHANGE} from 'react-router-redux'
 
 import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
@@ -20,68 +21,60 @@ import Tutorial from "./components/tutorial"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
 
-const DOMAIN="__"
+const DOMAIN="qiliApp"
 
 export const ACTION={
 	INIT_APP(error,tutorialized){
 		if(!!error){
 			return {
-                domain:DOMAIN
-				,type:"initedError"
-				,user
-				,error
+				type:`@@${DOMAIN}/initedError`
+				,payload:{user,error}
 			}
 		}else{
 			return {
-                domain:DOMAIN
-				,type:"inited"
-				,tutorialized
+				type:`@@${DOMAIN}/inited`
+				,payload:{tutorialized}
 			}
 		}
 	}
 	,USER_CHANGED:{
-        domain:DOMAIN
-        ,type:"USER_CHANGED"
+        type:`@@${DOMAIN}/USER_CHANGED`
 	},TUTORIALIZED:{
-        domain:DOMAIN
-        ,type:"TUTORIALIZED"
+        type:`@@${DOMAIN}/TUTORIALIZED`
 	}
 }
 
 export const REDUCER={
-    [DOMAIN]:(state={},action)=>{
-        if(action.domain==DOMAIN){
-            switch(action.type){
-            case 'inited':
-                return {
-                    inited:true
-                    ,user:User.current
-                    ,tutorialized:action.tutorialized
-                }
-            break
-            case 'initedError':
-                return {
-                    inited:false
-                    ,user:User.current
-                    ,initedError:action.error
-                }
-            break
-            case 'USER_CHANGED':
-                return {
-                    inited:!!User.current
-                    ,user:User.current
-                    ,tutorialized:state.tutorialized
-                }
-    		case 'TUTORIALIZED':
-    			state.tutorialized=true
-    			return state
-            }
-        }
+    [DOMAIN]:(state={},{type,payload})=>{
+		switch(type){
+		case `@@${DOMAIN}/inited`:
+			return {
+				inited:true
+				,user:User.current
+				,tutorialized:payload.tutorialized
+			}
+		break
+		case `@@${DOMAIN}/initedError`:
+			return {
+				inited:false
+				,user:User.current
+				,initedError:payload.error
+			}
+		break
+		case `@@${DOMAIN}/USER_CHANGED`:
+			return {
+				inited:!!User.current
+				,user:User.current
+				,tutorialized:state.tutorialized
+			}
+		case `@@${DOMAIN}/TUTORIALIZED`:
+			return Object.assign({},state,{tutorialized:true})
+		}
         return state
     }
 }
 
-export const QiliApp=connect(state=>state.__)(
+export const QiliApp=connect(state=>state[DOMAIN])(
 class extends Component{
     constructor(props){
         super(props)
@@ -185,10 +178,6 @@ class extends Component{
         loading: React.PropTypes.func
 	}
 
-	static contextTypes={
-		router: React.PropTypes.object
-	}
-
     static render(routes, props={}, reducers={}, ...middlewars){
         let container=document.getElementById('app')
         if(!container){
@@ -200,20 +189,23 @@ class extends Component{
         document.getElementsByTagName("head")[0].appendChild(style)
         style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
         container.style.height=window.innerHeight+'px'
-
+			
         if(!props.history)
             props.history=hashHistory
 
 		const defaultCreateElement=(Component,props)=>{
 			const {history,params}=props
-			return (<Component router={history} {...params} {...props}/>)
+			return (<Component router={history} {...props}/>)
 		}
 
-		const allReducers=combineReducers(Object.assign({},REDUCER,accountReducer, reducers))
-		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+		const allReducers=combineReducers(Object.assign({routing:routerReducer},REDUCER,accountReducer, reducers))
+		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+		const store=createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))
+		props.history=syncHistoryWithStore(props.history,store)
+		
         return render((
-                <Provider store={createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))}>
+                <Provider store={store}>
                     <Router createElement={defaultCreateElement} {...props}>
                         {routes}
                     </Router>

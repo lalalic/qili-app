@@ -133,7 +133,7 @@ export default class Application extends Service.BuiltIn{
         return new Promise((resolve, reject)=>{
             this.ajax({
                 method:'get',
-                url:`${this.server}schemas/logs?appman=${_current.apiKey}&query=${query}`
+                url:`${this.server}schemas/logs?appman=${_current.apiKey}&query=${query}&limit=20`
             }).then((a)=>resolve(a.results), reject)
         })
     }

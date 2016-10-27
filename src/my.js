@@ -20,7 +20,7 @@ export const My=({router})=>(
 						<ListItem primaryText={a.name} key={a._id}
 							leftIcon={<span/>}
 							rightIcon={<IconItem/>}
-							onClick={e=>router.push(`app/${(App.current=a).name}`)}/>
+							onClick={e=>router.push(`/app/${(App.current=a).name}`)}/>
 				))
 			}
 		/>

@@ -20,14 +20,14 @@ export const ACTION={
 			nameError="name is required"
 		if(nameError){
 			return dispatch=>{
-				dispatch({domain:DOMAIN, type:"error", nameError})
+				dispatch({type:`@@${DOMAIN}/error`, payload:{nameError}})
 				return Promise.reject()
 			}
 		}
 
 		return dispatch=>dbApplication.upsert({name,uname})
 			.then(app=>{
-				dispatch({domain:DOMAIN,type:"created"})
+				dispatch({type:`@@${DOMAIN}/created`})
 				return dbApplication.current=app
 			})
 	}
@@ -36,32 +36,30 @@ export const ACTION={
 		app[key]=value
 		return dispatch=>dbApplication.upsert(app)
 			.then(app=>{
-				dispatch({domain:DOMAIN, type:"updated"})
+				dispatch({type:`@@${DOMAIN}/updated`})
 				return dbApplication.current=app
 			})
 	}
-	,REMOVE: id=>dispatch=>dbApplication.remove(id).then(a=>dispatch({domain:DOMAIN, type:"removed"}))
+	,REMOVE: id=>dispatch=>dbApplication.remove(id).then(a=>dispatch({type:`@@${DOMAIN}/removed`}))
 
 	,UPLOAD: a=>displatch=>UI.selectFile('raw')
 			.then(app=>dbApplication.upload(app))
 			.then(app=>{
-				dispatch({domain:DOMAIN, type:"uploaded"})
+				dispatch({type:`@@${DOMAIN}/uploaded`})
 				return dbApplication.current=app
 			})
 }
 
 export const REDUCER={
-	[DOMAIN]: (state={},{domain, type, nameError, unameError})=>{
-		if(domain==DOMAIN){
-			switch(type){
-			case 'error':
-				return {nameError, unameError}
-			case 'uploaded':
-			case 'removed':
-			case 'created':
-			case 'updated':
-				return {}
-			}
+	[DOMAIN]: (state={},{type, payload})=>{
+		switch(type){
+		case `@@${DOMAIN}/error`:
+			return payload
+		case `@@${DOMAIN}/uploaded`:
+		case `@@${DOMAIN}/removed`:
+		case `@@${DOMAIN}/created`:
+		case `@@${DOMAIN}/updated`:
+			return {}
 		}
 		return state
 	}

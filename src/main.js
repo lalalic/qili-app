@@ -1,5 +1,5 @@
 require('../style/index.less')
-import React, {Component} from "react"
+import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton} from 'material-ui'
 
@@ -10,21 +10,19 @@ import Logo from './icons/logo'
 
 const {Empty}=UI
 
-const DOMAIN="main"
+const DOMAIN="qiliConsole"
 
 const ACTION={
 	APP_CHANGED:app=>{
-		return {domain:DOMAIN, type:"APP_CHANGED",app}
+		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}}
 	}
 }
 
 const REDUCER={
-	[DOMAIN]: (state={},{domain, type,app})=>{
-		if(domain==DOMAIN){
-			switch(type){
-			case "APP_CHANGED":
-				return {app}
-			}
+	[DOMAIN]: (state={},{type,payload})=>{
+		switch(type){
+		case `@@${DOMAIN}/APP_CHANGED`:
+			return {app:payload.app}
 		}
 		return state
 	}
@@ -35,10 +33,10 @@ class _QiliConsole extends Component{
     constructor(props){
         super(props)
 		Application.on('change',app=>{
-			const {dispatch,routes,params, router}=this.props
-			if(routes[1] && routes[1].name=='app' && params.name!=app.name)
-				router.replace(`app/${app.name}`)
+			const {dispatch,routes,params,router}=this.props
 			dispatch(ACTION.APP_CHANGED(app))
+			if(routes[1] && routes[1].name=='app' && params.name!=app.name)
+				router.replace(`/app/${app.name}`)
 		})
     }
 
@@ -86,6 +84,10 @@ class _QiliConsole extends Component{
 	static defaultProps={
 		initAppName:null
 	}
+	
+	static contextTypes={
+		router: PropTypes.object
+	}
 })
 
 const CurrentApp=({name, app, open})=>(
@@ -108,7 +110,7 @@ import Dashboard from './dashboard'
 import AppUI, {Creator, REDUCER as appUIReducer} from './app'
 import CloudUI from './cloud'
 import DataUI from './data'
-import LogUI from './log'
+import LogUI, {REDUCER as logUIReducer} from './log'
 import MyUI from "./my"
 import SettingUI from "./setting"
 import ProfileUI from "./user-profile"
@@ -117,7 +119,7 @@ import {connect} from "react-redux"
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 
-module.exports=QiliApp.render(
+export const Main=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
         <IndexRoute component={Dashboard}/>
 
@@ -127,10 +129,7 @@ module.exports=QiliApp.render(
 					QiliConsole.WrappedComponent.defaultProps.initAppName=name
 				}
 			}}
-			onChange={(prev, next)=>{
-				if(prev.params.name!=next.params.name)
-					Application.current=next.params.name
-			}}/>
+			/>
 		<Route path="app" contextual={false} component={Creator}/>
 
         <Route path="cloud" component={CloudUI}/>
@@ -153,7 +152,7 @@ module.exports=QiliApp.render(
 
 
     </Route>),{}
-	,Object.assign({},REDUCER,appUIReducer)
+	,Object.assign({},REDUCER,appUIReducer,logUIReducer)
 	,thunk
 	,createLogger()
 )
