@@ -2,7 +2,6 @@ import React, {Component} from "react"
 import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
-import {syncHistoryWithStore, routerReducer, LOCATION_CHANGE} from 'react-router-redux'
 
 import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
@@ -189,7 +188,7 @@ class extends Component{
         document.getElementsByTagName("head")[0].appendChild(style)
         style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
         container.style.height=window.innerHeight+'px'
-			
+
         if(!props.history)
             props.history=hashHistory
 
@@ -199,10 +198,9 @@ class extends Component{
 		}
 
 
-		const allReducers=combineReducers(Object.assign({routing:routerReducer},REDUCER,accountReducer, reducers))
+		const allReducers=combineReducers(Object.assign({},REDUCER,accountReducer, reducers))
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 		const store=createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))
-		props.history=syncHistoryWithStore(props.history,store)
 		
         return render((
                 <Provider store={store}>
