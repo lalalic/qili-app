@@ -34,15 +34,15 @@ export default class CommandBar extends Component{
                     command={action:command}
 
                 if(command.action.toLowerCase()=='back'){
-                    command.icon=BackIcon
+                    command.icon=<BackIcon/>
                     command.onSelect=()=>{this.context.router.goBack()}
                 }
 
                 if(command.action.toLowerCase()=='refresh' && !command.icon)
-                    command.icon=RefreshIcon
+                    command.icon=<RefreshIcon/>
 
                 if(command.action.toLowerCase()=='save' && !command.icon)
-                    command.icon=SaveIcon
+                    command.icon=<SaveIcon/>
 
                 return (
                     <CommandBar.Command key={command.action}
@@ -108,7 +108,7 @@ export default class CommandBar extends Component{
 
     static Command=class extends Component{
         render(){
-            var {primary, onSelect, action, label, icon:Icon=DefaultIcon, children}=this.props
+            var {primary, onSelect, action, label, icon:Icon=(<DefaultIcon/>), children}=this.props
             var props={}
             if(primary)
                 props.className="primary"
@@ -116,7 +116,7 @@ export default class CommandBar extends Component{
                 <div {...props}>
                     <a style={{cursor:'default'}}
                         onClick={(e)=>onSelect(action,e)}>
-                        <center><Icon/></center>
+                        <center>{React.isValidElement(Icon) ? Icon : (<Icon/>)}</center>
                         <center style={{fontSize:'smaller'}}>{label||action}</center>
                     </a>
                     {children}

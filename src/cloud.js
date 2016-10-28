@@ -56,10 +56,10 @@ export const Cloud=connect(state=>{cloudCode:App.current.cloudCode})(
 				<CommandBar className="footbar"
 					items={[
 						{action:"Back"}
-						,{action:"Upload", icon:Upload,
+						,{action:"Upload", icon:<Upload/>,
 							onSelect:e=>dispatch(ACTION.UPLOAD())
 						}
-						,{action:"Save",icon:Save,
+						,{action:"Save",icon:<Save/>,
 							onSelect:e=>dispatch(ACTION.UPDATE(refCode.getValue()))
 						}
 					]}/>

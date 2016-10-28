@@ -12,13 +12,13 @@ const {CommandBar, Empty}=UI
 export const Dashboard=({router})=>(
 	<div>
 		<Empty icon={<Cloud/>} text="Welcome to Qili"/>
-		<CommandBar  className="footbar" 
+		<CommandBar  className="footbar"
 			onSelect={cmd=>router.push(`/${cmd.toLowerCase()}`)}
 			items={[
-				{action:"Data", icon:Data},
-				{action:"Cloud", icon:Cloud},
-				{action:"Log", icon:Log},
-				{action:"My", icon:IconAccount}
+				{action:"Data", icon:<Data/>},
+				{action:"Cloud", icon:<Cloud/>},
+				{action:"Log", icon:<Log/>},
+				{action:"My", icon:<IconAccount/>}
 				]}
 			/>
 	</div>

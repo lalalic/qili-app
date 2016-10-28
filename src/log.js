@@ -35,7 +35,7 @@ export const REDUCER={
 		switch(type){
 		case `@@${DOMAIN}/fetched`:
 		return {logs:payload}
-		
+
 		}
         return state
     }
@@ -47,7 +47,7 @@ class extends Component{
 		const {dispatch,params:{level}}=this.props
 		dispatch(ACTION.FETCH(level))
 	}
-	
+
 	componentWillReceiveProps(next){
 		if(next.params.level!==this.props.params.level)
 			next.dispatch(ACTION.FETCH(next.params.level))
@@ -67,10 +67,10 @@ class extends Component{
 					primary={level}
 					items={[
 						{action:"Back"},
-						{action:"http", icon:Http},
-						{action:"error", icon:Error},
-						{action:"warning", icon:Warning},
-						{action:"all", icon:All}
+						{action:"http", icon:<Http/>},
+						{action:"error", icon:<Error/>},
+						{action:"warning", icon:<Warning/>},
+						{action:"all", icon:<All/>}
 					]}/>
 			</div>
 		)

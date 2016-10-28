@@ -75,11 +75,11 @@ export const App=connect(state=>({app:dbApplication.current, ...state[DOMAIN]}))
 					{action:"Back"}
 
 					,{action:"Upload"
-						,icon:Upload
+						,icon:<Upload/>
 						,onSelect:e=>dispatch(ACTION.UPLOAD())
 					}
 					,{action:"Remove"
-						,icon:Remove
+						,icon:<Remove/>
 						,onSelect:e=>{
 							let name=prompt("Please make sure you know what you are doing by giving this app name")
 							if(name==app.name){
@@ -153,7 +153,7 @@ export const Creator=connect(state=>state[DOMAIN])(
 			<UI.CommandBar className="footbar"
 				items={[
 					{action:"Back"}
-					,{action:"Save", label:"保存", icon:Save
+					,{action:"Save", label:"保存", icon:<Save/>
 						,onSelect:a=>dispatch(ACTION.CREATE(refName.getValue(),refUname.getValue()))
 							.then(({name})=>router.replace({pathname:`app/${name}`}))
 					}
