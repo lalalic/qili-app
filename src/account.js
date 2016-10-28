@@ -328,4 +328,4 @@ class SMSRequest extends Component{
 	}
 }
 
-export default Account
+export default Object.assign(Account,{ACTION, REDUCER})

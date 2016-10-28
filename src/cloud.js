@@ -21,11 +21,11 @@ export const ACTION={
 			new Function("Cloud",code)
 			app.cloudCode=code
 			return App.upsert(app)
-				.then(a=>dispatch({type:`@@${DOMAIN}/updated`}))
 				.catch(e=>alert(e.message))
+				.then(a=>dispatch({type:`@@${DOMAIN}/updated`}))
 		}catch(error){
 			return Promise.reject(error)
-				.catch(e->alert(e.message))
+				.catch(e=>alert(e.message))
 		}
 	}
 	,UPLOAD: a=>dispatch=>fileSelector.selectTextFile()
@@ -57,10 +57,10 @@ export const Cloud=connect(state=>{cloudCode:App.current.cloudCode})(
 					items={[
 						{action:"Back"}
 						,{action:"Upload", icon:Upload,
-							onSelect:e=>dispatch(ACTION.UPDATE(refCode.getValue()))
-						}
-						,{action:"Save",icon:Save
 							onSelect:e=>dispatch(ACTION.UPLOAD())
+						}
+						,{action:"Save",icon:Save,
+							onSelect:e=>dispatch(ACTION.UPDATE(refCode.getValue()))
 						}
 					]}/>
 			</div>
@@ -68,4 +68,5 @@ export const Cloud=connect(state=>{cloudCode:App.current.cloudCode})(
 	}
 )
 
-export default Cloud
+
+export default Object.assign(Cloud,{ACTION,REDUCER})

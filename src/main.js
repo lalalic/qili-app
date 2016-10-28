@@ -10,7 +10,7 @@ import Logo from './icons/logo'
 
 const {Empty}=UI
 
-const DOMAIN="qiliConsole"
+const DOMAIN="main"
 
 const ACTION={
 	APP_CHANGED:app=>{
@@ -29,7 +29,7 @@ const REDUCER={
 }
 
 const QiliConsole=connect(state=>({app:state[DOMAIN].app}))(
-class _QiliConsole extends Component{
+class extends Component{
     constructor(props){
         super(props)
 		Application.on('change',app=>{
@@ -71,22 +71,8 @@ class _QiliConsole extends Component{
 		return !!!routes.find(a=>a.contextual===false)
 	}
 
-	static childContextTypes={
-		app: React.PropTypes.object
-	}
-
-	getChildContext(){
-		return {
-			app: this.props.app
-		}
-	}
-
 	static defaultProps={
 		initAppName:null
-	}
-	
-	static contextTypes={
-		router: PropTypes.object
 	}
 })
 
@@ -107,10 +93,10 @@ const CurrentApp=({name, app, open})=>(
 )
 
 import Dashboard from './dashboard'
-import AppUI, {Creator, REDUCER as appUIReducer} from './app'
+import AppUI, {Creator} from './app'
 import CloudUI from './cloud'
 import DataUI from './data'
-import LogUI, {REDUCER as logUIReducer} from './log'
+import LogUI from './log'
 import MyUI from "./my"
 import SettingUI from "./setting"
 import ProfileUI from "./user-profile"
@@ -152,8 +138,8 @@ export const Main=QiliApp.render(
 
 
     </Route>),{}
-	,Object.assign({},REDUCER,appUIReducer,logUIReducer)
-	,thunk
+	,Object.assign({},REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER)
+	,thunk 
 	,createLogger()
 )
 

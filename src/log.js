@@ -76,4 +76,4 @@ class extends Component{
 		)
 	}
 })
-export default Log
+export default Object.assign(Log,{ACTION,REDUCER})

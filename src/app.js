@@ -163,4 +163,4 @@ export const Creator=connect(state=>state[DOMAIN])(
 	)
 })
 
-export default App
+export default Object.assign(App,{ACTION, REDUCER})

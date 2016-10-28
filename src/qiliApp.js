@@ -5,6 +5,7 @@ import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
 import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
+import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -15,7 +16,7 @@ import {init,User} from "./db"
 import Messager from "./components/messager"
 import Loading from "./components/loading"
 import supportTap from 'react-tap-event-plugin'
-import Account, {REDUCER as accountReducer} from './account'
+import Account from './account'
 import Tutorial from "./components/tutorial"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
@@ -198,9 +199,10 @@ class extends Component{
 		}
 
 
-		const allReducers=combineReducers(Object.assign({},REDUCER,accountReducer, reducers))
+		const allReducers=combineReducers(Object.assign({routing:routerReducer},REDUCER,Account.REDUCER, reducers))
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 		const store=createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))
+		props.history=syncHistoryWithStore(props.history,store)
 		
         return render((
                 <Provider store={store}>
@@ -212,4 +214,4 @@ class extends Component{
     }
 })
 
-export default QiliApp
+export default Object.assign(QiliApp,{ACTION,REDUCER})

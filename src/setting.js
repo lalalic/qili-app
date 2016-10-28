@@ -7,16 +7,6 @@ import UpdateIcon from 'material-ui/svg-icons/action/system-update-alt'
 import AboutIcon from 'material-ui/svg-icons/action/info-outline'
 import LogoIcon from "material-ui/svg-icons/action/android"
 
-export const DOMAIN="setting"
-export const ACTION={
-
-}
-
-export const REDUCER={
-    [DOMAIN]: (state, {type, payload}){
-
-    }
-}
 
 export const Setting=props=>(
     <List>
