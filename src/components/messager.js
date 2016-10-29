@@ -1,15 +1,13 @@
 import React, {Component} from 'react'
 
-var _instance
+
+
+
 export default class Messager extends Component{
-    constructor(props){
-        super(props)
-        this.state={
-            message:"default",
-            level:'Info',
-            open: !!this.props.open || false
-        }
-		_instance=_instance||this
+    state={
+        message:"default",
+        level:'Info',
+        open: !!this.props.open || false
     }
 
     render(){

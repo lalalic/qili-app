@@ -1,9 +1,8 @@
 import React, {Component} from "react"
-import {Avatar} from "material-ui"
+import {Avatar, List, ListItem} from "material-ui"
 
 import {Service} from '../db/service'
 import CommandBar from './command-bar'
-import List from './list'
 import User from '../db/user'
 import Comment from '../db/comment'
 
@@ -30,10 +29,9 @@ export default class CommentUI extends Component{
         const {params:{_id}, template}=this.props
 		return (
             <div className="comment">
-
-                <List ref="list"
-                    model={this._data}
-                    template={template}/>
+                <List>
+                    {data.maps(a=><template model={a}/>)}
+                </List>
 
                 <CommandBar
                     className="footbar centerinput"
@@ -42,7 +40,7 @@ export default class CommentUI extends Component{
                             (<textarea ref="comment"
                                 placeholder="give some comment:140"
                                 maxLength={140}/>),
-                            {action:"Save", onSelect:()=>this.save()}
+                            {action:"Save", onSelect:e=>this.save()}
                         ]}
                     />
     		</div>
@@ -68,11 +66,9 @@ export default class CommentUI extends Component{
     }
 
     static defaultProps={
-        template: class extends Component{
-            render(){
-                var {model}=this.props,
-                    name, left, right, text,
-                    isOwner=model.author._id==User.current._id;
+        template: ({model})=>{
+                let name, left, right, text
+                const isOwner=model.author._id==User.current._id;
                 if(isOwner){
                     left=(<span/>)
                     right=(<Avatar src={User.current.thumbnail}/>)
@@ -83,7 +79,7 @@ export default class CommentUI extends Component{
                 }
 
                 return (
-                    <List.Item
+                    <ListItem
                         key={model._id}
                         style={{paddingTop:10,paddingLeft:62}}
                         leftAvatar={left}
@@ -96,7 +92,7 @@ export default class CommentUI extends Component{
                                 <span>{model.content}</span>
                             </p>
                         </div>
-                    </List.Item>
+                    </ListItem>
                 )
             }
         }

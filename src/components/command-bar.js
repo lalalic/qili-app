@@ -13,47 +13,46 @@ var _current;
 
 export default class CommandBar extends Component{
     render(){
-        var {onSelect, className, primary, items=[],...others}=this.props,
-            i=0,
-            commands=items.map((command)=>{
-                if(command instanceof CommandBar.Command)
-                    return command
-
-                if(command instanceof CommandBar.DialogCommand)
-                    throw new Error("Please use common command to trigger DialogCommand")
-
-                if(React.isValidElement(command)){
-                    return (
-                        <div key={i++}>
-                            {command}
-                        </div>
-                    )
-                }
-
-                if(typeof(command)=='string')
-                    command={action:command}
-
-                if(command.action.toLowerCase()=='back'){
-                    command.icon=<BackIcon/>
-                    command.onSelect=()=>{this.context.router.goBack()}
-                }
-
-                if(command.action.toLowerCase()=='refresh' && !command.icon)
-                    command.icon=<RefreshIcon/>
-
-                if(command.action.toLowerCase()=='save' && !command.icon)
-                    command.icon=<SaveIcon/>
-
-                return (
-                    <CommandBar.Command key={command.action}
-                        primary={command.action==primary}
-                        onSelect={onSelect} {...command}/>
-                )
-            })
-
+        const {onSelect, className, primary, items=[],...others}=this.props
         return (
             <div className={`commands ${className}`} {...others}>
-                {commands}
+            {
+                items.map((command,i)=>{
+                    if(command instanceof CommandBar.Command)
+                        return command
+
+                    if(command instanceof CommandBar.DialogCommand)
+                        throw new Error("Please use common command to trigger DialogCommand")
+
+                    if(React.isValidElement(command)){
+                        return (
+                            <div key={i++}>
+                                {command}
+                            </div>
+                        )
+                    }
+
+                    if(typeof(command)=='string')
+                        command={action:command}
+
+                    if(command.action.toLowerCase()=='back'){
+                        command.icon=<BackIcon/>
+                        command.onSelect=()=>{this.context.router.goBack()}
+                    }
+
+                    if(command.action.toLowerCase()=='refresh' && !command.icon)
+                        command.icon=<RefreshIcon/>
+
+                    if(command.action.toLowerCase()=='save' && !command.icon)
+                        command.icon=<SaveIcon/>
+
+                    return (
+                        <CommandBar.Command key={command.action}
+                            primary={command.action==primary}
+                            onSelect={onSelect} {...command}/>
+                    )
+                })
+            }
             </div>
         )
     }
@@ -108,7 +107,7 @@ export default class CommandBar extends Component{
 
     static Command=class extends Component{
         render(){
-            var {primary, onSelect, action, label, icon:Icon=(<DefaultIcon/>), children}=this.props
+            var {primary, onSelect, action, label, icon=(<DefaultIcon/>), children}=this.props
             var props={}
             if(primary)
                 props.className="primary"
@@ -116,7 +115,7 @@ export default class CommandBar extends Component{
                 <div {...props}>
                     <a style={{cursor:'default'}}
                         onClick={(e)=>onSelect(action,e)}>
-                        <center>{React.isValidElement(Icon) ? Icon : (<Icon/>)}</center>
+                        <center>{icon}</center>
                         <center style={{fontSize:'smaller'}}>{label||action}</center>
                     </a>
                     {children}

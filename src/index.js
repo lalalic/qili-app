@@ -5,7 +5,6 @@ export {QiliApp} from "./qiliApp"
 export const UI={
     Empty:require('./components/empty'),
     Loading:require('./components/loading'),
-    List: require('./components/list'),
     Comment:require('./components/comment'),
     CommandBar: require('./components/command-bar'),
     Photo: require('./components/photo'),
