@@ -13,7 +13,10 @@ import IconCol from "material-ui/svg-icons/device/storage"
 const {CommandBar, fileSelector}=UI
 const {DialogCommand}=CommandBar
 
-const DOMAIN="data"
+const DOMAIN="ui.data"
+const INIT_STATE={
+	data:[],index:[],schema:[],app:null
+}
 export const ACTION={
 	FETCH:(name,schema)=>dispatch=>Promise.all([App.collectionData(name),App.collectionIndexes(name),schema])
 			.then(([data,index,schema])=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,index,schema}}))
@@ -36,7 +39,7 @@ export const ACTION={
 }
 
 export const REDUCER={
-	[DOMAIN]:(state={data:[],index:[],schema:[],app:null},{type,payload})=>{
+	[DOMAIN]:(state=INIT_STATE,{type,payload})=>{
 		switch(type){
 		case `@@${DOMAIN}/fetched`:
 			payload.schema=payload.schema||state.schema
@@ -46,7 +49,10 @@ export const REDUCER={
 			return Object.assign({},state,{schema:payload})
 
 		case `@@main/APP_CHANGED`:
-			return {data:[],index:[],schema:[],app:payload.app._id}
+			return Object.assign({},INIT_STATE,{app:payload.app._id})
+
+		case `@@${DOMAIN}/CLEAR`:
+			return INIT_STATE
 		}
 		return state
 	}
@@ -64,6 +70,9 @@ class extends Component{
 			next.dispatch(ACTION.FETCH(next.params.name,App.schema))
 		else if(next.params.name!=this.props.params.name)
 			next.dispatch(ACTION.FETCH(next.params.name))
+	}
+	componentWillUnmount(){
+		this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
 	}
 
 	render(){

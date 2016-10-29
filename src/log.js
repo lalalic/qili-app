@@ -24,18 +24,19 @@ const LEVEL={
     }
 const Icons={Http, Error, Warning, All}
 const DOMAIN="ui.log"
-
+const INIT_STATE={logs:[]}
 export const ACTION={
 	FETCH:level=>dispatch=>dbApplication.getLog(LEVEL[level]).then(logs=>dispatch(ACTION.FETCHED(logs)))
 	,FETCHED: logs=>({type:`@@${DOMAIN}/fetched`,payload:logs})
 }
 
 export const REDUCER={
-    [DOMAIN]:(state={logs:[]},{type,payload})=>{
+    [DOMAIN]:(state=INIT_STATE,{type,payload})=>{
 		switch(type){
 		case `@@${DOMAIN}/fetched`:
 		return {logs:payload}
-
+        case `@@${DOMAIN}/CLEAR`:
+        return INIT_STATE
 		}
         return state
     }
@@ -52,6 +53,9 @@ class extends Component{
 		if(next.params.level!==this.props.params.level)
 			next.dispatch(ACTION.FETCH(next.params.level))
 	}
+    componentWillUnmount(){
+        this.props.dispatch(`@@${DOMAIN}/CLEAR`)
+    }
 	render(){
 		const {logs,router,params:{level},dispatch}=this.props
 		return (

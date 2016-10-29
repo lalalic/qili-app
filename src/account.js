@@ -5,7 +5,7 @@ import {connect} from "react-redux"
 
 const ENTER=13
 const DOMAIN="ui.account"
-
+const INIT_STATE={}
 export const ACTION={
 	SIGNUP:user=>dispatch=>{
 		const {username,password,password2}=user
@@ -24,7 +24,6 @@ export const ACTION={
 		}
 
 		return User.signup({username,password})
-			.then(a=>{dispatch({type:`@@${DOMAIN}/signup.ok`});return a})
 			.catch(({message})=>dispatch({type:`@@${DOMAIN}/SIGNUP_UI`, payload:{usernameError:message}}))
 	}
 	,SIGNIN:user=>dispatch=>{
@@ -41,7 +40,6 @@ export const ACTION={
 		}
 
 		return User.signin({username,password})
-			.then(a=>{dispatch({type:`@@${DOMAIN}/signin.ok`});return a})
 			.catch(({message})=>dispatch({type:`@@${DOMAIN}/SIGNIN_UI`,payload:{usernameError:message}}))
 	}
 	,PHONE_VERIFY_REQUEST:phone=>{
@@ -68,41 +66,47 @@ export const ACTION={
 }
 
 export const REDUCER={
-	[DOMAIN]:(state={},{type,payload})=>{
+	[DOMAIN]:(state=INIT_STATE,{type,payload})=>{
 		switch(type){
-		case `@@${DOMAIN}/signin.ok`:
-		case `@@${DOMAIN}/signup.ok`:
-			return {}
 		case `@@${DOMAIN}/SIGNUP_UI`:
 		case `@@${DOMAIN}/SIGNIN_UI`:
 		case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
 		case `@@${DOMAIN}/RESET_PASSWORD_UI`:
 		case `@@${DOMAIN}/PHONE_VERIFY_UI`:
 			return payload
+		case `@@${DOMAIN}/CLEAR`:
+			return INIT_STATE
 		}
 		return state
 	}
 }
 
-export const Account=connect(state=>state[DOMAIN])(({user,type,dispatch})=>{
-	if(!type){
-		if(user)
-			type='SIGNIN_UI'
-		else
-			type='PHONE_VERIFY_UI'
+export const Account=connect(state=>state[DOMAIN])(
+class extends Component{
+	componentWillUnmount(){
+		this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
 	}
+	render(){
+		const {user,type,dispatch}=this.props
+		if(!type){
+			if(user)
+				type='SIGNIN_UI'
+			else
+				type='PHONE_VERIFY_UI'
+		}
 
-	switch(type){
-	case 'SIGNUP_UI':
-		return (<Signup/>)
-	case 'SIGNIN_UI':
-		return (<Signin user={user}/>)
-	case 'PHONE_VERIFY_UI':
-		return (<PhoneVerification />)
-	case 'FORGET_PASSWORD_UI':
-		return (<ForgetPassword/>)
-	case 'RESET_PASSWORD_UI':
-		return (<ResetPassword/>)
+		switch(type){
+		case 'SIGNUP_UI':
+			return (<Signup/>)
+		case 'SIGNIN_UI':
+			return (<Signin user={user}/>)
+		case 'PHONE_VERIFY_UI':
+			return (<PhoneVerification />)
+		case 'FORGET_PASSWORD_UI':
+			return (<ForgetPassword/>)
+		case 'RESET_PASSWORD_UI':
+			return (<ResetPassword/>)
+		}
 	}
 })
 
