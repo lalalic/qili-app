@@ -87,7 +87,7 @@ class extends Component{
 		this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
 	}
 	render(){
-		const {user,type,dispatch}=this.props
+		let {user,type,dispatch}=this.props
 		if(!type){
 			if(user)
 				type='SIGNIN_UI'

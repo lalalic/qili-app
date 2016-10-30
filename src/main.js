@@ -139,7 +139,7 @@ export const Main=QiliApp.render(
 
     </Route>),{}
 	,Object.assign({},REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER)
-	,thunk 
+	,thunk
 	,createLogger()
 )
 
