@@ -2,3 +2,7 @@ refactor
 =======
 > redux for state management
 > composition mode for qili-app
+
+0.6.0
+======
+redux refactor finished
