@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.7.4",
-    "immutable.js": "^1.1.2",
+    "immutable": "^3.8.1",
     "material-ui": "^0.15.0",
     "minimongo": ">=3.2.13",
     "react": "^15.1.0",
