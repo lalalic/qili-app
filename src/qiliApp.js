@@ -75,7 +75,7 @@ export const REDUCER={
     }
 }
 
-export const QiliApp=connect(state=>state[DOMAIN])(
+export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(
 class extends Component{
     constructor(props){
         super(props)
