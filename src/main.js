@@ -102,8 +102,6 @@ import SettingUI from "./setting"
 import ProfileUI from "./user-profile"
 
 import {connect} from "react-redux"
-import thunk from 'redux-thunk'
-import createLogger from 'redux-logger'
 
 export const Main=QiliApp.render(
     (<Route path="/" component={QiliConsole}>
@@ -137,10 +135,8 @@ export const Main=QiliApp.render(
 		</Route>
 
 
-    </Route>),{}
+    </Route>)
 	,Object.assign({},REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER)
-	,thunk
-	,createLogger()
 )
 
 

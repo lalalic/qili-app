@@ -6,6 +6,7 @@ import {Router, Route, IndexRoute, hashHistory} from "react-router"
 import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
 import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
+import thunk from 'redux-thunk'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -178,7 +179,8 @@ class extends Component{
         loading: React.PropTypes.func
 	}
 
-    static render(routes, props={}, reducers={}, ...middlewars){
+    static render(routes, reducers={}, ...middlewars){
+		const props={}
         let container=document.getElementById('app')
         if(!container){
             container=document.createElement('div')
@@ -201,7 +203,7 @@ class extends Component{
 
 		const allReducers=combineReducers(Object.assign({routing:routerReducer},REDUCER,Account.REDUCER, reducers))
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		const store=createStore(allReducers, composeEnhancers(applyMiddleware(...middlewars)))
+		const store=createStore(allReducers, composeEnhancers(applyMiddleware(thunk,...middlewars)))
 		props.history=syncHistoryWithStore(props.history,store)
 		
         return render((

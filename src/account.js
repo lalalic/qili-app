@@ -73,7 +73,7 @@ export const REDUCER={
 		case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
 		case `@@${DOMAIN}/RESET_PASSWORD_UI`:
 		case `@@${DOMAIN}/PHONE_VERIFY_UI`:
-			return payload
+			return Object.assign({type:type.split("/").pop()},payload)
 		case `@@${DOMAIN}/CLEAR`:
 			return INIT_STATE
 		}
@@ -110,7 +110,7 @@ class extends Component{
 	}
 })
 
-const PhoneVerification=connect(state=>state.account)(
+const PhoneVerification=connect(state=>state[DOMAIN])(
 	({phoneVerifiedError,dispatch})=>{
 		let code,phone
 		return (
@@ -135,7 +135,7 @@ const PhoneVerification=connect(state=>state.account)(
 		)
 });
 
-const Signup=connect(state=>state.account)(
+const Signup=connect(state=>state[DOMAIN])(
 	({usernameError, passwordError, password2Error, dispatch})=>{
 		let username, password, password2
 		let values=a=>({
@@ -175,7 +175,7 @@ const Signup=connect(state=>state.account)(
 			)
 });
 
-const Signin=connect(state=>state.account)(
+const Signin=connect(state=>state[DOMAIN])(
 	({user, usernameError, passwordError,dispatch})=>{
 		let username, password
 		let values=a=>({
@@ -210,7 +210,7 @@ const Signin=connect(state=>state.account)(
 		)
 });
 
-const ForgetPassword=connect(state=>state.account)(
+const ForgetPassword=connect(state=>state[DOMAIN])(
 	({contactError, dispatch})=>{
 		let contact
 		return (
@@ -235,7 +235,7 @@ const ForgetPassword=connect(state=>state.account)(
 			)
 });
 
-const ResetPassword=connect(state=>state.account)(
+const ResetPassword=connect(state=>state[DOMAIN])(
 	({resetError,dispatch})=>{
 		let oldPassword, password, password2
 		let values=a=>({
