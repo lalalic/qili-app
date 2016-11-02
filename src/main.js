@@ -2,7 +2,7 @@ require('../style/index.less')
 import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton} from 'material-ui'
-import {normalize} from "normalizr"
+import {normalize,arrayOf} from "normalizr"
 
 import {init,User,QiliApp, UI, Position} from '.'
 import Application from './db/app'
@@ -15,10 +15,10 @@ const DOMAIN="main"
 
 const ACTION={
 	APP_CHANGED:app=>{
-		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:app}
+		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}}
 	}
 	,APPS_FETCHED: apps=>{
-		return {type:`@@${DOMAIN}/APPS_FETCHED`,payload:normalize(payload,arrayOf(Application.Schema))}
+		return {type:`@@${DOMAIN}/APPS_FETCHED`,payload:normalize(apps,arrayOf(Application.Schema))}
 	}
 }
 
@@ -26,7 +26,7 @@ const REDUCER={
 	[DOMAIN]: (state={},{type,payload})=>{
 		switch(type){
 		case `@@${DOMAIN}/APP_CHANGED`:
-			return {app:payload}
+			return {app:payload.app}
 		case `@@${DOMAIN}/APPS_FETCHED`:
 			return Object.assign({},state,{entities:payload})
 		}
@@ -34,8 +34,7 @@ const REDUCER={
 	}
 }
 
-const QiliConsole=connect(state=>({app:state[DOMAIN].app}))(
-class extends Component{
+class QiliConsole extends Component{
     constructor(props){
         super(props)
 		console.log("/ constructed")
@@ -46,9 +45,13 @@ class extends Component{
 				router.replace(`/app/${app.name}`)
 		})
     }
-	
+
 	componentDidMount(){
 		console.log("/ did mount")
+	}
+
+	componentWillReceiveProps(){
+		console.log("/ receiving props")
 	}
 
     render(){
@@ -85,7 +88,7 @@ class extends Component{
 	static defaultProps={
 		initAppName:null
 	}
-})
+}
 
 const CurrentApp=({name, app, open})=>(
 	<FloatingActionButton className="sticky top right" mini={true}
@@ -115,10 +118,10 @@ import ProfileUI from "./user-profile"
 import {connect} from "react-redux"
 
 export const Main=QiliApp.render(
-    (<Route path="/" component={QiliConsole} onChange={function(){console.dir(arguments)}}>
+    (<Route path="/" component={connect(state=>({app:state[DOMAIN].app}))(QiliConsole)}>
         <IndexRoute component={Dashboard}/>
 
-        <Route path="app/:name" name="app" component={AppUI}
+        <Route path="app/:name" name="app" component={connect(state=>state.ui)(AppUI)}
 			onEnter={({params:{name}})=>{
 				if(!Application.current){
 					QiliConsole.WrappedComponent.defaultProps.initAppName=name
@@ -147,7 +150,7 @@ export const Main=QiliApp.render(
 
 
     </Route>)
-	,Object.assign({},REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER)
+	,[REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER]
 )
 
 

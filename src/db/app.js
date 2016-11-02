@@ -20,7 +20,7 @@ export default class Application extends Service.BuiltIn{
                 _apps=d
                 resolve(_apps)
 				if(!_current)
-					Application.current=name ? d.find(a=>a.name==name)||_apps[0] : _apps[0];
+					Application.current=(name ? (d.find(a=>a.name==name)||_apps[0]) : _apps[0]);
             },reject)
 
             dataDB=new RemoteDb(this.server+'classes/',{},function(method, url, params, data, success, error){
@@ -58,9 +58,9 @@ export default class Application extends Service.BuiltIn{
     static set current(v){
 		if(typeof(v)=='string')
 			v=_apps.find(a=>a.name==v)
-		
+
 		v=v || null
-		
+
         if(v!=_current){
 			_last=_current
 			_current=v

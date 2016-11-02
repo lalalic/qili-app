@@ -5,7 +5,6 @@ import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
 import {createStore,combineReducers, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
-import {syncHistoryWithStore, routerReducer} from 'react-router-redux'
 import thunk from 'redux-thunk'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
@@ -24,12 +23,17 @@ const muiTheme=getMuiTheme(lightBaseTheme)
 
 const DOMAIN="qiliApp"
 
+const INIT_STATE={
+	inited:false
+	,user:null
+	,tutorialized:false
+}
 export const ACTION={
 	INIT_APP(error,tutorialized){
 		if(!!error){
 			return {
 				type:`@@${DOMAIN}/initedError`
-				,payload:{user,error}
+				,payload:{user:User.current,error}
 			}
 		}else{
 			return {
@@ -74,6 +78,8 @@ export const REDUCER={
         return state
     }
 }
+
+const AccountContainer=connect(state=>state.ui)(Account)
 
 export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(
 class extends Component{
@@ -135,9 +141,9 @@ class extends Component{
             if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
                 return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
 
-            content=(<Account />)
+            content=(<AccountContainer />)
         }else if(!user.sessionToken){
-            content=(<Account user={user}/>)
+            content=(<AccountContainer user={user}/>)
         }else {
             content=this.renderContent()
         }
@@ -179,7 +185,7 @@ class extends Component{
         loading: React.PropTypes.func
 	}
 
-    static render(routes, reducers={}, ...middlewars){
+    static render(route, reducers=[], ...middlewars){
 		const props={}
         let container=document.getElementById('app')
         if(!container){
@@ -200,16 +206,57 @@ class extends Component{
 			return (<Component router={history} {...props}/>)
 		}
 
+		function routerRducer(state={},{type,payload}){
+			switch(type){
+			case '@@router/LOCATION_CHANGE':
+			return payload
+			}
+			return state
+		}
 
-		const allReducers=combineReducers(Object.assign({routing:routerReducer},REDUCER,Account.REDUCER, reducers))
+		const enhancedRoute=(root,dispatch)=>{
+			const {onEnter, onChange}=root.props
+			return React.cloneElement(root, {
+				onEnter(nextState){
+					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
+					onEnter && onEnter.bind(this)(...arguments)
+				},
+				onChange(state,nextState){
+					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
+					onChange && onChange.bind(this)(...arguments)
+				}
+			})
+		}
+
+		function enhancedCombineReducers(...reducers){
+			const functions=reducers.slice(1).reduce((combined,a)=>{
+				const lastTrunk=combined[combined.length-1]
+				const type=typeof(lastTrunk[0])
+				if(type!=typeof(a)){
+					combined.push([a])
+				}else{
+					lastTrunk.push(a)
+				}
+				return combined
+			},[[reducers[0]]]).map(a=>{
+				if(typeof(a[0])=='object'){
+					return combineReducers(Object.assign({},...a))
+				}else{
+					return (state,action)=>a.reduce((state,next)=>next(state,action), state)
+				}
+			})
+			return (state,action)=>functions.reduce((state,next)=>next(state,action),state)
+		}
+
+
+		const allReducers=enhancedCombineReducers({routing:routerRducer},REDUCER,Account.REDUCER, ...reducers)
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		const store=createStore(allReducers, composeEnhancers(applyMiddleware(thunk,...middlewars)))
-		props.history=syncHistoryWithStore(props.history,store)
-		
+		const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
+
         return render((
                 <Provider store={store}>
-                    <Router createElement={defaultCreateElement} onUpdate={a=>console.log('router state updated')} {...props}>
-                        {routes}
+                    <Router createElement={defaultCreateElement} {...props}>
+						{enhancedRoute(route,store.dispatch)}
                     </Router>
                 </Provider>
             ),container)
