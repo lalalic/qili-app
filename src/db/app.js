@@ -18,9 +18,9 @@ export default class Application extends Service.BuiltIn{
         return new Promise((resolve,reject)=>{
             this.find({},{interim:false}).fetch((d)=>{
                 _apps=d
-                resolve()
+                resolve(_apps)
 				if(!_current)
-					Application.current=name ? d.find(a=>a.name==name) : _apps[0];
+					Application.current=name ? d.find(a=>a.name==name)||_apps[0] : _apps[0];
             },reject)
 
             dataDB=new RemoteDb(this.server+'classes/',{},function(method, url, params, data, success, error){

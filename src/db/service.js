@@ -1,4 +1,5 @@
 import {EventEmitter} from 'events'
+import {Schema} from "normalizr"
 
 var _httpclient,
     _server,
@@ -79,6 +80,7 @@ export class Service {
                 _db.addCollection(this._name,opt)
                 this._cols=_db[this._name]
             }
+			this._schema=new Schema(this._name, {idAttribute:"_id"})
         }
     }
 
@@ -91,6 +93,10 @@ export class Service {
         }
         return this._cols
     }
+	
+	static get Schema(){
+		return this._schema
+	}
 
     static super(f){
         return this.__proto__[f].bind(this)

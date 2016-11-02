@@ -2,6 +2,7 @@ require('../style/index.less')
 import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton} from 'material-ui'
+import {normalize} from "normalizr"
 
 import {init,User,QiliApp, UI, Position} from '.'
 import Application from './db/app'
@@ -14,7 +15,10 @@ const DOMAIN="main"
 
 const ACTION={
 	APP_CHANGED:app=>{
-		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}}
+		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:app}
+	}
+	,APPS_FETCHED: apps=>{
+		return {type:`@@${DOMAIN}/APPS_FETCHED`,payload:normalize(payload,arrayOf(Application.Schema))}
 	}
 }
 
@@ -22,7 +26,9 @@ const REDUCER={
 	[DOMAIN]: (state={},{type,payload})=>{
 		switch(type){
 		case `@@${DOMAIN}/APP_CHANGED`:
-			return {app:payload.app}
+			return {app:payload}
+		case `@@${DOMAIN}/APPS_FETCHED`:
+			return Object.assign({},state,{entities:payload})
 		}
 		return state
 	}
@@ -32,6 +38,7 @@ const QiliConsole=connect(state=>({app:state[DOMAIN].app}))(
 class extends Component{
     constructor(props){
         super(props)
+		console.log("/ constructed")
 		Application.on('change',app=>{
 			const {dispatch,routes,params,router}=this.props
 			dispatch(ACTION.APP_CHANGED(app))
@@ -39,12 +46,16 @@ class extends Component{
 				router.replace(`/app/${app.name}`)
 		})
     }
+	
+	componentDidMount(){
+		console.log("/ did mount")
+	}
 
     render(){
-        const {app, initAppName, children}=this.props
+        const {app, initAppName, children, dispatch}=this.props
 		let props={
 			appId: "qiliAdmin"
-			, init:a=>Application.init(initAppName)
+			, init:a=>Application.init(initAppName).then(apps=>dispatch(ACTION.APPS_FETCHED(apps)))
 			, service:"http://localhost:9080/1/"
 		}
 		if(!app){
@@ -104,7 +115,7 @@ import ProfileUI from "./user-profile"
 import {connect} from "react-redux"
 
 export const Main=QiliApp.render(
-    (<Route path="/" component={QiliConsole}>
+    (<Route path="/" component={QiliConsole} onChange={function(){console.dir(arguments)}}>
         <IndexRoute component={Dashboard}/>
 
         <Route path="app/:name" name="app" component={AppUI}

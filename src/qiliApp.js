@@ -208,7 +208,7 @@ class extends Component{
 		
         return render((
                 <Provider store={store}>
-                    <Router createElement={defaultCreateElement} {...props}>
+                    <Router createElement={defaultCreateElement} onUpdate={a=>console.log('router state updated')} {...props}>
                         {routes}
                     </Router>
                 </Provider>
