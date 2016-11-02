@@ -11,6 +11,8 @@ import CommandBar  from "./components/command-bar"
 import Photo  from "./components/photo"
 import Messager  from "./components/messager"
 import fileSelector  from "./components/file-selector"
+import {combineReducers} from "redux"
+
 
 export const UI={
     Empty
@@ -23,6 +25,26 @@ export const UI={
 	,Account
 }
 
+export function enhancedCombineReducers(...reducers){
+    const functions=reducers.slice(1).reduce((combined,a)=>{
+        const lastTrunk=combined[combined.length-1]
+        const type=typeof(lastTrunk[0])
+        if(type!=typeof(a)){
+            combined.push([a])
+        }else{
+            lastTrunk.push(a)
+        }
+        return combined
+    },[[reducers[0]]]).map(a=>{
+        if(typeof(a[0])=='object'){
+            return combineReducers(Object.assign({},...a))
+        }else{
+            return (state,action)=>a.reduce((state,next)=>next(state,action), state)
+        }
+    })
+    return (state,action)=>functions.reduce((state,next)=>next(state,action),state)
+}
+
 ;(function(_raw){
     var r=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,ds
     JSON.parse=(a,reviver)=>{
@@ -33,6 +55,8 @@ export const UI={
         })
     }
 })(JSON.parse);
+
+
 
 Object.assign(Date.prototype,{
 	toDate(){

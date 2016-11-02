@@ -3,7 +3,7 @@ import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
 
-import {createStore,combineReducers, applyMiddleware,compose} from "redux"
+import {createStore, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
 import thunk from 'redux-thunk'
 
@@ -11,6 +11,8 @@ import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
+
+import {enhancedCombineReducers} from "."
 
 import {init,User} from "./db"
 import Messager from "./components/messager"
@@ -226,26 +228,6 @@ class extends Component{
 					onChange && onChange.bind(this)(...arguments)
 				}
 			})
-		}
-
-		function enhancedCombineReducers(...reducers){
-			const functions=reducers.slice(1).reduce((combined,a)=>{
-				const lastTrunk=combined[combined.length-1]
-				const type=typeof(lastTrunk[0])
-				if(type!=typeof(a)){
-					combined.push([a])
-				}else{
-					lastTrunk.push(a)
-				}
-				return combined
-			},[[reducers[0]]]).map(a=>{
-				if(typeof(a[0])=='object'){
-					return combineReducers(Object.assign({},...a))
-				}else{
-					return (state,action)=>a.reduce((state,next)=>next(state,action), state)
-				}
-			})
-			return (state,action)=>functions.reduce((state,next)=>next(state,action),state)
 		}
 
 
