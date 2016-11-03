@@ -24,10 +24,13 @@ export const UI={
 	,fileSelector
 	,Account
 }
+export const compact=(o,...keys)=>keys.reduce((a,k)=>(o && (a[k]=o[k]),a),{})
 
 export function enhancedCombineReducers(...reducers){
-	const combineArrayReducer=reducers=>(state,action)=>reducers.reduce((state,next)=>next(state,action), state)
-	
+	const combineArrayReducer=reducers=>(state,action)=>reducers.reduce((state,next)=>{
+        return next(state,action)
+    }, state)
+
 	const functions=reducers.slice(1).reduce((combined,a)=>{
         const lastTrunk=combined[combined.length-1]
         const type=typeof(lastTrunk[0])

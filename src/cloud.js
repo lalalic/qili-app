@@ -32,41 +32,37 @@ export const ACTION={
 		.then(({data:code})=>dispatch(ACTION.UPDATE(code)))
 }
 
-export const REDUCER={
-	[DOMAIN]:(state={}, {type,payload})=>{
-		switch(type){
-		case `@@${DOMAIN}/updated`:
-			return {}
-		}
-		return state
+export const REDUCER=(state={}, {type,payload})=>{
+	switch(type){
+	case `@@${DOMAIN}/updated`:
+		return {}
 	}
+	return state
 }
 
-export const Cloud=connect(state=>{cloudCode:App.current.cloudCode})(
-	({cloudCode,dispatch})=>{
-		let refCode
-		return (
-			<div>
-				<textarea ref={a=>refCode=a}
-					value={cloudCode}
-					onChange={({target:{value}})=>refCode.value=value}
-					placeholder="Cloud nodejs code"
-					style={{position:'absolute', height: '100%', top:0,lineHeight:'2em',
-						margin:0,width:'100%', padding:10, paddingBottom:51,border:0}}/>
-				<CommandBar className="footbar"
-					items={[
-						{action:"Back"}
-						,{action:"Upload", icon:<Upload/>,
-							onSelect:e=>dispatch(ACTION.UPLOAD())
-						}
-						,{action:"Save",icon:<Save/>,
-							onSelect:e=>dispatch(ACTION.UPDATE(refCode.getValue()))
-						}
-					]}/>
-			</div>
-		)
-	}
-)
+export const Cloud=({cloudCode,dispatch})=>{
+	let refCode
+	return (
+		<div>
+			<textarea ref={a=>refCode=a}
+				value={cloudCode}
+				onChange={({target:{value}})=>refCode.value=value}
+				placeholder="Cloud nodejs code"
+				style={{position:'absolute', height: '100%', top:0,lineHeight:'2em',
+					margin:0,width:'100%', padding:10, paddingBottom:51,border:0}}/>
+			<CommandBar className="footbar"
+				items={[
+					{action:"Back"}
+					,{action:"Upload", icon:<Upload/>,
+						onSelect:e=>dispatch(ACTION.UPLOAD())
+					}
+					,{action:"Save",icon:<Save/>,
+						onSelect:e=>dispatch(ACTION.UPDATE(refCode.getValue()))
+					}
+				]}/>
+		</div>
+	)
+}
 
 
-export default Object.assign(Cloud,{ACTION,REDUCER})
+export default Object.assign(Cloud,{DOMAIN, ACTION,REDUCER})

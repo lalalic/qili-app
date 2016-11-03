@@ -74,7 +74,7 @@ export const REDUCER=(state={},{type,payload})=>{
 	return state
 }
 
-const AccountContainer=connect(state=>state.ui)(Account)
+const AccountContainer=connect(state=>state.account)(Account)
 
 export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(
 	class extends Component{
@@ -217,7 +217,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 					}
 				})
 			}
-			
+
 			function normalizeData(entities={},{type,payload}){
 				switch(type){
 				case 'NORMALIZED_DATA':
@@ -238,7 +238,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 						routing:routerRducer
 						,entities:normalizeData
 						,[DOMAIN]:REDUCER
-						,ui: Account.REDUCER
+						,account:Account.REDUCER
 					}, ...reducers)
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))

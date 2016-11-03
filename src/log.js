@@ -1,4 +1,4 @@
-import React,{Component} from "react"
+import React,{Component, PropTypes} from "react"
 import {List, ListItem} from 'material-ui'
 import {connect} from "react-redux"
 
@@ -23,27 +23,24 @@ const LEVEL={
         "1":"info"
     }
 const Icons={Http, Error, Warning, All}
-const DOMAIN="ui.log"
+export const DOMAIN="ui.log"
 const INIT_STATE={logs:[]}
 export const ACTION={
 	FETCH:level=>dispatch=>dbApplication.getLog(LEVEL[level]).then(logs=>dispatch(ACTION.FETCHED(logs)))
 	,FETCHED: logs=>({type:`@@${DOMAIN}/fetched`,payload:logs})
 }
 
-export const REDUCER={
-    [DOMAIN]:(state=INIT_STATE,{type,payload})=>{
-		switch(type){
-		case `@@${DOMAIN}/fetched`:
-		return {logs:payload}
-        case `@@${DOMAIN}/CLEAR`:
-        return INIT_STATE
-		}
-        return state
-    }
+export const REDUCER=(state=INIT_STATE,{type,payload})=>{
+	switch(type){
+	case `@@${DOMAIN}/fetched`:
+	return {logs:payload}
+    case `@@${DOMAIN}/CLEAR`:
+    return INIT_STATE
+	}
+    return state
 }
 
-export const Log=connect(state=>state[DOMAIN])(
-class extends Component{
+export class Log extends Component{
 	componentDidMount(){
 		const {dispatch,params:{level}}=this.props
 		dispatch(ACTION.FETCH(level))
@@ -57,7 +54,8 @@ class extends Component{
         this.props.dispatch(`@@${DOMAIN}/CLEAR`)
     }
 	render(){
-		const {logs,router,params:{level},dispatch}=this.props
+		const {logs,params:{level},dispatch}=this.props
+        const {router}=this.context
 		return (
 			<div>
 				<List>
@@ -79,5 +77,7 @@ class extends Component{
 			</div>
 		)
 	}
-})
-export default Object.assign(Log,{ACTION,REDUCER})
+}
+Log.contextTypes={router:PropTypes.object}
+
+export default Object.assign(Log,{DOMAIN,ACTION,REDUCER})

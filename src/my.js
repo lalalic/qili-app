@@ -10,7 +10,7 @@ import {UI} from "."
 
 const {CommandBar}=UI
 
-export const My=(props,{router})=>(
+export const My=({apps},{router})=>(
 	<Account>
 		<ListItem
 			primaryText="Create QiLi app"
@@ -19,7 +19,7 @@ export const My=(props,{router})=>(
 			onTouchTap={a=>router.push("app")}
 			leftIcon={<IconAdd/>}
 			nestedItems={
-				App.all.map(a=>(
+				apps.map(a=>(
 						<ListItem primaryText={a.name} key={a._id}
 							leftIcon={<span/>}
 							rightIcon={<IconItem/>}

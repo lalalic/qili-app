@@ -13,10 +13,11 @@ import IconCol from "material-ui/svg-icons/device/storage"
 const {CommandBar, fileSelector}=UI
 const {DialogCommand}=CommandBar
 
-const DOMAIN="ui.data"
+export const DOMAIN="ui.data"
 const INIT_STATE={
 	data:[],index:[],schema:[],app:null
 }
+
 export const ACTION={
 	FETCH:(name,schema)=>dispatch=>Promise.all([App.collectionData(name),App.collectionIndexes(name),schema])
 			.then(([data,index,schema])=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,index,schema}}))
@@ -38,28 +39,25 @@ export const ACTION={
 				})
 }
 
-export const REDUCER={
-	[DOMAIN]:(state=INIT_STATE,{type,payload})=>{
-		switch(type){
-		case `@@${DOMAIN}/fetched`:
-			payload.schema=payload.schema||state.schema
-			return Object.assign({},state,payload)
+export const REDUCER=(state=INIT_STATE,{type,payload})=>{
+	switch(type){
+	case `@@${DOMAIN}/fetched`:
+		payload.schema=payload.schema||state.schema
+		return Object.assign({},state,payload)
 
-		case `@@${DOMAIN}/schema`:
-			return Object.assign({},state,{schema:payload})
+	case `@@${DOMAIN}/schema`:
+		return Object.assign({},state,{schema:payload})
 
-		case `@@main/APP_CHANGED`:
-			return Object.assign({},INIT_STATE,{app:payload.app._id})
+	case `@@main/APP_CHANGED`:
+		return Object.assign({},INIT_STATE,{app:payload.app._id})
 
-		case `@@${DOMAIN}/CLEAR`:
-			return INIT_STATE
-		}
-		return state
+	case `@@${DOMAIN}/CLEAR`:
+		return INIT_STATE
 	}
+	return state
 }
 
-export const Data=connect(state=>(state[DOMAIN]))(
-class extends Component{
+export class Data extends Component{
 	componentDidMount(){
 		const {params:{name}, dispatch}=this.props
 		dispatch(ACTION.FETCH(name,App.schema))
@@ -124,6 +122,6 @@ class extends Component{
         )
 	}
 
-})
+}
 
-export default Object.assign(Data,{ACTION, REDUCER})
+export default Object.assign(Data,{DOMAIN, ACTION, REDUCER})
