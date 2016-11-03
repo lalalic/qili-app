@@ -4,7 +4,7 @@ import User from './db/user'
 import {connect} from "react-redux"
 
 const ENTER=13
-const DOMAIN="account"
+export const DOMAIN="ui.account"
 const INIT_STATE={}
 export const ACTION={
 	SIGNUP:user=>dispatch=>{
@@ -65,16 +65,18 @@ export const ACTION={
 	,PHONE_VERIFY_UI:({type:`@@${DOMAIN}/PHONE_VERIFY_UI`})
 }
 
-export const REDUCER=(state=INIT_STATE,{type,payload})=>{
-	switch(type){
-	case `@@${DOMAIN}/SIGNUP_UI`:
-	case `@@${DOMAIN}/SIGNIN_UI`:
-	case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
-	case `@@${DOMAIN}/RESET_PASSWORD_UI`:
-	case `@@${DOMAIN}/PHONE_VERIFY_UI`:
-		return Object.assign({type:type.split("/").pop()},payload)
+export const REDUCER={
+	[DOMAIN]:(state=INIT_STATE,{type,payload})=>{
+		switch(type){
+		case `@@${DOMAIN}/SIGNUP_UI`:
+		case `@@${DOMAIN}/SIGNIN_UI`:
+		case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
+		case `@@${DOMAIN}/RESET_PASSWORD_UI`:
+		case `@@${DOMAIN}/PHONE_VERIFY_UI`:
+			return Object.assign({type:type.split("/").pop()},payload)
+		}
+		return state
 	}
-	return state
 }
 
 class Account extends Component{
@@ -319,4 +321,4 @@ class SMSRequest extends Component{
 	}
 }
 
-export default Object.assign(connect(state=>state.ui)(Account),{ACTION, REDUCER})
+export default Object.assign(connect(state=>state.ui)(Account),{DOMAIN, ACTION, REDUCER})

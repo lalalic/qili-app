@@ -23,7 +23,7 @@ import Tutorial from "./components/tutorial"
 
 const muiTheme=getMuiTheme(lightBaseTheme)
 
-const DOMAIN="qiliApp"
+export const DOMAIN="qiliApp"
 
 export const ACTION={
 	INIT_APP(error,tutorialized){
@@ -254,4 +254,4 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 	}
 )
 
-export default Object.assign(QiliApp,{ACTION,REDUCER})
+export default Object.assign(QiliApp,{DOMAIN, ACTION,REDUCER})

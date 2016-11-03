@@ -12,7 +12,7 @@ import {UI} from "."
 import dbApplication from "./db/app"
 
 const ENTER=13
-const DOMAIN="ui.app"
+export const DOMAIN="ui.app"
 export const ACTION={
 	CREATE: (name, uname)=>{
 		let nameError, unameError
@@ -50,18 +50,20 @@ export const ACTION={
 			})
 }
 
-export const REDUCER=(state={},{type, payload})=>{
-	console.log(`${DOMAIN} reducer run`)
-	switch(type){
-	case `@@${DOMAIN}/error`:
-		return payload
-	case `@@${DOMAIN}/uploaded`:
-	case `@@${DOMAIN}/removed`:
-	case `@@${DOMAIN}/created`:
-	case `@@${DOMAIN}/updated`:
-		return {}
+export const REDUCER={
+	[DOMAIN]:(state={},{type, payload})=>{
+		console.log(`${DOMAIN} reducer run`)
+		switch(type){
+		case `@@${DOMAIN}/error`:
+			return payload
+		case `@@${DOMAIN}/uploaded`:
+		case `@@${DOMAIN}/removed`:
+		case `@@${DOMAIN}/created`:
+		case `@@${DOMAIN}/updated`:
+			return {}
+		}
+		return state
 	}
-	return state
 }
 
 export const App=({app, dispatch, nameError, unameError},{router})=>{
@@ -163,4 +165,4 @@ export const Creator=({dispatch, nameError},{router})=>{
 }
 Creator.contextTypes={router: PropTypes.object}
 
-export default Object.assign(App,{ACTION, REDUCER})
+export default Object.assign(App,{DOMAIN, ACTION, REDUCER})
