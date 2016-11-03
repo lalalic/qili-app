@@ -1,6 +1,5 @@
 import React,{Component, PropTypes} from "react"
 import {List, ListItem} from 'material-ui'
-import {connect} from "react-redux"
 
 import Http from "material-ui/svg-icons/action/http"
 import Error from "material-ui/svg-icons/alert/error"
@@ -51,7 +50,7 @@ export class Log extends Component{
 			next.dispatch(ACTION.FETCH(next.params.level))
 	}
     componentWillUnmount(){
-        this.props.dispatch(`@@${DOMAIN}/CLEAR`)
+        this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
 	render(){
 		const {logs,params:{level},dispatch}=this.props

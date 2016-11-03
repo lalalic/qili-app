@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {TextField,FlatButton, RaisedButton} from 'material-ui'
 import User from './db/user'
-import {connect} from "react-redux"
 
 const ENTER=13
 export const DOMAIN=""

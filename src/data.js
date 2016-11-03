@@ -1,5 +1,4 @@
-import React, {Component} from 'react'
-import {connect} from "react-redux"
+import React, {Component, PropTypes} from 'react'
 import {Tabs, Tab, List, ListItem} from 'material-ui'
 import {Table} from 'reactable'
 
@@ -75,6 +74,7 @@ export class Data extends Component{
 
 	render(){
 		const {data, index, schema, params:{name},dispatch,router}=this.props
+		const {router}=this.context
 		const {IndexItem, Names}=this.constructor
 		const indexData=index.map(col=>{
 			Object.keys(col).filter(a=>a!='$option')
@@ -95,7 +95,7 @@ export class Data extends Component{
 					<List>
 					{
 						schema.map(({name})=>(
-							<ListItem primaryText={name} leftIcon={<IconCol/>}
+							<ListItem primaryText={name} leftIcon={<IconCol/>} key={name}
 								onClick={e=>{
 									refNames.dismiss()
 									router.push(`/data/${name}`)
@@ -121,7 +121,8 @@ export class Data extends Component{
 			</div>
         )
 	}
-
+	static contextTypes={router:PropTypes.object}
 }
+
 
 export default Object.assign(Data,{DOMAIN, ACTION, REDUCER})

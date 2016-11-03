@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from "react"
 import {Avatar, List, ListItem, Divider} from "material-ui"
-import {connect} from "react-redux"
 
 import Photo from "./components/photo"
 import User from "./db/user"
@@ -14,10 +13,8 @@ export const ACTION={
 	}
 }
 
-export const REDUCER={
-    [DOMAIN]: (state={}, {type, payload})=>{
-		return state
-    }
+export const REDUCER=(state={}, {type, payload})=>{
+	return state
 }
 
 export const Profile=({user,dispatch},{router})=>(

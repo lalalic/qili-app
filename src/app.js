@@ -1,6 +1,5 @@
 import React,{Component, PropTypes} from "react"
 import {TextField} from 'material-ui'
-import {connect} from "react-redux"
 
 import Upload from "material-ui/svg-icons/file/file-upload"
 import Download from "material-ui/svg-icons/file/file-download"

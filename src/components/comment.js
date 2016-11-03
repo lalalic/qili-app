@@ -1,6 +1,5 @@
 import React, {Component} from "react"
 import {Avatar, List, ListItem} from "material-ui"
-import {connect} from "react-redux"
 
 import {Service} from '../db/service'
 import CommandBar from './command-bar'
@@ -26,23 +25,20 @@ export const ACTION={
     }
 }
 
-export const REDUCER={
-    [DOMAIN]: (state=INIT_STATE, {type, payload})=>{
-        switch(type){
-        case `@@${DOMAIN}/CLEAR`:
-            return INIT_STATE
-        case `@@${DOMAIN}/fetched`:
-            return payload
-        case `@@${DOMAIN}/created`:
-            const {type,_id,data}=state
-            return {type,_id, data:new Array(...data,payload)}
-        }
-        return state
+export const REDUCER=(state=INIT_STATE, {type, payload})=>{
+    switch(type){
+    case `@@${DOMAIN}/CLEAR`:
+        return INIT_STATE
+    case `@@${DOMAIN}/fetched`:
+        return payload
+    case `@@${DOMAIN}/created`:
+        const {type,_id,data}=state
+        return {type,_id, data:new Array(...data,payload)}
     }
+    return state
 }
 
-export const CommentUI=connect()(
-class extends Component{
+export class CommentUI extends Component{
     componentDidMount(){
         const {dispatch,params:{type,_id}}=this.props
         dispatch(ACTION.FETCH(type,_id))
@@ -56,7 +52,7 @@ class extends Component{
 		return (
             <div className="comment">
                 <List>
-                    {data.maps(a=><template model={a}/>)}
+                    {data.maps(a=><template model={a} key={a._id}/>)}
                 </List>
 
                 <CommandBar
@@ -72,38 +68,38 @@ class extends Component{
     		</div>
         )
     }
-})
 
-CommentUI.defaultProps={
-    template: ({model})=>{
-        let name, left, right, text
-        const isOwner=model.author._id==User.current._id;
-        if(isOwner){
-            left=(<span/>)
-            right=(<Avatar src={User.current.thumbnail}/>)
-        }else{
-            name=(<span style={{fontSize:'x-small'}}>{model.author.name}</span>)
-            left=(<Avatar src={model.thumbnail}/>)
-            right=(<span/>)
+    static defaultProps={
+        template: ({model})=>{
+            let name, left, right, text
+            const isOwner=model.author._id==User.current._id;
+            if(isOwner){
+                left=(<span/>)
+                right=(<Avatar src={User.current.thumbnail}/>)
+            }else{
+                name=(<span style={{fontSize:'x-small'}}>{model.author.name}</span>)
+                left=(<Avatar src={model.thumbnail}/>)
+                right=(<span/>)
+            }
+
+            return (
+                <ListItem
+                    key={model._id}
+                    style={{paddingTop:10,paddingLeft:62}}
+                    leftAvatar={left}
+                    rightAvatar={right}
+                    disableTouchTap={true}>
+                    {name}
+
+                    <div style={{paddingRight:5}}>
+                        <p className={`content ${isOwner?"owner":""}`}>
+                            <span>{model.content}</span>
+                        </p>
+                    </div>
+                </ListItem>
+            )
         }
-
-        return (
-            <ListItem
-                key={model._id}
-                style={{paddingTop:10,paddingLeft:62}}
-                leftAvatar={left}
-                rightAvatar={right}
-                disableTouchTap={true}>
-                {name}
-
-                <div style={{paddingRight:5}}>
-                    <p className={`content ${isOwner?"owner":""}`}>
-                        <span>{model.content}</span>
-                    </p>
-                </div>
-            </ListItem>
-        )
-    }
 }
+
 
 export default Object.assign(CommentUI,{ACTION,REDUCER})

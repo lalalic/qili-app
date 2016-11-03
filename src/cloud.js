@@ -1,7 +1,5 @@
 import React, {Component} from "react"
 
-import {connect} from "react-redux"
-
 import {UI} from '.'
 import App from './db/app'
 
