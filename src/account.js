@@ -318,4 +318,4 @@ class SMSRequest extends Component{
 	}
 }
 
-export default Object.assign(connect(state=>state.ui)(Account),{DOMAIN, ACTION, REDUCER})
+export default Object.assign(Account,{DOMAIN, ACTION, REDUCER})

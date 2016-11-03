@@ -73,7 +73,7 @@ export class Data extends Component{
 	}
 
 	render(){
-		const {data, index, schema, params:{name},dispatch,router}=this.props
+		const {data, index, schema, params:{name},dispatch}=this.props
 		const {router}=this.context
 		const {IndexItem, Names}=this.constructor
 		const indexData=index.map(col=>{

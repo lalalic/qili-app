@@ -115,7 +115,7 @@ export const Main=QiliApp.render(
         <Route path="cloud" component={connect(state=>({cloudCode:state[DOMAIN].app.cloudCode}))(CloudUI)}/>
 
         <Route path="data"
-			component={connect(state=>state.ui.data)(DataUI)}>
+			component={connect(state=>({...state.ui.data,app:state[DOMAIN].app._id}))(DataUI)}>
             <IndexRedirect to={`${User._name}`}/>
             <Route path=":name"/>
         </Route>
