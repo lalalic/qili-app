@@ -10,7 +10,7 @@ import {UI} from "."
 
 const {CommandBar}=UI
 
-export const My=({router})=>(
+export const My=(props,{router})=>(
 	<Account>
 		<ListItem
 			primaryText="Create QiLi app"
@@ -30,5 +30,5 @@ export const My=({router})=>(
 		<CommandBar className="footbar" items={[{action:"Back"}]}/>
 	</Account>
 )
-
+My.contextTypes={router:PropTypes.object}
 export default My

@@ -1,4 +1,4 @@
-import React,{Component} from "react"
+import React,{Component, PropTypes} from "react"
 import {TextField} from 'material-ui'
 import {connect} from "react-redux"
 
@@ -50,23 +50,21 @@ export const ACTION={
 			})
 }
 
-export const REDUCER={
-	[DOMAIN]: (state={},{type, payload})=>{
-		switch(type){
-		case `@@${DOMAIN}/error`:
-			return payload
-		case `@@${DOMAIN}/uploaded`:
-		case `@@${DOMAIN}/removed`:
-		case `@@${DOMAIN}/created`:
-		case `@@${DOMAIN}/updated`:
-			return {}
-		}
-		return state
+export const REDUCER=(state={},{type, payload})=>{
+	console.log(`${DOMAIN} reducer run`)
+	switch(type){
+	case `@@${DOMAIN}/error`:
+		return payload
+	case `@@${DOMAIN}/uploaded`:
+	case `@@${DOMAIN}/removed`:
+	case `@@${DOMAIN}/created`:
+	case `@@${DOMAIN}/updated`:
+		return {}
 	}
+	return state
 }
 
-export const App=connect(state=>({app:dbApplication.current, ...state[DOMAIN]}))(
-({app, router,dispatch, nameError, unameError})=>{
+export const App=({app, dispatch, nameError, unameError},{router})=>{
 	let removable=dbApplication.isRemovable(app)
 	let commandBar
 	if(removable)
@@ -134,10 +132,11 @@ export const App=connect(state=>({app:dbApplication.current, ...state[DOMAIN]}))
 			{commandBar}
 		</div>
 	)
-})
+}
 
-export const Creator=connect(state=>state[DOMAIN])(
-({router,dispatch, nameError})=>{
+App.contextTypes={router: PropTypes.object}
+
+export const Creator=({dispatch, nameError},{router})=>{
 	let refName,refUname
 	return (
 		<div className="form">
@@ -161,6 +160,7 @@ export const Creator=connect(state=>state[DOMAIN])(
 				/>
 		</div>
 	)
-})
+}
+Creator.contextTypes={router: PropTypes.object}
 
 export default Object.assign(App,{ACTION, REDUCER})

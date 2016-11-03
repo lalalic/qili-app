@@ -26,7 +26,9 @@ export const UI={
 }
 
 export function enhancedCombineReducers(...reducers){
-    const functions=reducers.slice(1).reduce((combined,a)=>{
+	const combineArrayReducer=reducers=>(state,action)=>reducers.reduce((state,next)=>next(state,action), state)
+	
+	const functions=reducers.slice(1).reduce((combined,a)=>{
         const lastTrunk=combined[combined.length-1]
         const type=typeof(lastTrunk[0])
         if(type!=typeof(a)){
@@ -37,12 +39,26 @@ export function enhancedCombineReducers(...reducers){
         return combined
     },[[reducers[0]]]).map(a=>{
         if(typeof(a[0])=='object'){
-            return combineReducers(Object.assign({},...a))
+			//merge {ui:a},{ui,b} ==> {ui: [a,b]}
+			return combineReducers(
+				a.reduce((combined,b)=>{
+					return Object.assign(
+						combined,
+						b,
+						Object.keys(combined).reduce((withSameKeyReducers,key)=>{//merge with same key
+							if(b.hasOwnProperty(key)){
+								withSameKeyReducers[key]=combineArrayReducer([combined[key],b[key]])
+							}
+							return withSameKeyReducers
+						},{})
+					)
+				},{})
+			)
         }else{
-            return (state,action)=>a.reduce((state,next)=>next(state,action), state)
+            return combineArrayReducer(a)
         }
     })
-    return (state,action)=>functions.reduce((state,next)=>next(state,action),state)
+    return combineArrayReducer(functions)
 }
 
 ;(function(_raw){

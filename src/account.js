@@ -4,7 +4,7 @@ import User from './db/user'
 import {connect} from "react-redux"
 
 const ENTER=13
-const DOMAIN="ui.account"
+const DOMAIN="account"
 const INIT_STATE={}
 export const ACTION={
 	SIGNUP:user=>dispatch=>{
@@ -65,29 +65,21 @@ export const ACTION={
 	,PHONE_VERIFY_UI:({type:`@@${DOMAIN}/PHONE_VERIFY_UI`})
 }
 
-export const REDUCER={
-	[DOMAIN]:(state=INIT_STATE,{type,payload})=>{
-		switch(type){
-		case `@@${DOMAIN}/SIGNUP_UI`:
-		case `@@${DOMAIN}/SIGNIN_UI`:
-		case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
-		case `@@${DOMAIN}/RESET_PASSWORD_UI`:
-		case `@@${DOMAIN}/PHONE_VERIFY_UI`:
-			return Object.assign({type:type.split("/").pop()},payload)
-		case `@@${DOMAIN}/CLEAR`:
-			return INIT_STATE
-		}
-		return state
+export const REDUCER=(state=INIT_STATE,{type,payload})=>{
+	switch(type){
+	case `@@${DOMAIN}/SIGNUP_UI`:
+	case `@@${DOMAIN}/SIGNIN_UI`:
+	case `@@${DOMAIN}/FORGET_PASSWORD_UI`:
+	case `@@${DOMAIN}/RESET_PASSWORD_UI`:
+	case `@@${DOMAIN}/PHONE_VERIFY_UI`:
+		return Object.assign({type:type.split("/").pop()},payload)
 	}
+	return state
 }
 
-export const Account=connect(state=>state[DOMAIN])(
-class extends Component{
-	componentWillUnmount(){
-		this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
-	}
+class Account extends Component{
 	render(){
-		let {user,type,dispatch}=this.props
+		let {type,user,...others}=this.props
 		if(!type){
 			if(user)
 				type='SIGNIN_UI'
@@ -97,183 +89,178 @@ class extends Component{
 
 		switch(type){
 		case 'SIGNUP_UI':
-			return (<Signup/>)
+			return (<Signup {...others} />)
 		case 'SIGNIN_UI':
-			return (<Signin user={user}/>)
+			return (<Signin {...others} user={user}/>)
 		case 'PHONE_VERIFY_UI':
-			return (<PhoneVerification />)
+			return (<PhoneVerification {...others}/>)
 		case 'FORGET_PASSWORD_UI':
-			return (<ForgetPassword/>)
+			return (<ForgetPassword {...others}/>)
 		case 'RESET_PASSWORD_UI':
-			return (<ResetPassword/>)
+			return (<ResetPassword {...others}/>)
 		}
 	}
-})
+}
 
-const PhoneVerification=connect(state=>state[DOMAIN])(
-	({phoneVerifiedError,dispatch})=>{
-		let code,phone
-		return (
-			<div className="form" key="phoneverify">
-				<SMSRequest ref={a=>phone=a} dispatch={dispatch}/>
-				<TextField ref={a=>code=a} hintText="verification code you just received"
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.PHONE_VERIFY(phone.getValue(),code.getValue()))}}
-					errorText={phoneVerifiedError}/>
-				<center>
-					<RaisedButton label="verify" primary={true}
-						onClick={e=>dispatch(ACTION.PHONE_VERIFY(phone.getValue(),code.getValue()))}/>
-				</center>
-				<div className="commands">
-					<FlatButton label="already have an account"
-						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
+const PhoneVerification=({phoneVerifiedError,dispatch})=>{
+	let code,phone
+	return (
+		<div className="form" key="phoneverify">
+			<SMSRequest ref={a=>phone=a} dispatch={dispatch}/>
+			<TextField ref={a=>code=a} hintText="verification code you just received"
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.PHONE_VERIFY(phone.getValue(),code.getValue()))}}
+				errorText={phoneVerifiedError}/>
+			<center>
+				<RaisedButton label="verify" primary={true}
+					onClick={e=>dispatch(ACTION.PHONE_VERIFY(phone.getValue(),code.getValue()))}/>
+			</center>
+			<div className="commands">
+				<FlatButton label="already have an account"
+					onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
 
-					<FlatButton label="forget password"
-						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
-				</div>
+				<FlatButton label="forget password"
+					onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
 			</div>
+		</div>
+	)
+}
+
+const Signup=({usernameError, passwordError, password2Error, dispatch})=>{
+	let username, password, password2
+	let values=a=>({
+		username:username.getValue()
+		,password:password.getValue()
+		,password2:password2.getValue()
+	})
+	return (
+		<div className="form" key="signup">
+			<TextField ref={a=>username=a} hintText="login name"
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
+				errorText={usernameError}/>
+
+			<TextField ref={a=>password=a}
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
+				type="password" hintText="password" errorText={passwordError}/>
+
+			<TextField ref={a=>password2=a}
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
+				type="password" hintText="password again" errorText={password2Error}/>
+
+			<center>
+				<RaisedButton label="sign up" primary={true}
+					onClick={e=>dispatch(ACTION.SIGNUP(values()))}/>
+			</center>
+			<div className="commands">
+				<FlatButton label="already have an account"
+					onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
+
+				<FlatButton label="forget password"
+					onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
+			</div>
+		</div>
 		)
-});
+}
 
-const Signup=connect(state=>state[DOMAIN])(
-	({usernameError, passwordError, password2Error, dispatch})=>{
-		let username, password, password2
-		let values=a=>({
-			username:username.getValue()
-			,password:password.getValue()
-			,password2:password2.getValue()
-		})
-		return (
-			<div className="form" key="signup">
-				<TextField ref={a=>username=a} hintText="login name"
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
-					errorText={usernameError}/>
-
-				<TextField ref={a=>password=a}
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
-					type="password" hintText="password" errorText={passwordError}/>
-
-				<TextField ref={a=>password2=a}
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNUP(values()))}}
-					type="password" hintText="password again" errorText={password2Error}/>
-
-				<center>
-					<RaisedButton label="sign up" primary={true}
-						onClick={e=>dispatch(ACTION.SIGNUP(values()))}/>
-				</center>
-				<div className="commands">
-					<FlatButton label="already have an account"
-						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
-
-					<FlatButton label="forget password"
-						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
-				</div>
-			</div>
-			)
-});
-
-const Signin=connect(state=>state[DOMAIN])(
-	({user, usernameError, passwordError,dispatch})=>{
-		let username, password
-		let values=a=>({
-			username:username.getValue()
-			,password:password.getValue()
-		})
-		return (
-			<div className="form" key="signin">
-				<TextField ref={a=>username=a}
-					hintText="login name or phone number"
-					defaultValue={user && user.username}
+const Signin=({user, usernameError, passwordError,dispatch})=>{
+	let username, password
+	let values=a=>({
+		username:username.getValue()
+		,password:password.getValue()
+	})
+	return (
+		<div className="form" key="signin">
+			<TextField ref={a=>username=a}
+				hintText="login name or phone number"
+				defaultValue={user && user.username}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNIN(values()))}}
+				fullWidth={true}
+				errorText={usernameError}/>
+			<TextField ref={a=>password=a}
 					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNIN(values()))}}
-					fullWidth={true}
-					errorText={usernameError}/>
-				<TextField ref={a=>password=a}
-						onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.SIGNIN(values()))}}
-						fullWidth={true} errorText={passwordError}
-						type="password" hintText="password"/>
-				<center>
-					<RaisedButton label="sign in" primary={true}
-						onClick={e=>dispatch(ACTION.SIGNIN(values()))}/>
-				</center>
-				<div className="commands">
-					<FlatButton label="no account"
-							onClick={e=>dispatch(ACTION.PHONE_VERIFY_UI)}/>
-
-					<FlatButton label="forget password"
-						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
-
-				</div>
-			</div>
-		)
-});
-
-const ForgetPassword=connect(state=>state[DOMAIN])(
-	({contactError, dispatch})=>{
-		let contact
-		return (
-			<div className="form" key="forgetPwd">
-				<TextField ref={a=>contact=a}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.FORGET_PASSWORD(contact.getValue()))}}
-					fullWidth={true} errorText={contactError}
-					hintText="phone number or email"/>
-
-				<center>
-					<RaisedButton label="send me" primary={true}
-						onClick={e=>dispatch(ACTION.FORGET_PASSWORD(contact.getValue()))}/>
-				</center>
-				<div className="commands">
-					<FlatButton label="sign in"
-						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
-
-					<FlatButton label="sign up"
-						onClick={e=>dispatch(ACTION.PHONE_VERIFY_UI)}/>
-				</div>
-			</div>
-			)
-});
-
-const ResetPassword=connect(state=>state[DOMAIN])(
-	({resetError,dispatch})=>{
-		let oldPassword, password, password2
-		let values=a=>({
-			oldPassword:oldPassword.getValue()
-			,password:password.getValue()
-			,password2:password2.getValue()
-		})
-		return (
-			<div className="form" key="reset">
-				<TextField ref={a=>oldPassword=a} hintText="old password"
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
-					errorText={resetError}/>
-
-				<TextField ref={a=>password=a}
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
+					fullWidth={true} errorText={passwordError}
 					type="password" hintText="password"/>
+			<center>
+				<RaisedButton label="sign in" primary={true}
+					onClick={e=>dispatch(ACTION.SIGNIN(values()))}/>
+			</center>
+			<div className="commands">
+				<FlatButton label="no account"
+						onClick={e=>dispatch(ACTION.PHONE_VERIFY_UI)}/>
 
-				<TextField ref={a=>password2=a}
-					fullWidth={true}
-					onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
-					type="password" hintText="password again"/>
+				<FlatButton label="forget password"
+					onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
 
-				<center>
-					<RaisedButton label="reset password" primary={true}
-						onClick={e=>dispatch(ACTION.RESET_PASSWORD(values()))}/>
-				</center>
-				<div className="commands">
-					<FlatButton label="sign in"
-						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
-
-					<FlatButton label="forget password"
-						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
-				</div>
 			</div>
-			)
-})
+		</div>
+	)
+}
+
+const ForgetPassword=({contactError, dispatch})=>{
+	let contact
+	return (
+		<div className="form" key="forgetPwd">
+			<TextField ref={a=>contact=a}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.FORGET_PASSWORD(contact.getValue()))}}
+				fullWidth={true} errorText={contactError}
+				hintText="phone number or email"/>
+
+			<center>
+				<RaisedButton label="send me" primary={true}
+					onClick={e=>dispatch(ACTION.FORGET_PASSWORD(contact.getValue()))}/>
+			</center>
+			<div className="commands">
+				<FlatButton label="sign in"
+					onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
+
+				<FlatButton label="sign up"
+					onClick={e=>dispatch(ACTION.PHONE_VERIFY_UI)}/>
+			</div>
+		</div>
+		)
+}
+
+const ResetPassword=({resetError,dispatch})=>{
+	let oldPassword, password, password2
+	let values=a=>({
+		oldPassword:oldPassword.getValue()
+		,password:password.getValue()
+		,password2:password2.getValue()
+	})
+	return (
+		<div className="form" key="reset">
+			<TextField ref={a=>oldPassword=a} hintText="old password"
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
+				errorText={resetError}/>
+
+			<TextField ref={a=>password=a}
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
+				type="password" hintText="password"/>
+
+			<TextField ref={a=>password2=a}
+				fullWidth={true}
+				onKeyDown={e=>{e.keyCode==ENTER && dispatch(ACTION.RESET_PASSWORD(values()))}}
+				type="password" hintText="password again"/>
+
+			<center>
+				<RaisedButton label="reset password" primary={true}
+					onClick={e=>dispatch(ACTION.RESET_PASSWORD(values()))}/>
+			</center>
+			<div className="commands">
+				<FlatButton label="sign in"
+					onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
+
+				<FlatButton label="forget password"
+					onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
+			</div>
+		</div>
+		)
+}
 
 class SMSRequest extends Component{
 	state={phone:null,tick:null}
@@ -332,4 +319,4 @@ class SMSRequest extends Component{
 	}
 }
 
-export default Object.assign(Account,{ACTION, REDUCER})
+export default Object.assign(connect(state=>state.ui)(Account),{ACTION, REDUCER})

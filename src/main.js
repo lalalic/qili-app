@@ -4,21 +4,25 @@ import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} f
 import {FloatingActionButton} from 'material-ui'
 import {normalize,arrayOf} from "normalizr"
 
-import {init,User,QiliApp, UI, Position} from '.'
+import {init,User,QiliApp, UI, enhancedCombineReducers} from '.'
 import Application from './db/app'
 import App from './app'
 import Logo from './icons/logo'
 
 const {Empty}=UI
 
-const DOMAIN="main"
+const DOMAIN="qiliAdmin"
 
 const ACTION={
-	APP_CHANGED:app=>{
-		return {type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}}
+	APP_CHANGED:app=>({type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}})
+	,APPS_FETCHED: apps=>dispatch=>{
+		dispatch({type:'NORMALIZED_DATA',payload:normalize(apps,arrayOf(Application.Schema)).entities})
 	}
-	,APPS_FETCHED: apps=>{
-		return {type:`@@${DOMAIN}/APPS_FETCHED`,payload:normalize(apps,arrayOf(Application.Schema))}
+	,SWITCH_APPLICATION: app=>(dispatch,getState)=>{
+		const apps=getState().entities[Application._name]
+		let ids=Object.keys(apps)
+		let index=ids[(ids.indexOf(app)+1)%ids.length]
+		Application.current=apps[index]
 	}
 }
 
@@ -27,8 +31,6 @@ const REDUCER={
 		switch(type){
 		case `@@${DOMAIN}/APP_CHANGED`:
 			return {app:payload.app}
-		case `@@${DOMAIN}/APPS_FETCHED`:
-			return Object.assign({},state,{entities:payload})
 		}
 		return state
 	}
@@ -37,29 +39,20 @@ const REDUCER={
 class QiliConsole extends Component{
     constructor(props){
         super(props)
-		console.log("/ constructed")
 		Application.on('change',app=>{
-			const {dispatch,routes,params,router}=this.props
+			const {dispatch,routes,params}=this.props
+			const {router}=this.context
 			dispatch(ACTION.APP_CHANGED(app))
 			if(routes[1] && routes[1].name=='app' && params.name!=app.name)
 				router.replace(`/app/${app.name}`)
 		})
     }
 
-	componentDidMount(){
-		console.log("/ did mount")
-	}
-
-	componentWillReceiveProps(){
-		console.log("/ receiving props")
-	}
-
     render(){
-        const {app, initAppName, children, dispatch}=this.props
+        const {app, initAppName, children, dispatch, routes}=this.props
 		let props={
 			appId: "qiliAdmin"
-			, init:a=>Application.init(initAppName).then(apps=>dispatch(ACTION.APPS_FETCHED(apps)))
-			, service:"http://localhost:9080/1/"
+			,init:a=>Application.init(initAppName).then(apps=>dispatch(ACTION.APPS_FETCHED(apps)))
 		}
 		if(!app){
 			return (
@@ -70,41 +63,31 @@ class QiliConsole extends Component{
 				</QiliApp>
 			)
 		}
-
+		
+		let quickSwitchStyle={fontSize:"xx-small"}
+		if(routes.find(a=>a.contextual===false))
+			quickSwitchStyle.display="none"
 
         return (
             <QiliApp {...props}>
-				<CurrentApp name={app.name} app={app} open={!!app && this.contextual()}/>
+				<FloatingActionButton className="sticky top right" mini={true}
+					style={quickSwitchStyle}
+					onClick={e=>dispatch(ACTION.SWITCH_APPLICATION(app._id))}>
+					{app.name}
+				</FloatingActionButton>
 				{children}
             </QiliApp>
         )
     }
 
-	contextual(){
-		const {routes}=this.props
-		return !!!routes.find(a=>a.contextual===false)
-	}
-
 	static defaultProps={
 		initAppName:null
 	}
+	
+	static contextTypes={
+		router: PropTypes.object
+	}
 }
-
-const CurrentApp=({name, app, open})=>(
-	<FloatingActionButton className="sticky top right" mini={true}
-		style={{fontSize:"xx-small", display:open ? undefined : "none" }}
-		onClick={e=>{
-			let apps=Application.all, len=apps.length
-			if(len>1){
-				let index=apps.findIndex(a=>a._id==app._id)
-				let target=apps[(index+1) % len]
-
-				Application.current=target
-			}
-		}}>
-		{name}
-	</FloatingActionButton>
-)
 
 import Dashboard from './dashboard'
 import AppUI, {Creator} from './app'
@@ -118,17 +101,21 @@ import ProfileUI from "./user-profile"
 import {connect} from "react-redux"
 
 export const Main=QiliApp.render(
-    (<Route path="/" component={connect(state=>({app:state[DOMAIN].app}))(QiliConsole)}>
+    (<Route path="/" 
+		component={connect(state=>({app:state[DOMAIN].app}))(QiliConsole)}>
+		
         <IndexRoute component={Dashboard}/>
 
-        <Route path="app/:name" name="app" component={connect(state=>state.ui)(AppUI)}
+        <Route path="app/:name" name="app" 
+			component={connect(state=>({app:state[DOMAIN].app,...state.ui[AppUI.DOMAIN]}))(AppUI)}
 			onEnter={({params:{name}})=>{
 				if(!Application.current){
 					QiliConsole.WrappedComponent.defaultProps.initAppName=name
 				}
 			}}
 			/>
-		<Route path="app" contextual={false} component={Creator}/>
+		<Route path="app" contextual={false} 
+			component={connect(state=>state.ui)(Creator)}/>
 
         <Route path="cloud" component={CloudUI}/>
 
@@ -150,7 +137,7 @@ export const Main=QiliApp.render(
 
 
     </Route>)
-	,[REDUCER,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER]
+	,[REDUCER, {ui:enhancedCombineReducers(AppUI.REDUCER)}/*,AppUI.REDUCER,LogUI.REDUCER,CloudUI.REDUCER,ProfileUI.REDUCER,DataUI.REDUCER*/]
 )
 
 

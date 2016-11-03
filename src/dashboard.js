@@ -9,7 +9,7 @@ import IconAccount from 'material-ui/svg-icons/action/account-box'
 
 const {CommandBar, Empty}=UI
 
-export const Dashboard=({router})=>(
+export const Dashboard=(props,{router})=>(
 	<div>
 		<Empty icon={<Cloud/>} text="Welcome to Qili"/>
 		<CommandBar  className="footbar"
@@ -23,5 +23,6 @@ export const Dashboard=({router})=>(
 			/>
 	</div>
 )
+Dashboard.contextTypes={router:PropTypes.object}
 
 export default Dashboard
