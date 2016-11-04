@@ -99,6 +99,7 @@ export class CommentUI extends Component{
                 </ListItem>
             )
         }
+	}
 }
 
 

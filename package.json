@@ -1,14 +1,13 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
   "dependencies": {
     "babel-polyfill": "^6.7.4",
-    "immutable": "^3.8.1",
     "material-ui": "^0.15.0",
     "minimongo": ">=3.2.13",
     "normalizr": "^2.2.1",
@@ -19,9 +18,7 @@
     "react-tap-event-plugin": "^1.0.0",
     "reactable": "^0.13.2",
     "redux": "^3.6.0",
-    "redux-logger": "^2.7.0",
-    "redux-thunk": "^2.1.0",
-    "reselect": "^2.5.4"
+    "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",

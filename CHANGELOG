@@ -6,3 +6,12 @@ refactor
 0.6.0
 ======
 redux refactor finished
+
+0.7.0
+=====
+>state shape as following
+	>>{routing, qiliApp, account, ui:{...}, entities}
+>write stateless component, and create container component at design route
+>QiliApp is a container component
+
+
