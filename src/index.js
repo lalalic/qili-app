@@ -64,6 +64,10 @@ export function enhancedCombineReducers(...reducers){
     return combineArrayReducer(functions)
 }
 
+export function ENTITIES(data){
+	return {type:'NORMALIZED_DATA', payload:data}
+}
+
 ;(function(_raw){
     var r=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/,ds
     JSON.parse=(a,reviver)=>{

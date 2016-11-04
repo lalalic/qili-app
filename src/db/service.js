@@ -94,7 +94,7 @@ export class Service {
         return this._cols
     }
 	
-	static get Schema(){
+	static get schema(){
 		return this._schema
 	}
 

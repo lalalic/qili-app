@@ -67,7 +67,8 @@
   },
   "scripts": {
     "build": "babel src -d lib --source-maps inline",
-    "build1": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
+    "build-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
+	"build-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
     "dist": "browserify -g uglifyify ./lib/main.js -o dist/index.js",
     "merge": "npm run dist && node scripts/allin1.js",
     "karma": "karma start",

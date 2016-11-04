@@ -16,7 +16,7 @@ const DOMAIN="qiliAdmin"
 const ACTION={
 	APP_CHANGED:app=>({type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}})
 	,APPS_FETCHED: apps=>dispatch=>{
-		dispatch({type:'NORMALIZED_DATA',payload:normalize(apps,arrayOf(Application.Schema)).entities})
+		dispatch({type:'NORMALIZED_DATA',payload:normalize(apps,arrayOf(Application.schema)).entities})
 	}
 	,SWITCH_APPLICATION: app=>(dispatch,getState)=>{
 		const apps=getState().entities[Application._name]
