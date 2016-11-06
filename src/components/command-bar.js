@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {SvgIcon,EnhancedButton} from 'material-ui'
+import {Link} from "react-router"
+
 import RefreshIcon from "material-ui/svg-icons/navigation/refresh"
 import DefaultIcon from "material-ui/svg-icons/action/favorite-border"
 import HomeIcon from "material-ui/svg-icons/action/home"
@@ -13,7 +15,7 @@ var _current;
 
 export default class CommandBar extends Component{
     render(){
-        const {onSelect, className, primary, items=[],...others}=this.props
+        const {onSelect=a=>a, className, primary, items=[],...others}=this.props
         return (
             <div className={`commands ${className}`} {...others}>
             {
@@ -107,17 +109,17 @@ export default class CommandBar extends Component{
 
     static Command=class extends Component{
         render(){
-            var {primary, onSelect, action, label, icon=(<DefaultIcon/>), children}=this.props
+            const {primary, onSelect, action, label, icon=(<DefaultIcon/>), link, children}=this.props
             var props={}
             if(primary)
                 props.className="primary"
             return (
                 <div {...props}>
-                    <a style={{cursor:'default'}}
-                        onClick={(e)=>onSelect(action,e)}>
+                    <span style={{cursor:'default'}}
+                        onClick={e=>onSelect(action,e)}>
                         <center>{icon}</center>
                         <center style={{fontSize:'smaller'}}>{label||action}</center>
-                    </a>
+                    </span>
                     {children}
                 </div>
             )

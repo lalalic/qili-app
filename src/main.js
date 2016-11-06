@@ -132,9 +132,7 @@ export const Main=QiliApp.render(
 				contextual={false}/>
 
 			<Route path="setting" component={SettingUI} />
-			<Route path="profile"
-				component={connect(state=>({user:state.qiliApp.user}))(ProfileUI)}
-				contextual={false}/>
+			<Route path="profile" component={ProfileUI} contextual={false}/>
 		</Route>
 
 

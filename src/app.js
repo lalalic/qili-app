@@ -109,7 +109,7 @@ export class App extends Component{
 					value={app.name}
 					errorText={nameError}
 					onChange={({target:{value}})=>refName.value=value}
-					onKeyDown={e=>e.keyCode==ENTER && changeName(e.target.value.trim())}
+					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
 					onBlur={({target:{value}})=>changeName(value.trim())}/>
 
 				<TextField ref={a=>refUname}

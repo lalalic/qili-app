@@ -25,6 +25,8 @@ const muiTheme=getMuiTheme(lightBaseTheme)
 
 export const DOMAIN="qiliApp"
 
+export const currentUser=state=>state[DOMAIN].user
+
 export const ACTION={
 	INIT_APP(error,tutorialized){
 		if(!!error){
@@ -39,35 +41,33 @@ export const ACTION={
 			}
 		}
 	}
-	,USER_CHANGED:{
+	,USER_CHANGED:user=>({
         type:`@@${DOMAIN}/USER_CHANGED`
-	},TUTORIALIZED:{
+		,payload:user
+	}),TUTORIALIZED:({
         type:`@@${DOMAIN}/TUTORIALIZED`
-	}
+	})
 }
 
 export const REDUCER=(state={},{type,payload})=>{
 	switch(type){
 	case `@@${DOMAIN}/inited`:
-		return {
+		return Object.assign({}, state,{
 			inited:true
 			,user:User.current
 			,tutorialized:payload.tutorialized
-		}
+		})
 	break
 	case `@@${DOMAIN}/initedError`:
-		return {
-			inited:false
-			,user:User.current
-			,initedError:payload.error
-		}
+		return Object.assign({},state,{
+			initedError:payload.error
+		})
 	break
 	case `@@${DOMAIN}/USER_CHANGED`:
-		return {
-			inited:!!User.current
-			,user:User.current
-			,tutorialized:state.tutorialized
-		}
+		return Object.assign({},state,{
+			inited:!!payload
+			,user:payload
+		})
 	case `@@${DOMAIN}/TUTORIALIZED`:
 		return Object.assign({},state,{tutorialized:true})
 	}
@@ -100,7 +100,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 			init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
 				.then((tutorialized=true)=>{
 						dispatch(ACTION.INIT_APP(null,!!tutorialized))
-						User.on('change', ()=>dispatch(ACTION.USER_CHANGED))
+						User.on('change', user=>dispatch(ACTION.USER_CHANGED(user)))
 					},
 					(e)=>dispatch(ACTION.INIT_APP(e.message)))
 		}
@@ -225,7 +225,11 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 						{},
 						entities,
 						Object.keys(payload).reduce((merged,type)=>{
-							merged[type]=Object.assign({},entities[type],payload[type])
+							if(typeof(payload[type]['$remove'])=='undefined')
+								merged[type]=Object.assign({},entities[type],payload[type])
+							else
+								merged[type]=Object.assign({},payload[type]['$remove'].reduce((all,a)=>(delete all[a],all),entities[type]))
+
 							return merged
 						},{})
 					)

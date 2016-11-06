@@ -12,6 +12,9 @@ import Photo  from "./components/photo"
 import Messager  from "./components/messager"
 import fileSelector  from "./components/file-selector"
 import {combineReducers} from "redux"
+import Setting from "./setting"
+import Profile from "./user-profile"
+import TextFieldx from "./components/text-field"
 
 
 export const UI={
@@ -23,8 +26,11 @@ export const UI={
     ,Messager
 	,fileSelector
 	,Account
+    ,Setting
+    ,Profile
+    ,TextFieldx
 }
-export const compact=(o,...keys)=>keys.reduce((a,k)=>(o && (a[k]=o[k]),a),{})
+export const compact=(o,...keys)=>o ? keys.reduce((a,k)=>(a[k]=o[k],a),{}) : {}
 
 export function enhancedCombineReducers(...reducers){
 	const combineArrayReducer=reducers=>(state,action)=>reducers.reduce((state,next)=>{
@@ -66,6 +72,10 @@ export function enhancedCombineReducers(...reducers){
 
 export function ENTITIES(data){
 	return {type:'NORMALIZED_DATA', payload:data}
+}
+
+export function REMOVE_ENTITIES(type, ...ids){
+    return {type:'NORMALIZED_DATA', payload:{[type]:{$remove:ids}}}
 }
 
 ;(function(_raw){

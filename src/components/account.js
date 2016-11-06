@@ -1,5 +1,8 @@
-import React, {Component} from "react"
+import React, {Component, PropTypes} from "react"
 import {Avatar,List, ListItem, Divider} from "material-ui"
+import {Link} from "react-router"
+import {connect} from "react-redux"
+import _ from "lodash"
 
 import RightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import SettingIcon from 'material-ui/svg-icons/action/settings'
@@ -8,40 +11,33 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import Photo from "./photo"
 import User from "../db/user"
+import {ACTION} from "../user-profile"
+import {compact} from ".."
 
 
-export const Account=({children},{router})=>{
-	let user=User.current,avatar
-	if(user.photo)
-		avatar=(<Avatar src={user.photo}/>)
-	else {
-		avatar=(<Photo iconRatio={2/3} width={40} height={40}
-				onPhoto={url=>{
-					user.photo=url
-					User.upsert(user)
-				}}
-				/>)
-	}
-
+export const Account=({name, photo, username, children},{router})=>{
 	return (
 		<div>
 			<List>
-				<ListItem primaryText={user.name||user.username}
-					leftAvatar={avatar}
-					rightIcon={<RightArrow/>} 
-					onClick={e=>router.push('my/profile')}	
+				<ListItem primaryText={name||username}
+					leftAvatar={
+						<Photo src={photo} iconRatio={2/3} width={40} height={40}
+							onPhoto={url=>dispatch(ACTION.UPDATE_PHOTO(url))}/>
+					}
+					rightIcon={<RightArrow/>}
+					onClick={e=>router.push("/my/profile")}
 					/>
 
 				<Divider inset={true}/>
 
 				{children}
-				
+
 				<Divider inset={true}/>
 
 				<ListItem primaryText="设置"
 					leftIcon={<SettingIcon/>}
 					rightIcon={<RightArrow/>}
-					onClick={e=>router.push('my/setting')}
+					onClick={e=>router.push("/my/setting")}
 					/>
 			</List>
 		</div>
@@ -49,8 +45,7 @@ export const Account=({children},{router})=>{
 }
 
 Account.contextTypes={
-	router:React.PropTypes.object
+	router: PropTypes.object
 }
 
-export default Account
-
+export default connect(state=>_.pick(state.qiliApp.user,"name","username","photo"))(Account)

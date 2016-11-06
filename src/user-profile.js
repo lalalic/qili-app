@@ -1,15 +1,18 @@
 import React, {Component, PropTypes} from "react"
 import {Avatar, List, ListItem, Divider} from "material-ui"
+import {connect} from "react-redux"
 
 import Photo from "./components/photo"
 import User from "./db/user"
+import QiliApp from "./qiliApp"
+import {compact} from "."
 
 export const DOMAIN="profile"
 export const ACTION={
-	UPDATE_PHOTO:url=>dispatch=>{
-		const user=User.current
+	UPDATE_PHOTO:url=>(dispatch,getState)=>{
+		const user=getState().qiliApp.user
 		user.photo=url
-		return User.upsert(user)
+		User.upsert(user).then(updated=>dispatch(QiliApp.ACTION.USER_CHANGED(updated)))
 	}
 }
 
@@ -17,34 +20,28 @@ export const REDUCER=(state={}, {type, payload})=>{
 	return state
 }
 
-export const Profile=({user,dispatch},{router})=>(
+export const Profile=({name,nick,gender,location,photo,signature})=>(
 	<List>
 		<ListItem primaryText="头像"
 			rightAvatar={
-				<Photo src={user.photo}
+				<Photo src={photo}
 					onPhoto={url=>dispatch(ACTION.UPDATE_PHOTO(url))}
 					iconRatio={2/3} width={100} height={100}/>
 				}
 			style={{height:100}}/>
 
 		<Divider/>
-		<ListItem primaryText="帐号" rightIcon={<span>{user.name}</span>}/>
+		<ListItem primaryText="姓名" rightIcon={<span>{name}</span>}/>
 
 		<Divider/>
-		<ListItem primaryText="昵称" rightIcon={<span>{user.nick}</span>}/>
+		<ListItem primaryText="性别" rightIcon={<span>{gender||"男"}</span>}/>
 
 		<Divider/>
-		<ListItem primaryText="性别" rightIcon={<span>{user.gender||"男"}</span>}/>
+		<ListItem primaryText="地址" rightIcon={<span>{location}</span>}/>
 
 		<Divider/>
-		<ListItem primaryText="地址" rightIcon={<span>{user.location}</span>}/>
-
-		<Divider/>
-		<ListItem primaryText="个性签名" rightIcon={<span>{user.sign}</span>}/>
+		<ListItem primaryText="个性签名" rightIcon={<span>{signature}</span>}/>
 	</List>
 )
 
-Profile.contextTypes={router:PropTypes.object}
-
-
-export default Object.assign(Profile,{DOMAIN, ACTION, REDUCER})
+export default Object.assign(connect(state=>compact(state.qiliApp.user,"name","nick","gender","location","photo","signature"))(Profile),{DOMAIN, ACTION, REDUCER})

@@ -3,7 +3,7 @@ import {TextField,FlatButton, RaisedButton} from 'material-ui'
 import User from './db/user'
 
 const ENTER=13
-export const DOMAIN=""
+export const DOMAIN="account"
 const INIT_STATE={}
 export const ACTION={
 	SIGNUP:user=>dispatch=>{
