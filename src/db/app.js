@@ -5,72 +5,30 @@ import Role from './role'
 import File from './file'
 import Log from './log'
 
-var _apps=[],
-    _current=null,
-    _last=null,
-    schemas={},
-	indexes={},
-    dataDB;
+var schemas={}
+	,indexes={}
+	,_current=null
+    ,dataDB;
 
 export default class Application extends Service.BuiltIn{
-    static init(name){
+    static init(){
         this.super('init')()
         return new Promise((resolve,reject)=>{
-            this.find({},{interim:false}).fetch((d)=>{
-                _apps=d
-                resolve(_apps)
-				if(!_current)
-					Application.current=(name ? (d.find(a=>a.name==name)||_apps[0]) : _apps[0]);
-            },reject)
-
-            dataDB=new RemoteDb(this.server+'classes/',{},function(method, url, params, data, success, error){
+            this.find({/*author:{_id:User.current._id}*/},{interim:false})
+				.fetch(resolve,reject)
+			dataDB=new RemoteDb(this.server+'classes/',{},function(method, url, params, data, success, error){
                 this.httpclient(method, url, params, data, success, error, _current.apiKey)
             }.bind(this))
+
         })
     }
 
-    static upsert(doc, base, success, error){
-        return this.super('upsert')(...arguments)
-            .then(function(updated){
-                if(_apps.filter(a=>a._id==updated._id).length==0)
-                    _apps.push(updated)
-                return updated
-            }.bind(this))
-    }
-
-    static remove(id, success, error){
-        return this.super('remove')(...arguments)
-            .then(function(){
-                _apps=_apps.filter((a)=>a._id!=id)
-                this.current=_apps[0]
-            }.bind(this))
-    }
+	static set current(v){
+		_current=v
+	}
 
     static get _name(){
         return 'apps'
-    }
-    static get all(){
-        return _apps
-    }
-    static get current(){
-        return _current
-    }
-    static set current(v){
-		if(typeof(v)=='string')
-			v=_apps.find(a=>a.name==v)
-
-		v=v || null
-
-        if(v!=_current){
-			_last=_current
-			_current=v
-			this.emit('change',_current,_last)
-		}
-        return _current
-    }
-
-    static get last(){
-        return _last
     }
 
     static get indexes(){

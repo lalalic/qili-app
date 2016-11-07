@@ -14,11 +14,12 @@ const {DialogCommand}=CommandBar
 
 export const DOMAIN="ui.data"
 const INIT_STATE={
-	data:[],index:[],schema:[],app:null
+	data:[],index:[],schema:[]
 }
 
 export const ACTION={
-	FETCH:(name,schema)=>dispatch=>Promise.all([App.collectionData(name),App.collectionIndexes(name),schema])
+	FETCH_INCLUDING_SCHEMA: name=>dispatch=>dispatch(ACTION.FETCH(name,App.getSchema()))
+	,FETCH:(name,schema)=>dispatch=>Promise.all([App.collectionData(name),App.collectionIndexes(name),schema])
 			.then(([data,index,schema])=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,index,schema}}))
 
 	,UPLOAD_DATA:a=>dispatch=>fileSelector.selectJsonInJsFile()
@@ -47,9 +48,6 @@ export const REDUCER=(state=INIT_STATE,{type,payload})=>{
 	case `@@${DOMAIN}/schema`:
 		return Object.assign({},state,{schema:payload})
 
-	case `@@main/APP_CHANGED`:
-		return Object.assign({},INIT_STATE,{app:payload.app._id})
-
 	case `@@${DOMAIN}/CLEAR`:
 		return INIT_STATE
 	}
@@ -59,12 +57,12 @@ export const REDUCER=(state=INIT_STATE,{type,payload})=>{
 export class Data extends Component{
 	componentDidMount(){
 		const {params:{name}, dispatch}=this.props
-		dispatch(ACTION.FETCH(name,App.getSchema()))
+		dispatch(ACTION.FETCH_INCLUDING_SCHEMA(name))
 	}
 
 	componentWillReceiveProps(next){
 		if(next.app!=this.props.app)
-			next.dispatch(ACTION.FETCH(next.params.name,App.schema))
+			next.dispatch(ACTION.FETCH_INCLUDING_SCHEMA(next.params.name))
 		else if(next.params.name!=this.props.params.name)
 			next.dispatch(ACTION.FETCH(next.params.name))
 	}

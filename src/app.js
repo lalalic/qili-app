@@ -7,68 +7,48 @@ import Save from "material-ui/svg-icons/content/save"
 import Remove from "material-ui/svg-icons/action/delete"
 
 import {UI} from "."
+import {ACTION as qiliACTION} from "./main"
+import {getCurrentApp} from "./selector"
 
 import dbApplication from "./db/app"
 
 const ENTER=13
 export const DOMAIN="ui.app"
 export const ACTION={
-	CREATE: (name, uname)=>{
+	CREATE: (name, uname)=>dispatch=>{
 		let nameError, unameError
 		if(!name)
 			nameError="name is required"
 		if(nameError){
-			return dispatch=>{
-				dispatch({type:`@@${DOMAIN}/error`, payload:{nameError}})
-				return Promise.reject()
-			}
+			return Promise.reject(nameError)
 		}
 
-		return dispatch=>dbApplication.upsert({name,uname})
+		return dbApplication.upsert({name,uname})
 			.then(app=>{
-				dispatch({type:`@@${DOMAIN}/created`})
-				return dbApplication.current=app
+				dispatch(qiliACTION.SET_CURRENT_APP(app))
+				return app
 			})
 	}
-	,CHANGE: (key,value)=>{
-		const app=dbApplication.current
+	,CHANGE: (key,value)=>(dispatch,getState)=>{
+		const app=getCurrentApp(getState())
 		app[key]=value
 		return dispatch=>dbApplication.upsert(app)
-			.then(app=>{
-				dispatch({type:`@@${DOMAIN}/updated`})
-				return dbApplication.current=app
-			})
 	}
-	,REMOVE: id=>dispatch=>dbApplication.remove(id).then(a=>dispatch({type:`@@${DOMAIN}/removed`}))
+	,REMOVE: id=>dispatch=>dbApplication.remove(id)
 
 	,UPLOAD: a=>displatch=>UI.fileSelector.select()
 			.then(app=>dbApplication.upload(app))
 			.then(app=>{
-				dispatch({type:`@@${DOMAIN}/uploaded`})
-				return dbApplication.current=app
+				dispatch(qiliACTION.SET_CURRENT_APP(app))
+				return app
 			})
-}
-const INIT_STATE={}
-export const REDUCER=(state=INIT_STATE,{type, payload})=>{
-	switch(type){
-	case `@@${DOMAIN}/error`:
-		return payload
-	case `@@${DOMAIN}/uploaded`:
-	case `@@${DOMAIN}/removed`:
-	case `@@${DOMAIN}/created`:
-	case `@@${DOMAIN}/updated`:
-		return INIT_STATE
-	}
-	return state
 }
 
 export class App extends Component{
-	componentWillReceiveProps(next){
-		if(next.name!=this.props.name && next.name!=dbApplication.current.name)
-			dbApplication.current=next.name
-	}
+	state={nameError:null, unameError:null}
 	render(){
-		const {app, dispatch, nameError, unameError}=this.props
+		const {name,uname,apiKey, dispatch}=this.props
+		const {nameError, unameError}=this.state
 		const {router}=this.context
 		let removable=dbApplication.isRemovable(app)
 		let commandBar
@@ -84,9 +64,9 @@ export class App extends Component{
 						,{action:"Remove"
 							,icon:<Remove/>
 							,onSelect:e=>{
-								let name=prompt("Please make sure you know what you are doing by giving this app name")
-								if(name==app.name){
-									dispatch(ACTION.REMOVE(app._id))
+								let removing=prompt("Please make sure you know what you are doing by giving this app name")
+								if(removing==name){
+									dispatch(ACTION.REMOVE())
 										.then(a=>router.replace("/"))
 								}else
 									alert("name is not correct")
@@ -97,8 +77,10 @@ export class App extends Component{
 		else
 			commandBar=(<UI.CommandBar className="footbar" items={[{action:"Back"}]}/>)
 
-		const changeName=value=>value!=app.name && dispatch(ACTION.CHANGE("name",value)).then(({name})=>router.replace(`app/${name}`))
+		const changeName=value=>value!=app.name && dispatch(ACTION.CHANGE("name",value))
+			.then(a=>this.setState({nameError:null}),error=>this.setState(error))
 		const changeUName=value=>value!=app.uname && dispatch(ACTION.CHANGE("uname",value))
+			.then(a=>this.setState({unameError:null}),error=>this.setState(error))
 		let refName, refUname
 		return (
 			<div className="form">
@@ -106,7 +88,7 @@ export class App extends Component{
 					floatingLabelText="application name"
 					fullWidth={true}
 					disabled={!removable}
-					value={app.name}
+					value={name}
 					errorText={nameError}
 					onChange={({target:{value}})=>refName.value=value}
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
@@ -116,7 +98,7 @@ export class App extends Component{
 					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 					fullWidth={true}
 					disabled={!removable}
-					value={app.uname}
+					value={uname}
 					errorText={unameError}
 					onChange={({target:{value}})=>refUname.value=value}
 					onKeyDown={e=>e.keyCode==ENTER && changeUName(e.target.value.trim())}
@@ -126,47 +108,52 @@ export class App extends Component{
 					floatingLabelText="API key: value of http header 'x-application-id'"
 					disabled={true}
 					fullWidth={true}
-					value={app.apiKey}/>
+					value={apiKey}/>
 
 				<TextField
 					floatingLabelText="wechat url: use it to accept message from wechat"
 					disabled={true}
 					fullWidth={true}
-					value={app.apiKey ? `http://qili2.com/1/${app.apiKey}/wechat` : ""}/>
+					value={`http://qili2.com/1/${apiKey}/wechat`}/>
 
 				{commandBar}
 			</div>
 		)
 	}
+	static contextTypes={router: PropTypes.object}
 }
 
-App.contextTypes={router: PropTypes.object}
+export class Creator extends Component{
+	state={error:null}
+	render(){
+		const {dispatch}=this.props
+		const {error}=this.state
+		const {router}=this.context
+		let refName,refUname
+		return (
+			<div className="form">
+				<TextField ref={a=>refName=a}
+					floatingLabelText="application name"
+					errorText={error}
+					fullWidth={true}/>
 
-export const Creator=({dispatch, nameError},{router})=>{
-	let refName,refUname
-	return (
-		<div className="form">
-			<TextField ref={a=>refName=a}
-				floatingLabelText="application name"
-				errorText={nameError}
-				fullWidth={true}/>
+				<TextField ref={a=>refUname=a}
+					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
+					fullWidth={true}/>
 
-			<TextField ref={a=>refUname=a}
-				floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
-				fullWidth={true}/>
-
-			<UI.CommandBar className="footbar"
-				items={[
-					{action:"Back"}
-					,{action:"Save", label:"保存", icon:<Save/>
-						,onSelect:a=>dispatch(ACTION.CREATE(refName.getValue(),refUname.getValue()))
-							.then(({name})=>router.replace(`/app/${name}`))
-					}
-				]}
-				/>
-		</div>
-	)
+				<UI.CommandBar className="footbar"
+					items={[
+						{action:"Back"}
+						,{action:"Save", label:"保存", icon:<Save/>
+							,onSelect:a=>dispatch(ACTION.CREATE(refName.getValue(),refUname.getValue()))
+								.then(({_id})=>router.replace(`/app/${_id}`), error=>this.setState({error}))
+						}
+					]}
+					/>
+			</div>
+		)
+	}
+	static contextTypes={router: PropTypes.object}
 }
-Creator.contextTypes={router: PropTypes.object}
 
-export default Object.assign(App,{DOMAIN, ACTION, REDUCER})
+export default Object.assign(App,{DOMAIN, ACTION})
