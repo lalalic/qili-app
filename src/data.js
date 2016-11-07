@@ -59,7 +59,7 @@ export const REDUCER=(state=INIT_STATE,{type,payload})=>{
 export class Data extends Component{
 	componentDidMount(){
 		const {params:{name}, dispatch}=this.props
-		dispatch(ACTION.FETCH(name,App.schema))
+		dispatch(ACTION.FETCH(name,App.getSchema()))
 	}
 
 	componentWillReceiveProps(next){

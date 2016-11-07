@@ -84,7 +84,7 @@ export default class Application extends Service.BuiltIn{
         })
     }
 
-	static get schema(){
+	static getSchema(){
         if(typeof(schemas[_current._id])!=='undefined')
             return Promise.resolve(schemas[_current._id])
         return this.ajax({

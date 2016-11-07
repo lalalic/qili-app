@@ -4,7 +4,7 @@ import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} f
 import {FloatingActionButton} from 'material-ui'
 import {normalize,arrayOf} from "normalizr"
 
-import {init,User,QiliApp, UI, enhancedCombineReducers, compact} from '.'
+import {init,User,QiliApp, UI, enhancedCombineReducers, compact, ENTITIES} from '.'
 import Application from './db/app'
 import App from './app'
 import Logo from './icons/logo'
@@ -16,7 +16,8 @@ const DOMAIN="qiliAdmin"
 const ACTION={
 	APP_CHANGED:app=>({type:`@@${DOMAIN}/APP_CHANGED`,payload:{app}})
 	,APPS_FETCHED: apps=>dispatch=>{
-		dispatch({type:'NORMALIZED_DATA',payload:normalize(apps,arrayOf(Application.schema)).entities})
+		let normalized=normalize(apps,arrayOf(Application.schema))
+		dispatch(ENTITIES(normalized.entities))
 	}
 	,SWITCH_APPLICATION: app=>(dispatch,getState)=>{
 		const apps=getState().entities[Application._name]

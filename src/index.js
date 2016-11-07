@@ -1,5 +1,3 @@
-import 'babel-polyfill'
-
 export {init,Model,User,Role,File,Log} from "./db"
 export {QiliApp} from "./qiliApp"
 
