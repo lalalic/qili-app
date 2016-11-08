@@ -77,7 +77,7 @@
     "test": "restmock",
     "test.mock": "watchify -v -d ./.test.mock.js -o dist/test.js",
     "test.mongo": "watchify -v -d ./.test.mongo.js -o dist/test.js",
-    "cordova": "cordova create cordova --link-to=dist"
+    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android"
   },
   "repository": {
     "type": "git",

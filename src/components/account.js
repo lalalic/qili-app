@@ -2,7 +2,6 @@ import React, {Component, PropTypes} from "react"
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Link} from "react-router"
 import {connect} from "react-redux"
-import _ from "lodash"
 
 import RightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import SettingIcon from 'material-ui/svg-icons/action/settings'
