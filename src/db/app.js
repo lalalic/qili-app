@@ -110,7 +110,7 @@ export default class Application extends Service.BuiltIn{
         })
     }
 
-    static isRemovable(app){
-        return !this.isCurrentApp(app._id)
+    static isRemovable(id){
+        return !this.isCurrentApp(id)
     }
 }

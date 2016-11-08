@@ -14,4 +14,8 @@ redux refactor finished
 >write stateless component, and create container component at design route
 >QiliApp is a container component
 
+0.7.1
+======
+ui error message is wrapped in stateful component
+
 

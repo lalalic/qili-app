@@ -8,7 +8,7 @@ import {init,User,QiliApp, UI, enhancedCombineReducers, compact, ENTITIES} from 
 import Application from './db/app'
 import App from './app'
 import Logo from './icons/logo'
-import {getCurrentApp} from "./selector"
+import {getCurrentApp, getApp} from "./selector"
 
 let initApp=null
 
@@ -20,7 +20,7 @@ export const ACTION={
 	SET_CURRENT_APP_BY_ID: id=>(dispatch,getState)=>{
 		let state=getState()
 		let apps=state.entities[Application._name]
-		let found=apps.find(a=>a._id==id)
+		let found=apps[id]
 		if(found)
 			dispatch(ACTION.SET_CURRENT_APP(found))
 	}
@@ -39,7 +39,7 @@ export const ACTION={
 			dispatch(ACTION.SET_CURRENT_APP(current))
 		}
 	}
-	,SWITCH_APPLICATION: app=>(dispatch,getState)=>{
+	,NEXT_APPLICATION: app=>(dispatch,getState)=>{
 		const state=getState()
 		const apps=state.entities[Application._name]
 		let ids=Object.keys(apps)
@@ -60,18 +60,6 @@ const REDUCER=(state={},{type,payload})=>{
 }
 
 class QiliConsole extends Component{
-    constructor(props){
-        super(props)
-		/*
-		Application.on('change',(prev,current)=>{
-			const {dispatch,routes:[root,ui],params:{_id}}=this.props
-			const {router}=this.context
-			if(ui.name=='app' && _id!=current._id)
-				router.push(`/app/${current._id}`)
-		})
-		*/
-    }
-
     render(){
         const {_id,name, children, dispatch, routes}=this.props
 		let props={
@@ -96,7 +84,7 @@ class QiliConsole extends Component{
             <QiliApp {...props}>
 				<FloatingActionButton className="sticky top right" mini={true}
 					style={quickSwitchStyle}
-					onClick={e=>dispatch(ACTION.SWITCH_APPLICATION(_id))}>
+					onClick={e=>dispatch(ACTION.NEXT_APPLICATION(_id))}>
 					{name}
 				</FloatingActionButton>
 				{children}
@@ -126,13 +114,21 @@ export const Main=QiliApp.render(
 		component={connect(state=>compact(getCurrentApp(state),"_id","name"))(QiliConsole)}>
 
         <IndexRoute component={Dashboard}/>
-
-        <Route path="app/:_id" name="app"
-			component={connect(state=>({...compact(getCurrentApp(state),"name","uname","apiKey")}))(AppUI)}
-			onEnter={({params:{_id}})=>initApp=_id}
-			/>
-		<Route path="app" contextual={false}
-			component={connect()(Creator)}/>
+		
+		<Route path="app" contextual={false}>
+			<IndexRoute component={connect()(Creator)}/>
+				
+			<Route path=":_id" 
+				component={connect((state,{params:{_id}})=>{
+					let urlApp=getApp(state,_id)
+					let current=getCurrentApp(state)
+					let info=compact(urlApp,"name","uname","apiKey")
+					info.isCurrent=urlApp==current
+					return info
+					})(AppUI)}
+				onEnter={({params:{_id}})=>initApp=_id}
+				/>
+		</Route>
 
         <Route path="cloud" component={connect(state=>({cloudCode:getCurrentApp(state).cloudCode}))(CloudUI)}/>
 

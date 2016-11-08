@@ -7,3 +7,11 @@ export const getCurrentApp=state=>{
         return null
     }
 }
+
+export const getApp=(state,id)=>{
+    try{
+        return state.entities[Application._name][id]
+    }catch(e){
+        return null
+    }
+}

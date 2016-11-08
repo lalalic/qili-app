@@ -1,19 +1,21 @@
 import React,{Component, PropTypes} from "react"
 import {TextField} from 'material-ui'
+import {normalize} from "normalizr"
 
 import Upload from "material-ui/svg-icons/file/file-upload"
 import Download from "material-ui/svg-icons/file/file-download"
 import Save from "material-ui/svg-icons/content/save"
 import Remove from "material-ui/svg-icons/action/delete"
 
-import {UI} from "."
+import {UI, REMOVE_ENTITIES, ENTITIES} from "."
 import {ACTION as qiliACTION} from "./main"
 import {getCurrentApp} from "./selector"
 
 import dbApplication from "./db/app"
 
 const ENTER=13
-export const DOMAIN="ui.app"
+const {TextFieldx, CommandBar, fileSelector}=UI
+
 export const ACTION={
 	CREATE: (name, uname)=>dispatch=>{
 		let nameError, unameError
@@ -25,35 +27,49 @@ export const ACTION={
 
 		return dbApplication.upsert({name,uname})
 			.then(app=>{
+				dispatch(ENTITIES(normalize(app,dbApplication.schema).entities))
 				dispatch(qiliACTION.SET_CURRENT_APP(app))
 				return app
 			})
 	}
 	,CHANGE: (key,value)=>(dispatch,getState)=>{
-		const app=getCurrentApp(getState())
+		if(key=="name" && !value)
+			return Promise.reject("name is required")
+		const state=getState()
+		const app=getCurrentApp(state)
 		app[key]=value
-		return dispatch=>dbApplication.upsert(app)
+		return dbApplication.upsert(app)
+			.then(app=>dispatch(ENTITIES(normalize(app,dbApplication.schema).entities)))
 	}
-	,REMOVE: id=>dispatch=>dbApplication.remove(id)
-
-	,UPLOAD: a=>displatch=>UI.fileSelector.select()
-			.then(app=>dbApplication.upload(app))
-			.then(app=>{
-				dispatch(qiliACTION.SET_CURRENT_APP(app))
-				return app
+	,REMOVE: id=>(dispatch,getState)=>{
+		const state=getState()
+		let app=getCurrentApp(state)
+		let id=app._id
+		return dbApplication.remove(id)
+			.then(a=>{
+				dispatch(REMOVE_ENTITIES(dbApplication.schema.getKey(),id))
+				dispatch(qiliACTION.NEXT_APPLICATION(id))
 			})
+	}
+
+	,UPLOAD: a=>displatch=>fileSelector.select()
+			.then(app=>dbApplication.upload(app))
 }
 
 export class App extends Component{
 	state={nameError:null, unameError:null}
+	componentWillReceiveProps(next){
+		if(!next.isCurrent)
+			next.dispatch(qiliACTION.SET_CURRENT_APP_BY_ID(next.params._id))
+	}
 	render(){
-		const {name,uname,apiKey, dispatch}=this.props
+		const {name,uname,apiKey, dispatch, params:{_id}}=this.props
 		const {nameError, unameError}=this.state
 		const {router}=this.context
-		let removable=dbApplication.isRemovable(app)
+		let removable=dbApplication.isRemovable(_id)
 		let commandBar
 		if(removable)
-			commandBar=(<UI.CommandBar className="footbar" primary="Upload"
+			commandBar=(<CommandBar className="footbar" primary="Upload"
 				items={[
 						{action:"Back"}
 
@@ -64,8 +80,8 @@ export class App extends Component{
 						,{action:"Remove"
 							,icon:<Remove/>
 							,onSelect:e=>{
-								let removing=prompt("Please make sure you know what you are doing by giving this app name")
-								if(removing==name){
+								let removing=prompt("Please make sure you know what you are doing by giving this app name").trim()
+								if(removing && removing==name){
 									dispatch(ACTION.REMOVE())
 										.then(a=>router.replace("/"))
 								}else
@@ -75,16 +91,18 @@ export class App extends Component{
 					]}
 				/>)
 		else
-			commandBar=(<UI.CommandBar className="footbar" items={[{action:"Back"}]}/>)
+			commandBar=(<CommandBar className="footbar" items={[{action:"Back"}]}/>)
 
-		const changeName=value=>value!=app.name && dispatch(ACTION.CHANGE("name",value))
-			.then(a=>this.setState({nameError:null}),error=>this.setState(error))
-		const changeUName=value=>value!=app.uname && dispatch(ACTION.CHANGE("uname",value))
-			.then(a=>this.setState({unameError:null}),error=>this.setState(error))
+		const changeName=value=>value!=name && dispatch(ACTION.CHANGE("name",value))
+			.then(a=>this.setState({nameError:null}),error=>this.setState({nameError:error}))
+			
+		const changeUName=value=>value!=uname && dispatch(ACTION.CHANGE("uname",value))
+			.then(a=>this.setState({unameError:null}),error=>this.setState({unameError:error}))
+			
 		let refName, refUname
 		return (
 			<div className="form">
-				<TextField ref={a=>refName}
+				<TextFieldx ref={a=>refName=a}
 					floatingLabelText="application name"
 					fullWidth={true}
 					disabled={!removable}
@@ -94,14 +112,14 @@ export class App extends Component{
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
 					onBlur={({target:{value}})=>changeName(value.trim())}/>
 
-				<TextField ref={a=>refUname}
+				<TextFieldx ref={a=>refUname=a}
 					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 					fullWidth={true}
 					disabled={!removable}
 					value={uname}
 					errorText={unameError}
 					onChange={({target:{value}})=>refUname.value=value}
-					onKeyDown={e=>e.keyCode==ENTER && changeUName(e.target.value.trim())}
+					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
 					onBlur={({target:{value}})=>changeUName(value.trim())}/>
 
 				<TextField
@@ -141,7 +159,7 @@ export class Creator extends Component{
 					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 					fullWidth={true}/>
 
-				<UI.CommandBar className="footbar"
+				<CommandBar className="footbar"
 					items={[
 						{action:"Back"}
 						,{action:"Save", label:"保存", icon:<Save/>
@@ -156,4 +174,4 @@ export class Creator extends Component{
 	static contextTypes={router: PropTypes.object}
 }
 
-export default Object.assign(App,{DOMAIN, ACTION})
+export default Object.assign(App,{ACTION})

@@ -25,8 +25,6 @@ const muiTheme=getMuiTheme(lightBaseTheme)
 
 export const DOMAIN="qiliApp"
 
-export const currentUser=state=>state[DOMAIN].user
-
 export const ACTION={
 	INIT_APP(error,tutorialized){
 		if(!!error){
@@ -73,8 +71,6 @@ export const REDUCER=(state={},{type,payload})=>{
 	}
 	return state
 }
-
-const AccountContainer=connect(state=>state.account)(Account)
 
 export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(
 	class extends Component{
@@ -136,9 +132,9 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 				if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
 					return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
 
-				content=(<AccountContainer />)
+				content=(<Account />)
 			}else if(!user.sessionToken){
-				content=(<AccountContainer user={user}/>)
+				content=(<Account user={user}/>)
 			}else {
 				content=this.renderContent()
 			}
@@ -242,7 +238,6 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 						routing:routerRducer
 						,entities:normalizeData
 						,[DOMAIN]:REDUCER
-						,account:Account.REDUCER
 					}, ...reducers)
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
