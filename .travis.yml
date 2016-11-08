@@ -1,15 +1,32 @@
-language: node_js
-node_js:
- - "4.2"
+#language: node_js
+#node_js:
+# - "4.2"
+language: android
+android:
+ components:
+  - build-tools-23.0.2
+  - android-22
+
 addons:
  apt:
   packages:
    - sshpass
 
+before_install:
+ - echo "install nodejs"
+ - nvm install 4.2
+ - node --version
+ - npm --version
+ - nvm --version
+ 
 install:
  - npm install --production
- - npm install browserify node-lessify uglifyify
+ - npm install browserify node-lessify uglifyify cordova svg-to-png
 
 script:
  - npm run merge
  - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/allin1.html $DEPLOY_PATH
+ - npm run cordova
+ - mv cordova/platforms/android/build/outputs/apk/android-release-unsigned.apk dist/android.apk
+ - ls dist -l
+ - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist/android.apk $APK_PATH

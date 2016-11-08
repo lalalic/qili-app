@@ -30,5 +30,6 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <icon src="www/images/icon.svg" />
+    <icon src="res/icon.png" />
+    <hook src="../scripts/icon.js" type="before_prepare" />
 </widget>
