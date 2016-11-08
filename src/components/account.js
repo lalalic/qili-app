@@ -47,4 +47,4 @@ Account.contextTypes={
 	router: PropTypes.object
 }
 
-export default connect(state=>_.pick(state.qiliApp.user,"name","username","photo"))(Account)
+export default connect(state=>compact(state.qiliApp.user,"name","username","photo"))(Account)
