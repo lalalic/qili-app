@@ -111,18 +111,33 @@ export default class CommandBar extends Component{
         render(){
             const {primary, onSelect, action, label, icon=(<DefaultIcon/>), link, children}=this.props
             var props={}
-            if(primary)
-                props.className="primary"
-            return (
-                <div {...props}>
-                    <span style={{cursor:'default'}}
-                        onClick={e=>onSelect(action,e)}>
-                        <center>{icon}</center>
-                        <center style={{fontSize:'smaller'}}>{label||action}</center>
-                    </span>
-                    {children}
-                </div>
-            )
+            if(!link){
+				if(primary)
+					props.className="primary"
+				
+				return (
+					<div {...props}>
+						<span style={{cursor:'default'}}
+							onClick={e=>onSelect(action,e)}>
+							<center>{icon}</center>
+							<center style={{fontSize:'smaller'}}>{label||action}</center>
+						</span>
+						{children}
+					</div>
+				)
+			}else{
+				return (
+					<div {...props}>
+						<Link style={{cursor:'default'}} to={link} activeClassName="primary"
+							onlyActiveOnIndex={true}
+							onClick={e=>onSelect(action,e)}>
+							<center>{icon}</center>
+							<center style={{fontSize:'smaller'}}>{label||action}</center>
+						</Link>
+						{children}
+					</div>
+				)
+			}
         }
     }
 
@@ -160,3 +175,6 @@ export default class CommandBar extends Component{
         static propTypes={message:React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.func])}
     }
 }
+
+
+const Span=props=>(<span {...props}/>)
