@@ -27,7 +27,7 @@ script:
 
  - rm dist/config.xml
  - rm dist/cordova.html
- - ren dist $APP_NAME
+ - mv dist $APP_NAME
  - cd $APP_NAME
  - tar cvfz $APP_NAME.tgz .
  - ls $APP_NAME -l
