@@ -143,13 +143,13 @@ export default class CommandBar extends Component{
 
     static Comment=class extends Component{
         render(){
-            return (<CommandBar.Command label="Comment" onSelect={()=>this.onSelect()}
-                icon={CommentIcon} {...this.props}/>)
-        }
-
-        onSelect(){
-            var {type:{_name}, model:{_id}}=this.props
-            this.context.router.push(`comment/${_name}/${_id}`)
+			const {type:{_name}, model:{_id}}=this.props
+			const {router}=this.context
+            return (<CommandBar.Command 
+				label="Comment" 
+				onSelect={a=>router.push(`/comment/${_name}/${_id}`)}
+                icon={<CommentIcon/>} 
+				{...this.props}/>)
         }
 
         static contextTypes={router:React.PropTypes.object}
@@ -158,10 +158,14 @@ export default class CommandBar extends Component{
             model:React.PropTypes.object.isRequired
         }
     }
+	
     static Share=class extends Component{
         render(){
-            return (<CommandBar.Command label="Share" onSelect={this.onSelect.bind(this)}
-                icon={ShareIcon} {...this.props}/>)
+            return (<CommandBar.Command 
+				label="Share" 
+				onSelect={this.onSelect.bind(this)}
+                icon={<ShareIcon/>} 
+				{...this.props}/>)
         }
 
         onSelect(){
