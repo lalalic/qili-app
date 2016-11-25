@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",
-    "material-ui": "^0.15.0",
+    "material-ui": "^0.16.0",
     "minimongo": ">=3.2.13",
     "normalizr": "^2.2.1",
     "react": "^15.1.0",
@@ -17,7 +17,7 @@
     "react-redux": "^4.4.5",
     "react-responsive": "^1.2.1",
     "react-router": "^2.4.1",
-    "react-tap-event-plugin": "^1.0.0",
+    "react-tap-event-plugin": "^2.0.0",
     "reactable": "^0.13.2",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0"
@@ -80,7 +80,7 @@
     "test": "restmock",
     "test.mock": "watchify -v -d ./.test.mock.js -o dist/test.js",
     "test.mongo": "NODE_ENV=production watchify -v -d ./.test.mongo.js -o dist/test.js",
-    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android"
+    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build --release android"
   },
   "repository": {
     "type": "git",
