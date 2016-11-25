@@ -11,7 +11,7 @@ addons:
 
 before_install:
  - echo "install nodejs"
- - nvm install 4.2
+ - nvm install 6.9.1
  - node --version
  - npm --version
  - nvm --version
@@ -34,6 +34,6 @@ script:
  - ls $APP_NAME -l
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
  - sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "tar xvfz $DEPLOY_PATH/$APP_NAME.tgz -C $DEPLOY_PATH && rm $DEPLOY_PATH/$APP_NAME.tgz"
- 
+
  - mv cordova/platforms/android/build/outputs/apk/android-release-unsigned.apk $APP_NAME/app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME/app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
