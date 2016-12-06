@@ -9,8 +9,8 @@ export default class Photo extends Component{
 
     render(){
         var {url}=this.state,
-            {width, height, iconSize, style={}, 
-				cameraOptions, overwritable, 
+            {width, height, iconSize, style={},
+				cameraOptions, overwritable,iconRatio,
 				onPhoto, autoUpload,
 				...others}=this.props;
         if(!iconSize){
@@ -23,16 +23,15 @@ export default class Photo extends Component{
         if(url){
             if(overwritable)
                 others.onClick=this.takePhoto.bind(this)
-            return (<Avatar src={url} style={style} {...others}/>)
+            return (<Avatar  {...others} src={url} style={style}/>)
         }
 
-        var {iconRatio, ...lefts}=others,
-            viewWidth=Math.floor(Math.min(style.width, style.height)*iconRatio),
+        var viewWidth=Math.floor(Math.min(style.width, style.height)*iconRatio),
             top=Math.floor((style.height-viewWidth)/2),
             left=Math.floor((style.width-viewWidth)/2);
         style.width=style.height=viewWidth
         style.margin=`${top}px ${left}px`
-        return (<IconCamera {...lefts}
+        return (<IconCamera {...others}
                 style={style}
                 color="lightgray"
                 hoverColor="lightblue"
