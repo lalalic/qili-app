@@ -22,7 +22,7 @@ export default class Photo extends Component{
 
         if(url){
             if(overwritable)
-                others.onClick=this.takePhoto.bind(this)
+                others.onClick=this.doPhoto.bind(this)
             return (<Avatar  {...others} src={url} style={style}/>)
         }
 
@@ -48,7 +48,7 @@ export default class Photo extends Component{
             then(({url,binary})=>{
                 this.setState({url})
                 if(autoUpload){
-                    dbFile.upload(binary)
+                    dbFile.upload(url)
                         .then(url=>{
                             onPhoto && onPhoto(url)
                         })
@@ -89,18 +89,18 @@ export default class Photo extends Component{
         height:1024,
         iconRatio:0.5,
         overwritable:false,
-        autoUpload:true
+        autoUpload:true,
+		cameraOptions: typeof(Camera)!='undefined' ? {
+				quality : 75,
+				destinationType : Camera.DestinationType.FILE_URI,
+				sourceType : Camera.PictureSourceType.CAMERA,
+				allowEdit : false,
+				encodingType: Camera.EncodingType.JPEG,
+				popoverOptions: null,
+				saveToPhotoAlbum: false
+			}:{}
     }
 
 }
 
-typeof(Camera)!='undefined' && (
-Photo.defaultProps.cameraOptions={
-        quality : 75,
-        destinationType : Camera.DestinationType.FILE_URI,
-        sourceType : Camera.PictureSourceType.CAMERA,
-        allowEdit : false,
-        encodingType: Camera.EncodingType.JPEG,
-        popoverOptions: null,
-        saveToPhotoAlbum: false
-    });
+

@@ -1,15 +1,16 @@
 import {Service} from './service'
+import {toBlob} from "../components/file-selector"
 
 export default class File extends Service.BuiltIn{
     static get _name(){
         return 'files'
 	}
 
-    static upload(data,type="image",props, url="http://up.qiniu.com"){
+    static upload(data,props,url="http://up.qiniu.com"){
         return new Promise((resolve, reject)=>{
-            this._getToken().then((token)=>{
+            this._getToken().then(token=>dataAsBlob(data).then(data=>{
                 var formData=new FormData()
-                formData.append('file',data)
+                formData.append('file',data, "a.jpg")
                 formData.append('token',token)
                 for(var a in props)
                     formData.append(a,props[a])
@@ -25,8 +26,8 @@ export default class File extends Service.BuiltIn{
                 }
 
                 xhr.open('POST',url,true)
-                xhr.send(data)
-            })
+                xhr.send(formData)
+            }))
         })
     }
 
@@ -36,4 +37,21 @@ export default class File extends Service.BuiltIn{
             url:'http://qili2.com/1/files/token'
         }).then((data)=>data.token)
     }
+}
+
+function dataAsBlob(data){
+	return new Promise((resolve,reject)=>{
+		switch(typeof(data)){
+		case 'string':
+			if(data.startsWith("file://")){
+				window.resolveLocalFileSystemURL(data, entry=>entry.file(resolve,reject), reject)
+			}else if(data.startsWith("data:image/jpeg;base64,")){
+				resolve(toBlob(data))
+			}else
+				resolve(data)
+		break
+		default:
+			resolve(data)
+		}
+	})
 }
