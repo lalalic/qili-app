@@ -8,7 +8,7 @@ export default class File extends Service.BuiltIn{
 
     static upload(data,props,url="http://up.qiniu.com"){
         return new Promise((resolve, reject)=>{
-            this._getToken().then(token=>dataAsBlob(data).then(data=>{
+			this._getToken().then(token=>dataAsBlob(data).then(data=>{
                 var formData=new FormData()
                 formData.append('file',data, "a.jpg")
                 formData.append('token',token)
@@ -44,7 +44,11 @@ function dataAsBlob(data){
 		switch(typeof(data)){
 		case 'string':
 			if(data.startsWith("file://")){
-				window.resolveLocalFileSystemURL(data, entry=>entry.file(resolve,reject), reject)
+				window.resolveLocalFileSystemURL(data, entry=>entry.file(file=>{
+					let reader=new FileReader()
+					reader.onload=e=>resolve(new Blob([new Uint8Array(reader.result)],{type:file.type}))
+					reader.readAsArrayBuffer(file)
+				},reject), reject)
 			}else if(data.startsWith("data:image/jpeg;base64,")){
 				resolve(toBlob(data))
 			}else

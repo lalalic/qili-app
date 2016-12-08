@@ -104,7 +104,7 @@ module.exports={//for testable
     select(){
         return main("raw",...arguments)
     },
-	toBlob(data,contentType={type:"image/*"}, sliceSize=512){
+	toBlob(data,contentType="image/*", sliceSize=512){
 		var byteCharacters = atob(data.substr(IMAGE_DATA_SCHEME_LEN))
 		var byteArrays = [];
 
