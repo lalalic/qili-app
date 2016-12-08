@@ -160,7 +160,12 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
 
                 if(success){
                     User.on('change',()=>success(db))
-                    resolve(User.current ? Promise.resolve(success(db)||db).then(a=>isTutorialized(localStorage)) : db)
+					if(User.current){
+						Promise.resolve(success(db)||db)
+							.then(a=>resolve(isTutorialized(localStorage)))
+					}else{
+						resolve(isTutorialized(localStorage))
+					}       
                 }else
                     resolve(isTutorialized(localStorage))
 

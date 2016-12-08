@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Avatar} from "material-ui"
+import {Avatar, Dialog} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import dbFile from '../db/file'
 import {selectImageFile} from './file-selector'
@@ -94,7 +94,7 @@ export default class Photo extends Component{
 				quality : 75,
 				destinationType : Camera.DestinationType.FILE_URI,
 				sourceType : Camera.PictureSourceType.CAMERA,
-				allowEdit : false,
+				allowEdit : true,
 				encodingType: Camera.EncodingType.JPEG,
 				popoverOptions: null,
 				saveToPhotoAlbum: false
@@ -102,5 +102,4 @@ export default class Photo extends Component{
     }
 
 }
-
 

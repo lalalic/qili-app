@@ -94,7 +94,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 				document.title=title
 
 			init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
-				.then((tutorialized=true)=>{
+				.then((tutorialized=false)=>{
 						dispatch(ACTION.INIT_APP(null,!!tutorialized))
 						User.on('change', user=>dispatch(ACTION.USER_CHANGED(user)))
 					},
