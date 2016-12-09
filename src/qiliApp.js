@@ -8,6 +8,7 @@ import {Provider, connect} from "react-redux"
 import thunk from 'redux-thunk'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
@@ -20,8 +21,6 @@ import Loading from "./components/loading"
 import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
-
-const muiTheme=getMuiTheme(lightBaseTheme)
 
 export const DOMAIN="qiliApp"
 
@@ -104,8 +103,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 		getChildContext(){
 			let self=this
 			return {
-				muiTheme
-				,showMessage(){
+				showMessage(){
 					self.showMessage(...arguments)
 				}
 				,loading(open){
@@ -120,7 +118,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 
 
 		render(){
-			const {inited, initedError, user, tutorialized, dispatch}=this.props
+			const {theme, inited, initedError, user, tutorialized, dispatch}=this.props
 			let content
 
 			if(!inited){
@@ -140,6 +138,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 			}
 
 			return (
+				<MuiThemeProvider muiTheme={theme}>
 					<div className="withFootbar">
 						<div id="container" style={{overflowY:"scroll"}}>
 							{content}
@@ -147,7 +146,8 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 							<Loading ref="loading"  className="sticky top right"/>
 						</div>
 					</div>
-				)
+				</MuiThemeProvider>
+			)
 		}
 
 		renderContent(){
@@ -158,6 +158,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 
 		static defaultProps={
 			service:"http://qili2.com/1/",
+			theme:getMuiTheme(lightBaseTheme),
 			init(){},
 			tutorial:[]
 		}
@@ -165,13 +166,13 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 		static propsTypes={
 			service: React.PropTypes.string.isRequired,
 			appId:React.PropTypes.string.isRequired,
+			theme: React.PropTypes.object.isRequired,
 			init:React.PropTypes.func,
 			tutorial:React.PropTypes.array,
-			title: React.PropTypes.string
+			title: React.PropTypes.string,
 		}
 
 		static childContextTypes={
-			muiTheme:React.PropTypes.object.isRequired,
 			showMessage: React.PropTypes.func,
 			loading: React.PropTypes.func
 		}
