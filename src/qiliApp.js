@@ -158,7 +158,15 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 
 		static defaultProps={
 			service:"http://qili2.com/1/",
-			theme:getMuiTheme(lightBaseTheme),
+			theme:getMuiTheme(lightBaseTheme,{
+				footbar:{
+					height: 50
+				},
+				page:{
+					width: window.innerWidth > 960 ? 960 : window.innerWidth
+					,height:window.innerHeight
+				}
+			}),
 			init(){},
 			tutorial:[]
 		}

@@ -114,11 +114,11 @@ export const Main=QiliApp.render(
 		component={connect(state=>compact(getCurrentApp(state),"_id","name"))(QiliConsole)}>
 
         <IndexRoute component={Dashboard}/>
-		
+
 		<Route path="app" contextual={false}>
 			<IndexRoute component={connect()(Creator)}/>
-				
-			<Route path=":_id" 
+
+			<Route path=":_id"
 				component={connect((state,{params:{_id}})=>{
 					let urlApp=getApp(state,_id)
 					let current=getCurrentApp(state)
