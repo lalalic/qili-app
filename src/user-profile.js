@@ -7,6 +7,7 @@ import QiliApp from "./qiliApp"
 import {compact} from "."
 
 import {InfoForm, Field} from "./components/info-form"
+import TextFieldx from "./components/text-field"
 
 export const DOMAIN="profile"
 export const ACTION={
@@ -21,7 +22,7 @@ export const REDUCER=(state={}, {type, payload})=>{
 	return state
 }
 
-export const Profile=({username,nick,gender,location,photo,signature, dispatch, valueStyle={color:"lightgray"}})=>(
+export const Profile=({username,nick,birthday,gender,location,photo,signature, dispatch, valueStyle={color:"lightgray"}})=>(
 	<InfoForm style={{padding:5}}>
 		<Field primaryText="头像"
 			rightAvatar={
@@ -34,7 +35,7 @@ export const Profile=({username,nick,gender,location,photo,signature, dispatch, 
 		<Field primaryText="账号"
 			value={username}
 			/>
-			
+
 		<Field primaryText="昵称"
 			value={nick}
 			type="input"
@@ -42,25 +43,30 @@ export const Profile=({username,nick,gender,location,photo,signature, dispatch, 
 			hintText="好名字可以让你的朋友更容易记住你"
 			/>
 
-		<Field primaryText="性别" 
+		<Field primaryText="性别"
 			value={gender||"男"}
 			type="single"
 			options={["男","女"]}
 			onEdit={value=>dispatch(ACTION.UPDATE("gender",value))}/>
 
-		<Field primaryText="地址" 
+		<Field primaryText="地址"
 			value={location}
-			type="location"
+			type="input"
 			onEdit={value=>dispatch(ACTION.UPDATE("location",value))}
 			/>
 
-		<Field primaryText="签名" 
+		<Field primaryText="生日" value={birthday}
+			type="date"
+			onEdit={value=>dispatch(ACTION.UPDATE("birthday",value))}/>
+
+		<Field primaryText="签名"
 			value={signature}
 			type="input"
+			hintText="个性签名表达你的个性"
 			onEdit={value=>dispatch(ACTION.UPDATE("signature",value))}
 			/>
 	</InfoForm>
 )
 
 
-export default Object.assign(connect(state=>compact(state.qiliApp.user,"username","nick","gender","location","photo","signature"))(Profile),{DOMAIN, ACTION, REDUCER})
+export default Object.assign(connect(state=>compact(state.qiliApp.user,"username","nick","birthday","gender","location","photo","signature"))(Profile),{DOMAIN, ACTION, REDUCER})
