@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from "react"
-import {Avatar, List, ListItem, Divider} from "material-ui"
 import {connect} from "react-redux"
 
 import Photo from "./components/photo"
@@ -7,11 +6,13 @@ import User from "./db/user"
 import QiliApp from "./qiliApp"
 import {compact} from "."
 
+import {InfoForm, Field} from "./components/info-form"
+
 export const DOMAIN="profile"
 export const ACTION={
-	UPDATE_PHOTO:url=>(dispatch,getState)=>{
+	UPDATE:(key,value)=>(dispatch, getState)=>{
 		const user=getState().qiliApp.user
-		user.photo=url
+		user[key]=value
 		User.upsert(user).then(updated=>dispatch(QiliApp.ACTION.USER_CHANGED(updated)))
 	}
 }
@@ -20,28 +21,46 @@ export const REDUCER=(state={}, {type, payload})=>{
 	return state
 }
 
-export const Profile=({name,nick,gender,location,photo,signature, valueStyle={color:"lightgray"}})=>(
-	<List style={{padding:5}}>
-		<ListItem primaryText="头像"
+export const Profile=({username,nick,gender,location,photo,signature, dispatch, valueStyle={color:"lightgray"}})=>(
+	<InfoForm style={{padding:5}}>
+		<Field primaryText="头像"
 			rightAvatar={
 				<Photo src={photo}
-					onPhoto={url=>dispatch(ACTION.UPDATE_PHOTO(url))}
+					onPhoto={url=>dispatch(ACTION.UPDATE("photo",url))}
 					iconRatio={2/3} width={100} height={100}/>
 				}
 			style={{height:100}}/>
 
-		<Divider/>
-		<ListItem primaryText="姓名" rightIcon={<span style={valueStyle}>{name}</span>}/>
+		<Field primaryText="账号"
+			value={username}
+			/>
+			
+		<Field primaryText="昵称"
+			value={nick}
+			type="input"
+			onEdit={value=>dispatch(ACTION.UPDATE("nick",value))}
+			hintText="好名字可以让你的朋友更容易记住你"
+			/>
 
-		<Divider/>
-		<ListItem primaryText="性别" rightIcon={<span style={valueStyle}>{gender||"男"}</span>}/>
+		<Field primaryText="性别" 
+			value={gender||"男"}
+			type="single"
+			options={["男","女"]}
+			onEdit={value=>dispatch(ACTION.UPDATE("gender",value))}/>
 
-		<Divider/>
-		<ListItem primaryText="地址" rightIcon={<span style={valueStyle}>{location}</span>}/>
+		<Field primaryText="地址" 
+			value={location}
+			type="location"
+			onEdit={value=>dispatch(ACTION.UPDATE("location",value))}
+			/>
 
-		<Divider/>
-		<ListItem primaryText="个性签名" rightIcon={<span style={valueStyle}>{signature}</span>}/>
-	</List>
+		<Field primaryText="签名" 
+			value={signature}
+			type="input"
+			onEdit={value=>dispatch(ACTION.UPDATE("signature",value))}
+			/>
+	</InfoForm>
 )
 
-export default Object.assign(connect(state=>compact(state.qiliApp.user,"name","nick","gender","location","photo","signature"))(Profile),{DOMAIN, ACTION, REDUCER})
+
+export default Object.assign(connect(state=>compact(state.qiliApp.user,"username","nick","gender","location","photo","signature"))(Profile),{DOMAIN, ACTION, REDUCER})
