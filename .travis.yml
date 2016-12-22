@@ -2,9 +2,9 @@ language: android
 android:
  components:
   - tools
-  - build-tools-24.0.5
-  - android-24
-  - extra-android-support
+  - build-tools-22.0.1
+  - android-22
+  - extra
 
 addons:
  apt:
@@ -20,7 +20,7 @@ before_install:
 
 install:
  - npm install --production
- - npm install browserify node-lessify uglifyify cordova svg-to-png
+ - npm install browserify node-lessify uglifyify cordova@5.4.0
 
 script:
  - npm run merge
