@@ -10,7 +10,7 @@ export default class File extends Service.BuiltIn{
         return new Promise((resolve, reject)=>{
 			this._getToken().then(token=>dataAsBlob(data).then(data=>{
                 var formData=new FormData()
-                formData.append('file',data, "a.jpg")
+                formData.append('file',data)
                 formData.append('token',token)
                 for(var a in props)
                     formData.append(a,props[a])
