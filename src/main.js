@@ -1,7 +1,7 @@
 require('../style/index.less')
 import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
-import {FloatingActionButton} from 'material-ui'
+import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {normalize,arrayOf} from "normalizr"
 
 import {init,User,QiliApp, UI, enhancedCombineReducers, compact, ENTITIES} from '.'
@@ -69,9 +69,8 @@ class QiliConsole extends Component{
 		if(!_id){
 			return (
 				<QiliApp {...props}>
-					<Empty icon={<Logo/>}>
-						<Link to="app">click to create your first qili app</Link>
-					</Empty>
+					<AppBar title="Start from your first qili Applicaiton!"/>
+					<Creator bFirst={true} dispatch={dispatch}/>
 				</QiliApp>
 			)
 		}

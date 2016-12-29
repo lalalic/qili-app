@@ -144,7 +144,7 @@ export class App extends Component{
 export class Creator extends Component{
 	state={error:null}
 	render(){
-		const {dispatch}=this.props
+		const {dispatch, bFirst}=this.props
 		const {error}=this.state
 		const {router}=this.context
 		let refName,refUname
@@ -164,7 +164,7 @@ export class Creator extends Component{
 						{action:"Back"}
 						,{action:"Save", label:"保存", icon:<Save/>
 							,onSelect:a=>dispatch(ACTION.CREATE(refName.getValue(),refUname.getValue()))
-								.then(({_id})=>router.replace(`/app/${_id}`), error=>this.setState({error}))
+								.then(({_id})=>router.replace(!bFirst ? `/app/${_id}` : "/"), error=>this.setState({error}))
 						}
 					]}
 					/>

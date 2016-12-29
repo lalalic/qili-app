@@ -11,7 +11,7 @@ export default class User extends Service.BuiltIn{
 	static signup(user){
 		return this.ajax({
             method:'post',
-            url:this.server+this._name,
+            url:`${this.server}signup`,
             data:user
 		}).then((data)=>setCurrent(Object.assign({},user,data)))
 	}
@@ -21,8 +21,9 @@ export default class User extends Service.BuiltIn{
 	static signin(user){
 		var {username,password}=user
 		return this.ajax({
-    			url:`${this.server}login?username=${username}&password=${password}`,
-    			method:'get'
+    			url:`${this.server}login`,
+    			method:'post',
+				data:{username,password}
     		}).then((user)=>setCurrent(user))
 	}
 	/**
@@ -80,11 +81,12 @@ export default class User extends Service.BuiltIn{
 	 *  @instance
 	 */
     static logout(){
-		return setCurrent()
+		return setCurrent(null)
 	}
 
 
 	static init(){
+		this.super("init")()
 		return this.verify()
 	}
 
