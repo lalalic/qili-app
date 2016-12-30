@@ -12,6 +12,7 @@ import Photo from "./photo"
 import User from "../db/user"
 import {ACTION} from "../user-profile"
 import {compact} from ".."
+import CheckUpdate from "./check-update"
 
 
 export const Account=({name, photo, username, children},{router})=>{
@@ -33,7 +34,7 @@ export const Account=({name, photo, username, children},{router})=>{
 
 				<Divider inset={true}/>
 
-				<ListItem primaryText="设置"
+				<ListItem primaryText={<CheckUpdate>设置</CheckUpdate>}
 					leftIcon={<SettingIcon/>}
 					rightIcon={<RightArrow/>}
 					onClick={e=>router.push("/my/setting")}

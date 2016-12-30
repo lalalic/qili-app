@@ -65,6 +65,7 @@ class QiliConsole extends Component{
 		let props={
 			appId: "qiliAdmin"
 			,init:a=>Application.init().then(apps=>dispatch(ACTION.APPS_FETCHED(apps)))
+			,project: require("../package.json")
 		}
 		if(!_id){
 			return (

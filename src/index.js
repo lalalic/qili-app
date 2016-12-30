@@ -87,8 +87,6 @@ export function REMOVE_ENTITIES(type, ...ids){
     }
 })(JSON.parse);
 
-
-
 Object.assign(Date.prototype,{
 	toDate(){
 		let d=new Date(this.getTime())

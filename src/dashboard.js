@@ -7,6 +7,8 @@ import Log from "material-ui/svg-icons/action/assignment"
 
 import IconAccount from 'material-ui/svg-icons/action/account-box'
 
+import CheckUpdate from "./components/check-update"
+
 const {CommandBar, Empty}=UI
 
 export const Dashboard=(props,{router})=>(
@@ -18,11 +20,12 @@ export const Dashboard=(props,{router})=>(
 				{action:"Data", icon:<Data/>},
 				{action:"Cloud", icon:<Cloud/>},
 				{action:"Log", icon:<Log/>},
-				{action:"My", icon:<IconAccount/>}
+				{action:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}
 				]}
 			/>
 	</div>
 )
+
 Dashboard.contextTypes={router:PropTypes.object}
 
 export default Dashboard

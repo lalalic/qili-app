@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component, PropTypes} from "react"
 import ReactDOM, {render} from "react-dom"
 
 import {Router, Route, IndexRoute, hashHistory} from "react-router"
@@ -38,6 +38,11 @@ export const ACTION={
 			}
 		}
 	}
+	,CHECK_VERSION:(homepage,currentVersion)=>dispatch=>{ 
+		require("http").get(`${homepage}/app.apk.version`, res=>{
+			res.on("data", data=>dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:data.trim()}))
+		}).end()
+	}
 	,USER_CHANGED:user=>({
         type:`@@${DOMAIN}/USER_CHANGED`
 		,payload:user
@@ -67,7 +72,11 @@ export const REDUCER=(state={},{type,payload})=>{
 		})
 	case `@@${DOMAIN}/TUTORIALIZED`:
 		return Object.assign({},state,{tutorialized:true})
+		
+	case `@@${DOMAIN}/LASTEST_VERSION`:
+		return Object.assign({},state,{latestVersion:payload})
 	}
+	
 	return state
 }
 
@@ -88,7 +97,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 		}
 
 		componentDidMount(){
-			var {init:initApp, service, appId, title, dispatch}=this.props
+			var {init:initApp, service, appId, title, project, dispatch}=this.props
 			if(title)
 				document.title=title
 
@@ -98,6 +107,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 						User.on('change', user=>dispatch(ACTION.USER_CHANGED(user)))
 					},
 					(e)=>dispatch(ACTION.INIT_APP(e.message)))
+				.then(a=>dispatch(ACTION.CHECK_VERSION(project.homepage, project.version)))
 		}
 
 		getChildContext(){
@@ -108,7 +118,11 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 				}
 				,loading(open){
 					self.refs.loading[open ? "show" : "close"]()
-				}
+				},
+				is:{
+					app: typeof(cordova)!=='undefined'
+				},
+				project: this.props.project
 			}
 		}
 
@@ -154,8 +168,6 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 			return this.props.children
 		}
 
-
-
 		static defaultProps={
 			service:"http://qili2.com/1/",
 			theme:getMuiTheme(lightBaseTheme,{
@@ -168,21 +180,25 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 				}
 			}),
 			init(){},
-			tutorial:[]
+			tutorial:[],
+			project:{}
 		}
 
 		static propsTypes={
-			service: React.PropTypes.string.isRequired,
-			appId:React.PropTypes.string.isRequired,
-			theme: React.PropTypes.object.isRequired,
-			init:React.PropTypes.func,
-			tutorial:React.PropTypes.array,
-			title: React.PropTypes.string,
+			service: PropTypes.string.isRequired,
+			appId:PropTypes.string.isRequired,
+			theme: PropTypes.object.isRequired,
+			init:PropTypes.func,
+			tutorial:PropTypes.array,
+			title: PropTypes.string,
+			project: PropTypes.object
 		}
 
 		static childContextTypes={
-			showMessage: React.PropTypes.func,
-			loading: React.PropTypes.func
+			showMessage: PropTypes.func,
+			loading: PropTypes.func,
+			is: PropTypes.object,
+			project: PropTypes.object
 		}
 
 		static render(route, reducers=[], ...middlewars){
