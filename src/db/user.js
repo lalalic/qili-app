@@ -81,7 +81,13 @@ export default class User extends Service.BuiltIn{
 	 *  @instance
 	 */
     static logout(){
-		return setCurrent(null)
+		delete __current.sessionToken
+		return Promise.all([
+			User.localStorage.setItem('lastUser',JSON.stringify(__current)),
+			User.localStorage.removeItem('currentUser'),
+			User.localStorage.removeItem('sessionToken')
+		])
+		.then(a=>document.location.reload())
 	}
 
 

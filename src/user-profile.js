@@ -70,11 +70,11 @@ export const Profile=({username,nick,birthday,gender,location,photo,signature, d
 				onEdit={value=>dispatch(ACTION.UPDATE("signature",value))}
 				/>
 		</InfoForm>
-		
+
 		<CommandBar  className="footbar"
 			items={[
 				{action:"Back"},
-				{action:"Logout", icon:<QuitIcon/>, onSelect:e=>User.logout()}
+				{action:"Logout", icon:<QuitIcon/>, onSelect:e=>dispatch(QiliApp.ACTION.LOGOUT)}
 				]}
 			/>
 	</div>

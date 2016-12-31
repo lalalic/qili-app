@@ -38,11 +38,14 @@ export const ACTION={
 			}
 		}
 	}
-	,CHECK_VERSION:(homepage,currentVersion)=>dispatch=>{ 
+	,CHECK_VERSION:(homepage,currentVersion)=>dispatch=>{
 		require("http").get(`${homepage}/app.apk.version`, res=>{
-			res.on("data", data=>dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:data.trim()}))
+			res.on("data", data=>{
+				dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:new Buffer(data).toString().trim()})
+			})
 		}).end()
 	}
+	,LOGOUT: A=>User.logout()
 	,USER_CHANGED:user=>({
         type:`@@${DOMAIN}/USER_CHANGED`
 		,payload:user
@@ -67,16 +70,15 @@ export const REDUCER=(state={},{type,payload})=>{
 	break
 	case `@@${DOMAIN}/USER_CHANGED`:
 		return Object.assign({},state,{
-			inited:!!payload
-			,user:payload
+			user:payload
 		})
 	case `@@${DOMAIN}/TUTORIALIZED`:
 		return Object.assign({},state,{tutorialized:true})
-		
+
 	case `@@${DOMAIN}/LASTEST_VERSION`:
 		return Object.assign({},state,{latestVersion:payload})
 	}
-	
+
 	return state
 }
 
@@ -132,7 +134,7 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 
 
 		render(){
-			const {theme, inited, initedError, user, tutorialized, dispatch}=this.props
+			const {theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
 			let content
 
 			if(!inited){
