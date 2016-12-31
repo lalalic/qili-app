@@ -21,13 +21,18 @@ install:
  - npm install browserify node-lessify uglifyify cordova@5.4.0
 
 script:
- - npm run merge
- - npm run merge.debug
+ - npm run build.release
  - npm run cordova
 
 after_success:
+ - mv cordova/platforms/android/build/outputs/apk/android-debug.apk $APP_NAME/app.apk
+ - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME/app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
+
  - rm dist/config.xml
  - rm dist/cordova.html
+
+ - npm run build.debug
+ - node -p "require('./package.json').version" > dist/app.apk.version
  - mv dist $APP_NAME
  - cd $APP_NAME
  - tar cvfz ../$APP_NAME.tgz .
@@ -35,9 +40,3 @@ after_success:
  - ls $APP_NAME -l
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
  - sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "tar xvfz $DEPLOY_PATH/$APP_NAME.tgz -C $DEPLOY_PATH && rm $DEPLOY_PATH/$APP_NAME.tgz"
-
- - mv cordova/platforms/android/build/outputs/apk/android-debug.apk $APP_NAME/app.apk
- - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME/app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
-
- - node -p "require('./package.json').version" > app.apk.version
- - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null app.apk.version "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH" 

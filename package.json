@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "homepage":"http://apps.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -74,15 +74,21 @@
     ]
   },
   "scripts": {
-    "build": "babel src -d lib --source-maps inline",
-    "build-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
-    "build-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
-    "merge": "NODE_ENV=production browserify -g uglifyify ./lib/main.js -o dist/index.js -i jquery && node scripts/allin1.js",
-    "merge.debug": "browserify -g uglifyify ./lib/main.js -o dist/test.js -i jquery",
+    "compile": "babel src -d lib --source-maps inline",
+    "compile.superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
+    "compile.we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
+
+    "build.release": "NODE_ENV=production browserify -g uglifyify ./lib/main.js -o dist/index.js -i jquery && node scripts/allin1.js",
+    "build.debug": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
+
+    "build.app": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
+    "build.mock": "watchify -v -d ./.test.mock.js -o dist/index.js",
+    "build.mongo": "watchify -v -d ./.test.mongo.js -o dist/index.js",
+
     "karma": "karma start",
+
     "test": "restmock",
-    "test.mock": "watchify -v -d ./.test.mock.js -o dist/test.js",
-    "test.mongo": "watchify -v -d ./.test.mongo.js -o dist/test.js",
+
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d"
   },
   "repository": {
