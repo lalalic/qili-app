@@ -1,5 +1,8 @@
-import React, {Component} from "react"
+import React, {Component, PropTypes} from "react"
 import {Avatar, List, ListItem} from "material-ui"
+import {connect} from "react-redux"
+
+import {cyan50 as bg} from "material-ui/styles/colors"
 
 import {Service} from '../db/service'
 import CommandBar from './command-bar'
@@ -7,12 +10,15 @@ import User from '../db/user'
 import Comment from '../db/comment'
 
 const DOMAIN="COMMENT"
-const INIT_STATE={}
-export const ACTION={
+const ACTION={
     FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id})
-            .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,data,type,_id}))
+            .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,type,_id}}))
 
-    ,CREATE: (type,_id,content)=>diapatch=>{
+    ,CREATE: (type,_id,content)=>dispatch=>{
+		content=content.trim()
+		if(content.length<2)
+			return Promise.reject()
+		
         const user=User.current
         const comment={
                 type,
@@ -25,15 +31,14 @@ export const ACTION={
     }
 }
 
-export const REDUCER=(state=INIT_STATE, {type, payload})=>{
+export const reducer=(state={}, {type, payload})=>{
     switch(type){
     case `@@${DOMAIN}/CLEAR`:
-        return INIT_STATE
+        return {}
     case `@@${DOMAIN}/fetched`:
-        return payload
+        return {...state, ...payload}
     case `@@${DOMAIN}/created`:
-        const {type,_id,data}=state
-        return {type,_id, data:new Array(...data,payload)}
+        return {...state, data:[...(state.data||[]),payload]}
     }
     return state
 }
@@ -47,60 +52,62 @@ export class CommentUI extends Component{
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
     render(){
-        const {data,template,dispatch,params:{type,_id}}=this.props
+        const {data=[],template,dispatch,params:{type,_id}}=this.props
+		const {muiTheme:{page: {height}}}=this.context
         let refComment
 		return (
-            <div className="comment">
+            <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
                 <List>
-                    {data.maps(a=><template model={a} key={a._id}/>)}
+                    {data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
                 </List>
 
                 <CommandBar
                     className="footbar centerinput"
                     items={[
-                            "Back",
-                            (<textarea ref={a=>refComment=a}
-                                placeholder="give some comment:140"
-                                maxLength={140}/>),
-                            {action:"Save", onSelect:e=>(e=refComment.value.trim())&&dispatch(ACTION.CREATE(type,_id, e)).then(a=>refComment.value="")}
+							{action:"Back", label:"."},
+                            (<textarea ref={a=>refComment=a} placeholder="说两句"/>),
+                            {action:"Save", label:"发布", onSelect:e=>dispatch(ACTION.CREATE(type,_id, refComment.value)).then(a=>refComment.value="")}
                         ]}
                     />
     		</div>
         )
     }
+	
+	static contextTypes={
+		muiTheme: PropTypes.object
+	}
 
     static defaultProps={
-        template: ({model})=>{
-            let name, left, right, text
-            const isOwner=model.author._id==User.current._id;
-            if(isOwner){
-                left=(<span/>)
-                right=(<Avatar src={User.current.thumbnail}/>)
-            }else{
-                name=(<span style={{fontSize:'x-small'}}>{model.author.name}</span>)
-                left=(<Avatar src={model.thumbnail}/>)
-                right=(<span/>)
-            }
+        template: ({comment})=>{
+			let name, left, right, text
+			const isOwner=comment.author._id==User.current._id;
+			if(isOwner){
+				left=(<span/>)
+				right=(<Avatar src={User.current.thumbnail}/>)
+			}else{
+				name=(<span style={{fontSize:'x-small'}}>{comment.author.name}</span>)
+				left=(<Avatar src={comment.thumbnail}/>)
+				right=(<span/>)
+			}
 
-            return (
-                <ListItem
-                    key={model._id}
-                    style={{paddingTop:10,paddingLeft:62}}
-                    leftAvatar={left}
-                    rightAvatar={right}
-                    disableTouchTap={true}>
-                    {name}
+			return (
+				<ListItem
+					key={comment._id}
+					style={{paddingTop:10,paddingLeft:62, marginBottom:30}}
+					leftAvatar={left}
+					rightAvatar={right}
+					disabled={true}>
+					{name}
 
-                    <div style={{paddingRight:5}}>
-                        <p className={`content ${isOwner?"owner":""}`}>
-                            <span>{model.content}</span>
-                        </p>
-                    </div>
-                </ListItem>
-            )
-        }
+					<div style={{paddingRight:5}}>
+						<p className={`content ${isOwner?"owner":""}`}>
+							<span>{comment.content}</span>
+						</p>
+					</div>
+				</ListItem>
+			)
+		}
 	}
 }
 
-
-export default Object.assign(CommentUI,{ACTION,REDUCER})
+export default Object.assign(connect(state=>state.comment)(CommentUI),{reducer})

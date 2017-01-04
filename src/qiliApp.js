@@ -21,6 +21,7 @@ import Loading from "./components/loading"
 import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
+import Comment from "./components/comment"
 
 export const DOMAIN="qiliApp"
 
@@ -264,10 +265,11 @@ export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:t
 			const allReducers=enhancedCombineReducers({
 						routing:routerRducer
 						,entities:normalizeData
+						,comment:Comment.reducer
 						,[DOMAIN]:REDUCER
 					}, ...reducers)
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-			const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
+			const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{},comment:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
 
 			return render((
 					<Provider store={store}>
