@@ -66,7 +66,11 @@ export class CommentUI extends Component{
                     items={[
 							{action:"Back", label:"."},
                             (<textarea ref={a=>refComment=a} placeholder="说两句"/>),
-                            {action:"Save", label:"发布", onSelect:e=>dispatch(ACTION.CREATE(type,_id, refComment.value)).then(a=>refComment.value="")}
+                            {
+								action:"Save", 
+								label:"发布", 
+								onSelect:e=>dispatch(ACTION.CREATE(type,_id, refComment.value))
+							}
                         ]}
                     />
     		</div>
