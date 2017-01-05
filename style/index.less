@@ -73,7 +73,7 @@ figure{
     background-color:white;
     height:@footbarHeight;
     z-index:@topzIndex;
-	
+
 	a{
 		text-decoration:none;
 		color:inherit;
@@ -222,6 +222,9 @@ figure{
 
 .comment{
     background-color:lightgray;
+    .acomment{
+        .grid;
+    }
     .content{
         border-radius:3px;
         background-color:white;
@@ -309,7 +312,7 @@ article{
 .sticky{
 	position:fixed!important;
 	z-index: @topzIndex;
-	
+
 	.nth(@pos, @n){
 		&._@{n}{
 			@{pos}: (1*(@floatActionWidth+2*@stickyOffset)+2*@stickyOffset)!important;
@@ -326,9 +329,9 @@ article{
 				@media screen and (min-width:@maxWidth){
 					.sticky(right);
 				}
-				
+
 				.nth(@pos, 2);
-				
+
 				.nth(@pos, 3);
 			}
 
@@ -340,16 +343,16 @@ article{
 				}
 
                 .nth(@pos, 2);
-				
+
 				.nth(@pos, 3);
 			}
 		}
 	}
-	
+
 	.on(top);
 
 	.on(bottom);
-	
+
 	&.full{
 		.sticky(left,0);
 		width:100%;

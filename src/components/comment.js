@@ -66,7 +66,8 @@ export class CommentUI extends Component{
             action:"Save",
             label:"发布",
             icon: <IconSave/>,
-            onSelect:e=>dispatch(ACTION.CREATE(type,_id, comment)).then(a=>this.setState({comment:""}))
+            onSelect:e=>dispatch(ACTION.CREATE(type,_id, comment))
+                .then(a=>this.setState({comment:""}))
         }
         let photo={
             action:"photo",
@@ -84,9 +85,9 @@ export class CommentUI extends Component{
 
 		return (
             <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
-                <List>
+                <div>
                     {data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
-                </List>
+                </div>
 
                 <CommandBar
                     className="footbar centerinput"
@@ -123,21 +124,16 @@ export class CommentUI extends Component{
 			}
 
 			return (
-				<ListItem
-					key={comment._id}
-					style={{paddingTop:10,paddingLeft:62, marginBottom:30}}
-					leftAvatar={left}
-					rightAvatar={right}
-					disabled={true}>
-					{name}
-
-					<div style={{paddingRight:5}}>
+				<div key={comment._id} className="acomment" style={{padding:5}}>
+					<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
+					<div style={{padding:5,verticalAlign:"top"}}>
+                        <div>{name}</div>
 						<p className={`content ${isOwner?"owner":""}`}>
                         {
                             ((content,type)=>{
                                 switch(type){
                                 case "photo":
-                                    return <img src={content} style={{width:50}}/>
+                                    return <img src={content} style={{width:150}}/>
                                 default:
                                     return <span>{content}</span>
                                 }
@@ -145,7 +141,8 @@ export class CommentUI extends Component{
                         }
 						</p>
 					</div>
-				</ListItem>
+                    <div style={{width:40,minHeight:40,verticalAlign:"top"}}>{right}</div>
+				</div>
 			)
 		}
 	}
