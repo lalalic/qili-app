@@ -6,7 +6,7 @@ export default class File extends Service.BuiltIn{
         return 'files'
 	}
 
-    static upload(data,props,url="http://up.qiniu.com"){
+    static upload(data,props,url=File.Provider||"http://up.qiniu.com"){
         return new Promise((resolve, reject)=>{
 			this._getToken().then(token=>dataAsBlob(data).then(data=>{
                 var formData=new FormData()
@@ -34,7 +34,7 @@ export default class File extends Service.BuiltIn{
     static _getToken(){
         return this.ajax({
             method:'get',
-            url:'http://qili2.com/1/files/token'
+            url:`${this.server}${this._name}/token`
         }).then((data)=>data.token)
     }
 }

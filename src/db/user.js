@@ -30,7 +30,7 @@ export default class User extends Service.BuiltIn{
 	 *  @returns {Promise}
 	 */
 	static verify(){
-		return this.localStorage.getItem('sessionToken').then((token)=>{
+		return this.localStorage.getItem('sessionToken').then(token=>{
 			if(!token)
 				return null;
 			return this.ajax({
