@@ -40,7 +40,7 @@ export const ACTION={
 			.catch(({message})=>Promise.reject({usernameError:message}))
 	}
 	,PHONE_VERIFY_REQUEST:phone=>User.requestVerification(phone)
-	
+
 	,PHONE_VERIFY:(phone,code)=>dispatch=>User.verifyPhone(phone,code)
 
 	,FORGET_PASSWORD: contact=>dispatch=>{
@@ -49,7 +49,7 @@ export const ACTION={
 
 		return User.requestPasswordReset(contact)
 	}
-	,RESET_PASSWORD: (oldPwd, newPwd)=>dispatch=>User.resetPassword(oldPwd, newPwd) 
+	,RESET_PASSWORD: (oldPwd, newPwd)=>dispatch=>User.resetPassword(oldPwd, newPwd)
 
 	,SIGNUP_UI:{type:`SIGNUP_UI`}
 	,SIGNIN_UI:{type:`SIGNIN_UI`}
@@ -58,7 +58,7 @@ export const ACTION={
 	,PHONE_VERIFY_UI:({type:`PHONE_VERIFY_UI`})
 }
 
-class Account extends Component{
+export class Account extends Component{
 	state={type:null}
 	render(){
 		let {user,dispatch,...others}=this.props
@@ -69,7 +69,7 @@ class Account extends Component{
 			else
 				type='PHONE_VERIFY_UI'
 		}
-		
+
 		others.dispatch=action=>{
 			switch(action.type){
 			case `SIGNUP_UI`:
@@ -103,12 +103,12 @@ class PhoneVerification extends Component{
 	render(){
 		const {phoneVerifiedError}=this.state
 		const {dispatch}=this.props
-		
+
 		let code,phone
-		
+
 		const send=a=>dispatch(ACTION.PHONE_VERIFY(phone.getValue(),code.getValue()))
 			.then(a=>dispatch(ACTION.SIGNUP_UI),e=>this.setState({phoneVerifiedError:e}))
-			
+
 		return (
 			<div className="form" key="phoneverify">
 				<SMSRequest ref={a=>phone=a} dispatch={dispatch}/>
@@ -134,21 +134,21 @@ class PhoneVerification extends Component{
 
 class Signup extends Component{
 	state= {usernameError:null, passwordError:null, password2Error:null}
-	render(){	
+	render(){
 		const {usernameError, passwordError, password2Error}=this.state
 		const {dispatch}=this.props
-		
+
 		let username, password, password2
-		
+
 		const send=a=>dispatch(ACTION.SIGNUP({
 			username:username.getValue()
 			,password:password.getValue()
 			,password2:password2.getValue()
 		})).catch(e=>this.setState(Object.assign({},{usernameError:null, passwordError:null, password2Error:null},e)))
-				
+
 		return (
 			<div className="form" key="signup">
-				<TextField ref={a=>username=a} 
+				<TextField ref={a=>username=a}
 					hintText="login name"
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
@@ -191,7 +191,7 @@ class Signin extends Component{
 			username:refUsername.getValue()
 			,password:refPassword.getValue()
 		})).catch(e=>this.setState(Object.assign({},{usernameError:null, passwordError:null},e)))
-		
+
 		return (
 			<div className="form" key="signin">
 				<TextField ref={a=>refUsername=a}
@@ -236,7 +236,7 @@ class ForgetPassword extends Component{
 			<div className="form" key="forgetPwd">
 				<TextField ref={a=>contact=a}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
-					fullWidth={true} 
+					fullWidth={true}
 					errorText={contactError}
 					hintText="phone number or email"/>
 
@@ -261,7 +261,7 @@ class ResetPassword extends Component{
 	render(){
 		const {dispatch}=this.props
 		const {resetError}=this.state
-		
+
 		let oldPassword, password, password2
 		const send=a=>{
 			let newPassword=password.getValue()
@@ -269,12 +269,12 @@ class ResetPassword extends Component{
 				this.setState({password2Error:"password not matched"})
 				return
 			}
-			
+
 			dispatch(ACTION.RESET_PASSWORD(oldPassword.getValue(), newPassword))
 				.then(a=>this.setState({resetError:null, passwordError:null, password2Error:null}),
 					error=>this.setState({resetError:error, passwordError:null, password2Error:null}))
 		}
-		
+
 		return (
 			<div className="form" key="reset">
 				<TextField ref={a=>oldPassword=a} hintText="old password"
@@ -292,7 +292,7 @@ class ResetPassword extends Component{
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
 					errorText={password2Error}
-					type="password" 
+					type="password"
 					hintText="password again"/>
 
 				<center>
@@ -368,4 +368,4 @@ class SMSRequest extends Component{
 	}
 }
 
-export default Object.assign(connect()(Account))
+export default Account

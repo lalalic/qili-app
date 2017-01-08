@@ -34,8 +34,10 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
+    "enzyme": "^2.7.0",
     "fakexmlhttprequest": "0.0.1",
     "jasmine-core": "^2.3.4",
+    "jest": "^18.1.0",
     "karma": "^0.13.15",
     "karma-browserify": "^4.4.2",
     "karma-chrome-launcher": "^0.2.1",
@@ -43,6 +45,7 @@
     "node-lessify": "0.0.10",
     "react-addons-test-utils": "^15.1.0",
     "react-stub-context": "^0.7.0",
+    "redux-mock-store": "^1.2.1",
     "request": "^2.67.0",
     "restmock": "0.1.x",
     "through2": "^2.0.0",
@@ -74,13 +77,16 @@
     "compile": "babel src -d lib --source-maps inline",
     "compile.superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
     "compile.we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
+
     "build.release": "NODE_ENV=production browserify -g uglifyify ./lib/main.js -o dist/index.js -i jquery && node scripts/allin1.js",
     "build.debug": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
     "build.app": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
     "build.mock": "watchify -v -d ./.test.mock.js -o dist/index.js",
     "build.mongo": "watchify -v -d ./.test.mongo.js -o dist/index.js",
+
     "karma": "karma start",
-    "test": "restmock",
+    "restmock": "restmock",
+    "test": "jest",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d"
   },
   "repository": {
@@ -91,5 +97,10 @@
     "node": ">= 0.4.4"
   },
   "main": "lib",
-  "readme": "README.md"
+  "readme": "README.md",
+  "jest": {
+    "testPathDirs": [
+      "__tests__"
+    ]
+  }
 }

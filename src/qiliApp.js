@@ -83,203 +83,202 @@ export const REDUCER=(state={},{type,payload})=>{
 	return state
 }
 
-export const QiliApp=connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(
-	class extends Component{
-		constructor(props){
-			super(props)
+export class QiliApp extends Component{
+	constructor(props){
+		super(props)
 
-			supportTap()
+		const {service, appId}=this.props
 
-			const {service, appId}=this.props
+		if(!appId)
+			throw new Error("Please give application key")
 
-			if(!appId)
-				throw new Error("Please give application key")
+		if(!service)
+			throw new Error("Please give service url")
+	}
 
-			if(!service)
-				throw new Error("Please give service url")
-		}
+	componentDidMount(){
+		var {init:initApp, service, appId, title, project, dispatch}=this.props
+		if(title)
+			document.title=title
 
-		componentDidMount(){
-			var {init:initApp, service, appId, title, project, dispatch}=this.props
-			if(title)
-				document.title=title
-
-			init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
-				.then((tutorialized=false)=>{
-						dispatch(ACTION.INIT_APP(null,!!tutorialized))
-						User.on('change', user=>dispatch(ACTION.USER_CHANGED(user)))
-					},
-					(e)=>dispatch(ACTION.INIT_APP(e.message)))
-				.then(a=>dispatch(ACTION.CHECK_VERSION(project.homepage, project.version)))
-		}
-
-		getChildContext(){
-			let self=this
-			return {
-				showMessage(){
-					self.showMessage(...arguments)
-				}
-				,loading(open){
-					self.refs.loading[open ? "show" : "close"]()
+		init(service, appId, initApp, (e,type='Error')=>this.refs.msg.show(e,type), this.refs.loading)
+			.then((tutorialized=false)=>{
+					dispatch(ACTION.INIT_APP(null,!!tutorialized))
+					User.on('change', user=>dispatch(ACTION.USER_CHANGED(user)))
 				},
-				is:{
-					app: typeof(cordova)!=='undefined'
-				},
-				project: this.props.project
+				(e)=>dispatch(ACTION.INIT_APP(e.message)))
+			.then(a=>dispatch(ACTION.CHECK_VERSION(project.homepage, project.version)))
+	}
+
+	getChildContext(){
+		let self=this
+		return {
+			showMessage(){
+				self.showMessage(...arguments)
 			}
-		}
-
-		showMessage(){
-			this.refs.msg.show(...arguments)
-		}
-
-
-		render(){
-			const {theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
-			let content
-
-			if(!inited){
-				if(initedError)
-					content= `Initializing Error: ${initedError}`
-				else
-					content= "initializing..."
-			}else if(!user){
-				if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
-					return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
-
-				content=(<Account />)
-			}else if(!user.sessionToken){
-				content=(<Account user={user}/>)
-			}else {
-				content=this.renderContent()
-			}
-
-			return (
-				<MuiThemeProvider muiTheme={theme}>
-					<div className="withFootbar">
-						<div id="container" style={{overflowY:"scroll"}}>
-							{content}
-							<Messager ref="msg" className="sticky bottom left"/>
-							<Loading ref="loading"  className="sticky top right"/>
-						</div>
-					</div>
-				</MuiThemeProvider>
-			)
-		}
-
-		renderContent(){
-			return this.props.children
-		}
-
-		static defaultProps={
-			service:"http://qili2.com/1/",
-			theme:getMuiTheme(lightBaseTheme,{
-				footbar:{
-					height: 50
-				},
-				page:{
-					width: window.innerWidth > 960 ? 960 : window.innerWidth
-					,height:window.innerHeight
-				}
-			}),
-			init(){},
-			tutorial:[],
-			project:{}
-		}
-
-		static propsTypes={
-			service: PropTypes.string.isRequired,
-			appId:PropTypes.string.isRequired,
-			theme: PropTypes.object.isRequired,
-			init:PropTypes.func,
-			tutorial:PropTypes.array,
-			title: PropTypes.string,
-			project: PropTypes.object
-		}
-
-		static childContextTypes={
-			showMessage: PropTypes.func,
-			loading: PropTypes.func,
-			is: PropTypes.object,
-			project: PropTypes.object
-		}
-
-		static render(route, reducers=[], ...middlewars){
-			const props={}
-			let container=document.getElementById('app')
-			if(!container){
-				container=document.createElement('div')
-				container.id='app'
-				document.body.appendChild(container)
-			}
-			let style=document.createElement("style")
-			document.getElementsByTagName("head")[0].appendChild(style)
-			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-			container.style.height=window.innerHeight+'px'
-
-			if(!props.history)
-				props.history=hashHistory
-
-			function routerRducer(state={},{type,payload}){
-				switch(type){
-				case '@@router/LOCATION_CHANGE':
-				return payload
-				}
-				return state
-			}
-
-			const enhancedRoute=(root,dispatch)=>{
-				const {onEnter, onChange}=root.props
-				return React.cloneElement(root, {
-					onEnter(nextState){
-						dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
-						onEnter && onEnter.bind(this)(...arguments)
-					},
-					onChange(state,nextState){
-						dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
-						onChange && onChange.bind(this)(...arguments)
-					}
-				})
-			}
-
-			function normalizeData(entities={},{type,payload}){
-				switch(type){
-				case 'NORMALIZED_DATA':
-					return Object.assign(
-						{},
-						entities,
-						Object.keys(payload).reduce((merged,type)=>{
-							if(typeof(payload[type]['$remove'])=='undefined')
-								merged[type]=Object.assign({},entities[type],payload[type])
-							else
-								merged[type]=Object.assign({},payload[type]['$remove'].reduce((all,a)=>(delete all[a],all),entities[type]))
-
-							return merged
-						},{})
-					)
-				}
-				return entities
-			}
-
-
-			const allReducers=enhancedCombineReducers({
-						routing:routerRducer
-						,entities:normalizeData
-						,comment:Comment.reducer
-						,[DOMAIN]:REDUCER
-					}, ...reducers)
-			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-			const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{},comment:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
-
-			return render((
-					<Provider store={store}>
-						<Router {...props}>
-							{enhancedRoute(route,store.dispatch)}
-						</Router>
-					</Provider>
-				),container)
+			,loading(open){
+				self.refs.loading[open ? "show" : "close"]()
+			},
+			is:{
+				app: typeof(cordova)!=='undefined'
+			},
+			project: this.props.project
 		}
 	}
-)
 
-export default Object.assign(QiliApp,{DOMAIN, ACTION,REDUCER})
+	showMessage(){
+		this.refs.msg.show(...arguments)
+	}
+
+
+	render(){
+		const {theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
+		let content
+
+		if(!inited){
+			if(initedError)
+				content= `initializing Error: ${initedError}`
+			else
+				content= "initializing..."
+		}else if(!user){
+			if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
+				return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
+
+			content=(<Account dispatch={dispatch}/>)
+		}else if(!user.sessionToken){
+			content=(<Account user={user} dispatch={dispatch}/>)
+		}else {
+			content=this.renderContent()
+		}
+
+		return (
+			<MuiThemeProvider muiTheme={theme}>
+				<div className="withFootbar">
+					<div id="container" style={{overflowY:"scroll"}}>
+						{content}
+						<Messager ref="msg" className="sticky bottom left"/>
+						<Loading ref="loading"  className="sticky top right"/>
+					</div>
+				</div>
+			</MuiThemeProvider>
+		)
+	}
+
+	renderContent(){
+		return this.props.children
+	}
+
+	static defaultProps={
+		service:"http://qili2.com/1/",
+		theme:getMuiTheme(lightBaseTheme,{
+			footbar:{
+				height: 50
+			},
+			page:{
+				width: window.innerWidth > 960 ? 960 : window.innerWidth
+				,height:window.innerHeight
+			}
+		}),
+		init(){},
+		tutorial:[],
+		project:{}
+	}
+
+	static propsTypes={
+		service: PropTypes.string.isRequired,
+		appId:PropTypes.string.isRequired,
+		theme: PropTypes.object.isRequired,
+		init:PropTypes.func,
+		tutorial:PropTypes.array,
+		title: PropTypes.string,
+		project: PropTypes.object
+	}
+
+	static childContextTypes={
+		showMessage: PropTypes.func,
+		loading: PropTypes.func,
+		is: PropTypes.object,
+		project: PropTypes.object
+	}
+
+	static render(route, reducers=[], ...middlewars){
+		const props={}
+		let container=document.getElementById('app')
+		if(!container){
+			container=document.createElement('div')
+			container.id='app'
+			document.body.appendChild(container)
+		}
+		let style=document.createElement("style")
+		document.getElementsByTagName("head")[0].appendChild(style)
+		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+		container.style.height=window.innerHeight+'px'
+
+		if(!props.history)
+			props.history=hashHistory
+
+		function routerRducer(state={},{type,payload}){
+			switch(type){
+			case '@@router/LOCATION_CHANGE':
+			return payload
+			}
+			return state
+		}
+
+		const enhancedRoute=(root,dispatch)=>{
+			const {onEnter, onChange}=root.props
+			return React.cloneElement(root, {
+				onEnter(nextState){
+					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
+					onEnter && onEnter.bind(this)(...arguments)
+				},
+				onChange(state,nextState){
+					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
+					onChange && onChange.bind(this)(...arguments)
+				}
+			})
+		}
+
+		function normalizeData(entities={},{type,payload}){
+			switch(type){
+			case 'NORMALIZED_DATA':
+				return Object.assign(
+					{},
+					entities,
+					Object.keys(payload).reduce((merged,type)=>{
+						if(typeof(payload[type]['$remove'])=='undefined')
+							merged[type]=Object.assign({},entities[type],payload[type])
+						else
+							merged[type]=Object.assign({},payload[type]['$remove'].reduce((all,a)=>(delete all[a],all),entities[type]))
+
+						return merged
+					},{})
+				)
+			}
+			return entities
+		}
+
+
+		const allReducers=enhancedCombineReducers({
+					routing:routerRducer
+					,entities:normalizeData
+					,comment:Comment.reducer
+					,[DOMAIN]:REDUCER
+				}, ...reducers)
+		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+		const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{},comment:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
+
+		supportTap()
+
+		return render((
+				<Provider store={store}>
+					<Router {...props}>
+						{enhancedRoute(route,store.dispatch)}
+					</Router>
+				</Provider>
+			),container)
+	}
+}
+
+
+export default Object.assign(connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(QiliApp),{DOMAIN, ACTION,REDUCER})
