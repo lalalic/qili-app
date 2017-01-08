@@ -21,6 +21,7 @@ install:
  - npm install browserify node-lessify uglifyify cordova@5.4.0
 
 script:
+ - npm test
  - npm run build.release
  - npm run cordova
 
