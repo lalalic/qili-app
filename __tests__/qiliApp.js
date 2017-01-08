@@ -93,7 +93,7 @@ describe("qili application", function(){
             it("(null[succeed],tutorialized=true)",()=>{
                 let action=ACTION.INIT_APP(null,true)
                 expect(action.type).toBe(`@@${DOMAIN}/inited`)
-                expect(action.payload.tutorialized).toBe(false)
+                expect(action.payload.tutorialized).toBe(true)
                 let initState={}
                 let state=REDUCER(initState,action)
                 expect(state.inited).toBe(true)
