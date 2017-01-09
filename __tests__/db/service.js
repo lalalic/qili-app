@@ -2,6 +2,9 @@ jest.mock("../../src/db/user")
 
 const {init,User, Model}=require("../../src/db")
 
+const service="http://localhost/1/"
+jasmine.DEFAULT_TIMEOUT_INTERVAL=100
+
 function http(url=""){
 	let xhr={
 		url,
@@ -14,24 +17,22 @@ function http(url=""){
 			})
 		}
 	}
-	
+
 	"post,get,patch,put,delete".split(",")
 		.forEach(a=>xhr[a]=(path="")=>{
 			xhr.path=path
 			xhr.method=a
 			return xhr
 		})
-		
+
 	return xhr
 }
-const service="http://localhost/1/"
-jasmine.DEFAULT_TIMEOUT_INTERVAL=100
 
 describe("model service", function(){
 	class Book extends Model{
 		static get _name(){return 'book'}
 	}
-		
+
 	beforeAll(()=>{
 		global.XMLHttpRequest=require('fakexmlhttprequest')
 		User.on=jest.fn()
@@ -39,35 +40,37 @@ describe("model service", function(){
 		spyOn(User,'current').and.returnValue({username:"tester"})
 		spyOn(User,'init').and.returnValue(Promise.resolve())
 		spyOn(User,'isTutorialized').and.returnValue(Promise.resolve(true))
+		spyOn(Book,'emit')
 	})
 
 	beforeEach(()=>init(service,"testApp",null,jest.fn(),{show:jest.fn(),close:jest.fn()}).then(()=>Book.init()))
-	
+
 	describe("create/update/patch/remove", function(){
 		it("can create Book({name:'cat'})", function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let created={_id:"uouou", createdAt: new Date(1)}
 			http(service)
 				.post('classes/book')
 				.reply(created)
-		
+
 			return Book.upsert({name:'cat'})
 				.then(book=>{
 					expect(book.name).toBe("cat")
 					expect(book._id).toBe(created._id)
 					expect(book.createdAt.getTime()).toBe(created.createdAt.getTime())
+					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
 		})
-		
+
 		it("can create Book.upsert({name:'cat'}, null, success)", function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let created={_id:"uouou", createdAt: new Date(1)}
 			http(service)
 				.post('classes/book')
 				.reply(created)
-			
+
 			let success=jest.fn()
 			return Book.upsert({name:'cat'}, null, success)
 				.then(book=>{
@@ -75,18 +78,19 @@ describe("model service", function(){
 					expect(book._id).toBe(created._id)
 					expect(book.createdAt.getTime()).toBe(created.createdAt.getTime())
 					expect(success).toHaveBeenCalled()
+					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
 		})
-		
+
 		it("can patch update Book.upsert({_id,name:'cat',title:'we love cat'}, {_id,title:'we love cat and dog'}, success)", function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let changed={modifiedAt: new Date(1)}
 			let _id="uouou"
 			http(service)
 				.patch(`classes/book/${_id}`)
 				.reply(changed)
-			
+
 			let success=jest.fn()
 			return Book.upsert({_id,name:'cat',title:'we love cat'}, {_id,title:'we love cat and dog'}, success)
 				.then(book=>{
@@ -95,18 +99,19 @@ describe("model service", function(){
 					expect(book.modifiedAt.getTime()).toBe(changed.modifiedAt.getTime())
 					expect(book.title).toBe('we love cat')
 					expect(success).toHaveBeenCalled()
+					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
 		})
-		
+
 		it("can post update Book.upsert({_id,name:'cat',title:'we love cat'}, success)", function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let changed={modifiedAt: new Date(1)}
 			let _id="uouou"
 			http(service)
 				.post(`classes/book`)
 				.reply(changed)
-			
+
 			let success=jest.fn()
 			return Book.upsert({_id,name:'cat',title:'we love cat'}, success)
 				.then(book=>{
@@ -115,27 +120,29 @@ describe("model service", function(){
 					expect(book.modifiedAt.getTime()).toBe(changed.modifiedAt.getTime())
 					expect(book.title).toBe('we love cat')
 					expect(success).toHaveBeenCalled()
+					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
 		})
-		
+
 		it("can remove _id",function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let _id="uouou"
 			http(service)
 				.delete(`classes/book/${_id}`)
 				.reply("true")
-			
+
 			let success=jest.fn()
 			return Book.remove(_id, success)
 				.then(()=>{
 					expect(success).toHaveBeenCalled()
+					expect(Book.emit.calls.mostRecent().args[0]).toBe("removed")
 				})
 		})
-		
+
 		it("can't remove {_id}, and throw error",function(){
 			expect(User.init).toHaveBeenCalled()
-			
+
 			let _id="uouou"
 			http(service)
 				.delete(`classes/book/${_id}`)
@@ -149,14 +156,14 @@ describe("model service", function(){
 				})
 		})
 	})
-	
+
 	describe("find()",function(){
 		it("should return book array from remote server",function(){
 			let results=[{_id:"1"},{_id:"2"}]
 			http(service)
 				.get(`classes/book`)
 				.reply({results})
-				
+
 			return new Promise((resolve,reject)=>Book.find({},{interim:false}).fetch(docs=>{
 				try{
 					expect(Array.isArray(docs)).toBe(true)
@@ -167,7 +174,7 @@ describe("model service", function(){
 				}
 			}, reject))
 		})
-		
+
 		it("find from local first, then from remote, call success twice when docs are different",function(){
 			var localDocs=[{_id:"1"}],
 				remoteDocs=[{_id:"1"},{_id:"2"}],
@@ -199,7 +206,7 @@ describe("model service", function(){
 				}
 			},reject))
 		})
-		
+
 		it("only calls success once when local results are same with remote results",function(){
 			var localDocs=[{_id:"1"}],
 				remoteDocs=[{_id:"1"}],
@@ -235,7 +242,7 @@ describe("model service", function(){
 				}
 			},reject))
 		})
-		
+
 		it("only calls success once when local results are empty",()=>{
 			var localDocs=[],
 				remoteDocs=[{_id:"1"}],
@@ -259,7 +266,7 @@ describe("model service", function(){
 						expect(XMLHttpRequest.prototype.send).toHaveBeenCalled()
 						expect(Book.cols.localCol.find).toHaveBeenCalled()
 						expect(docs.length).toBe(remoteDocs.length)
-							
+
 						setTimeout(a=>{
 							count==2 ? reject() : resolve()
 						},50)
@@ -269,11 +276,11 @@ describe("model service", function(){
 				}catch(e){
 					reject(e)
 				}
-				
+
 			},reject))
 		})
-	})	
-	
+	})
+
 	describe("findOne", function(){
 		it("should return one doc, or null remote server",function(){
 			spyOn(Book.cols.remoteCol,'find').and.callThrough()

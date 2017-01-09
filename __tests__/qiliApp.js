@@ -57,15 +57,7 @@ describe("qili application", function(){
     })
 
     describe("actions",function(){
-
         const User=require("../src/db/user")
-
-        const {configureStore}=require('redux-mock-store')
-        const {thunk}=require('redux-thunk')
-
-
-
-
         describe("INIT_APP",function(){
             it("('no network')",function(){
                 let initedError="no network"

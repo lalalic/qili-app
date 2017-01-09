@@ -14,8 +14,8 @@ import User from '../db/user'
 import Comment from '../db/comment'
 import File from "../db/file"
 
-const DOMAIN="COMMENT"
-const ACTION={
+export const DOMAIN="COMMENT"
+export const ACTION={
     FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id})
             .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,type,_id}}))
 

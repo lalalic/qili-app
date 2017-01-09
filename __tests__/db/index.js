@@ -9,7 +9,7 @@ describe("data service initialization", ()=>{
 		spyOn(User,'init').and.returnValue(Promise.resolve())
 		spyOn(User,'isTutorialized').and.returnValue(Promise.resolve())
 	})
-	
+
 	it("can't call success when no User.current",()=>{
 		let mock=jest.fn()
 		return init("http：//localhost/1/","testApp",mock)
