@@ -51,7 +51,8 @@
     "restmock": "0.1.x",
     "through2": "^2.0.0",
     "uglifyify": "^3.0.1",
-    "watchify": "^3.6.1"
+    "watchify": "^3.6.1",
+	"cordova":"5.4.0"
   },
   "browserify": {
     "transform": [
