@@ -1,5 +1,5 @@
 export {init,Model,User,Role,File,Log} from "./db"
-export {QiliApp} from "./qiliApp"
+export {default as QiliApp} from "./qiliApp"
 
 import Account from "./components/account"
 import Empty from "./components/empty"
