@@ -157,17 +157,18 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
                 Role.init();
                 File.init();
                 Log.init();
-
+				
+				let pTutorial=User.isTutorialized()	
                 if(success){
                     User.on('change',()=>success(db))
 					if(User.current){
 						Promise.resolve(success(db)||db)
-							.then(a=>resolve(isTutorialized(localStorage)))
+							.then(a=>resolve(pTutorial))
 					}else{
-						resolve(isTutorialized(localStorage))
+						resolve(pTutorial)
 					}       
                 }else
-                    resolve(isTutorialized(localStorage))
+                    resolve(pTutorial)
 
                 supportWorker(_server, _appId)
 
@@ -243,17 +244,6 @@ function makeLocalStorage(localDb){
                     localDb.__localStorage.remove(key,resolve, reject))
             }
         }
-}
-
-function isTutorialized(localStorage){
-    return localStorage.getItem("__tutorialized")
-        .then(a=>{
-            if(!a){
-                localStorage.setItem("__tutorialized","true")
-                return false
-            }
-            return a
-        })
 }
 
 exports.User=User

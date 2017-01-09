@@ -23,7 +23,7 @@ export class Service {
 
     static remove(id, success,error){
         if(typeof(id)=='object')
-            throw new Error(`id should be string, instead of object when removing`)
+            return Promise.reject(new Error(`id should be string, instead of object when removing`))
 
         return this.cols.remove(id, success, error)
             .then(function(){

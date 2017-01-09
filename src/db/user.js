@@ -107,6 +107,17 @@ export default class User extends Service.BuiltIn{
 	static get currentAsAuthor(){
 		return {_id:__current._id, username:__current.username}
 	}
+	
+	static isTutorialized(){
+		return User.localStorage.getItem("__tutorialized")
+			.then(a=>{
+				if(!a){
+					User.localStorage.setItem("__tutorialized","true")
+					return false
+				}
+				return a
+			})
+	}
 }
 
 function setCurrent(user){

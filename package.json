@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
+    "babel-jest": "^18.0.0",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-transform-class-properties": "^6.6.0",
     "babel-plugin-transform-object-rest-spread": "^6.6.5",
@@ -77,13 +78,11 @@
     "compile": "babel src -d lib --source-maps inline",
     "compile.superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
     "compile.we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
-
     "build.release": "NODE_ENV=production browserify -g uglifyify ./lib/main.js -o dist/index.js -i jquery && node scripts/allin1.js",
     "build.debug": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
     "build.app": "browserify -d ./lib/main.js -o dist/index.js -i jquery",
     "build.mock": "watchify -v -d ./.test.mock.js -o dist/index.js",
     "build.mongo": "watchify -v -d ./.test.mongo.js -o dist/index.js",
-
     "karma": "karma start",
     "restmock": "restmock",
     "test": "jest",

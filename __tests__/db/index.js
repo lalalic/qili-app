@@ -1,34 +1,31 @@
-jest.mock("../../src/db/user")
 jest.mock("../../src/db/service")
-
+jest.mock("../../src/db/user")
 const {init,User}=require("../../src/db")
 
-describe("data service", ()=>{
-    describe("init", ()=>{
-        beforeEach(()=>{
-            User.init=jest.fn(a=>Promise.resolve())
-        })
-        fit("can't call success when no User.current",()=>{
-            let mock=jest.fn()
+describe("data service initialization", ()=>{
+	beforeAll(()=>{
+		User.on=jest.fn()
+		User.current=null
+		spyOn(User,'init').and.returnValue(Promise.resolve())
+		spyOn(User,'isTutorialized').and.returnValue(Promise.resolve())
+	})
+	
+	it("can't call success when no User.current",()=>{
+		let mock=jest.fn()
+		return init("http：//localhost/1/","testApp",mock)
+			.then(a=>{
+				expect(User.init).toHaveBeenCalled()
+				expect(User.isTutorialized).toHaveBeenCalled()
+				expect(mock).not.toHaveBeenCalled()
+			})
+	})
 
-            return init("http","testApp",mock)
-                .then(a=>{
-                    expect(mock).not.toHaveBeenCalled()
-                })
-        })
-
-        it("must call success when User.current set",()=>{
-            let mock=jest.fn()
-            User.current={}
-            return init("http","testApp",mock)
-                .then(a=>{
-                    expect(mock).toHaveBeenCalled()
-                })
-        })
-
-    })
-
-    describe("model",()=>{
-
-    })
+	it("must call success when User.current set",()=>{
+		spyOn(User,'current').and.returnValue({})
+		let mock=jest.fn()
+		return init("http","testApp",mock)
+			.then(a=>{
+				expect(mock).toHaveBeenCalled()
+			})
+	})
 })
