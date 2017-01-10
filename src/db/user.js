@@ -46,18 +46,21 @@ export default class User extends Service.BuiltIn{
 		})
 	}
 
-	static requestVerification(phone){
+	static requestVerification(phone,checkUnique=false){
 		return this.ajax({
-			url:`${this.server}requestVerification?phone=${phone}`,
-			method:'get'
-		})
+			url:`${this.server}requestVerification`,
+			method:'post',
+			data:{phone,checkUnique}
+		}).then(({salt})=>User.localStorage.setItem("__salt",salt))
 	}
 
 	static verifyPhone(phone, code){
-		return this.ajax({
-			url:`${this.server}verifyPhone?phone=${phone}&code=${code}`,
-			method:'get'
-		})
+		return User.localStorage.getItem("__salt")
+			.then(salt=>this.ajax({
+				url:`${this.server}verifyPhone`,
+				method:'post',
+				data:{phone,code,salt}
+			})).then(done=>User.localStorage.removeItem("__salt"))
 	}
 
 	/**
@@ -66,7 +69,7 @@ export default class User extends Service.BuiltIn{
 	static requestPasswordReset(email){
 		return this.ajax({
 			url:`${this.server}requestPasswordReset?email=${email}`,
-			method:'get'
+			method:'post'
 		})
 	}
 
