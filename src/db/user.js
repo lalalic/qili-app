@@ -9,11 +9,14 @@ export default class User extends Service.BuiltIn{
 	 *  @returns {Promise}
 	 */
 	static signup(user){
-		return this.ajax({
-            method:'post',
-            url:`${this.server}signup`,
-            data:user
-		}).then((data)=>setCurrent(Object.assign({},user,data)))
+		return User.localStorage.getItem("__phone")
+			.then(phone=>this.ajax({
+	            method:'post',
+	            url:`${this.server}signup`,
+	            data:{...user,phone}
+			}))
+			.then(data=>setCurrent({...user,...data}))
+			.then(done=>User.localStorage.removeItem("__phone"))
 	}
 	/**
 	 *  @returns {Promise}
@@ -46,11 +49,11 @@ export default class User extends Service.BuiltIn{
 		})
 	}
 
-	static requestVerification(phone,checkUnique=false){
+	static requestVerification(phone,existence){
 		return this.ajax({
 			url:`${this.server}requestVerification`,
 			method:'post',
-			data:{phone,checkUnique}
+			data:{phone,existence}
 		}).then(({salt})=>User.localStorage.setItem("__salt",salt))
 	}
 
@@ -60,17 +63,23 @@ export default class User extends Service.BuiltIn{
 				url:`${this.server}verifyPhone`,
 				method:'post',
 				data:{phone,code,salt}
-			})).then(done=>User.localStorage.removeItem("__salt"))
+			}))
+			.then(done=>User.localStorage.removeItem("__salt"))
+			.then(done=>User.localStorage.setItem("__phone",phone))
+
 	}
 
 	/**
 	 *  @returns {Promise}
 	 */
-	static requestPasswordReset(email){
-		return this.ajax({
-			url:`${this.server}requestPasswordReset?email=${email}`,
-			method:'post'
-		})
+	static requestPasswordReset(phone,code){
+		return User.localStorage.getItem("__salt")
+			.then(salt=>this.ajax({
+				url:`${this.server}requestPasswordReset`,
+				method:'post',
+				data:{phone,code,salt}
+			}))
+			.then(done=>User.localStorage.removeItem("__salt"))
 	}
 
 	static resetPassword(oldPassword,newPassword){
@@ -110,7 +119,7 @@ export default class User extends Service.BuiltIn{
 	static get currentAsAuthor(){
 		return {_id:__current._id, username:__current.username}
 	}
-	
+
 	static isTutorialized(){
 		return User.localStorage.getItem("__tutorialized")
 			.then(a=>{

@@ -39,15 +39,15 @@ export const ACTION={
 		return User.signin({username,password})
 			.catch(({message})=>Promise.reject({usernameError:message}))
 	}
-	,PHONE_VERIFY_REQUEST:phone=>User.requestVerification(phone)
+	,PHONE_VERIFY_REQUEST:(phone,existence)=>dispatch=>User.requestVerification(phone,existence)
 
 	,PHONE_VERIFY:(phone,code)=>dispatch=>User.verifyPhone(phone,code)
 
-	,FORGET_PASSWORD: contact=>dispatch=>{
-		if(!contact)
-			return Promise.reject("a phone number or email must be given to reset password")
+	,FORGET_PASSWORD: (phone,code)=>dispatch=>{
+		if(!phone || !code)
+			return Promise.reject("a phone number must be given to recover password")
 
-		return User.requestPasswordReset(contact)
+		return User.requestPasswordReset(phone,code)
 	}
 	,RESET_PASSWORD: (oldPwd, newPwd)=>dispatch=>User.resetPassword(oldPwd, newPwd)
 
@@ -222,26 +222,28 @@ class Signin extends Component{
 }
 
 class ForgetPassword extends Component{
-	state={contactError:null}
+	state={phoneVerifiedError:null}
 	render(){
 		const {dispatch}=this.props
-		const {contactError}=this.state
-		let contact
-		const send=a=>dispatch(ACTION.FORGET_PASSWORD(contact.getValue()))
+		const {phoneVerifiedError}=this.state
+		let phone,code
+		const send=a=>dispatch(ACTION.FORGET_PASSWORD(phone.getValue(),code.getValue()))
 			.then(a=>{
-					this.setState({contactError:null})
-					alert(`reset email/sms sent, please follow the instruction to reset your password`)
-				}, e=>this.setState({contactError:e}))
+					this.setState({phoneVerifiedError:null})
+					alert(`a temp password sent to your phone, please sign in within 2 hours and reset password immediatly`)
+				}, e=>this.setState({phoneVerifiedError:e}))
+
 		return (
 			<div className="form" key="forgetPwd">
-				<TextField ref={a=>contact=a}
-					onKeyDown={e=>{e.keyCode==ENTER && send()}}
+				<SMSRequest ref={a=>phone=a} dispatch={dispatch} existence={true}/>
+
+				<TextField ref={a=>code=a} hintText="verification code you just received"
 					fullWidth={true}
-					errorText={contactError}
-					hintText="phone number or email"/>
+					onKeyDown={e=>{e.keyCode==ENTER && send()}}
+					errorText={phoneVerifiedError}/>
 
 				<center>
-					<RaisedButton label="send me" primary={true}
+					<RaisedButton label="send me temp password" primary={true}
 						onClick={e=>send()}/>
 				</center>
 				<div className="commands">
@@ -312,7 +314,7 @@ class ResetPassword extends Component{
 }
 
 class SMSRequest extends Component{
-	state={phone:null,tick:null}
+	state={phone:null,tick:null, error:null}
 
     tick(){
         let i=60, doTick;
@@ -333,9 +335,9 @@ class SMSRequest extends Component{
     }
 
     render(){
-        const {phone, tick}=this.state
-		const {dispatch}=this.props
-		let button, refPhone
+        const {phone, tick,error}=this.state
+		const {dispatch,existence=false}=this.props
+		let button
 		if(phone){
             if(tick)
                 button=(<FlatButton label={tick} disabled={true}/>)
@@ -343,16 +345,18 @@ class SMSRequest extends Component{
                 button=(<FlatButton label={tick===0 ? "resend" : "send"}
 							onClick={e=>{
 								this.tick()
-								dispatch(ACTION.PHONE_VERIFY_REQUEST(refPhone.getValue()))
+								dispatch(ACTION.PHONE_VERIFY_REQUEST(this.refs.phone.getValue(),existence))
+									.catch(error=>this.setState({error}))
 							}}/>)
         }
 
         return (
             <div className="smsrequest">
                 <TextField
-					ref={a=>refPhone=a}
+					ref="phone"
 					hintText="phone number (default +86)"
 					disabled={!!tick}
+					errorText={error}
                     onChange={({target:{value}})=>this.setState({phone: this.isPhone(value)? value : null})}/>
                 {button}
             </div>
