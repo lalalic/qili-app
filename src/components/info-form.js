@@ -203,15 +203,19 @@ const Editor={
 		)
 	}
 	,customized({onEdit, onCancel, hintText,value,primaryText, children, page}){
+		let _onEdit=onEdit
+		if(onEdit){
+			_onEdit=a=>{
+				let p=_onEdit()
+				if(p && p.then)
+					p.then(onCancel)
+				else
+					onCancel()
+			}
+		}
 		return (
 			<FullPage>
-				<Title {...{onEdit:a=>{
-						let p=onEdit()
-						if(p && p.then)
-							p.then(onCancel)
-						else
-							onCancel()
-					}, onCancel, primaryText, isChange:!!value}}/>
+				<Title {...{onEdit:_onEdit, onCancel, primaryText, isChange:!!value}}/>
 				{children}
 			</FullPage>
 		)
@@ -221,6 +225,6 @@ const Editor={
 const Title=({onEdit, onCancel, primaryText, isChange})=>(
 	<AppBar title={`${isChange ? "更改" :""}${primaryText}`}
 		iconElementLeft={<IconButton onClick={onCancel}><NavigationBack/></IconButton>}
-		iconElementRight={<RaisedButton label="保存" onClick={onEdit} primary={true}/>}
+		iconElementRight={onEdit ? <RaisedButton label="保存" onClick={onEdit} primary={true}/> : null}
 		/>
 )

@@ -6,6 +6,7 @@ import CommandBar from "./components/command-bar"
 import User from "./db/user"
 import QiliApp from "./qiliApp"
 import {compact} from "."
+import {ResetPassword} from "./account"
 
 import {InfoForm, Field} from "./components/info-form"
 import TextFieldx from "./components/text-field"
@@ -39,7 +40,11 @@ export const Profile=({username,nick,birthday,gender,location,photo,signature, d
 			<Field primaryText="账号"
 				value={username}
 				/>
-
+			
+			<Field primaryText="密码" hintText="经常改密码更安全" value="...">
+				<ResetPassword dispatch={dispatch} />
+			</Field>
+				
 			<Field primaryText="昵称"
 				value={nick}
 				type="input"

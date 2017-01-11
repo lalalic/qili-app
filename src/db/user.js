@@ -1,5 +1,4 @@
 var {Service}=require('./service')
-import {dispatcher} from ".."
 
 var server=null,
 	__current=null;
@@ -9,25 +8,21 @@ export default class User extends Service.BuiltIn{
 	 *  @returns {Promise}
 	 */
 	static signup(user){
-		return User.localStorage.getItem("__phone")
-			.then(phone=>this.ajax({
+		return this.ajax({
 	            method:'post',
 	            url:`${this.server}signup`,
-	            data:{...user,phone}
-			}))
-			.then(data=>setCurrent({...user,...data}))
-			.then(done=>User.localStorage.removeItem("__phone"))
+	            data:{...user}
+			}).then(user=>setCurrent(user))
 	}
 	/**
 	 *  @returns {Promise}
 	 */
 	static signin(user){
-		var {username,password}=user
 		return this.ajax({
     			url:`${this.server}login`,
     			method:'post',
-				data:{username,password}
-    		}).then((user)=>setCurrent(user))
+				data:{...user}
+    		}).then(user=>setCurrent(user))
 	}
 	/**
 	 *  @returns {Promise}
@@ -49,37 +44,23 @@ export default class User extends Service.BuiltIn{
 		})
 	}
 
-	static requestVerification(phone,existence){
+	static requestPhoneCode(phone,existence){
 		return this.ajax({
-			url:`${this.server}requestVerification`,
+			url:`${this.server}requestPhoneCode`,
 			method:'post',
 			data:{phone,existence}
-		}).then(({salt})=>User.localStorage.setItem("__salt",salt))
-	}
-
-	static verifyPhone(phone, code){
-		return User.localStorage.getItem("__salt")
-			.then(salt=>this.ajax({
-				url:`${this.server}verifyPhone`,
-				method:'post',
-				data:{phone,code,salt}
-			}))
-			.then(done=>User.localStorage.removeItem("__salt"))
-			.then(done=>User.localStorage.setItem("__phone",phone))
-
+		}).then(({salt})=>salt)
 	}
 
 	/**
 	 *  @returns {Promise}
 	 */
-	static requestPasswordReset(phone,code){
-		return User.localStorage.getItem("__salt")
-			.then(salt=>this.ajax({
+	static requestPasswordReset(verifyPhone){
+		return this.ajax({
 				url:`${this.server}requestPasswordReset`,
 				method:'post',
-				data:{phone,code,salt}
-			}))
-			.then(done=>User.localStorage.removeItem("__salt"))
+				data:{...verifyPhone}
+			})
 	}
 
 	static resetPassword(oldPassword,newPassword){

@@ -241,7 +241,9 @@ function makeLocalStorage(localDb){
             },
             removeItem(key){
                 return new Promise((resolve, reject)=>
-                    localDb.__localStorage.remove(key,resolve, reject))
+                    localDb.__localStorage.remove(key,()=>{
+							localDb.__localStorage.resolveRemove(key, resolve,reject)
+						}, reject))
             }
         }
 }
