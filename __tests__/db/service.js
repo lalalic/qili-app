@@ -1,6 +1,7 @@
 jest.mock("../../src/db/user")
 
-const {init,User, Model}=require("../../src/db")
+const {init,User, Model}=require("../../src")//must import from src to extend JSON.parse for date
+
 
 const service="http://localhost/1/"
 jasmine.DEFAULT_TIMEOUT_INTERVAL=100
