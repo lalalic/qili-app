@@ -141,8 +141,13 @@ export class QiliApp extends Component{
 			else
 				content= "initializing..."
 		}else if(!user){
-			if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length)
-				return (<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>)
+			if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length){
+				return (
+					<MuiThemeProvider muiTheme={theme}>
+						<Tutorial slides={this.props.tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>
+					</MuiThemeProvider>
+				)
+			}
 
 			content=(<Account dispatch={dispatch}/>)
 		}else if(!user.sessionToken){
