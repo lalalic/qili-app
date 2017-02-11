@@ -12,17 +12,18 @@ addons:
 before_install:
  - echo "install nodejs"
  - nvm install 6
+ - npm install yarn -g
  - node --version
  - npm --version
  - nvm --version
 
 install:
- - npm install
+ - yarn install
 
 script:
- - npm test
- - npm run build.release
- - npm run cordova
+ - yarn test
+ - yarn run build.release
+ - yarn run cordova
 
 after_success:
  - mv cordova/platforms/android/build/outputs/apk/android-debug.apk $APP_NAME/app.apk

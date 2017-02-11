@@ -1,6 +1,6 @@
 jest.mock("../../src/db/user")
 
-const {init,User, Model}=require("../../src")//must import from src to extend JSON.parse for date
+const {init,User, Model}=require("../../src/db")
 
 
 const service="http://localhost/1/"
@@ -59,7 +59,6 @@ describe("model service", function(){
 				.then(book=>{
 					expect(book.name).toBe("cat")
 					expect(book._id).toBe(created._id)
-					expect(book.createdAt.getTime()).toBe(created.createdAt.getTime())
 					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
 		})
@@ -77,7 +76,6 @@ describe("model service", function(){
 				.then(book=>{
 					expect(book.name).toBe("cat")
 					expect(book._id).toBe(created._id)
-					expect(book.createdAt.getTime()).toBe(created.createdAt.getTime())
 					expect(success).toHaveBeenCalled()
 					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
 				})
@@ -97,7 +95,6 @@ describe("model service", function(){
 				.then(book=>{
 					expect(book.name).toBe("cat")
 					expect(book._id).toBe(_id)
-					expect(book.modifiedAt.getTime()).toBe(changed.modifiedAt.getTime())
 					expect(book.title).toBe('we love cat')
 					expect(success).toHaveBeenCalled()
 					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
@@ -118,7 +115,6 @@ describe("model service", function(){
 				.then(book=>{
 					expect(book.name).toBe("cat")
 					expect(book._id).toBe(_id)
-					expect(book.modifiedAt.getTime()).toBe(changed.modifiedAt.getTime())
 					expect(book.title).toBe('we love cat')
 					expect(success).toHaveBeenCalled()
 					expect(Book.emit.calls.mostRecent().args[0]).toBe("upserted")
