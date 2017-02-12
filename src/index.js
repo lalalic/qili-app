@@ -136,7 +136,3 @@ Object.assign(Date.prototype,{
 						- 3 + (week1.getDay() + 6) % 7) / 7);
 	}
 })
-
-Object.values=function(a){
-    return a ? Object.keys(a).map(k=>a[k]) : []
-}
