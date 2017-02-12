@@ -157,8 +157,8 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
                 Role.init();
                 File.init();
                 Log.init();
-				
-				let pTutorial=User.isTutorialized()	
+
+				let pTutorial=User.isTutorialized()
                 if(success){
                     User.on('change',()=>success(db))
 					if(User.current){
@@ -166,7 +166,7 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
 							.then(a=>resolve(pTutorial))
 					}else{
 						resolve(pTutorial)
-					}       
+					}
                 }else
                     resolve(pTutorial)
 

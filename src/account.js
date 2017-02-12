@@ -13,12 +13,12 @@ export const ACTION={
 		const {username,password,password2,verifyPhone}=user
 		let usernameError, passwordError,password2Error
 		if(!username)
-			usernameError="user name is required"
+			usernameError="帐号必须有"
 		if(!password)
-			passwordError="password is required"
+			passwordError="密码必须有"
 
 		if(password!=password2)
-			password2Error="password doesn't match"
+			password2Error="2次密码不相同"
 
 		if(usernameError || passwordError||password2Error)
 			return Promise.reject({passwordError, usernameError,password2Error})
@@ -30,9 +30,9 @@ export const ACTION={
 		const {username, password}=user
 		let usernameError, passwordError
 		if(!username)
-			usernameError="user name is required"
+			usernameError="帐号必须有"
 		if(!password)
-			passwordError="password is required"
+			passwordError="密码必须有"
 
 		if(usernameError || passwordError)
 			return Promise.reject({usernameError, passwordError})
@@ -102,7 +102,7 @@ class Signup extends Component{
 				<SMSRequest ref={a=>sms=a} dispatch={dispatch} existence={false}/>
 
 				<TextField ref={a=>username=a}
-					hintText="login name"
+					hintText="帐号"
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
 					errorText={usernameError}/>
@@ -110,22 +110,22 @@ class Signup extends Component{
 				<TextField ref={a=>password=a}
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
-					type="password" hintText="password" errorText={passwordError}/>
+					type="password" hintText="密码" errorText={passwordError}/>
 
 				<TextField ref={a=>password2=a}
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
-					type="password" hintText="password again" errorText={password2Error}/>
+					type="password" hintText="密码确认" errorText={password2Error}/>
 
 				<center>
-					<RaisedButton label="sign up" primary={true}
+					<RaisedButton label="创建帐号" primary={true}
 						onClick={e=>send()}/>
 				</center>
 				<div className="commands">
-					<FlatButton label="already have an account"
+					<FlatButton label="已经有帐号了"
 						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
 
-					<FlatButton label="forget password"
+					<FlatButton label="忘记密码"
 						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
 				</div>
 			</div>
@@ -148,7 +148,7 @@ class Signin extends Component{
 		return (
 			<div className="form" key="signin">
 				<TextField ref={a=>refUsername=a}
-					hintText="login name or phone number"
+					hintText="帐号"
 					defaultValue={username}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
 					fullWidth={true}
@@ -156,16 +156,16 @@ class Signin extends Component{
 				<TextField ref={a=>refPassword=a}
 						onKeyDown={e=>{e.keyCode==ENTER && send()}}
 						fullWidth={true} errorText={passwordError}
-						type="password" hintText="password"/>
+						type="password" hintText="密码"/>
 				<center>
-					<RaisedButton label="sign in" primary={true}
+					<RaisedButton label="登录" primary={true}
 						onClick={e=>send()}/>
 				</center>
 				<div className="commands">
-					<FlatButton label="no account"
+					<FlatButton label="没有帐号"
 							onClick={e=>dispatch(ACTION.SIGNUP_UI)}/>
 
-					<FlatButton label="forget password"
+					<FlatButton label="密码忘记了"
 						onClick={e=>dispatch(ACTION.FORGET_PASSWORD_UI)}/>
 
 				</div>
@@ -192,14 +192,14 @@ class ForgetPassword extends Component{
 				<SMSRequest ref={a=>sms=a} dispatch={dispatch} existence={true}/>
 
 				<center>
-					<RaisedButton label="send me temp password" primary={true}
+					<RaisedButton label="发送一个临时密码" primary={true}
 						onClick={e=>send()}/>
 				</center>
 				<div className="commands">
-					<FlatButton label="sign in"
+					<FlatButton label="登录"
 						onClick={e=>dispatch(ACTION.SIGNIN_UI)}/>
 
-					<FlatButton label="sign up"
+					<FlatButton label="创建帐号"
 						onClick={e=>dispatch(ACTION.SIGNUP_UI)}/>
 				</div>
 			</div>
@@ -217,7 +217,7 @@ export class ResetPassword extends Component{
 		const send=a=>{
 			let newPassword=password.getValue()
 			if(password2.getValue()!=newPassword){
-				this.setState({password2Error:"password not matched"})
+				this.setState({password2Error:"密码确认错误"})
 				return
 			}
 
@@ -231,7 +231,7 @@ export class ResetPassword extends Component{
 
 		return (
 			<div className="form" key="reset">
-				<TextField ref={a=>oldPassword=a} hintText="old password"
+				<TextField ref={a=>oldPassword=a} hintText="老密码"
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
 					errorText={resetError}/>
@@ -240,17 +240,17 @@ export class ResetPassword extends Component{
 					fullWidth={true}
 					errorText={passwordError}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
-					type="password" hintText="password"/>
+					type="password" hintText="密码"/>
 
 				<TextFieldx ref={a=>password2=a}
 					fullWidth={true}
 					onKeyDown={e=>{e.keyCode==ENTER && send()}}
 					errorText={password2Error}
 					type="password"
-					hintText="password again"/>
+					hintText="密码确认"/>
 
 				<center>
-					<RaisedButton label="reset password" primary={true}
+					<RaisedButton label="保存" primary={true}
 						onClick={e=>send()}/>
 				</center>
 			</div>

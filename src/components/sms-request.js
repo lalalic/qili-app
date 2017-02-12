@@ -31,7 +31,7 @@ export class SMSRequest extends Component{
             if(tick)
                 button=(<FlatButton label={tick} disabled={true}/>)
             else
-                button=(<FlatButton label={tick===0 ? "resend" : "send"}
+                button=(<FlatButton label={tick===0 ? "重新申请" : "申请验证码"}
 							onClick={e=>{
 								this.tick()
 								dispatch(ACTION.PHONE_CODE_REQUEST(this.refs.phone.getValue(),existence))
@@ -47,7 +47,7 @@ export class SMSRequest extends Component{
 						<TextField
 							ref="phone"
 							fullWidth={true}
-							hintText="phone number (default +86)"
+							hintText="手机号"
 							disabled={!!tick}
 							errorText={error}
 							onChange={({target:{value}})=>this.setState({phone: this.isPhone(value)? value : null})}/>
@@ -56,8 +56,8 @@ export class SMSRequest extends Component{
 						{button}
 					</div>
 				</div>
-				
-				<TextField ref="code" fullWidth={true} hintText="verification code you just received" />
+
+				<TextField ref="code" fullWidth={true} hintText="手机验证码" />
 			</div>
         )
     }
@@ -71,7 +71,7 @@ export class SMSRequest extends Component{
 			phone:this.state.phone,
 			code:this.refs.code.getValue(),
 			salt:this.salt
-		}	
+		}
 	}
 }
 
