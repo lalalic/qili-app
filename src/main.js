@@ -146,7 +146,10 @@ export const Main=QiliApp.render(
 
 		<Route path="my">
 			<IndexRoute
-				component={connect(state=>({apps:Object.values(state.entities[Application._name])}))(MyUI)}
+				component={connect(state=>{
+					let apps=state.entities[Application._name]
+					return {apps: apps ? Object.keys(apps).map(k=>apps[k]) : []}	
+				})(MyUI)}
 				contextual={false}/>
 
 			<Route path="setting" component={SettingUI} />
