@@ -56,7 +56,7 @@ export class Account extends Component{
 	render(){
 		let {user,dispatch,...others}=this.props
 		let {type}=this.state
-		
+
 		if(!type)
 			type='SIGNIN_UI'
 
@@ -100,7 +100,7 @@ class Signup extends Component{
 		return (
 			<div className="form" key="signup">
 				<SMSRequest ref={a=>sms=a} dispatch={dispatch} existence={false}/>
-				
+
 				<TextField ref={a=>username=a}
 					hintText="login name"
 					fullWidth={true}
@@ -138,18 +138,15 @@ class Signin extends Component{
 	render(){
 		const {username, dispatch}=this.props
 		const {usernameError, passwordError}=this.state
-		let refUsername, refPassword, sms
+		let refUsername, refPassword
 
 		let send=a=>dispatch(ACTION.SIGNIN({
 			username:refUsername.getValue()
 			,password:refPassword.getValue()
-			,verifyPhone:sms.data
 		})).catch(e=>this.setState(Object.assign({},{usernameError:null, passwordError:null},e)))
 
 		return (
 			<div className="form" key="signin">
-				<SMSRequest ref={a=>sms=a} dispatch={dispatch} existence={true}/>
-				
 				<TextField ref={a=>refUsername=a}
 					hintText="login name or phone number"
 					defaultValue={username}

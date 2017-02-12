@@ -102,6 +102,7 @@ export default class User extends Service.BuiltIn{
 	}
 
 	static isTutorialized(){
+		return Promise.resolve(false)
 		return User.localStorage.getItem("__tutorialized")
 			.then(a=>{
 				if(!a){
