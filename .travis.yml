@@ -22,7 +22,7 @@ install:
 
 script:
  - yarn test
- - yarn run build.release
+ - yarn run build.$BUILD_MODE
  - yarn run cordova
 
 after_success:
