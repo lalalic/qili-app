@@ -1,6 +1,6 @@
 jest.mock("../src/db/user")
 const React=require("react")
-const {ACTION,DOMAIN,REDUCER,QiliApp}=require("../src/qiliApp")
+const {ACTION,DOMAIN,REDUCER, QiliApp}=require("../src/qiliApp")
 
 describe("qili application", function(){
     const {Carousel}=require("../src/components/tutorial")
@@ -112,4 +112,68 @@ describe("qili application", function(){
             expect(REDUCER({},ACTION.TUTORIALIZED).tutorialized).toBe(true)
         })
     })
+	
+	describe("state", function(){
+		const reducers=QiliApp.enhanceReducers()
+		const INIT_STATE=QiliApp.INIT_STATE
+		
+		it("location change",function(){
+			let next={
+				type: '@@router/LOCATION_CHANGE',
+				payload: {
+					routes: [],
+					params: {},
+					location: {}
+				}
+			}
+			let state = reducers(INIT_STATE, next)
+			expect(state).toEqual(Object.assign({},INIT_STATE,{routing:next.payload}))
+		})
+		
+		describe("normalized data", function(){
+			it("{entities:{}}",function(){
+				let next={
+					type: 'NORMALIZED_DATA',
+					payload: {
+						books: {
+							mine:{},
+							yours:{}
+						}
+					}
+				}
+				let state = reducers(INIT_STATE, next)
+				expect(state).toEqual(Object.assign({},INIT_STATE,{entities:next.payload}))
+			})
+			
+			it("books on entities:{authors:{}}",function(){
+				let next={
+					type: 'NORMALIZED_DATA',
+					payload: {
+						books: {
+							mine:{},
+							yours:{}
+						}
+					}
+				}
+				let authors = {authors:{raymond:{}}}
+				let state=reducers(Object.assign({},INIT_STATE,{entities:authors}), next)
+				expect(state.entities).toEqual(Object.assign({},next.payload,authors))
+			})
+			
+			it("books on entities:{books:{his:{}}}",function(){
+				let next={
+					type: 'NORMALIZED_DATA',
+					payload: {
+						books: {
+							mine:{},
+							yours:{}
+						}
+					}
+				}
+				let books = {books:{his:{}}}
+				let state=reducers(Object.assign({},INIT_STATE,{entities:books}), next)
+				expect(state.entities.books).toEqual(Object.assign({},next.payload.books,books.books))
+			})
+		})
+	})
 })

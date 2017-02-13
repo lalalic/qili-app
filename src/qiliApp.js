@@ -206,7 +206,7 @@ export class QiliApp extends Component{
 		project: PropTypes.object
 	}
 
-	static render(route, reducers=[], ...middlewars){
+	static render(route, customizedReducers=[], ...middlewars){
 		const props={}
 		let container=document.getElementById('app')
 		if(!container){
@@ -222,14 +222,6 @@ export class QiliApp extends Component{
 		if(!props.history)
 			props.history=hashHistory
 
-		function routerRducer(state={},{type,payload}){
-			switch(type){
-			case '@@router/LOCATION_CHANGE':
-			return payload
-			}
-			return state
-		}
-
 		const enhancedRoute=(root,dispatch)=>{
 			const {onEnter, onChange}=root.props
 			return React.cloneElement(root, {
@@ -242,6 +234,34 @@ export class QiliApp extends Component{
 					onChange && onChange.bind(this)(...arguments)
 				}
 			})
+		}
+		
+		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+		const {enhanceReducers, INIT_STATE}=QiliApp
+		const store=createStore(enhanceReducers(customizedReducers), INIT_STATE, composeEnhancers(applyMiddleware(thunk,...middlewars)))
+
+		supportTap()
+
+		return render((
+				<Provider store={store}>
+					<Router {...props}>
+						{enhancedRoute(route,store.dispatch)}
+					</Router>
+				</Provider>
+			),container)
+	}
+	
+	static get INIT_STATE(){
+		return {qiliApp:{}, ui:{}, entities:{},comment:{},routing:{}}
+	}
+	
+	static enhanceReducers(customized=[{ui:(state={})=>state}]){
+		function routerReducer(state={},{type,payload}){
+			switch(type){
+			case '@@router/LOCATION_CHANGE':
+			return payload
+			}
+			return state
 		}
 
 		function normalizeData(entities={},{type,payload}){
@@ -264,26 +284,12 @@ export class QiliApp extends Component{
 		}
 
 
-		const allReducers=enhancedCombineReducers({
-					routing:routerRducer
+		return enhancedCombineReducers({
+					routing:routerReducer
 					,entities:normalizeData
 					,comment:Comment.reducer
 					,[DOMAIN]:REDUCER
-				}, ...reducers)
-		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-		const store=createStore(allReducers, {qiliApp:{}, ui:{}, entities:{},comment:{}}, composeEnhancers(applyMiddleware(thunk,...middlewars)))
-
-		supportTap()
-
-		return render((
-				<Provider store={store}>
-					<Router {...props}>
-						{enhancedRoute(route,store.dispatch)}
-					</Router>
-				</Provider>
-			),container)
+				}, ...customized)
 	}
 }
-
-
 export default Object.assign(connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(QiliApp),{DOMAIN, ACTION,REDUCER})
