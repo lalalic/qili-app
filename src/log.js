@@ -63,7 +63,7 @@ export class Log extends Component{
 					)}
 				</List>
 
-				<CommandBar className="footbar" dispath={dispatch}
+				<CommandBar className="footbar" dispatch={dispatch}
 					onSelect={level=>router.replace(`/log/${level}`)}
 					primary={level}
 					items={[

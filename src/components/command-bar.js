@@ -15,7 +15,7 @@ var _current;
 
 export default class CommandBar extends Component{
     render(){
-        const {onSelect=a=>a, className, primary, items=[],...others}=this.props
+        const {onSelect=a=>a, className, primary, items=[],dispatch, ...others}=this.props
         return (
             <div className={`commands ${className}`} {...others}>
             {
@@ -114,7 +114,7 @@ export default class CommandBar extends Component{
             if(!link){
 				if(primary)
 					props.className="primary"
-				
+
 				return (
 					<div {...props}>
 						<span style={{cursor:'default'}}
@@ -145,10 +145,10 @@ export default class CommandBar extends Component{
         render(){
 			const {type:{_name}, model:{_id}}=this.props
 			const {router}=this.context
-            return (<CommandBar.Command 
-				label="Comment" 
+            return (<CommandBar.Command
+				label="Comment"
 				onSelect={a=>router.push(`/comment/${_name}/${_id}`)}
-                icon={<CommentIcon/>} 
+                icon={<CommentIcon/>}
 				{...this.props}/>)
         }
 
@@ -158,13 +158,13 @@ export default class CommandBar extends Component{
             model:React.PropTypes.object.isRequired
         }
     }
-	
+
     static Share=class extends Component{
         render(){
-            return (<CommandBar.Command 
-				label="Share" 
+            return (<CommandBar.Command
+				label="Share"
 				onSelect={this.onSelect.bind(this)}
-                icon={<ShareIcon/>} 
+                icon={<ShareIcon/>}
 				{...this.props}/>)
         }
 

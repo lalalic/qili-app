@@ -82,10 +82,10 @@ export class Data extends Component{
 			<div>
 				<Tabs>
 					<Tab label={name}>
-						<Table data={data}/>
+						<Table data={data} defaultSort={{column:"createdAt"}} noDataText="no data yet"/>
 					</Tab>
 					<Tab label="Indexes">
-						<Table data={index}/>
+						<Table data={index} noDataText="no index yet"/>
 					</Tab>
 				</Tabs>
 
