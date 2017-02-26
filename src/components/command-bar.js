@@ -39,14 +39,23 @@ export default class CommandBar extends Component{
 
                     if(command.action.toLowerCase()=='back'){
                         command.icon=<BackIcon/>
+                        if(!command.label)
+                            command.label="后退"
                         command.onSelect=()=>{this.context.router.goBack()}
                     }
 
-                    if(command.action.toLowerCase()=='refresh' && !command.icon)
+                    if(command.action.toLowerCase()=='refresh' && !command.icon){
+                        if(!command.label)
+                            command.label="更新"
                         command.icon=<RefreshIcon/>
+                    }
 
-                    if(command.action.toLowerCase()=='save' && !command.icon)
+                    if(command.action.toLowerCase()=='save' && !command.icon){
                         command.icon=<SaveIcon/>
+                        if(!command.label)
+                            command.label="保存"
+                    }
+
 
                     return (
                         <CommandBar.Command key={command.action}
@@ -146,7 +155,7 @@ export default class CommandBar extends Component{
 			const {type:{_name}, model:{_id}}=this.props
 			const {router}=this.context
             return (<CommandBar.Command
-				label="Comment"
+				label="评论"
 				onSelect={a=>router.push(`/comment/${_name}/${_id}`)}
                 icon={<CommentIcon/>}
 				{...this.props}/>)
@@ -162,7 +171,7 @@ export default class CommandBar extends Component{
     static Share=class extends Component{
         render(){
             return (<CommandBar.Command
-				label="Share"
+				label="朋友圈"
 				onSelect={this.onSelect.bind(this)}
                 icon={<ShareIcon/>}
 				{...this.props}/>)
