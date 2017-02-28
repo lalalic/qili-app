@@ -26,7 +26,7 @@ export const REDUCER=(state={}, {type, payload})=>{
 	return state
 }
 
-export const Profile=({username,nick,birthday,gender,location,photo,signature, dispatch, valueStyle={color:"lightgray"}})=>(
+export const Profile=({username,nick,birthday,gender,location,photo,signature, dispatch, children, valueStyle={color:"lightgray"}})=>(
 	<div>
 		<InfoForm style={{padding:5}}>
 			<Field primaryText="头像"
@@ -74,12 +74,15 @@ export const Profile=({username,nick,birthday,gender,location,photo,signature, d
 				hintText="个性签名表达你的个性"
 				onEdit={value=>dispatch(ACTION.UPDATE("signature",value))}
 				/>
+			
+			{children}
+			
 		</InfoForm>
 
 		<CommandBar  className="footbar"
 			items={[
 				{action:"Back"},
-				{action:"Logout", icon:<QuitIcon/>, onSelect:e=>dispatch(QiliApp.ACTION.LOGOUT)}
+				{action:"Logout", label:"退出账号", icon:<QuitIcon/>, onSelect:e=>dispatch(QiliApp.ACTION.LOGOUT)}
 				]}
 			/>
 	</div>

@@ -5,6 +5,7 @@ import {connect} from "react-redux"
 import {cyan50 as bg} from "material-ui/styles/colors"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
+import IconEmptyComment from "material-ui/svg-icons/editor/mode-comment"
 
 import {select as selectImageFile} from "./file-selector"
 
@@ -13,6 +14,7 @@ import CommandBar from './command-bar'
 import User from '../db/user'
 import Comment from '../db/comment'
 import File from "../db/file"
+import Empty from "./empty"
 
 export const DOMAIN="COMMENT"
 export const ACTION={
@@ -148,4 +150,46 @@ export class CommentUI extends Component{
 	}
 }
 
-export default Object.assign(connect(state=>state.comment)(CommentUI),{reducer})
+export class Inline extends Component{
+	componentDidMount(){
+        const {dispatch,type:{_name},model:{_id}}=this.props
+        dispatch(ACTION.FETCH(_name,_id))
+    }
+    componentWillUnmount(){
+        this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
+    }
+	
+	render(){
+		const {data=[],template, emptyIcon}=this.props
+		
+		let content=null
+		if(data.length){
+			content=(
+				<div>
+					{data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
+				</div>
+			)
+		}else{
+			content=<Empty text="当前还没有评论哦" icon={emptyIcon}/>
+		}
+		
+		return (
+            <div className="comment inline">
+				<div style={{borderLeft:"5px solid red",borderRadius:4, paddingLeft:2, fontSize:"large"}}>
+					最新评论
+				</div>
+				{content}
+    		</div>
+        )
+	}
+	
+	static defaultProps={
+		template:CommentUI.defaultProps.template,
+		emptyIcon:<IconEmptyComment/>
+	}
+}
+
+export default Object.assign(connect(state=>state.comment)(CommentUI),{
+	reducer, 
+	Inline: connect(state=>state.comment)(Inline)
+})

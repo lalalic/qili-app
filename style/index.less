@@ -211,6 +211,10 @@ figure{
 
 .comment{
     background-color:lightgray;
+	
+	&.inline{
+		background-color:white;
+	}
     .acomment{
         .grid;
     }
@@ -289,6 +293,10 @@ article{
 
 			p{
 				padding: @insetWidth 0px;
+			}
+			
+			h1{
+				line-height:3em;
 			}
 		}
 	}
@@ -394,9 +402,9 @@ article{
 .li{
     @listHeight:120px;
     @listHeightWithImage:160px;
-    @titleFont:16px;
+    @titleFont:larger;
     @titleLineHeight:25px;
-    @smallFont:10px;
+    @smallFont:small;
     @smallLineHeight:15px;
     @imageWidth:120px;
     @imageHeight:100px;
@@ -408,7 +416,7 @@ article{
 
     margin: @margin;
     border-radius: @margin;
-    background-color: lightblue;
+    background-color: white;
 
     height: @listHeight;
     overflow: hidden;
@@ -423,6 +431,8 @@ article{
         line-height: @titleLineHeight;
         max-height: 2*@titleLineHeight;
         overflow: hidden;
+		font-weight: bold;
+		text-align: left;
     }
 
     .summary{
@@ -431,6 +441,7 @@ article{
         line-height: @smallLineHeight;
         max-height: 2*@smallLineHeight;
         overflow: hidden;
+		text-align: left;
     }
 
     .more{
