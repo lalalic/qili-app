@@ -6,6 +6,7 @@ import {Provider, connect} from "react-redux"
 import thunk from 'redux-thunk'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
+import CircularProgress from 'material-ui/CircularProgress'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
@@ -20,6 +21,7 @@ import supportTap from 'react-tap-event-plugin'
 import Account from './account'
 import Tutorial from "./components/tutorial"
 import Comment from "./components/comment"
+import Empty from "./components/empty"
 
 export const DOMAIN="qiliApp"
 
@@ -82,18 +84,6 @@ export const REDUCER=(state={},{type,payload})=>{
 }
 
 export class QiliApp extends Component{
-	constructor(props){
-		super(props)
-
-		const {service, appId}=this.props
-
-		if(!appId)
-			throw new Error("Please give application key")
-
-		if(!service)
-			throw new Error("Please give service url")
-	}
-
 	componentDidMount(){
 		var {init:initApp, service, appId, title, project, dispatch}=this.props
 		if(title)
@@ -130,14 +120,41 @@ export class QiliApp extends Component{
 
 
 	render(){
-		const {theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
+		const {appId, service, theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
 		let content
+		
+		if(!appId){
+			content=(
+				<Empty icon={null}>
+					<ol  style={{textAlign:"left"}}>
+						<li>在app.qili.com上创建一个应用，获取AppId</li>
+						<li>创建一个React Component
+							<pre>
+							{`
+	import React from "react"
+	import QiliApp from "qili-app"
 
-		if(!inited){
+	const MyApp=()=>(
+		<QiliApp appId="xxxx">
+			hello qili!
+		</QiliApp>
+	)
+
+	QiliApp.render(<MyApp/>)
+							`}
+							</pre>
+						</li>
+						<li>Have fun</li>
+					</ol>
+				</Empty>
+			)
+		}else if(!service)
+			content=(<Empty>Please give service url</Empty>)
+		else if(!inited){
 			if(initedError)
-				content= `initializing Error: ${initedError}`
+				content=(<Empty>{`初始化错误: ${initedError}`}</Empty>)
 			else
-				content= "initializing..."
+				content= (<Empty><CircularProgress size={60} thickness={7} /></Empty>)
 		}else if(!user){
 			if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length){
 				return (
