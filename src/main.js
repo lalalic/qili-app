@@ -3,12 +3,24 @@ import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {normalize,arrayOf} from "normalizr"
+import {combineReducers} from "redux"
 
 import {init,User,QiliApp, UI, enhancedCombineReducers, compact, ENTITIES} from '.'
 import Application from './db/app'
 import App from './app'
 import Logo from './icons/logo'
 import {getCurrentApp, getApp} from "./selector"
+
+import Dashboard from './dashboard'
+import AppUI, {Creator} from './app'
+import CloudUI from './cloud'
+import DataUI from './data'
+import LogUI from './log'
+import MyUI from "./my"
+import SettingUI from "./setting"
+import ProfileUI from "./user-profile"
+
+import {connect} from "react-redux"
 
 let initApp=null
 
@@ -59,9 +71,11 @@ const REDUCER=(state={},{type,payload})=>{
 	return state
 }
 
-class QiliConsole extends Component{
+export class QiliConsole extends Component{
+	state={contextual:true}
     render(){
-        const {_id,name, children, dispatch, routes}=this.props
+        const {_id,name, children, dispatch}=this.props
+		const {contextual}=this.state
 		let props={
 			appId: "qiliAdmin"
 			,init:a=>Application.init().then(apps=>dispatch(ACTION.APPS_FETCHED(apps)))
@@ -76,122 +90,81 @@ class QiliConsole extends Component{
 			)
 		}
 
-		let quickSwitchStyle={fontSize:"xx-small"}
-		if(routes.find(a=>a.contextual===false))
-			quickSwitchStyle.display="none"
-
         return (
             <QiliApp {...props}>
-				<FloatingActionButton className="sticky top right" mini={true}
-					style={quickSwitchStyle}
-					onClick={e=>dispatch(ACTION.NEXT_APPLICATION(_id))}>
-					{name}
-				</FloatingActionButton>
-				{children}
+				{
+					contextual ? 
+					(<FloatingActionButton className="sticky top right" mini={true}
+						style={{fontSize:"xx-small"}}
+						onClick={e=>dispatch(ACTION.NEXT_APPLICATION(_id))}>
+						{name}
+					</FloatingActionButton>) : null
+				}
+				<Router history={hashHistory}>
+					<Route path="/"
+						onEnter={({routes})=>
+							this.setState({contextual:!!!routes.find(a=>a.contextual===false)})
+						}
+						onChange={(prevState, {routes})=>
+							this.setState({contextual:!!!routes.find(a=>a.contextual===false)})
+						}>
+
+						<IndexRoute component={Dashboard}/>
+
+						<Route path="app" contextual={false}>
+							<IndexRoute component={connect()(Creator)}/>
+
+							<Route path=":_id"
+								component={connect((state,{params:{_id}})=>{
+									let urlApp=getApp(state,_id)
+									let current=getCurrentApp(state)
+									let info=compact(urlApp,"name","uname","apiKey")
+									info.isCurrent=urlApp==current
+									return info
+									})(AppUI)}
+								onEnter={({params:{_id}})=>initApp=_id}
+								/>
+						</Route>
+
+						<Route path="cloud" component={connect(state=>({cloudCode:getCurrentApp(state).cloudCode}))(CloudUI)}/>
+
+						<Route path="data"
+							component={connect(state=>({...state.ui.data,app:getCurrentApp(state)._id}))(DataUI)}>
+							<IndexRedirect to={`${User._name}`}/>
+							<Route path=":name"/>
+						</Route>
+
+						<Route path="log"
+							component={connect(state=>state.ui.log)(LogUI)}>
+							<IndexRedirect to="all"/>
+							<Route path=":level"/>
+						</Route>
+
+						<Route path="my">
+							<IndexRoute
+								component={connect(state=>{
+									let apps=state.entities[Application._name]
+									return {apps: apps ? Object.keys(apps).map(k=>apps[k]) : []}	
+								})(MyUI)}
+								contextual={false}/>
+
+							<Route path="setting" component={SettingUI} />
+							<Route path="profile" component={ProfileUI} contextual={false}/>
+						</Route>
+					</Route>
+				</Router>
             </QiliApp>
         )
     }
-
-	static contextTypes={
-		router: PropTypes.object
-	}
 }
 
-import Dashboard from './dashboard'
-import AppUI, {Creator} from './app'
-import CloudUI from './cloud'
-import DataUI from './data'
-import LogUI from './log'
-import MyUI from "./my"
-import SettingUI from "./setting"
-import ProfileUI from "./user-profile"
+const StateQiliConsole=connect(state=>compact(getCurrentApp(state),"_id","name"))(QiliConsole)
 
-import {connect} from "react-redux"
-
-
-export const Main=QiliApp.render(
-    (<Route path="/"
-		component={connect(state=>compact(getCurrentApp(state),"_id","name"))(QiliConsole)}>
-
-        <IndexRoute component={Dashboard}/>
-
-		<Route path="app" contextual={false}>
-			<IndexRoute component={connect()(Creator)}/>
-
-			<Route path=":_id"
-				component={connect((state,{params:{_id}})=>{
-					let urlApp=getApp(state,_id)
-					let current=getCurrentApp(state)
-					let info=compact(urlApp,"name","uname","apiKey")
-					info.isCurrent=urlApp==current
-					return info
-					})(AppUI)}
-				onEnter={({params:{_id}})=>initApp=_id}
-				/>
-		</Route>
-
-        <Route path="cloud" component={connect(state=>({cloudCode:getCurrentApp(state).cloudCode}))(CloudUI)}/>
-
-        <Route path="data"
-			component={connect(state=>({...state.ui.data,app:getCurrentApp(state)._id}))(DataUI)}>
-            <IndexRedirect to={`${User._name}`}/>
-            <Route path=":name"/>
-        </Route>
-
-        <Route path="log"
-			component={connect(state=>state.ui.log)(LogUI)}>
-            <IndexRedirect to="all"/>
-            <Route path=":level"/>
-        </Route>
-
-		<Route path="my">
-			<IndexRoute
-				component={connect(state=>{
-					let apps=state.entities[Application._name]
-					return {apps: apps ? Object.keys(apps).map(k=>apps[k]) : []}	
-				})(MyUI)}
-				contextual={false}/>
-
-			<Route path="setting" component={SettingUI} />
-			<Route path="profile" component={ProfileUI} contextual={false}/>
-		</Route>
-
-
-    </Route>)
-	,[  {[DOMAIN]:REDUCER}
-		,{
-			ui:enhancedCombineReducers(
-				{log:LogUI.REDUCER}
-				,{cloud:CloudUI.REDUCER}
-				,{data:DataUI.REDUCER}
-			)
-		}]
-)
-
-
-/**
-@Todo:
-*Done: after adding new application
-    application list doesn't reflect the change
-    local storage without All fields, such as without application name, ..., because server returned only _id, createdAt, ...
-*Done: after application deletion, UI should go to / even with error
-*Done: error happens, UI should not be Empty
-*Don't: use <Link/> rather than this.context.router.transitionTo
-**Done: Never empty UI
-**Done: FloatActionButton position when view width is 960
-
-* too small-zoom size in mobile browser
-* first focus on form, cloud UI
-* background to upload to backend
-    done: WebSQLDb is done
-    *** sqlite
-    done: *** after remove app, local cache should be removed too
-** textfield can't be changed (which??)
-*Done: login error, placeholder and value show together
-* simple data mode:
-    * remote upsert and remove directly
-    * local cache for search
-* Cannot read property 'componentDidEnter' of undefined
-*Done: Date show as meaningful
-* data list to show object field [object]=>{...}
-*/
+export const Main=QiliApp.render(<StateQiliConsole/>,{
+	[DOMAIN]:REDUCER,
+	ui:combineReducers({
+		log:LogUI.REDUCER,
+		cloud:CloudUI.REDUCER,
+		data:DataUI.REDUCER
+	})
+})

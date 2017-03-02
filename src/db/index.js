@@ -163,7 +163,7 @@ export function init(_server,_appId, success, httpError, _loadingHandler){
                     User.on('change',()=>success(db))
 					if(User.current){
 						Promise.resolve(success(db)||db)
-							.then(a=>resolve(pTutorial))
+							.then(a=>resolve(pTutorial),reject)
 					}else{
 						resolve(pTutorial)
 					}

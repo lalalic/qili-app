@@ -18,4 +18,8 @@ redux refactor finished
 ======
 ui error message is wrapped in stateful component
 
+0.7.5
+=====
+refactor to <QiliApp><Router>...</Router></QiliApp> to make sure init success
+
 

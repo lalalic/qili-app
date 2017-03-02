@@ -1,8 +1,6 @@
 import React, {Component, PropTypes} from "react"
 import ReactDOM, {render} from "react-dom"
 
-import {Router, Route, IndexRoute, hashHistory} from "react-router"
-
 import {createStore, applyMiddleware,compose} from "redux"
 import {Provider, connect} from "react-redux"
 import thunk from 'redux-thunk'
@@ -206,8 +204,7 @@ export class QiliApp extends Component{
 		project: PropTypes.object
 	}
 
-	static render(route, customizedReducers=[], ...middlewars){
-		const props={}
+	static render(customizedQiliApp, customizedReducer, ...middlewars){
 		let container=document.getElementById('app')
 		if(!container){
 			container=document.createElement('div')
@@ -218,52 +215,25 @@ export class QiliApp extends Component{
 		document.getElementsByTagName("head")[0].appendChild(style)
 		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
 		container.style.height=window.innerHeight+'px'
-
-		if(!props.history)
-			props.history=hashHistory
-
-		const enhancedRoute=(root,dispatch)=>{
-			const {onEnter, onChange}=root.props
-			return React.cloneElement(root, {
-				onEnter(nextState){
-					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
-					onEnter && onEnter.bind(this)(...arguments)
-				},
-				onChange(state,nextState){
-					dispatch({type:`@@router/LOCATION_CHANGE`,payload:nextState});
-					onChange && onChange.bind(this)(...arguments)
-				}
-			})
-		}
 		
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 		const {enhanceReducers, INIT_STATE}=QiliApp
-		const store=createStore(enhanceReducers(customizedReducers), INIT_STATE, composeEnhancers(applyMiddleware(thunk,...middlewars)))
-
+		const store=createStore(enhanceReducers(customizedReducer), INIT_STATE, composeEnhancers(applyMiddleware(thunk,...middlewars)))
+		
 		supportTap()
 
 		return render((
 				<Provider store={store}>
-					<Router {...props}>
-						{enhancedRoute(route,store.dispatch)}
-					</Router>
+					{customizedQiliApp}
 				</Provider>
 			),container)
 	}
 	
 	static get INIT_STATE(){
-		return {qiliApp:{}, ui:{}, entities:{},comment:{},routing:{}}
+		return {qiliApp:{}, ui:{}, entities:{},comment:{}}
 	}
 	
-	static enhanceReducers(customized=[{ui:(state={})=>state}]){
-		function routerReducer(state={},{type,payload}){
-			switch(type){
-			case '@@router/LOCATION_CHANGE':
-			return payload
-			}
-			return state
-		}
-
+	static enhanceReducers(customized={ui:(state={})=>state}){
 		function normalizeData(entities={},{type,payload}){
 			switch(type){
 			case 'NORMALIZED_DATA':
@@ -285,11 +255,10 @@ export class QiliApp extends Component{
 
 
 		return enhancedCombineReducers({
-					routing:routerReducer
-					,entities:normalizeData
+					entities:normalizeData
 					,comment:Comment.reducer
 					,[DOMAIN]:REDUCER
-				}, ...customized)
+				}, customized)
 	}
 }
 export default Object.assign(connect(state=>state[DOMAIN],null,null,{pure:true,withRef:true})(QiliApp),{DOMAIN, ACTION,REDUCER})

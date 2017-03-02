@@ -117,19 +117,6 @@ describe("qili application", function(){
 		const reducers=QiliApp.enhanceReducers()
 		const INIT_STATE=QiliApp.INIT_STATE
 		
-		it("location change",function(){
-			let next={
-				type: '@@router/LOCATION_CHANGE',
-				payload: {
-					routes: [],
-					params: {},
-					location: {}
-				}
-			}
-			let state = reducers(INIT_STATE, next)
-			expect(state).toEqual(Object.assign({},INIT_STATE,{routing:next.payload}))
-		})
-		
 		describe("normalized data", function(){
 			it("{entities:{}}",function(){
 				let next={

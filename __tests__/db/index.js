@@ -28,4 +28,14 @@ describe("data service initialization", ()=>{
 				expect(mock).toHaveBeenCalled()
 			})
 	})
+	
+	it("fail init with customized init rejected Promise",()=>{
+		spyOn(User,'current').and.returnValue({})
+		let error=new Error("")
+		let mock=jest.fn().mockReturnValueOnce(Promise.reject(error))
+		return init("http","testApp",mock)
+			.then(fail,a=>{
+				expect(a).toBe(error)
+			})
+	})
 })
