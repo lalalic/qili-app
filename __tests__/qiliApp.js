@@ -32,12 +32,14 @@ describe("qili application", function(){
 
         it("{inited:false}", function(){
             let app=shallow(<QiliApp {...props} {...{inited:false}}/>)
-            expect(app.find("#container").text()).toContain("initializing")
+            const CircularProgress=require('material-ui/CircularProgress')
+            expect(app.find(CircularProgress)).toBeDefined()
         })
 
-        it("{inited:false,initedError:'no network'}", function(){
+        fit("{inited:false,initedError:'no network'}", function(){
             let app=shallow(<QiliApp {...props} {...{inited:false,initedError:'no network'}}/>)
-            expect(app.find("#container").text()).toContain("no network")
+            const Empty=require("../src/components/empty")
+            expect(app.find(Empty).props().children).toContain("no network")
         })
 
         it("{inited:true,tutorialized:false,tutorial:[...]}", function(){
@@ -112,11 +114,11 @@ describe("qili application", function(){
             expect(REDUCER({},ACTION.TUTORIALIZED).tutorialized).toBe(true)
         })
     })
-	
+
 	describe("state", function(){
 		const reducers=QiliApp.enhanceReducers()
 		const INIT_STATE=QiliApp.INIT_STATE
-		
+
 		describe("normalized data", function(){
 			it("{entities:{}}",function(){
 				let next={
@@ -131,7 +133,7 @@ describe("qili application", function(){
 				let state = reducers(INIT_STATE, next)
 				expect(state).toEqual(Object.assign({},INIT_STATE,{entities:next.payload}))
 			})
-			
+
 			it("books on entities:{authors:{}}",function(){
 				let next={
 					type: 'NORMALIZED_DATA',
@@ -146,7 +148,7 @@ describe("qili application", function(){
 				let state=reducers(Object.assign({},INIT_STATE,{entities:authors}), next)
 				expect(state.entities).toEqual(Object.assign({},next.payload,authors))
 			})
-			
+
 			it("books on entities:{books:{his:{}}}",function(){
 				let next={
 					type: 'NORMALIZED_DATA',
