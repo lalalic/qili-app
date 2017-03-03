@@ -16,7 +16,7 @@ export const Setting=({latestVersion}, {is:{app}, project:{homepage=".",version}
 		
         <ListItem primaryText="建议" leftIcon={<BugIcon/>}/>
 		
-		<ListItem primaryText={app ? `${latestVersion && version!=latestVersion} ? <CheckUpdate>更新</CheckUpdate> : "没有更新"}`:"下载App"} leftIcon={<LogoIcon/>}
+		<ListItem primaryText={app ? `${latestVersion && version!=latestVersion ? <CheckUpdate>当前{lastVersion},更新到{version}</CheckUpdate> : "已是最新v"+version}`:`下载App [V${version}]`} leftIcon={<LogoIcon/>}
             onClick={e=>{
 				if(app && (!latestVersion || version==latestVersion))
 					return
