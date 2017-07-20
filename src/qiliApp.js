@@ -6,7 +6,7 @@ import {Provider, connect} from "react-redux"
 import thunk from 'redux-thunk'
 
 import {Styles, Snackbar, Utils, FloatingActionButton} from 'material-ui'
-import CircularProgress from 'material-ui/CircularProgress'
+import LinearProgress from 'material-ui/LinearProgress'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
@@ -122,7 +122,7 @@ export class QiliApp extends Component{
 	render(){
 		const {appId, service, theme, inited, initedError, user, lastUser, tutorialized, dispatch}=this.props
 		let content
-		
+
 		if(!appId){
 			content=(
 				<Empty icon={null}>
@@ -154,7 +154,7 @@ export class QiliApp extends Component{
 			if(initedError)
 				content=(<Empty>{`初始化错误: ${initedError}`}</Empty>)
 			else
-				content= (<Empty><CircularProgress size={60} thickness={7} /></Empty>)
+				content= (<Empty><LinearProgress mode="indeterminate"/></Empty>)
 		}else if(!user){
 			if(!tutorialized && Array.isArray(this.props.tutorial) && this.props.tutorial.length){
 				return (
@@ -232,11 +232,11 @@ export class QiliApp extends Component{
 		document.getElementsByTagName("head")[0].appendChild(style)
 		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
 		container.style.height=window.innerHeight+'px'
-		
+
 		const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 		const {enhanceReducers, INIT_STATE}=QiliApp
 		const store=createStore(enhanceReducers(customizedReducer), INIT_STATE, composeEnhancers(applyMiddleware(thunk,...middlewars)))
-		
+
 		supportTap()
 
 		return render((
@@ -245,11 +245,11 @@ export class QiliApp extends Component{
 				</Provider>
 			),container)
 	}
-	
+
 	static get INIT_STATE(){
 		return {qiliApp:{}, ui:{}, entities:{},comment:{}}
 	}
-	
+
 	static enhanceReducers(customized={ui:(state={})=>state}){
 		function normalizeData(entities={},{type,payload}){
 			switch(type){
