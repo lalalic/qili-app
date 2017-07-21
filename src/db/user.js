@@ -35,8 +35,11 @@ export default class User extends Service.BuiltIn{
 				url:this.server+'me',
 				method:'get',
 				_sessionToken:token
-			}).then((user)=>{return setCurrent(user)},
-				(e)=>{
+			}).then(
+				user=>{
+					return setCurrent(user)
+				},
+				e=>{
 					//@Todo: should go on without network
 					User.logout();
 					return e
@@ -74,13 +77,16 @@ export default class User extends Service.BuiltIn{
 	 *  @instance
 	 */
     static logout(){
-		delete __current.sessionToken
-		return Promise.all([
-			User.localStorage.setItem('lastUser',JSON.stringify(__current)),
-			User.localStorage.removeItem('currentUser'),
-			User.localStorage.removeItem('sessionToken')
-		])
-		.then(a=>document.location.reload())
+		let all=[]
+		if(__current){
+			delete __current.sessionToken
+			all.push(User.localStorage.setItem('lastUser',JSON.stringify(__current)))
+		}
+		
+		all.push(User.localStorage.removeItem('currentUser'))
+		all.push(User.localStorage.removeItem('sessionToken'))
+		return Promise.all(all)
+			.then(a=>document.location.reload())
 	}
 
 
