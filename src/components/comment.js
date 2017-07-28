@@ -2,6 +2,10 @@ import React, {Component, PropTypes} from "react"
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"
 
+import TextField from 'material-ui/TextField'
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar'
+import IconButton from 'material-ui/IconButton'
+
 import {cyan50 as bg} from "material-ui/styles/colors"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
@@ -160,10 +164,15 @@ export class Inline extends Component{
     }
 	
 	render(){
-		const {data=[],template, emptyIcon}=this.props
+		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}}=this.props
 		
-		let content=null
+		let content=null, hint=null
 		if(data.length){
+			hint=(
+				<div style={{borderLeft:"5px solid red",borderRadius:4, paddingLeft:2, fontSize:"large"}}>
+					最新评论
+				</div>
+			)
 			content=(
 				<div>
 					{data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
@@ -175,9 +184,8 @@ export class Inline extends Component{
 		
 		return (
             <div className="comment inline">
-				<div style={{borderLeft:"5px solid red",borderRadius:4, paddingLeft:2, fontSize:"large"}}>
-					最新评论
-				</div>
+				<Editor type={_name} _id={_id} dispatch={dispatch}/>
+				{hint}
 				{content}
     		</div>
         )
@@ -186,6 +194,51 @@ export class Inline extends Component{
 	static defaultProps={
 		template:CommentUI.defaultProps.template,
 		emptyIcon:<IconEmptyComment/>
+	}
+}
+
+
+class Editor extends Component{
+	state={
+		comment:""
+	}
+	render(){
+		const {comment}=this.state
+		let action=null
+		if(comment){
+			action=<IconButton onTouchTap={this.save.bind(this)}><IconSave/></IconButton>
+		}else{
+			action=<IconButton onTouchTap={this.photo.bind(this)}><IconCamera/></IconButton>
+		}
+		return (
+			<Toolbar noGutter={true} 
+				style={{backgroundColor:"transparent", display:"flex"}}>
+				<ToolbarGroup>
+					<TextField value={comment} 
+						onChange={(e,comment)=>this.setState({comment})}
+						hintText="说两句" 
+						fullWidth={true}/>
+				</ToolbarGroup>
+				<ToolbarGroup style={{width:40}}>
+					{action}
+				</ToolbarGroup>
+			</Toolbar>
+		)
+	}
+	
+	save(){
+		const {type, _id,dispatch}=this.props
+		const {comment}=this.state
+		dispatch(ACTION.CREATE(type,_id, comment))
+			.then(a=>this.setState({comment:""}))
+	}
+	
+	photo(){
+		const {type, _id,dispatch}=this.props
+		const {comment}=this.state
+		selectImageFile()
+			.then(url=>File.upload(url))
+			.then(url=>dispatch(ACTION.CREATE(type,_id,url,{content_type:"photo"})))
 	}
 }
 
