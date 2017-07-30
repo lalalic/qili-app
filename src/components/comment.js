@@ -65,7 +65,7 @@ export class CommentUI extends Component{
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
     render(){
-        const {data=[],template,dispatch,params:{type,_id}}=this.props
+        const {data=[],template,dispatch,params:{type,_id},hint="说两句", system}=this.props
 		const {muiTheme:{page: {height}}}=this.context
         const {comment}=this.state
         let save={
@@ -92,7 +92,7 @@ export class CommentUI extends Component{
 		return (
             <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
                 <div>
-                    {data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
+                    {data.map(a=>React.createElement(template, {comment:a,key:a._id, system}))}
                 </div>
 
                 <CommandBar
@@ -100,7 +100,7 @@ export class CommentUI extends Component{
                     primary="Save"
                     items={[
 							{action:"Back"},
-                            (<textarea placeholder="说两句" value={comment}
+                            (<textarea placeholder={hint} value={comment}
                                 onChange={e=>{
                                     this.setState({comment:e.target.value})
                                     e.preventDefault()
@@ -117,10 +117,15 @@ export class CommentUI extends Component{
 	}
 
     static defaultProps={
-        template: ({comment})=>{
+        systemThumbnail:null,
+        template: ({comment, system={}})=>{
 			let name, left, right, text
 			const isOwner=comment.author._id==User.current._id;
-			if(isOwner){
+            if(comment.system){
+                name=(<span style={{fontSize:'x-small'}}>{system.name}</span>)
+				left=(<Avatar src={system.thumbnail}/>)
+				right=(<span/>)
+            }else if(isOwner){
 				left=(<span/>)
 				right=(<Avatar src={User.current.thumbnail}/>)
 			}else{
@@ -162,13 +167,13 @@ export class Inline extends Component{
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
-	
+
 	render(){
-		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}}=this.props
-		
-		let content=null, hint=null
+		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}, hint="说两句"}=this.props
+
+		let content=null, title=null
 		if(data.length){
-			hint=(
+			title=(
 				<div style={{borderLeft:"5px solid red",borderRadius:4, paddingLeft:2, fontSize:"large"}}>
 					最新评论
 				</div>
@@ -181,16 +186,16 @@ export class Inline extends Component{
 		}else{
 			content=<Empty text="当前还没有评论哦" icon={emptyIcon}/>
 		}
-		
+
 		return (
             <div className="comment inline">
-				<Editor type={_name} _id={_id} dispatch={dispatch}/>
-				{hint}
+				<Editor type={_name} _id={_id} dispatch={dispatch} hint={hint}/>
+				{title}
 				{content}
     		</div>
         )
 	}
-	
+
 	static defaultProps={
 		template:CommentUI.defaultProps.template,
 		emptyIcon:<IconEmptyComment/>
@@ -204,6 +209,7 @@ class Editor extends Component{
 	}
 	render(){
 		const {comment}=this.state
+        const {hint}=this.props
 		let action=null
 		if(comment){
 			action=<IconButton onTouchTap={this.save.bind(this)}><IconSave/></IconButton>
@@ -211,12 +217,12 @@ class Editor extends Component{
 			action=<IconButton onTouchTap={this.photo.bind(this)}><IconCamera/></IconButton>
 		}
 		return (
-			<Toolbar noGutter={true} 
+			<Toolbar noGutter={true}
 				style={{backgroundColor:"transparent", display:"flex"}}>
 				<ToolbarGroup>
-					<TextField value={comment} 
+					<TextField value={comment}
 						onChange={(e,comment)=>this.setState({comment})}
-						hintText="说两句" 
+						hintText={hint}
 						fullWidth={true}/>
 				</ToolbarGroup>
 				<ToolbarGroup style={{width:40}}>
@@ -225,14 +231,14 @@ class Editor extends Component{
 			</Toolbar>
 		)
 	}
-	
+
 	save(){
 		const {type, _id,dispatch}=this.props
 		const {comment}=this.state
 		dispatch(ACTION.CREATE(type,_id, comment))
 			.then(a=>this.setState({comment:""}))
 	}
-	
+
 	photo(){
 		const {type, _id,dispatch}=this.props
 		const {comment}=this.state
@@ -243,6 +249,6 @@ class Editor extends Component{
 }
 
 export default Object.assign(connect(state=>state.comment)(CommentUI),{
-	reducer, 
+	reducer,
 	Inline: connect(state=>state.comment)(Inline)
 })
