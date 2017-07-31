@@ -120,7 +120,7 @@ export class CommentUI extends Component{
         systemThumbnail:null,
         template: ({comment, system={}})=>{
 			let name, left, right, text
-			const isOwner=comment.author._id==User.current._id;
+			const isOwner=comment.author._id==User.current._id
             if(comment.system){
                 name=(<span style={{fontSize:'x-small'}}>{system.name}</span>)
 				left=(<Avatar src={system.thumbnail}/>)
@@ -139,7 +139,7 @@ export class CommentUI extends Component{
 					<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
 					<div style={{padding:5,verticalAlign:"top"}}>
                         <div>{name}</div>
-						<p className={`content ${isOwner?"owner":""}`}>
+						<p className={`content ${!comment.system&&isOwner?"owner":""}`}>
                         {
                             ((content,type)=>{
                                 switch(type){
@@ -217,9 +217,9 @@ class Editor extends Component{
 			action=<IconButton onTouchTap={this.photo.bind(this)}><IconCamera/></IconButton>
 		}
 		return (
-			<Toolbar noGutter={true}
-				style={{backgroundColor:"transparent", display:"flex"}}>
-				<ToolbarGroup>
+			<Toolbar noGutter={true} className="grid"
+				style={{backgroundColor:"transparent"}}>
+				<ToolbarGroup style={{display:"table-cell",width:"100%"}}>
 					<TextField value={comment}
 						onChange={(e,comment)=>this.setState({comment})}
 						hintText={hint}
