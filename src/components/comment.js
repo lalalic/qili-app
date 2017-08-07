@@ -169,28 +169,22 @@ export class Inline extends Component{
     }
 
 	render(){
-		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}, hint="说两句"}=this.props
+		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}, hint="说两句", empty}=this.props
 
-		let content=null, title=null
+		let content=null
 		if(data.length){
-			title=(
-				<div style={{borderLeft:"5px solid red",borderRadius:4, paddingLeft:2, fontSize:"large"}}>
-					最新评论
-				</div>
-			)
 			content=(
 				<div>
 					{data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
 				</div>
 			)
 		}else{
-			content=<Empty text="当前还没有评论哦" icon={emptyIcon}/>
+			content=<Empty text={empty||"当前还没有评论哦"} icon={emptyIcon}/>
 		}
 
 		return (
             <div className="comment inline">
 				<Editor type={_name} _id={_id} dispatch={dispatch} hint={hint}/>
-				{title}
 				{content}
     		</div>
         )
