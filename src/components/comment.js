@@ -169,7 +169,10 @@ export class Inline extends Component{
     }
 
 	render(){
-		const {data=[],template, emptyIcon, dispatch,type:{_name},model:{_id}, hint="说两句", empty}=this.props
+		const {data=[],template, emptyIcon, 
+			dispatch,type:{_name},model:{_id},
+			commentable=true,
+			hint="说两句", empty}=this.props
 
 		let content=null
 		if(data.length){
@@ -181,10 +184,12 @@ export class Inline extends Component{
 		}else{
 			content=<Empty text={empty||"当前还没有评论哦"} icon={emptyIcon}/>
 		}
-
+		let editor=null
+		if(commentable)
+			editor=(<Editor type={_name} _id={_id} dispatch={dispatch} hint={hint}/>)
 		return (
             <div className="comment inline">
-				<Editor type={_name} _id={_id} dispatch={dispatch} hint={hint}/>
+				{editor}
 				{content}
     		</div>
         )
