@@ -68,12 +68,12 @@ export class CommentUI extends Component{
         const {data=[],template,dispatch,params:{type,_id},hint="说两句", system}=this.props
 		const {muiTheme:{page: {height}}}=this.context
         const {comment}=this.state
+		const create=()=>dispatch(ACTION.CREATE(type,_id, comment)).then(a=>this.setState({comment:""}))
         let save={
             action:"Save",
             label:"发布",
             icon: <IconSave/>,
-            onSelect:e=>dispatch(ACTION.CREATE(type,_id, comment))
-                .then(a=>this.setState({comment:""}))
+            onSelect:create
         }
         let photo={
             action:"photo",
@@ -101,6 +101,7 @@ export class CommentUI extends Component{
                     items={[
 							{action:"Back"},
                             (<textarea placeholder={hint} value={comment}
+								onKeyDown={({keyCode})=>keyCode==13 && create()}
                                 onChange={e=>{
                                     this.setState({comment:e.target.value})
                                     e.preventDefault()
@@ -161,7 +162,7 @@ export class CommentUI extends Component{
 
 export class Inline extends Component{
 	componentDidMount(){
-        const {dispatch,type:{_name},model:{_id}}=this.props
+        const {dispatch,kind:{_name},model:{_id}}=this.props
         dispatch(ACTION.FETCH(_name,_id))
     }
     componentWillUnmount(){
@@ -170,7 +171,7 @@ export class Inline extends Component{
 
 	render(){
 		const {data=[],template, emptyIcon, 
-			dispatch,type:{_name},model:{_id},
+			dispatch,kind:{_name},model:{_id},
 			commentable=true,
 			hint="说两句", empty}=this.props
 
@@ -221,6 +222,7 @@ class Editor extends Component{
 				<ToolbarGroup style={{display:"table-cell",width:"100%"}}>
 					<TextField value={comment}
 						onChange={(e,comment)=>this.setState({comment})}
+						onKeyDown={({keyCode})=>keyCode==13 && this.save()}
 						hintText={hint}
 						fullWidth={true}/>
 				</ToolbarGroup>

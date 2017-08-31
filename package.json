@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -61,16 +61,14 @@
     ]
   },
   "scripts": {
-    "compile": "babel src -d lib --source-maps inline",
-    "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib --source-maps inline",
-    "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib --source-maps inline",
+    "compile": "babel src -d lib",
+    "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib",
+    "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
     
 	"build.release": "webpack -p && node scripts/allin1.js",
     "build.debug": "webpack -d",
 	
     "dev": "webpack-dev-server --inline -d --entry=./.test.mongo.js",
-	
-    "restmock": "restmock",
 	
     "test": "jest",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d"

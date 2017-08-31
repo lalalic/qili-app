@@ -22,4 +22,9 @@ ui error message is wrapped in stateful component
 =====
 refactor to <QiliApp><Router>...</Router></QiliApp> to make sure init success
 
+0.7.6
+====
+* fix inline comment creation bug
+* enter to create comment
+
 
