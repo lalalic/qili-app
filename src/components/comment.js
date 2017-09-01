@@ -22,8 +22,8 @@ import Empty from "./empty"
 
 export const DOMAIN="COMMENT"
 export const ACTION={
-    FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id})
-            .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data,type,_id}}))
+    FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id}, {sort:[["createdAt","desc"]], limit:20})
+            .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data: data.reverse(),type,_id}}))
 
     ,CREATE: (type,id,content,props={})=>dispatch=>{
 		content=content.trim()
@@ -50,7 +50,7 @@ export const reducer=(state={}, {type, payload})=>{
     case `@@${DOMAIN}/fetched`:
         return {...state, ...payload}
     case `@@${DOMAIN}/created`:
-        return {...state, data:[...(state.data||[]),payload]}
+        return {...state, data:[...(state.data||[]), payload]}
     }
     return state
 }
@@ -60,6 +60,7 @@ export class CommentUI extends Component{
     componentDidMount(){
         const {dispatch,params:{type,_id}}=this.props
         dispatch(ACTION.FETCH(type,_id))
+		this.end.scrollIntoView({ behavior: "smooth" });
     }
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
@@ -94,6 +95,7 @@ export class CommentUI extends Component{
                 <div>
                     {data.map(a=>React.createElement(template, {comment:a,key:a._id, system}))}
                 </div>
+				<div ref={el=>this.end=el}/>
 
                 <CommandBar
                     className="footbar centerinput"
@@ -164,6 +166,7 @@ export class Inline extends Component{
 	componentDidMount(){
         const {dispatch,kind:{_name},model:{_id}}=this.props
         dispatch(ACTION.FETCH(_name,_id))
+		this.end.scrollIntoView({ behavior: "smooth" });
     }
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
@@ -192,6 +195,7 @@ export class Inline extends Component{
             <div className="comment inline">
 				{editor}
 				{content}
+				<div ref={el=>this.end=el}/>
     		</div>
         )
 	}
