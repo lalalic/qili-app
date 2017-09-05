@@ -24,7 +24,12 @@ export const DOMAIN="COMMENT"
 export const ACTION={
     FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id}, {sort:[["createdAt","desc"]], limit:20})
             .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data: data.reverse(),type,_id}}))
-
+	,FETCH_MORE: ()=>(dispatch,getState)=>{
+		return Promise.resolve()
+	}
+	,FETCH_REFRESH: ()=>(dispatch,getState)=>{
+		return Promise.resolve()
+	}
     ,CREATE: (type,id,content,props={})=>dispatch=>{
 		content=content.trim()
 		if(content.length<2)
@@ -55,6 +60,21 @@ export const reducer=(state={}, {type, payload})=>{
     return state
 }
 
+function smartFormat(d){
+	let now=new Date()
+	switch(d.relative(now)){
+	case 0:
+		return d.format("HH:mm")
+	case -1:
+		return d.format("昨天 HH:mm")
+	default:
+		if(now.getFullYear()==d.getFullYear())
+			return d.format("MM月DD日 HH:mm")
+		else
+			return d.format("YYYY年MM月DD日 HH:mm")
+	}
+}
+
 export class CommentUI extends Component{
     state={comment:""}
     componentDidMount(){
@@ -65,6 +85,13 @@ export class CommentUI extends Component{
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
+	componentDidUpdate(prevProps, prevState){
+		const {prev=[{}]}=prevProps
+		const {data=[{}]}=this.props
+		if(prev[0]._id!==data[0]._id){
+			this.end.scrollIntoView({ behavior: "smooth" });
+		}
+	}
     render(){
         const {data=[],template,dispatch,params:{type,_id},hint="说两句", system}=this.props
 		const {muiTheme:{page: {height}}}=this.context
@@ -93,7 +120,17 @@ export class CommentUI extends Component{
 		return (
             <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
                 <div>
-                    {data.map(a=>React.createElement(template, {comment:a,key:a._id, system}))}
+                    {data.reduce((state,a)=>{
+							let {comments,last}=state
+							let props={comment:a,key:a._id, system}
+							if(!last || (a.createdAt.getTime()-last.getTime())>1000*60){
+								props.time=a.createdAt
+							}
+							comments.push(React.createElement(template, props))
+							state.last=a.createdAt
+							return state
+						},{comments:[]}).comments						
+					}
                 </div>
 				<div ref={el=>this.end=el}/>
 
@@ -121,7 +158,7 @@ export class CommentUI extends Component{
 
     static defaultProps={
         systemThumbnail:null,
-        template: ({comment, system={}})=>{
+        template: ({comment, system={}, time})=>{
 			let name, left, right, text
 			const isOwner=comment.author._id==User.current._id
             if(comment.system){
@@ -136,26 +173,39 @@ export class CommentUI extends Component{
 				left=(<Avatar src={comment.thumbnail}/>)
 				right=(<span/>)
 			}
+			
+			let timing=null
+			if(time){
+				timing=(
+					<center>
+						<span style={{backgroundColor:"lightgray",fontSize:'x-small',padding:2,borderRadius:2}}>
+							{smartFormat(time)}
+						</span>
+					</center>)
+			}
 
 			return (
-				<div key={comment._id} className="acomment" style={{padding:5}}>
-					<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
-					<div style={{padding:5,verticalAlign:"top"}}>
-                        <div>{name}</div>
-						<p className={`content ${!comment.system&&isOwner?"owner":""}`}>
-                        {
-                            ((content,type)=>{
-                                switch(type){
-                                case "photo":
-                                    return <img src={content} style={{width:150}}/>
-                                default:
-                                    return <span>{content}</span>
-                                }
-                            })(comment.content,comment.content_type)
-                        }
-						</p>
+				<div>
+					{timing}
+					<div key={comment._id} className="acomment" style={{padding:5}}>
+						<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
+						<div style={{padding:5,verticalAlign:"top"}}>
+							<div>{name}</div>
+							<p className={`content ${!comment.system&&isOwner?"owner":""}`}>
+							{
+								((content,type)=>{
+									switch(type){
+									case "photo":
+										return <img src={content} style={{width:150}}/>
+									default:
+										return <span>{content}</span>
+									}
+								})(comment.content,comment.content_type)
+							}
+							</p>
+						</div>
+						<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{right}</div>
 					</div>
-                    <div style={{width:40,minHeight:40,verticalAlign:"top"}}>{right}</div>
 				</div>
 			)
 		}
@@ -171,7 +221,14 @@ export class Inline extends Component{
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
-
+	
+	componentDidUpdate(prevProps, prevState){
+		const {prev=[{}]}=prevProps
+		const {data=[{}]}=this.props
+		if(prev[0]._id!==data[0]._id){
+			this.end.scrollIntoView({ behavior: "smooth" });
+		}
+	}
 	render(){
 		const {data=[],template, emptyIcon, 
 			dispatch,kind:{_name},model:{_id},
