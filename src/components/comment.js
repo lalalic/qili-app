@@ -11,6 +11,8 @@ import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
 import IconEmptyComment from "material-ui/svg-icons/editor/mode-comment"
 
+import PullToRefresh from "pull-to-refresh2"
+
 import {select as selectImageFile} from "./file-selector"
 
 import {Service} from '../db/service'
@@ -24,11 +26,36 @@ export const DOMAIN="COMMENT"
 export const ACTION={
     FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id}, {sort:[["createdAt","desc"]], limit:20})
             .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data: data.reverse(),type,_id}}))
-	,FETCH_MORE: ()=>(dispatch,getState)=>{
-		return Promise.resolve()
+	,FETCH_MORE: ok=>(dispatch,getState)=>{
+		const state=getState()
+		const {type,_id, data:[first]=[]}=state.comment
+		let query={parent:_id}
+		if(first){
+			query.createdAt={$lt:first.createdAt}
+		}
+		
+		Comment.of(type)
+			.find(query, {sort:[["createdAt","desc"]], limit:20})
+			.fetch(data=>{
+				dispatch({type:`@@${DOMAIN}/fetched_more`,payload:{data: data.reverse()}})
+				ok()
+			})
 	}
-	,FETCH_REFRESH: ()=>(dispatch,getState)=>{
-		return Promise.resolve()
+	,FETCH_REFRESH: ok=>(dispatch,getState)=>{
+		const state=getState()
+		const {type,_id, data=[]}=state.comment
+		let last=data[data.length-1]
+		let query={parent:_id}
+		if(last){
+			query.createdAt={$gt:last.createdAt}
+		}
+		
+		Comment.of(type)
+			.find(query)
+			.fetch(data=>{
+				dispatch({type:`@@${DOMAIN}/fetched_refresh`,payload:{data}})
+				ok()
+			})
 	}
     ,CREATE: (type,id,content,props={})=>dispatch=>{
 		content=content.trim()
@@ -53,9 +80,13 @@ export const reducer=(state={}, {type, payload})=>{
     case `@@${DOMAIN}/CLEAR`:
         return {}
     case `@@${DOMAIN}/fetched`:
-        return {...state, ...payload}
+		return {...state, ...payload}
+    case `@@${DOMAIN}/fetched_more`:
+		return {...state, data: [...payload.data, ...state.data]}
+    case `@@${DOMAIN}/fetched_refresh`:
+		return {...state, data: [...state.data, ...payload.data]}
     case `@@${DOMAIN}/created`:
-        return {...state, data:[...(state.data||[]), payload]}
+        return {...state, data:[...state.data, payload]}
     }
     return state
 }
@@ -77,19 +108,22 @@ function smartFormat(d){
 
 export class CommentUI extends Component{
     state={comment:""}
+	first=true
     componentDidMount(){
         const {dispatch,params:{type,_id}}=this.props
         dispatch(ACTION.FETCH(type,_id))
-		this.end.scrollIntoView({ behavior: "smooth" });
+		if(this.end && this.first){
+			this.end.scrollIntoView({ behavior: "smooth" })
+			this.first=false
+		}
     }
     componentWillUnmount(){
         this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
 	componentDidUpdate(prevProps, prevState){
-		const {prev=[{}]}=prevProps
-		const {data=[{}]}=this.props
-		if(prev[0]._id!==data[0]._id){
-			this.end.scrollIntoView({ behavior: "smooth" });
+		if(this.end && this.first){
+			this.end.scrollIntoView({ behavior: "smooth" })
+			this.first=false
 		}
 	}
     render(){
@@ -116,10 +150,18 @@ export class CommentUI extends Component{
 
         if(comment.trim())
             action=save
+		
+		let elEnd=null
+		if(data.length && this.first){
+			elEnd=(<div ref={el=>this.end=el}/>)
+		}
 
 		return (
             <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
-                <div>
+                <PullToRefresh
+					onRefresh={ok=>dispatch(ACTION.FETCH_MORE(ok))}
+					onMore={ok=>dispatch(ACTION.FETCH_REFRESH(ok))}
+					>
                     {data.reduce((state,a)=>{
 							let {comments,last}=state
 							let props={comment:a,key:a._id, system}
@@ -131,8 +173,8 @@ export class CommentUI extends Component{
 							return state
 						},{comments:[]}).comments						
 					}
-                </div>
-				<div ref={el=>this.end=el}/>
+                </PullToRefresh>
+				
 
                 <CommandBar
                     className="footbar centerinput"
@@ -238,9 +280,12 @@ export class Inline extends Component{
 		let content=null
 		if(data.length){
 			content=(
-				<div>
+				<PullToRefresh
+					onRefresh={ok=>dispatch(ACTION.FETCH_MORE(ok))}
+					onMore={ok=>dispatch(ACTION.FETCH_REFRESH(ok))}
+					>
 					{data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
-				</div>
+				</PullToRefresh>
 			)
 		}else{
 			content=<Empty text={empty||"当前还没有评论哦"} icon={emptyIcon}/>
