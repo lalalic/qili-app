@@ -8,12 +8,15 @@
     "email": "lalalic@139.com"
   },
   "dependencies": {
+    "babel-plugin-module-resolver": "^2.7.1",
+    "isemail": "^3.0.0",
     "material-auto-rotating-carousel": "1.1.0",
     "material-ui": "^0.16.0",
     "minimongo": ">=3.2.13",
     "normalizr": "^2.2.1",
     "pull-to-refresh2": "^0.0.2",
     "react": "^15.1.0",
+    "react-apollo": "^1.4.15",
     "react-dom": "^15.1.0",
     "react-intl": "^2.1.5",
     "react-motion": "^0.4.5",
@@ -27,6 +30,7 @@
     "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
+    "@kadira/storybook": "^2.21.0",
     "babel-cli": "^6.6.5",
     "babel-jest": "^18.0.0",
     "babel-loader": "^6.3.2",
@@ -69,7 +73,9 @@
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --inline -d --entry=./.test.mongo.js",
     "test": "jest",
-    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d"
+    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",
