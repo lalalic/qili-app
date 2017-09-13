@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {FlatButton,TextField} from "material-ui"
 import {validate as isEmail} from "isemail"
-import {gql,graphql, compose} from "react-apollo"
+import {gql,graphql, compose, connect} from "react-apollo"
 
 function isPhone(v){
     return (/^(\+\d{2})?\d{11}$/g).test(v)
@@ -16,10 +16,11 @@ export class Authentication extends Component{
         login: PropTypes.func
     }
 	state={
-        address:null,
+        contact:null,
         token:null,
         tick:null,
-        error:null
+        error:null,
+        exists:true
     }
 
     tick(){
@@ -41,10 +42,10 @@ export class Authentication extends Component{
     }
 
     render(){
-        const {address, token, tick,error}=this.state
+        const {contact, token, tick,error}=this.state
 		const {requestToken, login}=this.props
 		let btnRequest, btnLogin
-		if(address){
+		if(contact){
             if(tick){
                 btnRequest=(<FlatButton label={tick} disabled={true}/>)
             } else {
@@ -52,7 +53,8 @@ export class Authentication extends Component{
 							onClick={e=>{
 								this.tick()
                                 this.setState({error:undefined})
-								requestToken({variables:{emailOrPhone:address}})
+								requestToken({variables:{contact}})
+                                    .then(exists=>this.setState({exists}))
                                     .catch(e=>this.setState({error:e.message}))
 							}}/>)
             }
@@ -61,9 +63,9 @@ export class Authentication extends Component{
                             label="登录"
                             primary={true}
                             onClick={e=>{
-                                clearInterval(this._t)
                                 this.setState({error:undefined})
-                                login({variables:{emailOrPhone:address,token}})
+                                login({variables:{contact,token}})
+                                    .then(()=>this.setState({done:true}))
                                     .catch(e=>this.setState({error:e.message}))
                             }}
                             />)
@@ -80,8 +82,8 @@ export class Authentication extends Component{
 							fullWidth={true}
 							floatingLabelText="手机号/Email"
 							disabled={!!tick}
-							errorText={address&&!token ? error : null}
-							onChange={({target:{value}})=>this.setState({address: this.validate(value)})}
+							errorText={contact&&!token ? error : null}
+							onChange={({target:{value}})=>this.setState({contact: this.validate(value)})}
                             />
 					</div>
 					<div>
@@ -92,7 +94,7 @@ export class Authentication extends Component{
 				<TextField
                     fullWidth={true}
                     floatingLabelText="验证码"
-                    errorText={address&&token ? error : null}
+                    errorText={contact&&token ? error : null}
                     onChange={({target:{value:token}})=>this.setState({token})}
                     />
 
@@ -110,15 +112,15 @@ export class Authentication extends Component{
 
 export default compose(
     graphql(gql`
-        mutation ($emailOrPhone: String!){
-            requestToken(emailOrPhone:$emailOrPhone)
+        mutation ($contact: String!){
+            requestToken(contact:$contact)
         }
     `,{name: "requestToken"}),
     graphql(gql`
-        mutation ($emailOrPhone: String!, $token: String!){
-            login(emailOrPhone: $emailOrPhone, token: $token){
+        mutation ($contact: String!, $token: String!){
+            login(contact: $contact, token: $token){
                 _id
-                username
+                name
                 token
             }
         }
