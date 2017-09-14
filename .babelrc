@@ -11,7 +11,8 @@
 			"root": ["./src"],
 			"alias":{
                 "qili-app":"./",    
-				"components":"./components"
+				"components":"./components",
+				"icons":"./icons",
 			}
 		}]
     ],

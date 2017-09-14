@@ -1,26 +1,22 @@
 import React, {Component, PropTypes} from "react"
 import {FlatButton,TextField} from "material-ui"
 import {validate as isEmail} from "isemail"
-import {gql,graphql, compose, connect} from "react-apollo"
+import {gql,graphql} from "react-apollo"
+import {compose, withState,branch,renderComponent,defaultProps} from "recompose"
 
 function isPhone(v){
     return (/^(\+\d{2})?\d{11}$/g).test(v)
 }
 
 export class Authentication extends Component{
-    static defaultProps={
-
-    }
-    static propTypes={
-        requestToken: PropTypes.func,
-        login: PropTypes.func
-    }
+	static propTypes={
+		onSuccess: PropTypes.func
+	}
 	state={
-        contact:null,
-        token:null,
         tick:null,
         error:null,
-        exists:true
+        exists:true,
+		errName:null
     }
 
     tick(){
@@ -40,65 +36,85 @@ export class Authentication extends Component{
         if(this._t)
             clearInterval(this._t)
     }
-
-    render(){
-        const {contact, token, tick,error}=this.state
+	
+	render(){
+        const {contact, setContact, token, setToken, name, setName, success, onSuccess}=this.props
 		const {requestToken, login}=this.props
-		let btnRequest, btnLogin
+		
+		const {tick,error,errName,exists}=this.state
+		let btnRequest, btnLogin, inputName
 		if(contact){
             if(tick){
                 btnRequest=(<FlatButton label={tick} disabled={true}/>)
             } else {
                 btnRequest=(<FlatButton label={tick===0 ? "重新申请" : "申请验证码"}
 							onClick={e=>{
-								this.tick()
-                                this.setState({error:undefined})
-								requestToken({variables:{contact}})
-                                    .then(exists=>this.setState({exists}))
+								this.setState({error:null,errName:null,exists:true})
+								setToken("")
+								requestToken()
+                                    .then(({data:{requestToken:exists}})=>{
+										this.tick()
+										this.setState({exists})
+									})
                                     .catch(e=>this.setState({error:e.message}))
 							}}/>)
             }
-            if(token){
-                btnLogin=(<FlatButton
-                            label="登录"
-                            primary={true}
-                            onClick={e=>{
-                                this.setState({error:undefined})
-                                login({variables:{contact,token}})
-                                    .then(()=>this.setState({done:true}))
-                                    .catch(e=>this.setState({error:e.message}))
-                            }}
-                            />)
-            }
+			
+			if(!exists){
+				inputName=(<TextField
+							fullWidth={true}
+							floatingLabelText="新用户名称/昵称"
+							errorText={errName}
+							onChange={({target:{value}})=>{
+								setName(value)
+							}}
+							/>)
+			}
+			
+            if((name || exists) && token){
+				btnLogin=(<FlatButton
+							label="登录"
+							primary={true}
+							onClick={e=>{
+								this.setState({error:undefined})
+								login()
+									.then(onSuccess||success)
+									.catch(e=>this.setState({error:e.message}))
+							}}
+							/>)
+			}
         }
 
 
 
         return (
 			<div>
-				<div className="grid">
-					<div>
+				<div style={{display:"table",tableLayout:"fixed",width:"100%"}}>
+					<div style={{display:"table-cell"}}>
 						<TextField
 							fullWidth={true}
 							floatingLabelText="手机号/Email"
 							disabled={!!tick}
 							errorText={contact&&!token ? error : null}
-							onChange={({target:{value}})=>this.setState({contact: this.validate(value)})}
+							onChange={({target:{value}})=>setContact(this.validate(value))}
                             />
 					</div>
-					<div>
+					<div style={{display:"table-cell", textAlign:"right", width: !!btnRequest ? "8em" : 0}}>
 						{btnRequest}
 					</div>
 				</div>
 
 				<TextField
+					value={token}
                     fullWidth={true}
                     floatingLabelText="验证码"
                     errorText={contact&&token ? error : null}
-                    onChange={({target:{value:token}})=>this.setState({token})}
+                    onChange={({target:{value}})=>setToken(value)}
                     />
-
-                <center>
+					
+				{inputName}
+                
+				<center>
                     {btnLogin}
                 </center>
 			</div>
@@ -106,23 +122,34 @@ export class Authentication extends Component{
     }
 
     validate(v){
-        return (isEmail(v) || isPhone(v)) ? v : null
+        return (isEmail(v) || isPhone(v)) ? v : undefined
     }
 }
 
 export default compose(
-    graphql(gql`
+	withState("done","success"),
+	branch(({done})=>done,renderComponent(()=><span>成功</span>)),
+	withState("contact","setContact"),
+	withState("token","setToken",""),
+	withState("name","setName"),
+	graphql(gql`
         mutation ($contact: String!){
             requestToken(contact:$contact)
         }
-    `,{name: "requestToken"}),
+    `,{
+		name: "requestToken",
+		options: ({contact})=>({variables:{contact}})
+	}),
     graphql(gql`
-        mutation ($contact: String!, $token: String!){
-            login(contact: $contact, token: $token){
+        mutation ($contact: String!, $token: String!, $name: String){
+            login(contact: $contact, token: $token, name: $name){
                 _id
                 name
                 token
             }
         }
-    `,{name:"login"})
+    `,{
+		name:"login",
+		options: ({contact,token,name})=>({variables:{contact,token,name}})
+	})
 )(Authentication)
