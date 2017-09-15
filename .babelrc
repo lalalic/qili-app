@@ -10,9 +10,10 @@
       ["module-resolver",{
 			"root": ["./src"],
 			"alias":{
-                "qili-app":"./",    
+                "qili-app":"./",
 				"components":"./components",
 				"icons":"./icons",
+                "tools":"./tools",
 			}
 		}]
     ],

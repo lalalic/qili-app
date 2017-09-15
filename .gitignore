@@ -29,3 +29,9 @@ node_modules
 
 dist/test.js
 dist/allin1.html
+
+.storybook/
+cordova/
+dist/.DS_Store
+package-lock.json
+src.bak/

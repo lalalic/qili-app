@@ -36,11 +36,11 @@ export class Authentication extends Component{
         if(this._t)
             clearInterval(this._t)
     }
-	
+
 	render(){
         const {contact, setContact, token, setToken, name, setName, success, onSuccess}=this.props
 		const {requestToken, login}=this.props
-		
+
 		const {tick,error,errName,exists}=this.state
 		let btnRequest, btnLogin, inputName
 		if(contact){
@@ -59,7 +59,7 @@ export class Authentication extends Component{
                                     .catch(e=>this.setState({error:e.message}))
 							}}/>)
             }
-			
+
 			if(!exists){
 				inputName=(<TextField
 							fullWidth={true}
@@ -70,7 +70,7 @@ export class Authentication extends Component{
 							}}
 							/>)
 			}
-			
+
             if((name || exists) && token){
 				btnLogin=(<FlatButton
 							label="登录"
@@ -78,7 +78,7 @@ export class Authentication extends Component{
 							onClick={e=>{
 								this.setState({error:undefined})
 								login()
-									.then(onSuccess||success)
+									.then(({data:{login}})=>(onSuccess||success)(login))
 									.catch(e=>this.setState({error:e.message}))
 							}}
 							/>)
@@ -111,9 +111,9 @@ export class Authentication extends Component{
                     errorText={contact&&token ? error : null}
                     onChange={({target:{value}})=>setToken(value)}
                     />
-					
+
 				{inputName}
-                
+
 				<center>
                     {btnLogin}
                 </center>
