@@ -30,7 +30,7 @@ export const ACTION={
 			})
 		}).end()
 	},
-	LOGIN:user=>({
+	USER_CHANGED:user=>({
         type:`@@${DOMAIN}/USER_CHANGED`
 		,payload:user
 	}),
@@ -236,9 +236,7 @@ export default compose(
 	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,apollo, store})=>
 		<ApolloProvider client={apollo} store={store}>
 			<UI muiTheme={theme}>
-				<Authentication onSuccess={user=>{
-					dispatch(ACTION.LOGIN(user))
-				}}/>
+				<Authentication onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
 				<Loading/>
 				<Message/>
 			 </UI>
