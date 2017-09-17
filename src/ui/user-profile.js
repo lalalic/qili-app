@@ -9,7 +9,8 @@ import {InfoForm, Field} from "components/info-form"
 
 import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
-export const Profile=({_id, username,birthday,gender,location,photo,signature,
+export const Profile=({
+	username,birthday,gender,location,photo,signature,
 	children, valueStyle={color:"lightgray"},
 	update,
 	dispatch
@@ -24,26 +25,26 @@ export const Profile=({_id, username,birthday,gender,location,photo,signature,
 				/>
 
 			<Field primaryText="性别"
-				value={gender||"男"}
+				value={gender||"boy"}
 				type="single"
-				options={["男","女"]}
-				onEdit={gender=>setGender($(gender))}/>
+				options={[{label:"男",value:"boy"},{label:"女",value:"girl"}]}
+				onEdit={gender=>update({gender})}/>
 
 			<Field primaryText="地址"
 				value={location}
 				type="input"
-				onEdit={location=>setLocation($(location))}
+				onEdit={location=>update({location})}
 				/>
 
 			<Field primaryText="生日" value={birthday}
 				type="date"
-				onEdit={birthday=>setBirthday($(birthday))}/>
+				onEdit={birthday=>update({birthday})}/>
 
 			<Field primaryText="签名"
 				value={signature}
 				type="input"
 				hintText="个性签名表达你的个性"
-				onEdit={signature=>setSignature($(signature))}
+				onEdit={signature=>update({signature})}
 				/>
 
 			{children}
@@ -59,20 +60,19 @@ export const Profile=({_id, username,birthday,gender,location,photo,signature,
 	</div>
 )
 
-const Query=gql`
-	query me{
-		me{
-			_id
-			username
-			birthday
-			gender
-			location
-			photo
-			signature
-		}
-	}`
 export default compose(
-	graphql(Query),
+	graphql(gql`
+		query me{
+			me{
+				_id
+				username
+				birthday
+				gender
+				location
+				photo
+				signature
+			}
+		}`),
 
 	withProps(({data:{me}})=>me),
 
@@ -89,25 +89,21 @@ export default compose(
 				signature
 				updatedAt
 			}
-		}
-		`,{
-			props({ownProps:{__typename, _id}, mutate}){
-				return {
-					update(variables){
-						mutate({
-							variables,
-							optimisticResponse:{
-								user_update:{
-									__typename,
-									_id,
-									...variables,
-									updatedAt: new Date()
-								}
+		}`,{
+			props:({ownProps:{data:{me}}, mutate})=>({
+				update(variables){
+					mutate({
+						variables,
+						optimisticResponse:{
+							user_update:{
+								...me,
+								...variables,
+								updatedAt: new Date()
 							}
-						})
-					}
+						}
+					})
 				}
-			}
+			})
 		}),
 
 	connect()
