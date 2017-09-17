@@ -4,8 +4,8 @@ import {List, ListItem, Divider, Dialog, DatePicker,
 		RadioButtonGroup, RadioButton} from "material-ui"
 import NavigationBack from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 
-import TextField from "./text-field"
-import FullPage from "./full-page"
+import TextField from "components/text-field"
+import FullPage from "components/full-page"
 
 
 export class InfoForm extends Component{
@@ -83,7 +83,6 @@ const Value=({value,style={}})=>(
 )
 
 export const Field=()=>null
-
 
 const Editor={
 	input({onEdit, onCancel, hintText,value,primaryText, page}){

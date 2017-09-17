@@ -1,3 +1,5 @@
+require("../style/index.less")
+
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
@@ -6,29 +8,43 @@ import { linkTo } from '@storybook/addon-links';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import Authentication from "components/authentication"
 import { ApolloClient,ApolloProvider,createNetworkInterface} from 'react-apollo'
 
-const Context=({children})=>(
-	<MuiThemeProvider muiTheme={getMuiTheme()}>
-		<ApolloProvider client={new ApolloClient({
-                networkInterface:createNetworkInterface({uri:"http://localhost:8080/1/graphql"})
-            })} children={children}/>
-	</MuiThemeProvider>
-)
-
+import Authentication from "components/authentication"
 storiesOf('Authentication', module)
-	.add('UI', () =><Context><Authentication/></Context>)
+	.addDecorator(story=>(
+		<MuiThemeProvider muiTheme={getMuiTheme()}>
+			<ApolloProvider client={new ApolloClient({
+	                networkInterface:createNetworkInterface({uri:"http://localhost:8080/1/graphql"})
+	            })}>
+				{story()}
+			</ApolloProvider>
+		</MuiThemeProvider>
+	))
+	.add('UI', () =><Authentication/>)
 
-import QiliApp from "qili-app"
+import QiliApp from "../src/qili-app"
 storiesOf('qili app', module)
 	.add('no app', ()=><QiliApp/>)
     .add('not tutorialized with tutoirals', ()=><QiliApp appId="test" tutorial={[{title:"test",media:"a.png"}]}/>)
     .add('tutorialized with tutoirals', ()=><QiliApp appId="test" tutorialized={true} tutorial={[{title:"test",media:"a.png"}]}/>)
 	.add('no user', ()=><QiliApp appId="test"/>)
     .add('not login with user', ()=><QiliApp appId="test" user={{phone:"1233453343"}}/>)
-    .add('logged-in', ()=><QiliApp appId="test" user={{phone:"1233453343", sessionToken:"123"}}/>)
-    .add('hello qili', ()=><QiliApp
-        appId="qiliAdmin"
-        service="http://localhost:8080/1/graphql"
-        />)
+    .add('logged-in', ()=><QiliApp appId="test" user={{phone:"1233453343", token:"123"}}/>)
+    .add('features', ()=><QiliApp appId="qiliAdmin" service="http://localhost:8080/1/graphql"/>)
+
+const Qili=story=>(
+	<QiliApp
+		appId="qiliAdmin"
+		service="http://localhost:8080/1/graphql"
+		user={{token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWI5YWVjOWQ3OTEwYzA0MGNjYjg5ZjkiLCJpYXQiOjE1MDU1NTQ5NTAsImV4cCI6MTUzNzExMjU1MH0.2H4BggNNnwJtjluN4zfeLT88UCV6fJejeBDNmil2zfk"}}>
+		{story()}
+	</QiliApp>
+)
+
+import ConnectedProfile, {Profile} from "ui/user-profile"
+storiesOf('profile', module)
+	.addDecorator(Qili)
+	.add('ui', ()=><Profile/>)
+/*
+*/

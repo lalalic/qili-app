@@ -1,4 +1,7 @@
 import React, {Component} from 'react'
+import {connect} from "react-redux"
+import * as QiliApp from "qili-app"
+
 import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
 import {Link} from "react-router"
 
@@ -9,7 +12,6 @@ import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 import CommentIcon from "material-ui/svg-icons/communication/comment"
 import ShareIcon from "material-ui/svg-icons/social/share"
 import SaveIcon from "material-ui/svg-icons/content/save"
-import Messager from './messager'
 
 var _current;
 
@@ -168,7 +170,7 @@ export default class CommandBar extends Component{
         }
     }
 
-    static Share=class extends Component{
+    static Share=connect()(class extends Component{
         render(){
             return (<CommandBar.Command
 				label="朋友圈"
@@ -178,15 +180,15 @@ export default class CommandBar extends Component{
         }
 
         onSelect(){
-            var {message}=this.props
+            var {message, dispatch}=this.props
             if(typeof(message)=='function')
                 message=message()
             WeChat.share(message,null,function(reason){
-                Messager.error(reason)
+                dispatch(QiliApp.ACTION.MESSAGE({message:reason}))
             })
         }
         static propTypes={message:React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.func])}
-    }
+    })
 }
 
 

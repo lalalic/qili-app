@@ -109,22 +109,6 @@ export class QiliApp extends Component{
 		}
 	}
 
-	getChildContext(){
-		let self=this
-		return {
-			showMessage(){
-				self.showMessage(...arguments)
-			}
-			,loading(open){
-				self.refs.loading[open ? "show" : "close"]()
-			},
-			is:{
-				app: typeof(cordova)!=='undefined'
-			},
-			project: this.props.project
-		}
-	}
-
 	static propsTypes={
 		service: PropTypes.string.isRequired,
 		appId:PropTypes.string.isRequired,
@@ -139,6 +123,35 @@ export class QiliApp extends Component{
 }
 
 export default compose(
+	setStatic("render", (app)=>{
+		let container=document.getElementById('app')
+		if(!container){
+			container=document.createElement('div')
+			container.id='app'
+			document.body.appendChild(container)
+			let style=document.createElement("style")
+			document.getElementsByTagName("head")[0].appendChild(style)
+			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+			container.style.height=window.innerHeight+'px'
+		}
+
+		supportTap()
+
+		return render(app,container)
+	}),
+
+	withContext({
+			is: PropTypes.object,
+			project: PropTypes.object
+		},
+		({project})=>({
+			is:{
+				app: typeof(cordova)!=="undefined"
+			},
+			project
+		})
+	),
+
 	defaultProps({
 		service:"http://qili2.com/1/",
 		theme:getMuiTheme(LightBaseTheme,{
@@ -191,7 +204,7 @@ export default compose(
 
 			networkInterface.use([{
 				applyMiddleware(req,next){
-					if(props.user && props.user.sessionToken){
+					if(props.user && props.user.token){
 						req.options.headers["X-Session-Token"]=props.user.token
 					}
 					next()
@@ -242,33 +255,4 @@ export default compose(
 			 </UI>
 		</ApolloProvider>
 	)),
-	withContext({
-		childContextTypes:{
-			is: PropTypes.object,
-			project: PropTypes.object
-		},
-		getChildContext:({project})=>({
-			is:{
-				app: typeof(cordova)!=="undefined"
-			},
-			project
-		})
-	}),
-
-	setStatic("render", (app)=>{
-		let container=document.getElementById('app')
-		if(!container){
-			container=document.createElement('div')
-			container.id='app'
-			document.body.appendChild(container)
-			let style=document.createElement("style")
-			document.getElementsByTagName("head")[0].appendChild(style)
-			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-			container.style.height=window.innerHeight+'px'
-		}
-
-		supportTap()
-
-		return render(app,container)
-	}),
 )(QiliApp)

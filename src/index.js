@@ -1,26 +1,18 @@
-export {default as QiliApp} from "qili-app/qili-app"
-
-import Account from "components/account"
-import Empty from "components/empty"
-import Comment from "components/comment"
-import Photo  from "components/photo"
-import fileSelector  from "components/file-selector"
-import Setting from "qili-app/setting"
-import Profile from "qili-app/user-profile"
-import TextFieldx from "components/text-field"
-
-export const UI={
-    Empty
-    ,Comment
-    ,Photo
-	,fileSelector
-	,Account
-    ,Setting
-    ,Profile
-    ,TextFieldx
-}
+export {default as QiliApp} from "./qili-app"
 
 export const compact=(o,...keys)=>o ? keys.reduce((a,k)=>(a[k]=o[k],a),{}) : {}
+
+;(function(_raw){
+    var r=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):((\d{2})(?:\.(\d*))?)Z$/,ds
+    JSON.parse=(a,reviver)=>{
+        return _raw.call(JSON,a,(k,v)=>{
+            if(typeof(v)=='string' && v[v.length-1]=='Z' && v[10]=='T' && (ds=r.exec(v))){
+                return new Date(v);
+			}
+            return reviver ? reviver(k,v) : v
+        })
+    }
+})(JSON.parse);
 
 Object.assign(Date.prototype,{
 	toDate(){
