@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
-import {compose,withProps} from "recompose"
+import {compose,withProps,getContext,setStatic} from "recompose"
 import {connect} from "react-redux"
-import {graphql, gql} from "react-apollo"
+import {graphql, QueryRenderer, commitMutation} from "react-relay"
 
 import CommandBar from "components/command-bar"
 
@@ -9,26 +9,14 @@ import {InfoForm, Field} from "components/info-form"
 
 import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
-const Test=compose(
-	graphql(gql`
-		query me1{
-			me{
-				phone
-			}
-		}
-	`,{
-		props:({data:{me}})=>me
-	})
-)(({phone})=><span>{phone}</span>)
-
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
-	children, valueStyle={color:"lightgray"},
+	children, 
+	valueStyle={color:"lightgray"},
 	update,
-	dispatch
+	logout,
 	})=>(
 	<div>
-		<Test/>
 		<InfoForm style={{padding:5}}>
 
 			<Field primaryText="昵称"
@@ -67,12 +55,75 @@ export const Profile=({
 		<CommandBar  className="footbar"
 			items={[
 				{action:"Back"},
-				{action:"Logout", label:"退出账号", icon:<QuitIcon/>, onSelect:e=>dispatch(QiliApp.ACTION.LOGOUT)}
+				{action:"Logout", label:"退出账号", icon:<QuitIcon/>, onSelect:e=>logout()}
 				]}
 			/>
 	</div>
 )
 
+export default compose(
+	getContext({
+		environment:PropTypes.object
+	}),
+	setStatic("contextTypes", {
+		environment:PropTypes.object
+	}),
+/*
+	withProps(({environment})=>({
+		update(data){
+			return new Promise((resolve, reject)=>
+				commitMutation(environment,{
+					mutation: graphql`
+						mutation userProfile_update_Mutation($data: user_updateInput!){
+							user_update(data:$data){
+								_id
+								username
+								birthday
+								gender
+								location
+								photo
+								signature
+							}
+						}
+					`,
+					variables:{data},
+					onError: reject,
+					onCompleted({user_update}, error){
+						if(error){
+							reject(error)
+						}else{
+							resolve(user_update)
+						}
+					},
+				})
+			)
+		}
+	})),*/
+)
+((others, {environment})=>(
+	<QueryRenderer
+		environment={environment}
+		query={graphql`
+			query userProfile_me_Query{
+				me{
+					_id
+					username
+					birthday
+					gender
+					location
+					photo
+					signature
+				}
+			}`
+		}
+		render={
+			function({error, props}){
+				return <Profile {...others} {...props.me}/>
+			}
+		}
+		/>
+))
+/*
 export default compose(
 	graphql(gql`
 		query me{
@@ -121,3 +172,4 @@ export default compose(
 
 	connect()
 )(Profile)
+*/

@@ -9,12 +9,6 @@ import { linkTo } from '@storybook/addon-links';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {QueryRenderer, graphql as gql} from 'react-relay'
-import {
-  Environment,
-  Network,
-  RecordSource,
-  Store,
-} from 'relay-runtime'
 
 import Authentication from "components/authentication"
 storiesOf('Authentication', module)
@@ -24,50 +18,6 @@ storiesOf('Authentication', module)
 		</MuiThemeProvider>
 	))
 	.add('UI', () =><Authentication/>)
-	.addDecorator(story=>{
-		return (
-			<QueryRenderer 
-				environment={
-					(function(){
-						const source = new RecordSource();
-						const store = new Store(source);
-						const network = Network.create(function fetchQuery(
-							  operation,
-							  variables,
-							  cacheConfig,
-							  uploadables,
-							) {
-							  return fetch('http://localhost:8080/1/graphql', {
-								method: 'POST',
-								headers: {
-									"X-Application-Id": "qiliAdmin",
-								  // Add authentication and other headers here
-								  'content-type': 'application/json'
-								},
-								body: JSON.stringify({
-								  query: operation.text, // GraphQL text from input
-								  variables,
-								}),
-							  }).then(response => {
-								return response.json();
-							  });
-							}); // see note below
-						const handlerProvider = null;
-
-						const environment = new Environment({
-						  handlerProvider, // Can omit.
-						  network,
-						  store,
-						});						
-					})()
-				}
-				query={gql`query {version}`}
-				>
-				{story()}
-			</QueryRenderer>
-		)
-	})
-	.add('with relay', () =><Authentication/>)
 	
 /*
 import QiliApp from "../src/qili-app"

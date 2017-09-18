@@ -4,9 +4,8 @@ import {render} from "react-dom"
 import {compose, withState,branch,renderComponent,withProps, defaultProps, withContext, setStatic} from "recompose"
 
 import {createStore, applyMiddleware, combineReducers, compose as  redux_compose} from "redux"
-import {connect} from "react-redux"
+import {connect, Provider} from "react-redux"
 import thunk from 'redux-thunk'
-import {gql,graphql,ApolloClient,ApolloProvider,createNetworkInterface} from 'react-apollo'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -19,6 +18,7 @@ import supportTap from 'react-tap-event-plugin'
 import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
+import createEnvironment from "environment"
 
 export const DOMAIN="qili"
 
@@ -74,6 +74,7 @@ const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
 		<CircularProgress style={{display: loading ? undefined : "none"}}/>
 	</div>
 ))
+
 const Message=connect(state=>({level:"info",duration:4000,...state[DOMAIN].message}))(({level,message,dispatch,duration})=>(
 	<Snackbar
           open={!!message}
@@ -84,18 +85,19 @@ const Message=connect(state=>({level:"info",duration:4000,...state[DOMAIN].messa
         />
 ))
 
+
 export class QiliApp extends Component{
 	static displayName="QiliApp"
     render(){
-        let {theme, store, apollo, children}=this.props
+        let {theme, store, children}=this.props
         return (
-			<ApolloProvider client={apollo} store={store}>
+			<Provider store={store}>
 				<UI muiTheme={theme}>
 					{children}
 					<Loading/>
 					<Message/>
 				 </UI>
-			</ApolloProvider>
+			</Provider>
         )
     }
 
@@ -114,7 +116,7 @@ export class QiliApp extends Component{
 		appId:PropTypes.string.isRequired,
 		theme: PropTypes.object.isRequired,
 		store: PropTypes.object.isRequired,
-		apollo: PropTypes.object.isRequired,
+		environment: PropTypes.object.isRequired,
 		user: PropTypes.object,
 		tutorial:PropTypes.array,
 		title: PropTypes.string,
@@ -139,18 +141,6 @@ export default compose(
 
 		return render(app,container)
 	}),
-
-	withContext({
-			is: PropTypes.object,
-			project: PropTypes.object
-		},
-		({project})=>({
-			is:{
-				app: typeof(cordova)!=="undefined"
-			},
-			project
-		})
-	),
 
 	defaultProps({
 		service:"http://qili2.com/1/",
@@ -190,45 +180,16 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(props=>{
-		let {apollo,service, appId}=props
-		if(!apollo){
-			let networkInterface=createNetworkInterface({
-				uri:service,
-				opts:{
-					headers:{
-						"X-Application-Id": appId
-					}
-				}
-			})
-
-			networkInterface.use([{
-				applyMiddleware(req,next){
-					if(props.user && props.user.token){
-						req.options.headers["X-Session-Token"]=props.user.token
-					}
-					next()
-				}
-			}])
-
-			apollo=new ApolloClient({
-				networkInterface
-			})
-			return {apollo}
-		}
-	}),
-
-	withProps(({store,apollo,reducers})=>{
+	withProps(({store,environment,reducers})=>{
 		if(!store){
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 			store=createStore(
 				combineReducers({
 					...reducers,
-					qili:REDUCER,
-					apollo: apollo.reducer()
+					qili:REDUCER
 				}),
-				composeEnhancers(applyMiddleware(thunk, apollo.middleware()))
+				composeEnhancers(applyMiddleware(thunk))
 			)
 
 			return {store}
@@ -238,21 +199,43 @@ export default compose(
 	connect(state=>state[DOMAIN]),
 
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
-		renderComponent(({tutorial,theme,dispatch,apollo,store})=>
-			<ApolloProvider client={apollo} store={store}>
+		renderComponent(({tutorial,theme,dispatch,store})=>
+			<Provider store={store}>
 				<UI muiTheme={theme}>
 					<Tutorial slides={tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>
 				 </UI>
-			</ApolloProvider>
+			</Provider>
 	)),
-
-	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,apollo, store})=>
-		<ApolloProvider client={apollo} store={store}>
+	
+	withProps(props=>{
+		let {environment,service, appId}=props
+		if(!environment){
+			return {environment: createEnvironment(appId, props.user? props.user.token : undefined)}
+		}
+	}),
+	
+	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,environment, store})=>
+		<Provider store={store}>
 			<UI muiTheme={theme}>
-				<Authentication onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
+				<Authentication 
+					environment={environment}
+					onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
 				<Loading/>
 				<Message/>
 			 </UI>
-		</ApolloProvider>
+		</Provider>
 	)),
+	withContext({
+			is: PropTypes.object,
+			project: PropTypes.object,
+			environment: PropTypes.object,
+		},
+		({project, environment})=>({
+			is:{
+				app: typeof(cordova)!=="undefined"
+			},
+			project,
+			environment,
+		})
+	),	
 )(QiliApp)

@@ -5,6 +5,7 @@ import {compose, withState, withProps, branch,renderComponent,defaultProps} from
 
 import {graphql, commitMutation} from "react-relay"
 
+
 function isPhone(v){
     return (/^(\+\d{2})?\d{11}$/g).test(v)
 }
@@ -53,7 +54,7 @@ export class Authentication extends Component{
 								this.setState({error:null,errName:null,exists:true})
 								setToken("")
 								requestToken()
-                                    .then(({data:{requestToken:exists}})=>{
+                                    .then(exists=>{
 										this.tick()
 										this.setState({exists})
 									})
@@ -79,7 +80,7 @@ export class Authentication extends Component{
 							onClick={e=>{
 								this.setState({error:undefined})
 								login()
-									.then(({data:{login}})=>(onSuccess||success)(login))
+									.then(user=>(onSuccess||success)(user))
 									.catch(e=>this.setState({error:e.message}))
 							}}
 							/>)
@@ -127,105 +128,54 @@ export class Authentication extends Component{
     }
 }
 
-import {
-  Environment,
-  Network,
-  RecordSource,
-  Store,
-} from 'relay-runtime'
-
-const environment=(function(){
-	const source = new RecordSource();
-	const store = new Store(source);
-	const network = Network.create(function fetchQuery(
-		  operation,
-		  variables,
-		  cacheConfig,
-		  uploadables,
-		) {
-		  return fetch('http://localhost:8080/1/graphql', {
-			method: 'POST',
-			headers: {
-				"X-Application-Id": "qiliAdmin",
-			  // Add authentication and other headers here
-			  'content-type': 'application/json'
-			},
-			body: JSON.stringify({
-			  query: operation.text, // GraphQL text from input
-			  variables,
-			}),
-		  }).then(response => {
-			return response.json();
-		  });
-		}); // see note below
-	const handlerProvider = null;
-
-	return new Environment({
-	  handlerProvider, // Can omit.
-	  network,
-	  store,
-	});						
-})()
-
-const LinkedAuthentication=compose(
+export default compose(
 	withState("done","success"),
 	branch(({done})=>done,renderComponent(()=><span>成功</span>)),
 	withState("contact","setContact"),
 	withState("token","setToken",""),
 	withState("name","setName"),
-	withProps(({contact, token, name, relay})=>({
+	withProps(({contact, token, name, environment})=>({
 		requestToken(){
-			commitMutation(environment,{
-				mutation: graphql`
-					mutation authentication_requestToken_Mutation($contact: String!){
-						requestToken(data:{contact:$contact})
-					}
-				`,
-				variables:{contact}
-			})
+			return new Promise((resolve, reject)=>
+				commitMutation(environment,{
+					mutation: graphql`
+						mutation authentication_requestToken_Mutation($data: requestTokenInput!){
+							requestToken(data:$data)
+						}
+					`,
+					variables:{data:{contact}},
+					onError: reject,
+					onCompleted({requestToken}, error){
+						if(error){
+							reject(error)
+						}else{
+							resolve(requestToken)
+						}
+					},
+				})
+			)
 		},
 		login(){
-			commitMutation(environment,{
-				mutation: graphql`
-					mutation authentication_login_Mutation($contact: String!, $token: String!, $name: String){
-						login(data:{contact: $contact, token: $token, name: $name}){
-							_id
-							name
-							token
+			return new Promise((resolve, reject)=>
+				commitMutation(environment,{
+					mutation: graphql`
+						mutation authentication_login_Mutation($data:loginInput){
+							login(data:$data){
+								token
+							}
 						}
-					}
-				`,
-				variables:{contact, token, name}
-			})
+					`,
+					variables:{data:{contact, token, name}},
+					onError: reject,
+					onCompleted({login}, error){
+						if(error){
+							reject(error)
+						}else{
+							resolve(login)
+						}
+					},
+				})
+			)
 		}
 	}))
-	
-	
-	/*
-	graphql(gql`
-        mutation ($contact: String!){
-            requestToken(contact:$contact)
-        }
-    `,{
-		name: "requestToken",
-		options: ({contact})=>({variables:{contact}})
-	}),
-    graphql(gql`
-        mutation ($contact: String!, $token: String!, $name: String){
-            login(contact: $contact, token: $token, name: $name){
-                _id
-                name
-                token
-            }
-        }
-    `,{
-		name:"login",
-		options: ({contact,token,name})=>({variables:{contact,token,name}})
-	})
-	*/
 )(Authentication)
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import {render} from "react-dom"
-
-render(<MuiThemeProvider muiTheme={getMuiTheme()}><LinkedAuthentication/></MuiThemeProvider>,document.body)

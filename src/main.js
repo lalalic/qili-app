@@ -4,7 +4,7 @@ import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} f
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {combineReducers} from "redux"
 
-import {compose, withProps} from "recompose"
+import {compose, withProps, withContext, getContext, setStatic} from "recompose"
 
 import {QiliApp, compact} from '.'
 import Profile from "ui/user-profile"
@@ -16,8 +16,15 @@ const QiliAdmin=compose(
 		service: "http://localhost:8080/1/graphql",
 		user:{token},
 	})),
-
 )(QiliApp)
 
+const Text=compose(
+	getContext({
+		environment:PropTypes.object
+	}),
+	setStatic("contextTypes", {
+		environment:PropTypes.object
+	}),
+)((props, {environment})=><div>hello{environment.toString()}</div>)
 
 QiliApp.render(<QiliAdmin><Profile/></QiliAdmin>)
