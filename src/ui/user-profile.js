@@ -62,13 +62,6 @@ export const Profile=({
 )
 
 export default compose(
-	getContext({
-		environment:PropTypes.object
-	}),
-	setStatic("contextTypes", {
-		environment:PropTypes.object
-	}),
-/*
 	withProps(({environment})=>({
 		update(data){
 			return new Promise((resolve, reject)=>
@@ -98,7 +91,13 @@ export default compose(
 				})
 			)
 		}
-	})),*/
+	})),
+	getContext({
+		environment:PropTypes.object
+	}),
+	setStatic("contextTypes", {
+		environment:PropTypes.object
+	}),
 )
 ((others, {environment})=>(
 	<QueryRenderer
@@ -118,7 +117,12 @@ export default compose(
 		}
 		render={
 			function({error, props}){
-				return <Profile {...others} {...props.me}/>
+				if(props){
+					return <Profile {...others} {...props.me}/>
+				}else if(error){
+					return <div>{error.toString()}</div>
+				}else 
+					return <div>loading</div>
 			}
 		}
 		/>
