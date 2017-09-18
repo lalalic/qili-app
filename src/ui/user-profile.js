@@ -9,6 +9,18 @@ import {InfoForm, Field} from "components/info-form"
 
 import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
+const Test=compose(
+	graphql(gql`
+		query me1{
+			me{
+				phone
+			}
+		}
+	`,{
+		props:({data:{me}})=>me
+	})
+)(({phone})=><span>{phone}</span>)
+
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
 	children, valueStyle={color:"lightgray"},
@@ -16,6 +28,7 @@ export const Profile=({
 	dispatch
 	})=>(
 	<div>
+		<Test/>
 		<InfoForm style={{padding:5}}>
 
 			<Field primaryText="昵称"

@@ -1,8 +1,9 @@
 import React, {Component, PropTypes} from "react"
 import {FlatButton,TextField} from "material-ui"
 import {validate as isEmail} from "isemail"
-import {gql,graphql} from "react-apollo"
-import {compose, withState,branch,renderComponent,defaultProps} from "recompose"
+import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
+
+import {graphql, commitMutation} from "react-relay"
 
 function isPhone(v){
     return (/^(\+\d{2})?\d{11}$/g).test(v)
@@ -126,12 +127,81 @@ export class Authentication extends Component{
     }
 }
 
-export default compose(
+import {
+  Environment,
+  Network,
+  RecordSource,
+  Store,
+} from 'relay-runtime'
+
+const environment=(function(){
+	const source = new RecordSource();
+	const store = new Store(source);
+	const network = Network.create(function fetchQuery(
+		  operation,
+		  variables,
+		  cacheConfig,
+		  uploadables,
+		) {
+		  return fetch('http://localhost:8080/1/graphql', {
+			method: 'POST',
+			headers: {
+				"X-Application-Id": "qiliAdmin",
+			  // Add authentication and other headers here
+			  'content-type': 'application/json'
+			},
+			body: JSON.stringify({
+			  query: operation.text, // GraphQL text from input
+			  variables,
+			}),
+		  }).then(response => {
+			return response.json();
+		  });
+		}); // see note below
+	const handlerProvider = null;
+
+	return new Environment({
+	  handlerProvider, // Can omit.
+	  network,
+	  store,
+	});						
+})()
+
+const LinkedAuthentication=compose(
 	withState("done","success"),
 	branch(({done})=>done,renderComponent(()=><span>成功</span>)),
 	withState("contact","setContact"),
 	withState("token","setToken",""),
 	withState("name","setName"),
+	withProps(({contact, token, name, relay})=>({
+		requestToken(){
+			commitMutation(environment,{
+				mutation: graphql`
+					mutation authentication_requestToken_Mutation($contact: String!){
+						requestToken(data:{contact:$contact})
+					}
+				`,
+				variables:{contact}
+			})
+		},
+		login(){
+			commitMutation(environment,{
+				mutation: graphql`
+					mutation authentication_login_Mutation($contact: String!, $token: String!, $name: String){
+						login(data:{contact: $contact, token: $token, name: $name}){
+							_id
+							name
+							token
+						}
+					}
+				`,
+				variables:{contact, token, name}
+			})
+		}
+	}))
+	
+	
+	/*
 	graphql(gql`
         mutation ($contact: String!){
             requestToken(contact:$contact)
@@ -152,4 +222,10 @@ export default compose(
 		name:"login",
 		options: ({contact,token,name})=>({variables:{contact,token,name}})
 	})
+	*/
 )(Authentication)
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {render} from "react-dom"
+
+render(<MuiThemeProvider muiTheme={getMuiTheme()}><LinkedAuthentication/></MuiThemeProvider>,document.body)

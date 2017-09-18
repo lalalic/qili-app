@@ -9,12 +9,12 @@ import {compose, withProps} from "recompose"
 import {QiliApp, compact} from '.'
 import Profile from "ui/user-profile"
 import Logo from 'icons/logo'
-
+const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJyb290IiwidXNlcm5hbWUiOiJyb290IiwiaWF0IjoxNTA1Njk3MzMwLCJleHAiOjE1MzcyNTQ5MzB9.cCM0hCo-o_2asA8FyfI2lkz1pI7-DO0v-OSZHmayTts"
 const QiliAdmin=compose(
 	withProps(props=>({
 		appId:"qiliAdmin",
 		service: "http://localhost:8080/1/graphql",
-		user:{token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OWI5YWVjOWQ3OTEwYzA0MGNjYjg5ZjkiLCJpYXQiOjE1MDU1NTQ5NTAsImV4cCI6MTUzNzExMjU1MH0.2H4BggNNnwJtjluN4zfeLT88UCV6fJejeBDNmil2zfk"},
+		user:{token},
 	})),
 
 )(QiliApp)
