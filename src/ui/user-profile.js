@@ -11,7 +11,7 @@ import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
-	children, 
+	children,
 	valueStyle={color:"lightgray"},
 	update,
 	logout,
@@ -62,6 +62,10 @@ export const Profile=({
 )
 
 export default compose(
+	getContext({
+		environment:PropTypes.object
+	}),
+
 	withProps(({environment})=>({
 		update(data){
 			return new Promise((resolve, reject)=>
@@ -92,9 +96,6 @@ export default compose(
 			)
 		}
 	})),
-	getContext({
-		environment:PropTypes.object
-	}),
 	setStatic("contextTypes", {
 		environment:PropTypes.object
 	}),
@@ -121,59 +122,9 @@ export default compose(
 					return <Profile {...others} {...props.me}/>
 				}else if(error){
 					return <div>{error.toString()}</div>
-				}else 
+				}else
 					return <div>loading</div>
 			}
 		}
 		/>
 ))
-/*
-export default compose(
-	graphql(gql`
-		query me{
-			me{
-				_id
-				username
-				birthday
-				gender
-				location
-				photo
-				signature
-			}
-		}`),
-
-	withProps(({data:{me}})=>me),
-
-	graphql(gql`
-		mutation user_update($username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
-			user_update(username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature){
-				_id
-				__typename
-				username
-				birthday
-				gender
-				location
-				photo
-				signature
-				updatedAt
-			}
-		}`,{
-			props:({ownProps:{data:{me}}, mutate})=>({
-				update(variables){
-					mutate({
-						variables,
-						optimisticResponse:{
-							user_update:{
-								...me,
-								...variables,
-								updatedAt: new Date()
-							}
-						}
-					})
-				}
-			})
-		}),
-
-	connect()
-)(Profile)
-*/
