@@ -84,6 +84,14 @@ const Value=({value,style={}})=>(
 
 export const Field=()=>null
 
+const _onEdit=(v,onEdit, onCancel, onError)=>{
+	let p=onEdit(v)
+	if(p && p.then)
+		p.then(onCancel, e=>refEditor.errorText=e)
+	else
+		onCancel()
+}
+
 const Editor={
 	input({onEdit, onCancel, hintText,value,primaryText, page}){
 		let props={}
@@ -97,11 +105,11 @@ const Editor={
 		return (
 			<FullPage>
 				<Title {...{onEdit:a=>{
-						let p=onEdit(refEditor.getValue())
-						if(p && p.then)
-							p.then(onCancel, e=>refEditor.errorText=e)
-						else
+						if(value==refEditor.getValue()){
 							onCancel()
+							return
+						}
+						_onEdit(refEditor.getValue(), onEdit, onCancel, e=>refEditor.errorText=e)
 					}, onCancel, primaryText, isChange:!!value}}/>
 				<div style={{padding:5}}>
 					<TextField ref={a=>refEditor=a} {...props}
@@ -118,8 +126,10 @@ const Editor={
 				<RadioButtonGroup name={primaryText}
 					valueSelected={value}
 					labelPosition="left"
-					onChange={(e,value)=>{
-						onEdit(value)
+					onChange={(e,newValue)=>{
+						if(newValue!==value){
+							onEdit(newValue)
+						}
 						onCancel()
 					}}>
 				{
@@ -147,7 +157,14 @@ const Editor={
 		return (
 			<Dialog open={true}
 				onRequestClose={onCancel}
-				title={<Title {...{onEdit:a=>onEdit(selecteds), onCancel, primaryText, isChange:!!value}}/>}>
+				title={<Title {...{
+						onEdit:a=>{
+							if(v1.length!=selecteds.length 
+								|| v1.findIndex((a,i)=>selecteds[i]!==a)!=-1){
+								onEdit(selecteds)
+							}
+							onCancel()
+						}, onCancel, primaryText, isChange:!!value}}/>}>
 				{
 					options.map((opt,i)=>{
 						let value,label
@@ -184,19 +201,26 @@ const Editor={
 				floatingLabelText:hintText
 			}
 		}
+		if(value){
+			props.defaultDate=value
+		}
 		let refEditor
 		return (
 			<FullPage>
 				<Title {...{onEdit:a=>{
-						let p=onEdit(refEditor.getDate())
-						if(p && p.then)
-							p.then(onCancel, e=>refEditor.errorText=e)
-						else
+						if(refEditor.getDate()==value){
 							onCancel()
+							return
+						}
+						onEdit(refEditor.getDate())
+						onCancel()
 					}, onCancel, primaryText, isChange:!!value}}/>
 					<div style={{padding:5}}>
-						<DatePicker ref={a=>refEditor=a} autoOk={true} name={primaryText} {...props} fullWidth={true}
-							defaultDate={value}/>
+						<DatePicker ref={a=>refEditor=a} 
+							autoOk={true} 
+							name={primaryText} 
+							{...props} 
+							fullWidth={true}/>
 					</div>
 			</FullPage>
 		)

@@ -18,7 +18,7 @@ import supportTap from 'react-tap-event-plugin'
 import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
-import createEnvironment from "environment"
+import createEnvironment from "tools/environment"
 
 export const DOMAIN="qili"
 

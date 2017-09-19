@@ -15,9 +15,8 @@
 				"components":"./components",
 				"icons":"./icons",
                 "qili-app": "./qili-app",
-				"environment": "./environment"
+				"tools": "./tools",
 			}
 		}]
-    ],
-	"sourceMaps": "inline"
+    ]
  }
