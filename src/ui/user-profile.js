@@ -1,7 +1,10 @@
 import React, {Component, PropTypes} from "react"
-import {compose,withProps,getContext,setStatic} from "recompose"
+import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
 import {graphql, QueryRenderer, commitMutation} from "react-relay"
+import withQuery from "tools/withQuery"
+import withMutation from "tools/withMutation"
+import withFragment from "tools/withFragment"
 
 import CommandBar from "components/command-bar"
 
@@ -9,16 +12,28 @@ import {InfoForm, Field} from "components/info-form"
 
 import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
+
+const Test=compose(
+	withFragment(graphql`
+		fragment userProfile_test on User{
+			phone
+		}
+	`),
+	withProps(({test})=>test),
+	
+)(({phone})=><div>hello: {phone}</div>)
+
+
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
 	children,
 	valueStyle={color:"lightgray"},
-	update,
+	mutate: update,
 	logout,
 	})=>(
 	<div>
 		<InfoForm style={{padding:5}}>
-
+			<Test/>
 			<Field primaryText="昵称"
 				value={username}
 				type="input"
@@ -61,7 +76,9 @@ export const Profile=({
 	</div>
 )
 
+
 export default compose(
+<<<<<<< HEAD
 	getContext({
 		environment:PropTypes.object
 	}),
@@ -104,16 +121,22 @@ export default compose(
 	<QueryRenderer
 		environment={environment}
 		query={graphql`
+=======
+	withQuery({
+		query:graphql`
+>>>>>>> decaf7067ea517885216f2dafff51f9df009e4ed
 			query userProfile_me_Query{
 				me{
-					_id
+					id
 					username
 					birthday
 					gender
 					location
 					photo
 					signature
+					...userProfile_test
 				}
+<<<<<<< HEAD
 			}`
 		}
 		render={
@@ -124,7 +147,31 @@ export default compose(
 					return <div>{error.toString()}</div>
 				}else
 					return <div>loading</div>
+=======
+>>>>>>> decaf7067ea517885216f2dafff51f9df009e4ed
 			}
+			`,
+	}),
+	withProps(({birthday})=>{
+		if(birthday){
+			return {birthday:new Date(birthday)}
 		}
+<<<<<<< HEAD
 		/>
 ))
+=======
+	}),
+	withMutation(({id}, data)=>{
+		return {
+			patch4:id,
+			dateFields:["birthday"],
+			mutation: graphql`
+				mutation userProfile_update_Mutation($data: user_updateInput!){
+					user_update(data:$data)
+				}
+			`
+		}
+	}),		
+	pure,
+)(Profile)
+>>>>>>> decaf7067ea517885216f2dafff51f9df009e4ed

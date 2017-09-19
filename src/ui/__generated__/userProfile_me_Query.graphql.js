@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash e5540d6f29615324bedb813c8a28d12d
+ * @relayHash 45799dfdb2285d7dc383995d40bc1645
  */
 
 /* eslint-disable */
@@ -11,7 +11,7 @@
 import type {ConcreteBatch} from 'relay-runtime';
 export type userProfile_me_QueryResponse = {|
   +me: {|
-    +_id: any;
+    +id: string;
     +username: ?string;
     +birthday: ?any;
     +gender: ?"girl" | "boy";
@@ -26,15 +26,19 @@ export type userProfile_me_QueryResponse = {|
 /*
 query userProfile_me_Query {
   me {
-    _id
+    id
     username
     birthday
     gender
     location
     photo
     signature
-    id
+    ...userProfile_test
   }
+}
+
+fragment userProfile_test on User {
+  phone
 }
 */
 
@@ -57,7 +61,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
-            "name": "_id",
+            "name": "id",
             "storageKey": null
           },
           {
@@ -101,6 +105,11 @@ const batch /*: ConcreteBatch*/ = {
             "args": null,
             "name": "signature",
             "storageKey": null
+          },
+          {
+            "kind": "FragmentSpread",
+            "name": "userProfile_test",
+            "args": null
           }
         ],
         "storageKey": null
@@ -130,7 +139,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
-            "name": "_id",
+            "name": "id",
             "storageKey": null
           },
           {
@@ -176,18 +185,24 @@ const batch /*: ConcreteBatch*/ = {
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
+            "kind": "InlineFragment",
+            "type": "User",
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "phone",
+                "storageKey": null
+              }
+            ]
           }
         ],
         "storageKey": null
       }
     ]
   },
-  "text": "query userProfile_me_Query {\n  me {\n    _id\n    username\n    birthday\n    gender\n    location\n    photo\n    signature\n    id\n  }\n}\n"
+  "text": "query userProfile_me_Query {\n  me {\n    id\n    username\n    birthday\n    gender\n    location\n    photo\n    signature\n    ...userProfile_test\n  }\n}\n\nfragment userProfile_test on User {\n  phone\n}\n"
 };
 
 module.exports = batch;
