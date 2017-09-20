@@ -1,18 +1,18 @@
 import React, {Component, PropTypes} from "react"
 import {compose,getContext} from "recompose"
 import withQuery from "tools/withQuery"
+import withMutation from "tools/withMutation"
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Link} from "react-router"
 
 
 import IconRightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
-import IconSettingIcon from 'material-ui/svg-icons/action/settings'
+import IconSetting from 'material-ui/svg-icons/action/settings'
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import CheckUpdate from "components/check-update"
 import Photo from "components/photo"
-import {compact} from "qili-app"
 
 
 export const Account=({photo, username, children,router, setPhoto})=>{
@@ -24,7 +24,7 @@ export const Account=({photo, username, children,router, setPhoto})=>{
 						<Photo src={photo} iconRatio={2/3} width={40} height={40}
 							onPhoto={url=>setPhoto({url})}/>
 					}
-					rightIcon={<RightArrow/>}
+					rightIcon={<IconRightArrow/>}
 					onClick={e=>router.push("/my/profile")}
 					/>
 

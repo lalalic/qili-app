@@ -13,6 +13,7 @@ import {QiliApp, compact} from '.'
 import Profile from "ui/user-profile"
 import Dashboard from "ui/dashboard"
 import My from "ui/my"
+import Setting from "ui/setting"
 
 
 const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJyb290IiwidXNlcm5hbWUiOiJyb290MSIsImlhdCI6MTUwNTkyMjkwMiwiZXhwIjoxNTM3NDgwNTAyfQ.g8kZP6BCiL7eoZaTCawxpHabp9objwxxTlVjGE8bg28"
@@ -32,10 +33,7 @@ const router=(
 
 			<Route path="my">
 				<IndexRoute component={My} contextual={false}/>
-				{/*
-
-				<Route path="setting" component={SettingUI} />
-			*/}
+				<Route path="setting" component={Setting} />
 				<Route path="profile" component={Profile} contextual={false}/>
 			</Route>
 		</Route>

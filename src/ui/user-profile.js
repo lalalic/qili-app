@@ -7,12 +7,10 @@ import withMutation from "tools/withMutation"
 import withFragment from "tools/withFragment"
 
 import CommandBar from "components/command-bar"
-
+import Photo from "components/photo"
 import {InfoForm, Field} from "components/info-form"
-
 import {TextField} from "material-ui"
-
-import QuitIcon from "material-ui/svg-icons/file/cloud-off"
+import IconQuit from "material-ui/svg-icons/file/cloud-off"
 
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
@@ -23,6 +21,14 @@ export const Profile=({
 	})=>(
 	<div>
 		<InfoForm style={{padding:5}}>
+			<Field primaryText="头像"
+				rightAvatar={
+					<Photo src={photo}
+						onPhoto={url=>setPhoto({url})}
+						iconRatio={2/3} width={100} height={100}/>
+					}
+				style={{height:100}}/>
+
 			<Field primaryText="昵称"
 				value={username}
 				type="input"
@@ -59,7 +65,7 @@ export const Profile=({
 		<CommandBar  className="footbar"
 			items={[
 				{action:"Back"},
-				{action:"Logout", label:"退出账号", icon:<QuitIcon/>, onSelect:e=>logout()}
+				{action:"Logout", label:"退出账号", icon:<IconQuit/>, onSelect:logout}
 				]}
 			/>
 	</div>
@@ -93,5 +99,18 @@ export default compose(
 			`
 		}
 	}),
+	withMutation(({id},{url})=>({
+		name:"setPhoto",
+		variables:{
+			id,
+			url,
+		},
+		patch4:id,
+		mutation:graphql`
+			mutation userProfile_setPhoto_Mutation($url:String!, $id:ID!, $field:String="photo"){
+				file_link(url:$url, id:$id, field:$field)
+			}
+		`
+	})),
 	pure,
 )(Profile)
