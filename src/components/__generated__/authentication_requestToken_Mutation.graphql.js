@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash a2413c92c43808e37b0c593550546b24
+ * @relayHash 9ad5174193fcdd4a2929a2ad4af80157
  */
 
 /* eslint-disable */
@@ -10,9 +10,7 @@
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
 export type authentication_requestToken_MutationVariables = {|
-  data: {
-    contact: string;
-  };
+  contact: string;
 |};
 
 export type authentication_requestToken_MutationResponse = {|
@@ -23,9 +21,9 @@ export type authentication_requestToken_MutationResponse = {|
 
 /*
 mutation authentication_requestToken_Mutation(
-  $data: requestTokenInput!
+  $contact: String!
 ) {
-  requestToken(data: $data)
+  requestToken(contact: $contact)
 }
 */
 
@@ -34,8 +32,8 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "data",
-        "type": "requestTokenInput!",
+        "name": "contact",
+        "type": "String!",
         "defaultValue": null
       }
     ],
@@ -49,9 +47,9 @@ const batch /*: ConcreteBatch*/ = {
         "args": [
           {
             "kind": "Variable",
-            "name": "data",
-            "variableName": "data",
-            "type": "requestTokenInput!"
+            "name": "contact",
+            "variableName": "contact",
+            "type": "String!"
           }
         ],
         "name": "requestToken",
@@ -68,8 +66,8 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "data",
-        "type": "requestTokenInput!",
+        "name": "contact",
+        "type": "String!",
         "defaultValue": null
       }
     ],
@@ -83,9 +81,9 @@ const batch /*: ConcreteBatch*/ = {
         "args": [
           {
             "kind": "Variable",
-            "name": "data",
-            "variableName": "data",
-            "type": "requestTokenInput!"
+            "name": "contact",
+            "variableName": "contact",
+            "type": "String!"
           }
         ],
         "name": "requestToken",
@@ -93,7 +91,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation authentication_requestToken_Mutation(\n  $data: requestTokenInput!\n) {\n  requestToken(data: $data)\n}\n"
+  "text": "mutation authentication_requestToken_Mutation(\n  $contact: String!\n) {\n  requestToken(contact: $contact)\n}\n"
 };
 
 module.exports = batch;

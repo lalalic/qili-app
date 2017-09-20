@@ -3,7 +3,8 @@ import {FlatButton,TextField} from "material-ui"
 import {validate as isEmail} from "isemail"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
 
-import {graphql, commitMutation} from "react-relay"
+import {graphql} from "react-relay"
+import withMutation from "tools/withMutation"
 
 
 function isPhone(v){
@@ -53,7 +54,7 @@ export class Authentication extends Component{
 							onClick={e=>{
 								this.setState({error:null,errName:null,exists:true})
 								setToken("")
-								requestToken()
+								requestToken({contact})
                                     .then(exists=>{
 										this.tick()
 										this.setState({exists})
@@ -79,7 +80,7 @@ export class Authentication extends Component{
 							primary={true}
 							onClick={e=>{
 								this.setState({error:undefined})
-								login()
+								login({contact, token, name})
 									.then(user=>(onSuccess||success)(user))
 									.catch(e=>this.setState({error:e.message}))
 							}}
@@ -134,48 +135,24 @@ export default compose(
 	withState("contact","setContact"),
 	withState("token","setToken",""),
 	withState("name","setName"),
-	withProps(({contact, token, name, environment})=>({
-		requestToken(){
-			return new Promise((resolve, reject)=>
-				commitMutation(environment,{
-					mutation: graphql`
-						mutation authentication_requestToken_Mutation($data: requestTokenInput!){
-							requestToken(data:$data)
-						}
-					`,
-					variables:{data:{contact}},
-					onError: reject,
-					onCompleted({requestToken}, error){
-						if(error){
-							reject(error)
-						}else{
-							resolve(requestToken)
-						}
-					},
-				})
-			)
-		},
-		login(){
-			return new Promise((resolve, reject)=>
-				commitMutation(environment,{
-					mutation: graphql`
-						mutation authentication_login_Mutation($data:loginInput){
-							login(data:$data){
-								token
-							}
-						}
-					`,
-					variables:{data:{contact, token, name}},
-					onError: reject,
-					onCompleted({login}, error){
-						if(error){
-							reject(error)
-						}else{
-							resolve(login)
-						}
-					},
-				})
-			)
-		}
-	}))
+	withMutation({
+		name: "requestToken",
+		promise:true,
+		mutation: graphql`
+			mutation authentication_requestToken_Mutation($contact:String!){
+				requestToken(contact:$contact)
+			}
+		`
+	}),
+	withMutation({
+		name: "login",
+		promise:true,
+		mutation: graphql`
+			mutation authentication_login_Mutation($contact:String!, $token: String!, $name: String){
+				login(contact:$contact, token:$token, name: $name){
+					token
+				}
+			}
+		`
+	})
 )(Authentication)

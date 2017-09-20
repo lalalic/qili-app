@@ -213,18 +213,6 @@ export default compose(
 			return {environment: createEnvironment(appId, props.user? props.user.token : undefined)}
 		}
 	}),
-	
-	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,environment, store})=>
-		<Provider store={store}>
-			<UI muiTheme={theme}>
-				<Authentication 
-					environment={environment}
-					onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
-				<Loading/>
-				<Message/>
-			 </UI>
-		</Provider>
-	)),
 	withContext({
 			is: PropTypes.object,
 			project: PropTypes.object,
@@ -238,4 +226,14 @@ export default compose(
 			environment,
 		})
 	),	
+	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,environment, store})=>
+		<Provider store={store}>
+			<UI muiTheme={theme}>
+				<Authentication 
+					onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
+				<Loading/>
+				<Message/>
+			 </UI>
+		</Provider>
+	)),	
 )(QiliApp)

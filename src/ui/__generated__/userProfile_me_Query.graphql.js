@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 45799dfdb2285d7dc383995d40bc1645
+ * @relayHash 4a63dce49cfc0e2e26db0d7ac1cf3397
  */
 
 /* eslint-disable */
@@ -33,12 +33,7 @@ query userProfile_me_Query {
     location
     photo
     signature
-    ...userProfile_test
   }
-}
-
-fragment userProfile_test on User {
-  phone
 }
 */
 
@@ -105,11 +100,6 @@ const batch /*: ConcreteBatch*/ = {
             "args": null,
             "name": "signature",
             "storageKey": null
-          },
-          {
-            "kind": "FragmentSpread",
-            "name": "userProfile_test",
-            "args": null
           }
         ],
         "storageKey": null
@@ -183,26 +173,13 @@ const batch /*: ConcreteBatch*/ = {
             "args": null,
             "name": "signature",
             "storageKey": null
-          },
-          {
-            "kind": "InlineFragment",
-            "type": "User",
-            "selections": [
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "phone",
-                "storageKey": null
-              }
-            ]
           }
         ],
         "storageKey": null
       }
     ]
   },
-  "text": "query userProfile_me_Query {\n  me {\n    id\n    username\n    birthday\n    gender\n    location\n    photo\n    signature\n    ...userProfile_test\n  }\n}\n\nfragment userProfile_test on User {\n  phone\n}\n"
+  "text": "query userProfile_me_Query {\n  me {\n    id\n    username\n    birthday\n    gender\n    location\n    photo\n    signature\n  }\n}\n"
 };
 
 module.exports = batch;

@@ -7,11 +7,17 @@ export const withQuery=raw=>BaseComponent=>{
 	const factory=createEagerFactory(QueryRenderer)
 	const EargerElement=({environment,...others})=>{
 		raw=typeof(raw)=="function" ? raw(others) : raw
-		const {spread,...query}=raw
+		const {spread,query, ...more}=raw
+		//////hack: make variables default undefined as undefined
+		query().query.argumentDefinitions.forEach(def=>{
+			if(def.defaultValue===null)
+				def.defaultValue=undefined
+		})
+		
 		return factory({
 			render({error, props}){
 				if(props){
-					return <BaseComponent {...others} {...spreadResponse(props, spread, others)}/>
+					return <BaseComponent {...others} {...props} {...spreadResponse(props, spread, others)}/>
 				}else if(error){
 					return <div>error: {error.toString()}</div>
 				}else {
@@ -19,7 +25,8 @@ export const withQuery=raw=>BaseComponent=>{
 				}
 			},
 			environment,
-			...query,
+			query,
+			...more,
 			})
 		}
 	const WithQuery=getContext({environment:PropTypes.object})(EargerElement)

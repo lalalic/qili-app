@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash a86becf917fba86fdd4a8f4b5b21d0f5
+ * @relayHash 3266faac37d0747bc8c3c010c1da440e
  */
 
 /* eslint-disable */
@@ -10,11 +10,9 @@
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
 export type authentication_login_MutationVariables = {|
-  data?: ?{
-    contact: string;
-    token: string;
-    name?: ?string;
-  };
+  contact: string;
+  token: string;
+  name?: ?string;
 |};
 
 export type authentication_login_MutationResponse = {|
@@ -27,9 +25,11 @@ export type authentication_login_MutationResponse = {|
 
 /*
 mutation authentication_login_Mutation(
-  $data: loginInput
+  $contact: String!
+  $token: String!
+  $name: String
 ) {
-  login(data: $data) {
+  login(contact: $contact, token: $token, name: $name) {
     token
     id
   }
@@ -41,8 +41,20 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "data",
-        "type": "loginInput",
+        "name": "contact",
+        "type": "String!",
+        "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "token",
+        "type": "String!",
+        "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "name",
+        "type": "String",
         "defaultValue": null
       }
     ],
@@ -56,9 +68,21 @@ const batch /*: ConcreteBatch*/ = {
         "args": [
           {
             "kind": "Variable",
-            "name": "data",
-            "variableName": "data",
-            "type": "loginInput"
+            "name": "contact",
+            "variableName": "contact",
+            "type": "String!"
+          },
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "name",
+            "type": "String"
+          },
+          {
+            "kind": "Variable",
+            "name": "token",
+            "variableName": "token",
+            "type": "String!"
           }
         ],
         "concreteType": "User",
@@ -86,8 +110,20 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "data",
-        "type": "loginInput",
+        "name": "contact",
+        "type": "String!",
+        "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "token",
+        "type": "String!",
+        "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "name",
+        "type": "String",
         "defaultValue": null
       }
     ],
@@ -101,9 +137,21 @@ const batch /*: ConcreteBatch*/ = {
         "args": [
           {
             "kind": "Variable",
-            "name": "data",
-            "variableName": "data",
-            "type": "loginInput"
+            "name": "contact",
+            "variableName": "contact",
+            "type": "String!"
+          },
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "name",
+            "type": "String"
+          },
+          {
+            "kind": "Variable",
+            "name": "token",
+            "variableName": "token",
+            "type": "String!"
           }
         ],
         "concreteType": "User",
@@ -129,7 +177,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation authentication_login_Mutation(\n  $data: loginInput\n) {\n  login(data: $data) {\n    token\n    id\n  }\n}\n"
+  "text": "mutation authentication_login_Mutation(\n  $contact: String!\n  $token: String!\n  $name: String\n) {\n  login(contact: $contact, token: $token, name: $name) {\n    token\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

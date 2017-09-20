@@ -7,13 +7,20 @@ const isDate=date=>typeof date.getMonth === 'function'
 export const withMutation=raw=>BaseComponent=>{
 	const factory=createEagerFactory(BaseComponent)
 	const EagerElement=({environment,...others})=>{
-		const {name="mutate"}=typeof(raw)=="function" ? raw(others, {}) : raw
+		const {name="mutate",mutation}=typeof(raw)=="function" ? raw(others, {}) : raw
+		
+		//////hack: make variables default undefined as undefined
+		mutation().query.argumentDefinitions.forEach(def=>{
+			if(def.defaultValue===null)
+				def.defaultValue=undefined
+		})
+		
 		function mutate(data){
-			let props=typeof(raw)=="function" ? raw(others, data) : raw
-			const {spread, varName="data", variables, patch4, promise,dateFields=[], ...mutation}=props
+			let props=typeof(raw)=="function" ? raw(others, ...arguments) : raw
+			const {spread, variables, patch4, patchData, promise,dateFields=[], ...mutation}=props
 			let smart={}
 			if(patch4){
-				const updater=id=>(store, res)=>{
+				const updater=(id,data)=>(store, res)=>{
 					let entity=store.get(id)
 					if(entity){
 						Object.keys(data)
@@ -22,12 +29,12 @@ export const withMutation=raw=>BaseComponent=>{
 							})
 					}
 				}
-				smart.updater=smart.optimisticUpdater=updater(patch4)
+				smart.updater=smart.optimisticUpdater=updater(patch4, patchData||data)
 			}
 			
 			let p=new Promise((resolve, reject)=>{
 				commitMutation(environment,{
-					variables:{...variables,[varName]:data},
+					variables:{...variables,...data},
 					...smart,
 					...mutation,
 					onError: reject,
