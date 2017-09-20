@@ -102,13 +102,11 @@ export class QiliApp extends Component{
     }
 
 	componentDidMount(){
-		const {title, project}=this.props
+		const {title, checkVersion}=this.props
 		if(title){
 			document.title=title
 		}
-		if(project){
-			dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
-		}
+		checkVersion()
 	}
 
 	static propsTypes={
@@ -196,7 +194,11 @@ export default compose(
 		}
 	}),
 
-	connect(state=>state[DOMAIN]),
+	connect(state=>state[DOMAIN],(dispatch, {project})=>({
+		checkVersion(){
+			dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+		}
+	})),
 
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
 		renderComponent(({tutorial,theme,dispatch,store})=>
@@ -206,7 +208,7 @@ export default compose(
 				 </UI>
 			</Provider>
 	)),
-	
+
 	withProps(props=>{
 		let {environment,service, appId}=props
 		if(!environment){
@@ -225,15 +227,15 @@ export default compose(
 			project,
 			environment,
 		})
-	),	
+	),
 	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,environment, store})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
-				<Authentication 
+				<Authentication
 					onSuccess={user=>dispatch(ACTION.USER_CHANGED(user))}/>
 				<Loading/>
 				<Message/>
 			 </UI>
 		</Provider>
-	)),	
+	)),
 )(QiliApp)

@@ -10,10 +10,11 @@ export const withQuery=raw=>BaseComponent=>{
 		const {spread,query, ...more}=raw
 		//////hack: make variables default undefined as undefined
 		query().query.argumentDefinitions.forEach(def=>{
-			if(def.defaultValue===null)
+			if(def.defaultValue===null){
 				def.defaultValue=undefined
+			}
 		})
-		
+
 		return factory({
 			render({error, props}){
 				if(props){
@@ -30,7 +31,7 @@ export const withQuery=raw=>BaseComponent=>{
 			})
 		}
 	const WithQuery=getContext({environment:PropTypes.object})(EargerElement)
-		
+
 	if (process.env.NODE_ENV !== 'production') {
 		return setDisplayName(wrapDisplayName(BaseComponent, 'withQuery'))(WithQuery)
 	}
@@ -38,4 +39,3 @@ export const withQuery=raw=>BaseComponent=>{
 }
 
 export default withQuery
-

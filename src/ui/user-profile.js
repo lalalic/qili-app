@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
-import {graphql, QueryRenderer, commitMutation, createFragmentContainer} from "react-relay"
+import {graphql} from "react-relay"
 import withQuery from "tools/withQuery"
 import withMutation from "tools/withMutation"
 import withFragment from "tools/withFragment"
@@ -16,7 +16,7 @@ import QuitIcon from "material-ui/svg-icons/file/cloud-off"
 
 export const Profile=({
 	username,birthday,gender,location,photo,signature,
-	children, 
+	children,
 	valueStyle={color:"lightgray"},
 	mutate: update,
 	logout,
@@ -92,6 +92,6 @@ export default compose(
 				}
 			`
 		}
-	}),		
+	}),
 	pure,
 )(Profile)

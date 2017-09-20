@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
+
 import {Avatar, Dialog} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
-import dbFile from '../db/file'
-import {selectImageFile} from './file-selector'
+import {selectImageFile, upload} from 'components/file'
 
 export default class Photo extends Component{
     state={url:this.props.src}
@@ -48,7 +48,7 @@ export default class Photo extends Component{
             then(({url,binary})=>{
                 this.setState({url})
                 if(autoUpload){
-                    dbFile.upload(url)
+                    upload(url)
                         .then(url=>{
                             onPhoto && onPhoto(url)
                         })
@@ -66,7 +66,7 @@ export default class Photo extends Component{
                 this.setState({url})
                 if(autoUpload){
                     dbFile.upload(url)
-                        .then(url=>{
+                        .then(({url})=>{
                             onPhoto && onPhoto(url)
                         })
                 } else {
@@ -102,4 +102,3 @@ export default class Photo extends Component{
     }
 
 }
-

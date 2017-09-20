@@ -70,7 +70,7 @@ function main(type="json", width, height){
     			reader.readAsText(file)
     		}
         }
-		
+
 		input.click()
     })
 }
@@ -85,6 +85,27 @@ function resize(dataUrl, size, img){
     _imgSizer.style.height=_imgSizer.height+"px"
     ctx.drawImage(img,0,0,img.width,img.height,0,0,_imgSizer.width, _imgSizer.height);
     return _imgSizer.toDataURL("image/jpeg")
+}
+
+function dataAsBlob(data){
+	return new Promise((resolve,reject)=>{
+		switch(typeof(data)){
+		case 'string':
+			if(data.startsWith("file://")){
+				window.resolveLocalFileSystemURL(data, entry=>entry.file(file=>{
+					let reader=new FileReader()
+					reader.onload=e=>resolve(new Blob([new Uint8Array(reader.result)],{type:file.type}))
+					reader.readAsArrayBuffer(file)
+				},reject), reject)
+			}else if(data.startsWith("data:image/jpeg;base64,")){
+				resolve(module.exports.toBlob(data))
+			}else
+				resolve(data)
+		break
+		default:
+			resolve(data)
+		}
+	})
 }
 
 module.exports={//for testable
@@ -123,5 +144,29 @@ module.exports={//for testable
 
 		var blob = new Blob(byteArrays, {type: contentType});
 		return blob;
-	}
+	},
+    upload(data, props, token, url="http://up.qiniu.com"){
+        return new Promise((resolve, reject)=>{
+			dataAsBlob(data).then(data=>{
+                var formData=new FormData()
+                formData.append('file',data)
+                formData.append('token',token)
+                Object.keys(props)
+                    .forEach(a=>formData.append(a,props[a]))
+
+                var xhr=new XMLHttpRequest()
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 300)
+                            resolve(JSON.parse(xhr.responseText))
+                        else
+                            reject(xhr.responseText);
+                    }
+                }
+
+                xhr.open('POST',url,true)
+                xhr.send(formData)
+            })
+        })
+    }
 }

@@ -6,7 +6,7 @@ export const CheckUpdate=({lastVersion,children},{project:{version}})=>{
 	let hasUpdate=lastVersion && lastVersion!=version
 	if(!hasUpdate)
 		return typeof(children)=="string" ? <span>{children}</span> : children
-	
+
 	if(typeof(children)=="string"){
 		return (<span>{children}<New/></span>)
 	}else{
@@ -43,4 +43,4 @@ const New=({text="New"})=>(
 	</span>
 )
 
-export default connect(state=>({lastVersion:state.qiliApp.lastVersion}))(CheckUpdate)
+export default connect(state=>({lastVersion:state.qili.lastVersion}))(CheckUpdate)
