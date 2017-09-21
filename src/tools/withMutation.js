@@ -33,10 +33,10 @@ export const withMutation=option=>BaseComponent=>{
 		})
 
 		function mutate(data){
-			let props=typeof(option)=="function" ? option(others, ...arguments) : option
 			const {spread, variables, patch4, patchData,
 				shouldPatch=o=>Object.keys(o).reduce((a,k)=>o[k]!==null&&a,true),
-				promise,dateFields=[], ...mutation}=props
+				promise,dateFields=[], 
+				...mutation}=typeof(option)=="function" ? option(others, ...arguments) : option
 			let smart={}
 			if(patch4){
 				const updater=(id,data)=>(store,res)=>{

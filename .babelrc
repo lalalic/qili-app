@@ -11,10 +11,11 @@
       ["module-resolver",{
 			"root": ["./src"],
 			"alias":{
+				"main": "main.js",
+				"qili": "index.js", 
                 "ui":"./ui",
 				"components":"./components",
 				"icons":"./icons",
-                "qili-app": "./qili-app",
 				"tools": "./tools",
 			}
 		}]

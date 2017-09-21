@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux"
-import * as QiliApp from "qili-app"
+import * as QiliApp from "qili"
 
 import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
 import {Link} from "react-router"

@@ -1,8 +1,9 @@
 import React,{Component, PropTypes} from "react"
-import {compose, withStatic, withContext} from "recompse"
+import {compose, setStatic, getContext} from "recompose"
 import withQuery from "tools/withQuery"
 import withMutation from "tools/withMutation"
 import {graphql} from "react-relay"
+import {connect} from "react-redux"
 
 import {TextField} from 'material-ui'
 
@@ -11,66 +12,26 @@ import IconDownload from "material-ui/svg-icons/file/file-download"
 import IconSave from "material-ui/svg-icons/content/save"
 import IconRemove from "material-ui/svg-icons/action/delete"
 
-import TextFieldx from "components/TextField"
-import CommandBar from "component/command-bar"
-import file from "component/file"
+import TextFieldx from "components/text-field"
+import CommandBar from "components/command-bar"
+import file from "components/file"
 
-import {ACTION as qiliACTION} from "./main"
-import {getCurrentApp} from "./selector"
+import * as Admin from "main"
 
 const ENTER=13
 
-export const ACTION={
-	CREATE: (name, uname)=>dispatch=>{
-		let nameError, unameError
-		if(!name)
-			nameError="name is required"
-		if(nameError){
-			return Promise.reject(nameError)
-		}
-
-		return dbApplication.upsert({name,uname})
-			.then(app=>{
-				dispatch(ENTITIES(normalize(app,dbApplication.schema).entities))
-				dispatch(qiliACTION.SET_CURRENT_APP(app))
-				return app
-			})
-	}
-	,CHANGE: (key,value)=>(dispatch,getState)=>{
-		if(key=="name" && !value)
-			return Promise.reject("name is required")
-		const state=getState()
-		const app=getCurrentApp(state)
-		app[key]=value
-		return dbApplication.upsert(app)
-			.then(app=>dispatch(ENTITIES(normalize(app,dbApplication.schema).entities)))
-	}
-	,REMOVE: id=>(dispatch,getState)=>{
-		const state=getState()
-		let app=getCurrentApp(state)
-		let id=app._id
-		return dbApplication.remove(id)
-			.then(a=>{
-				dispatch(REMOVE_ENTITIES(dbApplication.schema.getKey(),id))
-				dispatch(qiliACTION.NEXT_APPLICATION(id))
-			})
-	}
-
-	,UPLOAD: a=>displatch=>fileSelector.select()
-			.then(app=>dbApplication.upload(app))
-}
-
 export class App extends Component{
-	state={nameError:null, unameError:null}
-	componentWillReceiveProps(next){
-		if(!next.isCurrent)
-			next.dispatch(qiliACTION.SET_CURRENT_APP_BY_ID(next.params._id))
+	state={
+		nameError:null, 
+		unameError:null
 	}
+	componentWillReceiveProps(next){
+		next.syncCurrent(next.params.id)
+	}
+	
 	render(){
-		const {name,uname,apiKey, dispatch, params:{_id}}=this.props
+		const {name,uname,apiKey, update, upload, remove, router,removable}=this.props
 		const {nameError, unameError}=this.state
-		const {router}=this.context
-		let removable=dbApplication.isRemovable(_id)
 		let commandBar
 		if(removable)
 			commandBar=(<CommandBar className="footbar" primary="Upload"
@@ -79,28 +40,21 @@ export class App extends Component{
 
 						,{action:"Upload"
 							,icon:<IconUpload/>
-							,onSelect:e=>dispatch(ACTION.UPLOAD())
+							,onSelect:upload
 						}
 						,{action:"Remove"
 							,icon:<IconRemove/>
-							,onSelect:e=>{
-								let removing=prompt("Please make sure you know what you are doing by giving this app name").trim()
-								if(removing && removing==name){
-									dispatch(ACTION.REMOVE())
-										.then(a=>router.replace("/"))
-								}else
-									alert("name is not correct")
-							}
+							,onSelect: remove
 						}
 					]}
 				/>)
 		else
 			commandBar=(<CommandBar className="footbar" items={[{action:"Back"}]}/>)
 
-		const changeName=value=>value!=name && dispatch(ACTION.CHANGE("name",value))
+		const changeName=value=>value!=name && update({name:value})
 			.then(a=>this.setState({nameError:null}),error=>this.setState({nameError:error}))
 
-		const changeUName=value=>value!=uname && dispatch(ACTION.CHANGE("uname",value))
+		const changeUName=value=>value!=uname && update({uname:value})
 			.then(a=>this.setState({unameError:null}),error=>this.setState({unameError:error}))
 
 		let refName, refUname
@@ -110,7 +64,7 @@ export class App extends Component{
 					floatingLabelText="application name"
 					fullWidth={true}
 					disabled={!removable}
-					value={name}
+					value={name||""}
 					errorText={nameError}
 					onChange={({target:{value}})=>refName.value=value}
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
@@ -120,7 +74,7 @@ export class App extends Component{
 					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 					fullWidth={true}
 					disabled={!removable}
-					value={uname}
+					value={uname||""}
 					errorText={unameError}
 					onChange={({target:{value}})=>refUname.value=value}
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
@@ -130,7 +84,7 @@ export class App extends Component{
 					floatingLabelText="API key: value of http header 'x-application-id'"
 					disabled={true}
 					fullWidth={true}
-					value={apiKey}/>
+					value={apiKey||""}/>
 
 				<TextField
 					floatingLabelText="wechat url: use it to accept message from wechat"
@@ -142,7 +96,6 @@ export class App extends Component{
 			</div>
 		)
 	}
-	static contextTypes={router: PropTypes.object}
 }
 
 export class Creator extends Component{
@@ -177,29 +130,98 @@ export class Creator extends Component{
 }
 
 export default compose(
-	withStatic("Creator",compose(
+	setStatic("Creator",compose(
 		withMutation({
 			name:"create",
 			promise:true,
 			mutation:graphql`
 				mutation app_create_Mutation($name:String!, $uname: String){
-					app_create(name:$name, uname:$uname)
+					app_create(name:$name, uname:$uname){
+						id
+						name
+						uname
+						apiKey
+					}
 				}
 			`,
 		}),
 		getContext({router: PropTypes.object}),
 	)(Creator)),
+	
 	getContext({router: PropTypes.object}),
 
-	withQuery({
+	withQuery(({params:{id}})=>({
+		variables:{
+			id
+		},
 		query: graphql`
-			query app_edit_Mutation{
-				me{
-					apps(){
-
+			query app_update_Query($id:ID!){
+				node(id:$id){
+					...on App{
+						id
+						name
+						uname
+						apiKey
 					}
 				}
 			}
 		`,
+	})),
+	
+	withMutation(({id},data)=>({
+		name:"update",
+		patch4:id,
+		mutation:graphql`
+			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String){
+				app_update(_id:$id, name:$name, uname: $uname)
+			}
+		`
+	})),
+	
+	withMutation(({id})=>({
+		name:"doRemove",
+		variables:{id},
+		mutation:graphql`
+			mutation app_remove_Mutation($id:ObjectID!){
+				app_remove(_id:$id)
+			}
+		`,
+	})),
+	/*
+	withMutation({
+		mutation:graphql`
+			mutation app_upload_mutation(){
+				app_upload()
+			}
+		`
 	}),
+	*/
+	connect(state=>({
+			removable:state.current!="qiliAdmin"
+		}),
+		(dispatch,{doRemove,doUpload,name, router,params:{id}})=>({
+			syncCurrent(newAppID){
+				if(newAppID!=id)
+					dispatch(Admin.ACTION.CURRENT_APP(newAppID))
+			},
+			remove(){
+				let removing=prompt("Please make sure you know what you are doing by giving this app name").trim()
+				if(removing && removing==name){
+					doRemove()
+					router.replace("/")
+					dispatch(Admin.ACTION.NEXT_APP())
+				}else{
+					dispatch(Admin.ACTION.MESSAGE({
+						message:"name is not correct, cancel removing",
+						level:"warning",
+					}))
+				}
+			},
+			
+			upload(){
+				file.select()
+					.then(doUpload)
+			}
+		})
+	)
 )(App)

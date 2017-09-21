@@ -1,13 +1,21 @@
-import React, {PropTypes} from "react"
+import React, {PureComponent, PropTypes} from "react"
+import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
 import {createEagerFactory, setDisplayName, wrapDisplayName, getContext} from "recompose"
 import spreadResponse from "tools/spread-response"
 
-export const withQuery=raw=>BaseComponent=>{
+class Wrapper extends PureComponent{
+	componentWillMount(){
+		this.props.handle()
+	}
+	render(){
+		return React.Children.only(this.props.children)
+	}
+}
+export const withQuery=option=>BaseComponent=>{
 	const factory=createEagerFactory(QueryRenderer)
-	const EargerElement=({environment,...others})=>{
-		raw=typeof(raw)=="function" ? raw(others) : raw
-		const {spread,query, ...more}=raw
+	const EargerElement=connect()(({environment,dispatch,...others})=>{
+		const {spread,query, onSuccess, onError, ...more}=typeof(option)=="function" ? option(others) : option
 		//////hack: make variables default undefined as undefined
 		query().query.argumentDefinitions.forEach(def=>{
 			if(def.defaultValue===null){
@@ -18,9 +26,17 @@ export const withQuery=raw=>BaseComponent=>{
 		return factory({
 			render({error, props}){
 				if(props){
-					return <BaseComponent {...others} {...props} {...spreadResponse(props, spread, others)}/>
+					return (
+						<Wrapper handle={()=>onSuccess && onSuccess(props,dispatch)}>
+							<BaseComponent {...others} {...props} {...spreadResponse(props, spread, others)}/>
+						</Wrapper>
+					)
 				}else if(error){
-					return <div>error: {error.toString()}</div>
+					return (
+						<Wrapper handle={()=>onError && onError(error,dispatch)}>
+							<div>error: {error.toString()}</div>
+						</Wrapper>
+					)
 				}else {
 					return <div>loading...</div>
 				}
@@ -29,7 +45,7 @@ export const withQuery=raw=>BaseComponent=>{
 			query,
 			...more,
 			})
-		}
+	})
 	const WithQuery=getContext({environment:PropTypes.object})(EargerElement)
 
 	if (process.env.NODE_ENV !== 'production') {

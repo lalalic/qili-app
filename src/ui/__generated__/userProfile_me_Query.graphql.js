@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 4a63dce49cfc0e2e26db0d7ac1cf3397
+ * @relayHash 0fe4a3fb05c61e5729c1db90dc5dfae3
  */
 
 /* eslint-disable */
@@ -10,15 +10,7 @@
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
 export type userProfile_me_QueryResponse = {|
-  +me: {|
-    +id: string;
-    +username: ?string;
-    +birthday: ?any;
-    +gender: ?"girl" | "boy";
-    +location: ?string;
-    +photo: ?string;
-    +signature: ?string;
-  |};
+  +me: {| |};
 |};
 */
 
@@ -26,14 +18,19 @@ export type userProfile_me_QueryResponse = {|
 /*
 query userProfile_me_Query {
   me {
+    ...userProfile
     id
-    username
-    birthday
-    gender
-    location
-    photo
-    signature
   }
+}
+
+fragment userProfile on User {
+  id
+  username
+  birthday
+  gender
+  location
+  photo
+  signature
 }
 */
 
@@ -53,53 +50,9 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "username",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "birthday",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "gender",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "location",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "photo",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "signature",
-            "storageKey": null
+            "kind": "FragmentSpread",
+            "name": "userProfile",
+            "args": null
           }
         ],
         "storageKey": null
@@ -133,53 +86,59 @@ const batch /*: ConcreteBatch*/ = {
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "username",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "birthday",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "gender",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "location",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "photo",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "signature",
-            "storageKey": null
+            "kind": "InlineFragment",
+            "type": "User",
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "username",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "birthday",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "gender",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "location",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "photo",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "signature",
+                "storageKey": null
+              }
+            ]
           }
         ],
         "storageKey": null
       }
     ]
   },
-  "text": "query userProfile_me_Query {\n  me {\n    id\n    username\n    birthday\n    gender\n    location\n    photo\n    signature\n  }\n}\n"
+  "text": "query userProfile_me_Query {\n  me {\n    ...userProfile\n    id\n  }\n}\n\nfragment userProfile on User {\n  id\n  username\n  birthday\n  gender\n  location\n  photo\n  signature\n}\n"
 };
 
 module.exports = batch;

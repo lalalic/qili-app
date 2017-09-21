@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 9df40fa6a4d57c22104828a83aaf0059
+ * @relayHash b9b22de309a5c9ac2d8e016d11f7ef94
  */
 
 /* eslint-disable */
@@ -10,12 +10,7 @@
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
 export type my_apps_QueryResponse = {|
-  +me: {|
-    +apps: $ReadOnlyArray<?{|
-      +id: string;
-      +name: string;
-    |}>;
-  |};
+  +me: {| |};
 |};
 */
 
@@ -23,12 +18,23 @@ export type my_apps_QueryResponse = {|
 /*
 query my_apps_Query {
   me {
-    apps {
-      id
-      name
-    }
+    ...my
     id
   }
+}
+
+fragment my on User {
+  ...account
+  apps {
+    id
+    name
+  }
+}
+
+fragment account on User {
+  id
+  username
+  photo
 }
 */
 
@@ -48,29 +54,9 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
-            "alias": null,
-            "args": null,
-            "concreteType": "App",
-            "name": "apps",
-            "plural": true,
-            "selections": [
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "name",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
+            "kind": "FragmentSpread",
+            "name": "my",
+            "args": null
           }
         ],
         "storageKey": null
@@ -97,43 +83,63 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
+            "kind": "ScalarField",
             "alias": null,
             "args": null,
-            "concreteType": "App",
-            "name": "apps",
-            "plural": true,
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "kind": "InlineFragment",
+            "type": "User",
             "selections": [
               {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "id",
+                "name": "username",
                 "storageKey": null
               },
               {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "name",
+                "name": "photo",
+                "storageKey": null
+              },
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "args": null,
+                "concreteType": "App",
+                "name": "apps",
+                "plural": true,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "name",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
-            ],
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
+            ]
           }
         ],
         "storageKey": null
       }
     ]
   },
-  "text": "query my_apps_Query {\n  me {\n    apps {\n      id\n      name\n    }\n    id\n  }\n}\n"
+  "text": "query my_apps_Query {\n  me {\n    ...my\n    id\n  }\n}\n\nfragment my on User {\n  ...account\n  apps {\n    id\n    name\n  }\n}\n\nfragment account on User {\n  id\n  username\n  photo\n}\n"
 };
 
 module.exports = batch;

@@ -74,21 +74,28 @@ export const Profile=({
 
 export default compose(
 	withQuery({
-		spread:({me})=>({...me, birthday:new Date(me.birthday)}),
+		spread:false,
 		query:graphql`
 			query userProfile_me_Query{
 				me{
-					id
-					username
-					birthday
-					gender
-					location
-					photo
-					signature
+					...userProfile
 				}
 			}
 			`,
 	}),
+	withProps(({me})=>({data:me})),
+	withFragment(graphql`
+		fragment userProfile on User{
+			id
+			username
+			birthday
+			gender
+			location
+			photo
+			signature
+		}
+	`),
+	withProps(({data})=>({...data, birthday: new Date(data.birthday)})),
 	withMutation(({id}, data)=>{
 		return {
 			patch4:id,
