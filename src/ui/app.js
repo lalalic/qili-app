@@ -1,8 +1,6 @@
 import React,{Component, PropTypes} from "react"
-import {compose, setStatic, getContext} from "recompose"
-import withQuery from "tools/withQuery"
-import withMutation from "tools/withMutation"
-import {graphql} from "react-relay"
+import {compose, setStatic, getContext, withProps} from "recompose"
+import {graphql, withFragment, withMutation} from "tools/recompose"
 import {connect} from "react-redux"
 
 import {TextField} from 'material-ui'
@@ -149,24 +147,16 @@ export default compose(
 	)(Creator)),
 	
 	getContext({router: PropTypes.object}),
-
-	withQuery(({params:{id}})=>({
-		variables:{
+	
+	withFragment(graphql`
+		fragment app on App{
 			id
-		},
-		query: graphql`
-			query app_update_Query($id:ID!){
-				node(id:$id){
-					...on App{
-						id
-						name
-						uname
-						apiKey
-					}
-				}
-			}
-		`,
-	})),
+			name
+			uname
+			apiKey
+		}
+	`),
+	withProps(({data})=>({...data})),
 	
 	withMutation(({id},data)=>({
 		name:"update",

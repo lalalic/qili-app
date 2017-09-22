@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {compose,getContext,withProps} from "recompose"
-import withFragment from "tools/withFragment"
-import withMutation from "tools/withMutation"
+import {graphql, withMutation, withFragment} from "tools/recompose"
+
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Link} from "react-router"
 

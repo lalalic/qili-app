@@ -4,18 +4,20 @@ import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} f
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {combineReducers} from "redux"
 import {connect} from "react-redux"
-import {graphql} from "react-relay"
 
 import {compose, withProps, withContext, getContext, setStatic} from "recompose"
-import withQuery from "tools/withQuery"
+import {graphql, withFragment, withQuery, withInit, withMutation} from "tools/recompose"
+
 import Logo from 'icons/logo'
-import QiliApp, {DOMAIN,REDUCER} from 'qili'
+import QiliApp, * as qili from 'qili'
 
 import Profile from "ui/user-profile"
 import Dashboard from "ui/dashboard"
 import My from "ui/my"
 import Setting from "ui/setting"
 import App from "ui/app"
+
+const {DOMAIN,REDUCER}=qili
 
 export const ACTION={
 	CURRENT_APP: payload=>({
@@ -51,30 +53,31 @@ const QiliAdmin=compose(
 		user:{token},
 		reducers:{
 			[DOMAIN]:reducer
-		},
-		prefetch: {
-			query:graphql`
-				query main_prefetch_Query{
-					me{
-						name
-						apps{
-							id
-							name
-							uname
-							apiKey
-						}
-					}
-				}
-			`,
-			onSuccess(response,dispatch){
-				debugger
-				const {me:{apps}}=response
-				if(apps.length>0){
-					dispatch(ACTION.CURRENT_APP(apps[0].id))
-				}
-			}
 		}
 	})),
+	withInit({
+		query:graphql`
+			query main_prefetch_Query{
+				me{
+					name
+					token
+					apps{
+						id
+						name
+						uname
+						apiKey
+					}
+				}
+			}
+		`,
+		onSuccess(response,dispatch){
+			const {me:{apps, token,name}}=response
+			dispatch(qili.ACTION.CURRENT_USER({name,token}))
+			if(apps.length>0){
+				dispatch(ACTION.CURRENT_APP(apps[0].id))
+			}
+		}
+	}),
 )(QiliApp)
 
 const router=(
@@ -83,14 +86,60 @@ const router=(
 			<IndexRoute component={Dashboard}/>
 
 			<Route path="my">
-				<IndexRoute component={My} contextual={false}/>
+				<IndexRoute  contextual={false} component={
+						compose(
+							withQuery({
+								spread:false,
+								query: graphql`
+									query main_my_apps_Query{
+										me{
+											...my
+										}
+									}
+								`
+							}),
+							withProps(({me})=>({data:me})),
+						)(My)
+					}/>
+					
 				<Route path="setting" component={Setting} />
-				<Route path="profile" component={Profile} contextual={false}/>
+				
+				<Route path="profile"  contextual={false} component={
+						compose(
+							withQuery({
+								spread:false,
+								query:graphql`
+									query main_userProfile_me_Query{
+										me{
+											...userProfile
+										}
+									}
+									`,
+							}),
+							withProps(({me})=>({data:me})),
+						)(Profile)
+					}/>
 			</Route>
 			
 			<Route path="app" contextual={false}>
 				<IndexRoute component={App.Creator}/>
-				<Route path=":id" component={App}/>
+				<Route path=":id" component={
+						compose(
+							withQuery(({params:{id}})=>({
+								variables:{
+									id
+								},
+								query: graphql`
+									query main_app_update_Query($id:ID!){
+										node(id:$id){
+											...app
+										}
+									}
+								`,
+							})),
+							withProps(({node})=>({data:node})),
+						)(App)
+					}/>
 			</Route>
 			
 		</Route>

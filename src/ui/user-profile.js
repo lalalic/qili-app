@@ -1,10 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
-import {graphql} from "react-relay"
-import withQuery from "tools/withQuery"
-import withMutation from "tools/withMutation"
-import withFragment from "tools/withFragment"
+import {graphql, withFragment, withMutation} from "tools/recompose"
 
 import CommandBar from "components/command-bar"
 import Photo from "components/photo"
@@ -73,17 +70,6 @@ export const Profile=({
 
 
 export default compose(
-	withQuery({
-		spread:false,
-		query:graphql`
-			query userProfile_me_Query{
-				me{
-					...userProfile
-				}
-			}
-			`,
-	}),
-	withProps(({me})=>({data:me})),
 	withFragment(graphql`
 		fragment userProfile on User{
 			id

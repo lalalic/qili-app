@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash e12a436370dbc9543cb71898979cef2f
+ * @relayHash 9214b3429216e0d3ae165e55b86c70b1
  */
 
 /* eslint-disable */
@@ -12,6 +12,7 @@ import type {ConcreteBatch} from 'relay-runtime';
 export type main_prefetch_QueryResponse = {|
   +me: {|
     +name: ?string;
+    +token: ?string;
     +apps: $ReadOnlyArray<?{|
       +id: string;
       +name: string;
@@ -27,6 +28,7 @@ export type main_prefetch_QueryResponse = {|
 query main_prefetch_Query {
   me {
     name
+    token
     apps {
       id
       name
@@ -58,6 +60,13 @@ const batch /*: ConcreteBatch*/ = {
             "alias": null,
             "args": null,
             "name": "name",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "token",
             "storageKey": null
           },
           {
@@ -131,6 +140,13 @@ const batch /*: ConcreteBatch*/ = {
             "storageKey": null
           },
           {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "token",
+            "storageKey": null
+          },
+          {
             "kind": "LinkedField",
             "alias": null,
             "args": null,
@@ -181,7 +197,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_prefetch_Query {\n  me {\n    name\n    apps {\n      id\n      name\n      uname\n      apiKey\n    }\n    id\n  }\n}\n"
+  "text": "query main_prefetch_Query {\n  me {\n    name\n    token\n    apps {\n      id\n      name\n      uname\n      apiKey\n    }\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

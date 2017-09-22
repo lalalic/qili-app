@@ -2,11 +2,12 @@ import React, {Component, PropTypes} from "react"
 import {render} from "react-dom"
 
 import {compose, pure,withState,branch,renderComponent,withProps, defaultProps, withContext, setStatic} from "recompose"
+import {withGraphqlClient} from "tools/recompose"
 
 import {createStore, applyMiddleware, combineReducers, compose as  redux_compose} from "redux"
+
 import {connect, Provider} from "react-redux"
 import thunk from 'redux-thunk'
-import withQuery from "tools/withQuery"
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -20,7 +21,6 @@ import * as date from "tools/date"
 import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
-import createEnvironment from "tools/environment"
 
 export const DOMAIN="qili"
 
@@ -102,16 +102,11 @@ const Message=connect(state=>({level:"info",duration:4000,...state[DOMAIN].messa
 export class QiliApp extends Component{
 	static displayName="QiliApp"
     render(){
-        let {theme, store, prefetch, children}=this.props
-		let content=children
-		if(prefetch){
-			let Prefetcher=withQuery(prefetch)(()=><div>{children}</div>)
-			content=<Prefetcher/>
-		}
+        let {theme, store, children}=this.props
         return (
 			<Provider store={store}>
 				<UI muiTheme={theme}>
-					{content}
+					{children}
 					<Loading/>
 					<Message/>
 				 </UI>
@@ -132,7 +127,7 @@ export class QiliApp extends Component{
 		appId:PropTypes.string.isRequired,
 		theme: PropTypes.object.isRequired,
 		store: PropTypes.object.isRequired,
-		environment: PropTypes.object.isRequired,
+		client: PropTypes.object.isRequired,
 		user: PropTypes.object,
 		tutorial:PropTypes.array,
 		title: PropTypes.string,
@@ -170,7 +165,19 @@ export default compose(
 			}
 		})
 	}),
-
+	
+	withContext({
+			is: PropTypes.object,
+			project: PropTypes.object,
+		},
+		({project})=>({
+			is:{
+				app: typeof(cordova)!=="undefined"
+			},
+			project,
+		})
+	),
+	
 	branch(({appId})=>!appId,renderComponent(({theme})=>
 		<UI muiTheme={theme}>
 			<Empty icon={null}>
@@ -196,7 +203,7 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,environment,reducers})=>{
+	withProps(({store,reducers})=>{
 		if(!store){
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -226,27 +233,8 @@ export default compose(
 				 </UI>
 			</Provider>
 	)),
-
-	withProps(props=>{
-		let {environment,service, appId}=props
-		if(!environment){
-			return {environment: createEnvironment(appId, props.user? props.user.token : undefined)}
-		}
-	}),
-	withContext({
-			is: PropTypes.object,
-			project: PropTypes.object,
-			environment: PropTypes.object,
-		},
-		({project, environment})=>({
-			is:{
-				app: typeof(cordova)!=="undefined"
-			},
-			project,
-			environment,
-		})
-	),
-	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme,environment, store})=>
+	withGraphqlClient("relay-modern"),
+	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme, store})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
 				<Authentication

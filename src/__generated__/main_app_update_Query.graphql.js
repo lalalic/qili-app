@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash c9b6ac4e4e68e8ad47852d3d3e5d6ce4
+ * @relayHash c170ff324e6d89c46f252532cd3edf82
  */
 
 /* eslint-disable */
@@ -9,31 +9,28 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type app_update_QueryResponse = {|
-  +node: ?{|
-    +id?: string;
-    +name?: string;
-    +uname?: ?string;
-    +apiKey?: string;
-  |};
+export type main_app_update_QueryResponse = {|
+  +node: ?{| |};
 |};
 */
 
 
 /*
-query app_update_Query(
+query main_app_update_Query(
   $id: ID!
 ) {
   node(id: $id) {
     __typename
-    ... on App {
-      id
-      name
-      uname
-      apiKey
-    }
+    ...app
     id
   }
+}
+
+fragment app on App {
+  id
+  name
+  uname
+  apiKey
 }
 */
 
@@ -49,7 +46,7 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "app_update_Query",
+    "name": "main_app_update_Query",
     "selections": [
       {
         "kind": "LinkedField",
@@ -67,38 +64,9 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "InlineFragment",
-            "type": "App",
-            "selections": [
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "name",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "uname",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "apiKey",
-                "storageKey": null
-              }
-            ]
+            "kind": "FragmentSpread",
+            "name": "app",
+            "args": null
           }
         ],
         "storageKey": null
@@ -109,7 +77,7 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "app_update_Query",
+  "name": "main_app_update_Query",
   "query": {
     "argumentDefinitions": [
       {
@@ -120,7 +88,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "app_update_Query",
+    "name": "main_app_update_Query",
     "operation": "query",
     "selections": [
       {
@@ -184,7 +152,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query app_update_Query(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ... on App {\n      id\n      name\n      uname\n      apiKey\n    }\n    id\n  }\n}\n"
+  "text": "query main_app_update_Query(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...app\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n}\n"
 };
 
 module.exports = batch;

@@ -2,9 +2,7 @@ import React, {Component, PropTypes} from "react"
 import {FlatButton,TextField} from "material-ui"
 import {validate as isEmail} from "isemail"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
-
-import {graphql} from "react-relay"
-import withMutation from "tools/withMutation"
+import {graphql, withMutation} from "tools/recompose"
 
 
 function isPhone(v){

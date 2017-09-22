@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash b9b22de309a5c9ac2d8e016d11f7ef94
+ * @relayHash 3218dc2722b5af2254375e2673a74e76
  */
 
 /* eslint-disable */
@@ -9,32 +9,28 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type my_apps_QueryResponse = {|
+export type main_userProfile_me_QueryResponse = {|
   +me: {| |};
 |};
 */
 
 
 /*
-query my_apps_Query {
+query main_userProfile_me_Query {
   me {
-    ...my
+    ...userProfile
     id
   }
 }
 
-fragment my on User {
-  ...account
-  apps {
-    id
-    name
-  }
-}
-
-fragment account on User {
+fragment userProfile on User {
   id
   username
+  birthday
+  gender
+  location
   photo
+  signature
 }
 */
 
@@ -43,7 +39,7 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "my_apps_Query",
+    "name": "main_userProfile_me_Query",
     "selections": [
       {
         "kind": "LinkedField",
@@ -55,7 +51,7 @@ const batch /*: ConcreteBatch*/ = {
         "selections": [
           {
             "kind": "FragmentSpread",
-            "name": "my",
+            "name": "userProfile",
             "args": null
           }
         ],
@@ -67,11 +63,11 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "my_apps_Query",
+  "name": "main_userProfile_me_Query",
   "query": {
     "argumentDefinitions": [],
     "kind": "Root",
-    "name": "my_apps_Query",
+    "name": "main_userProfile_me_Query",
     "operation": "query",
     "selections": [
       {
@@ -104,32 +100,35 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
+                "name": "birthday",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "gender",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "location",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
                 "name": "photo",
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
+                "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "concreteType": "App",
-                "name": "apps",
-                "plural": true,
-                "selections": [
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "args": null,
-                    "name": "id",
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "args": null,
-                    "name": "name",
-                    "storageKey": null
-                  }
-                ],
+                "name": "signature",
                 "storageKey": null
               }
             ]
@@ -139,7 +138,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query my_apps_Query {\n  me {\n    ...my\n    id\n  }\n}\n\nfragment my on User {\n  ...account\n  apps {\n    id\n    name\n  }\n}\n\nfragment account on User {\n  id\n  username\n  photo\n}\n"
+  "text": "query main_userProfile_me_Query {\n  me {\n    ...userProfile\n    id\n  }\n}\n\nfragment userProfile on User {\n  id\n  username\n  birthday\n  gender\n  location\n  photo\n  signature\n}\n"
 };
 
 module.exports = batch;
