@@ -102,9 +102,9 @@ const router=(
 						)(My)
 					}/>
 					
-				<Route path="setting" component={Setting} />
+				<Route path="setting" component={Setting}/>
 				
-				<Route path="profile"  contextual={false} component={
+				<Route path="profile" contextual={false} component={
 						compose(
 							withQuery({
 								spread:false,
@@ -130,18 +130,37 @@ const router=(
 									id
 								},
 								query: graphql`
-									query main_app_update_Query($id:ID!){
-										node(id:$id){
-											...app
+									query main_app_update_Query($id:ObjectID!){
+										me{
+											app(_id:$id){
+												...app
+											}
 										}
 									}
 								`,
 							})),
-							withProps(({node})=>({data:node})),
+							withProps(({me})=>({data:me.app})),
 						)(App)
 					}/>
 			</Route>
-			
+
+			<Route path="comment/:id" component={
+					compose(
+						withQuery(({params:{id}})=>({
+							variables:{
+								id
+							},
+							query: graphql`
+								query main_comment_Query($id:ID!){
+									comment(id:$id){
+										
+									}
+								}
+							`,
+						})),
+						withProps(({me})=>({data:me})),
+					)(Comment)
+				}/>			
 		</Route>
 	</Router>
 )

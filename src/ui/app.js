@@ -28,7 +28,7 @@ export class App extends Component{
 	}
 	
 	render(){
-		const {name,uname,apiKey, update, upload, remove, router,removable}=this.props
+		const {id, name,uname,apiKey, update, upload, remove, router,removable}=this.props
 		const {nameError, unameError}=this.state
 		let commandBar
 		if(removable)
@@ -43,6 +43,11 @@ export class App extends Component{
 						,{action:"Remove"
 							,icon:<IconRemove/>
 							,onSelect: remove
+						},
+						{
+							action: "Comment",
+							icon: <IconComment/>,
+							onSelect: ()=>router.push(`/comment/${id}`)
 						}
 					]}
 				/>)

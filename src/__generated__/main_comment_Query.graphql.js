@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash ec7f9fed0727ccf352b7f60d2eb4e705
+ * @relayHash b841eaa6a5d721707d3b974f37bf334a
  */
 
 /* eslint-disable */
@@ -9,7 +9,7 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type main_app_update_QueryResponse = {|
+export type main_comment_QueryResponse = {|
   +me: {|
     +app: ?{| |};
   |};
@@ -18,7 +18,7 @@ export type main_app_update_QueryResponse = {|
 
 
 /*
-query main_app_update_Query(
+query main_comment_Query(
   $id: ObjectID!
 ) {
   me {
@@ -50,7 +50,7 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "main_app_update_Query",
+    "name": "main_comment_Query",
     "selections": [
       {
         "kind": "LinkedField",
@@ -92,7 +92,7 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "main_app_update_Query",
+  "name": "main_comment_Query",
   "query": {
     "argumentDefinitions": [
       {
@@ -103,7 +103,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "main_app_update_Query",
+    "name": "main_comment_Query",
     "operation": "query",
     "selections": [
       {
@@ -172,7 +172,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_app_update_Query(\n  $id: ObjectID!\n) {\n  me {\n    app(_id: $id) {\n      ...app\n      id\n    }\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n}\n"
+  "text": "query main_comment_Query(\n  $id: ObjectID!\n) {\n  me {\n    app(_id: $id) {\n      ...app\n      id\n    }\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n}\n"
 };
 
 module.exports = batch;

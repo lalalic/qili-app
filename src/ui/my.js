@@ -31,7 +31,6 @@ export const My=({data, apps, router})=>(
 )
 
 export default compose(
-	getContext({router:PropTypes.object}),
 	withFragment(graphql`
 		fragment my on User{
 			...account			
@@ -42,4 +41,5 @@ export default compose(
 		}
 	`),
 	withProps(({data})=>data),
+	getContext({router:PropTypes.object}),	
 )(My)
