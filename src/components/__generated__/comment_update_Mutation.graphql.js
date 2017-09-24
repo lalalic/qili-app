@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash a1ff23bbd085150bea941385ab805556
+ * @relayHash b4be57904e214c17b84efd0259447617
  */
 
 /* eslint-disable */
@@ -12,6 +12,7 @@ import type {ConcreteBatch} from 'relay-runtime';
 export type comment_update_MutationVariables = {|
   id: string;
   content: string;
+  type?: ?"text" | "photo";
 |};
 
 export type comment_update_MutationResponse = {|
@@ -27,8 +28,9 @@ export type comment_update_MutationResponse = {|
 mutation comment_update_Mutation(
   $id: ID!
   $content: String!
+  $type: CommentType
 ) {
-  comment(host: $id, content: $content) {
+  comment(host: $id, content: $content, type: $type) {
     id
     createdAt
   }
@@ -48,6 +50,12 @@ const batch /*: ConcreteBatch*/ = {
         "kind": "LocalArgument",
         "name": "content",
         "type": "String!",
+        "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "type",
+        "type": "CommentType",
         "defaultValue": null
       }
     ],
@@ -70,6 +78,12 @@ const batch /*: ConcreteBatch*/ = {
             "name": "host",
             "variableName": "id",
             "type": "ID!"
+          },
+          {
+            "kind": "Variable",
+            "name": "type",
+            "variableName": "type",
+            "type": "CommentType"
           }
         ],
         "concreteType": "Comment",
@@ -113,6 +127,12 @@ const batch /*: ConcreteBatch*/ = {
         "name": "content",
         "type": "String!",
         "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "type",
+        "type": "CommentType",
+        "defaultValue": null
       }
     ],
     "kind": "Root",
@@ -134,6 +154,12 @@ const batch /*: ConcreteBatch*/ = {
             "name": "host",
             "variableName": "id",
             "type": "ID!"
+          },
+          {
+            "kind": "Variable",
+            "name": "type",
+            "variableName": "type",
+            "type": "CommentType"
           }
         ],
         "concreteType": "Comment",
@@ -159,7 +185,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation comment_update_Mutation(\n  $id: ID!\n  $content: String!\n) {\n  comment(host: $id, content: $content) {\n    id\n    createdAt\n  }\n}\n"
+  "text": "mutation comment_update_Mutation(\n  $id: ID!\n  $content: String!\n  $type: CommentType\n) {\n  comment(host: $id, content: $content, type: $type) {\n    id\n    createdAt\n  }\n}\n"
 };
 
 module.exports = batch;

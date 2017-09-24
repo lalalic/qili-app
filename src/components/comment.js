@@ -36,6 +36,13 @@ function smartFormat(d){
 }
 
 export class Comment extends Component{
+	static propTypes={
+		data: PropTypes.arrayOf(PropTypes.object),
+		currentUserId: PropTypes.string,
+		commentText: PropTypes.func,
+		commentPhoto: PropTypes.func,
+		loadMore: PropTypes.func
+	}
 	first=true
     state={comment:""}
     componentDidMount(){
@@ -51,11 +58,10 @@ export class Comment extends Component{
 		}
 	}
     render(){
-        let {data, currentUserId, createText, createPhoto, template,loadMore,hint="说两句", system}=this.props
+        let {data, currentUserId, commentText, commentPhoto, template,loadMore,hint="说两句", system}=this.props
 		const {comment}=this.state
         const {muiTheme:{page: {height}}}=this.context
-        const create=()=>createText({content:this.state.comment}).then(a=>this.setState({comment:""}))
-        data=data||[]
+        const create=()=>commentText({content:comment}).then(a=>this.setState({comment:""}))
 
         let save={
             action:"Save",
@@ -69,7 +75,7 @@ export class Comment extends Component{
             icon: <IconCamera/>,
             onSelect:e=>file.selectImageFile()
                 .then(url=>file.upload(url))
-                .then(url=>createPhoto({url}))
+                .then(url=>commentPhoto({url}))
         }
 
         let action=photo
@@ -123,7 +129,6 @@ export class Comment extends Component{
 	}
 
     static defaultProps={
-        systemThumbnail:null,
         template: ({comment, system={}, time, currentUserId})=>{
 			let name, left, right, text
 			const isOwner=comment.author._id==currentUserId
@@ -166,7 +171,7 @@ export class Comment extends Component{
 									default:
 										return <span>{content}</span>
 									}
-								})(comment.content,comment.content_type)
+								})(comment.content,comment.type)
 							}
 							</p>
 						</div>
@@ -179,18 +184,24 @@ export class Comment extends Component{
 }
 
 export default compose(
-	withMutation(({id})=>({
-		name: "createText",
+	withMutation({
 		promise:true,
-		variables:{id},
 		mutation:graphql`
-			mutation comment_update_Mutation($id:ID!, $content:String!){
-				comment(host:$id, content:$content){
+			mutation comment_update_Mutation($id:ID!, $content:String!, $type: CommentType){
+				comment(host:$id, content:$content, type:$type){
 					id
 					createdAt
 				}
 			}
 		`
+	}),
+	withProps(({id, mutate})=>({
+		commentText({content}){
+			return mutate({id,content})
+		},
+		commentPhoto({url}){
+			return mutate({id,content:url, type:"photo"})
+		}
 	})),
 	withFragment(graphql`
         fragment comment on App{
@@ -198,6 +209,7 @@ export default compose(
                 edges{
 					node{
 						content
+						type
 						createdAt
 						author{
 							id
@@ -225,5 +237,38 @@ export default compose(
 				})
 			}
 		}
-	}))
+	})),
+	withSubscription(({id})=>({
+		variable:{id},
+		subscription: graphql`
+			subscription comment_new_Subscription($id:ID!){
+				commentNotify(id:$id){
+					id
+					content
+					type
+					createdAt
+					author{
+						id
+						name
+						photo
+					}
+				}
+			}
+		`,
+		updater(store){
+			// Get the notification
+			const rootField = store.getRootField('commentNotify');
+			const notification = rootField.getLinkedRecord('notification');
+			// Add it to a connection
+			const viewer = store.getRoot().getLinkedRecord('me');
+			const notifications =ConnectionHandler.getConnection(viewer, 'notifications');
+			const edge = ConnectionHandler.createEdge(
+				store,
+				notifications,
+				notification,
+				'<TypeOfCommentEdge>',
+			);
+			ConnectionHandler.insertEdgeAfter(notifications, edge);
+		}
+	})),
 )(Comment)
