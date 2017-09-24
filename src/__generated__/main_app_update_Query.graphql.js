@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash ec7f9fed0727ccf352b7f60d2eb4e705
+ * @relayHash f6165d6e5f9cd0cb50ca3db8bd9e013e
  */
 
 /* eslint-disable */
@@ -68,7 +68,7 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "Variable",
                 "name": "_id",
                 "variableName": "id",
-                "type": "ObjectID"
+                "type": "ObjectID!"
               }
             ],
             "concreteType": "App",
@@ -122,7 +122,7 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "Variable",
                 "name": "_id",
                 "variableName": "id",
-                "type": "ObjectID"
+                "type": "ObjectID!"
               }
             ],
             "concreteType": "App",

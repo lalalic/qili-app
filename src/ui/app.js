@@ -9,6 +9,7 @@ import IconUpload from "material-ui/svg-icons/file/file-upload"
 import IconDownload from "material-ui/svg-icons/file/file-download"
 import IconSave from "material-ui/svg-icons/content/save"
 import IconRemove from "material-ui/svg-icons/action/delete"
+import IconComment from "material-ui/svg-icons/editor/mode-comment"
 
 import TextFieldx from "components/text-field"
 import CommandBar from "components/command-bar"
@@ -20,13 +21,13 @@ const ENTER=13
 
 export class App extends Component{
 	state={
-		nameError:null, 
+		nameError:null,
 		unameError:null
 	}
 	componentWillReceiveProps(next){
 		next.syncCurrent(next.params.id)
 	}
-	
+
 	render(){
 		const {id, name,uname,apiKey, update, upload, remove, router,removable}=this.props
 		const {nameError, unameError}=this.state
@@ -150,9 +151,9 @@ export default compose(
 		}),
 		getContext({router: PropTypes.object}),
 	)(Creator)),
-	
+
 	getContext({router: PropTypes.object}),
-	
+
 	withFragment(graphql`
 		fragment app on App{
 			id
@@ -162,7 +163,7 @@ export default compose(
 		}
 	`),
 	withProps(({data})=>({...data})),
-	
+
 	withMutation(({id},data)=>({
 		name:"update",
 		patch4:id,
@@ -172,7 +173,7 @@ export default compose(
 			}
 		`
 	})),
-	
+
 	withMutation(({id})=>({
 		name:"doRemove",
 		variables:{id},
@@ -212,7 +213,7 @@ export default compose(
 					}))
 				}
 			},
-			
+
 			upload(){
 				file.select()
 					.then(doUpload)

@@ -2,7 +2,6 @@ import React, {PureComponent, PropTypes} from "react"
 import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
 import {compose, createEagerFactory, setDisplayName, wrapDisplayName, getContext} from "recompose"
-import spreadResponse from "tools/spread-response"
 
 class Wrapper extends PureComponent{
 	componentWillMount(){
@@ -18,7 +17,7 @@ export const withQuery=option=>BaseComponent=>{
 			getContext({client:PropTypes.object}),
 			connect(),
 		)(({client:environment,dispatch,...others})=>{
-			const {spread,query, onSuccess, onError, ...more}=typeof(option)=="function" ? option(others) : option
+			const {query, onSuccess, onError, ...more}=typeof(option)=="function" ? option(others) : option
 			//////hack: make variables default undefined as undefined
 			query().query.argumentDefinitions.forEach(def=>{
 				if(def.defaultValue===null){

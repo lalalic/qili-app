@@ -6,7 +6,7 @@ import {combineReducers} from "redux"
 import {connect} from "react-redux"
 
 import {compose, withProps, withContext, getContext, setStatic} from "recompose"
-import {graphql, withFragment, withQuery, withInit, withMutation} from "tools/recompose"
+import {graphql, withFragment, withQuery, withInit, withMutation, withPagination} from "tools/recompose"
 
 import Logo from 'icons/logo'
 import QiliApp, * as qili from 'qili'
@@ -16,6 +16,7 @@ import Dashboard from "ui/dashboard"
 import My from "ui/my"
 import Setting from "ui/setting"
 import App from "ui/app"
+import Comment from "components/comment"
 
 const {DOMAIN,REDUCER}=qili
 
@@ -27,7 +28,7 @@ export const ACTION={
 	NEXT_APP: payload=>({
 		type:`@@${DOMAIN}/CURRENT_APP`,
 		payload,
-	}),	
+	}),
 }
 
 const reducer=(state={},{type,payload})=>{
@@ -38,7 +39,7 @@ const reducer=(state={},{type,payload})=>{
 	case `@@${DOMAIN}/NEXT_APP`:
 		let current=state.current
 		let next=current
-		return {...state, current:next}	
+		return {...state, current:next}
 	}
 
 	return state
@@ -101,9 +102,9 @@ const router=(
 							withProps(({me})=>({data:me})),
 						)(My)
 					}/>
-					
+
 				<Route path="setting" component={Setting}/>
-				
+
 				<Route path="profile" contextual={false} component={
 						compose(
 							withQuery({
@@ -120,7 +121,7 @@ const router=(
 						)(Profile)
 					}/>
 			</Route>
-			
+
 			<Route path="app" contextual={false}>
 				<IndexRoute component={App.Creator}/>
 				<Route path=":id" component={
@@ -144,23 +145,26 @@ const router=(
 					}/>
 			</Route>
 
-			<Route path="comment/:id" component={
-					compose(
-						withQuery(({params:{id}})=>({
-							variables:{
+			<Route path="comment/:id" component={compose(
+				withPagination(({params:{id}})=>({
+					variables:{id},
+					query: graphql`
+				        query main_comment_Query($id:ObjectID!, $count: Int=10, $cursor: String=null){
+				            me{
 								id
-							},
-							query: graphql`
-								query main_comment_Query($id:ID!){
-									comment(id:$id){
-										
-									}
-								}
-							`,
-						})),
-						withProps(({me})=>({data:me})),
-					)(Comment)
-				}/>			
+				                app(_id:$id){
+				                    ...comment
+				                }
+				            }
+				        }
+				    `,
+				})),
+				withProps(({me, params:{id}})=>({
+					data:me && me.app,
+					currentUserId: me && me.id && me.id.split(":").pop(),
+					id,
+				})),
+			)(Comment)}/>
 		</Route>
 	</Router>
 )

@@ -1,95 +1,24 @@
 import React, {Component, PropTypes} from "react"
+import {compose,withProps} from "recompose"
+import {graphql, withMutation, withFragment} from "tools/recompose"
+
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"
 
 import TextField from 'material-ui/TextField'
 import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar'
 import IconButton from 'material-ui/IconButton'
-
 import {cyan50 as bg} from "material-ui/styles/colors"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
 import IconEmptyComment from "material-ui/svg-icons/editor/mode-comment"
-
 import PullToRefresh from "pull-to-refresh2"
 
-import {select as selectImageFile} from "./file-selector"
+import file from "components/file"
+import CommandBar from 'components/command-bar'
+import Empty from "components/empty"
 
-import {Service} from '../db/service'
-import CommandBar from './command-bar'
-import User from '../db/user'
-import Comment from '../db/comment'
-import File from "../db/file"
-import Empty from "./empty"
-
-export const DOMAIN="COMMENT"
-export const ACTION={
-    FETCH: (type,_id)=>dispatch=>Comment.of(type).find({parent:_id}, {sort:[["createdAt","desc"]], limit:20})
-            .fetch(data=>dispatch({type:`@@${DOMAIN}/fetched`,payload:{data: data.reverse(),type,_id}}))
-	,FETCH_MORE: ok=>(dispatch,getState)=>{
-		const state=getState()
-		const {type,_id, data:[first]=[]}=state.comment
-		let query={parent:_id}
-		if(first){
-			query.createdAt={$lt:first.createdAt}
-		}
-		
-		Comment.of(type)
-			.find(query, {sort:[["createdAt","desc"]], limit:20})
-			.fetch(data=>{
-				dispatch({type:`@@${DOMAIN}/fetched_more`,payload:{data: data.reverse()}})
-				ok()
-			})
-	}
-	,FETCH_REFRESH: ok=>(dispatch,getState)=>{
-		const state=getState()
-		const {type,_id, data=[]}=state.comment
-		let last=data[data.length-1]
-		let query={parent:_id}
-		if(last){
-			query.createdAt={$gt:last.createdAt}
-		}
-		
-		Comment.of(type)
-			.find(query)
-			.fetch(data=>{
-				dispatch({type:`@@${DOMAIN}/fetched_refresh`,payload:{data}})
-				ok()
-			})
-	}
-    ,CREATE: (type,id,content,props={})=>dispatch=>{
-		content=content.trim()
-		if(content.length<2)
-			return Promise.reject()
-
-        const user=User.current
-        const comment={
-                ...props,
-                type,
-                parent:id,
-                thumbnail:user.thumbnail,
-                content:content
-            }
-        return Comment.of(type).upsert(comment)
-            .then(a=>dispatch({type:`@@${DOMAIN}/created`,payload:a}))
-    }
-}
-
-export const reducer=(state={}, {type, payload})=>{
-    switch(type){
-    case `@@${DOMAIN}/CLEAR`:
-        return {}
-    case `@@${DOMAIN}/fetched`:
-		return {...state, ...payload}
-    case `@@${DOMAIN}/fetched_more`:
-		return {...state, data: [...payload.data, ...state.data]}
-    case `@@${DOMAIN}/fetched_refresh`:
-		return {...state, data: [...state.data, ...payload.data]}
-    case `@@${DOMAIN}/created`:
-        return {...state, data:[...state.data, payload]}
-    }
-    return state
-}
+import {createPaginationContainer} from "react-relay"
 
 function smartFormat(d){
 	let now=new Date()
@@ -106,19 +35,14 @@ function smartFormat(d){
 	}
 }
 
-export class CommentUI extends Component{
-    state={comment:""}
+export class Comment extends Component{
 	first=true
+    state={comment:""}
     componentDidMount(){
-        const {dispatch,params:{type,_id}}=this.props
-        dispatch(ACTION.FETCH(type,_id))
 		if(this.end && this.first){
 			this.end.scrollIntoView({ behavior: "smooth" })
 			this.first=false
 		}
-    }
-    componentWillUnmount(){
-        this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
     }
 	componentDidUpdate(prevProps, prevState){
 		if(this.end && this.first){
@@ -127,10 +51,12 @@ export class CommentUI extends Component{
 		}
 	}
     render(){
-        const {data=[],template,dispatch,params:{type,_id},hint="说两句", system}=this.props
-		const {muiTheme:{page: {height}}}=this.context
-        const {comment}=this.state
-		const create=()=>dispatch(ACTION.CREATE(type,_id, comment)).then(a=>this.setState({comment:""}))
+        let {data, currentUserId, createText, createPhoto, template,loadMore,hint="说两句", system}=this.props
+		const {comment}=this.state
+        const {muiTheme:{page: {height}}}=this.context
+        const create=()=>createText({content:this.state.comment}).then(a=>this.setState({comment:""}))
+        data=data||[]
+
         let save={
             action:"Save",
             label:"发布",
@@ -141,16 +67,16 @@ export class CommentUI extends Component{
             action:"photo",
             label:"照片",
             icon: <IconCamera/>,
-            onSelect:e=>selectImageFile()
-                .then(url=>File.upload(url))
-                .then(url=>dispatch(ACTION.CREATE(type,_id,url,{content_type:"photo"})))
+            onSelect:e=>file.selectImageFile()
+                .then(url=>file.upload(url))
+                .then(url=>createPhoto({url}))
         }
 
         let action=photo
 
         if(comment.trim())
             action=save
-		
+
 		let elEnd=null
 		if(data.length && this.first){
 			elEnd=(<div ref={el=>this.end=el}/>)
@@ -158,23 +84,21 @@ export class CommentUI extends Component{
 
 		return (
             <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
-                <PullToRefresh
-					onRefresh={ok=>dispatch(ACTION.FETCH_MORE(ok))}
-					onMore={ok=>dispatch(ACTION.FETCH_REFRESH(ok))}
-					>
-                    {data.reduce((state,a)=>{
+                <PullToRefresh onRefresh={loadMore}>
+                    {data.reduce((state,a,i)=>{
+							let createdAt=new Date(a.createdAt)
 							let {comments,last}=state
-							let props={comment:a,key:a._id, system}
-							if(!last || (a.createdAt.getTime()-last.getTime())>1000*60){
-								props.time=a.createdAt
+							let props={comment:a,key:i, system, currentUserId}
+							if(!last || (createdAt.getTime()-last.getTime())>1000*60){
+								props.time=createdAt
 							}
 							comments.push(React.createElement(template, props))
-							state.last=a.createdAt
+							state.last=createdAt
 							return state
-						},{comments:[]}).comments						
+						},{comments:[]}).comments
 					}
                 </PullToRefresh>
-				
+
 
                 <CommandBar
                     className="footbar centerinput"
@@ -200,22 +124,22 @@ export class CommentUI extends Component{
 
     static defaultProps={
         systemThumbnail:null,
-        template: ({comment, system={}, time})=>{
+        template: ({comment, system={}, time, currentUserId})=>{
 			let name, left, right, text
-			const isOwner=comment.author._id==User.current._id
+			const isOwner=comment.author._id==currentUserId
             if(comment.system){
                 name=(<span style={{fontSize:'x-small'}}>{system.name}</span>)
 				left=(<Avatar src={system.thumbnail}/>)
 				right=(<span/>)
             }else if(isOwner){
 				left=(<span/>)
-				right=(<Avatar src={User.current.thumbnail}/>)
+				right=(<Avatar src={comment.author.thumbnail}/>)
 			}else{
 				name=(<span style={{fontSize:'x-small'}}>{comment.author.name}</span>)
-				left=(<Avatar src={comment.thumbnail}/>)
+				left=(<Avatar src={comment.author.thumbnail}/>)
 				right=(<span/>)
 			}
-			
+
 			let timing=null
 			if(time){
 				timing=(
@@ -254,108 +178,52 @@ export class CommentUI extends Component{
 	}
 }
 
-export class Inline extends Component{
-	componentDidMount(){
-        const {dispatch,kind:{_name},model:{_id}}=this.props
-        dispatch(ACTION.FETCH(_name,_id))
-		this.end.scrollIntoView({ behavior: "smooth" });
-    }
-    componentWillUnmount(){
-        this.props.dispatch({type:`@@${DOMAIN}/CLEAR`})
-    }
-	
-	componentDidUpdate(prevProps, prevState){
-		const {prev=[{}]}=prevProps
-		const {data=[{}]}=this.props
-		if(prev[0]._id!==data[0]._id){
-			this.end.scrollIntoView({ behavior: "smooth" });
+export default compose(
+	withMutation(({id})=>({
+		name: "createText",
+		promise:true,
+		variables:{id},
+		mutation:graphql`
+			mutation comment_update_Mutation($id:ID!, $content:String!){
+				comment(host:$id, content:$content){
+					id
+					createdAt
+				}
+			}
+		`
+	})),
+	withFragment(graphql`
+        fragment comment on App{
+            comments(last:$count, before: $cursor)@connection(key:"comment_comments"){
+                edges{
+					node{
+						content
+						createdAt
+						author{
+							id
+							name
+							photo
+						}
+					}
+                }
+                pageInfo{
+                    hasPreviousPage
+                    startCursor
+                }
+            }
+        }
+    `),
+	withProps(({data, relay})=>({
+		data:data.comments.edges.map(({node})=>node),
+		loadMore(ok){
+			if(relay.hasMore() && !relay.isLoading()){
+				relay.loadMore(10, e=>{
+					ok()
+					if(e){
+						console.error(e)
+					}
+				})
+			}
 		}
-	}
-	render(){
-		const {data=[],template, emptyIcon, 
-			dispatch,kind:{_name},model:{_id},
-			commentable=true,
-			hint="说两句", empty}=this.props
-
-		let content=null
-		if(data.length){
-			content=(
-				<PullToRefresh
-					onRefresh={ok=>dispatch(ACTION.FETCH_MORE(ok))}
-					onMore={ok=>dispatch(ACTION.FETCH_REFRESH(ok))}
-					>
-					{data.map(a=>React.createElement(template, {comment:a,key:a._id}))}
-				</PullToRefresh>
-			)
-		}else{
-			content=<Empty text={empty||"当前还没有评论哦"} icon={emptyIcon}/>
-		}
-		let editor=null
-		if(commentable)
-			editor=(<Editor type={_name} _id={_id} dispatch={dispatch} hint={hint}/>)
-		return (
-            <div className="comment inline">
-				{editor}
-				{content}
-				<div ref={el=>this.end=el}/>
-    		</div>
-        )
-	}
-
-	static defaultProps={
-		template:CommentUI.defaultProps.template,
-		emptyIcon:<IconEmptyComment/>
-	}
-}
-
-
-class Editor extends Component{
-	state={
-		comment:""
-	}
-	render(){
-		const {comment}=this.state
-        const {hint}=this.props
-		let action=null
-		if(comment){
-			action=<IconButton onTouchTap={this.save.bind(this)}><IconSave/></IconButton>
-		}else{
-			action=<IconButton onTouchTap={this.photo.bind(this)}><IconCamera/></IconButton>
-		}
-		return (
-			<Toolbar noGutter={true} className="grid"
-				style={{backgroundColor:"transparent"}}>
-				<ToolbarGroup style={{display:"table-cell",width:"100%"}}>
-					<TextField value={comment}
-						onChange={(e,comment)=>this.setState({comment})}
-						onKeyDown={({keyCode})=>keyCode==13 && this.save()}
-						hintText={hint}
-						fullWidth={true}/>
-				</ToolbarGroup>
-				<ToolbarGroup style={{width:40}}>
-					{action}
-				</ToolbarGroup>
-			</Toolbar>
-		)
-	}
-
-	save(){
-		const {type, _id,dispatch}=this.props
-		const {comment}=this.state
-		dispatch(ACTION.CREATE(type,_id, comment))
-			.then(a=>this.setState({comment:""}))
-	}
-
-	photo(){
-		const {type, _id,dispatch}=this.props
-		const {comment}=this.state
-		selectImageFile()
-			.then(url=>File.upload(url))
-			.then(url=>dispatch(ACTION.CREATE(type,_id,url,{content_type:"photo"})))
-	}
-}
-
-export default Object.assign(connect(state=>state.comment)(CommentUI),{
-	reducer,
-	Inline: connect(state=>state.comment)(Inline)
-})
+	}))
+)(Comment)
