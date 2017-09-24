@@ -238,37 +238,4 @@ export default compose(
 			}
 		}
 	})),
-	withSubscription(({id})=>({
-		variable:{id},
-		subscription: graphql`
-			subscription comment_new_Subscription($id:ID!){
-				commentNotify(id:$id){
-					id
-					content
-					type
-					createdAt
-					author{
-						id
-						name
-						photo
-					}
-				}
-			}
-		`,
-		updater(store){
-			// Get the notification
-			const rootField = store.getRootField('commentNotify');
-			const notification = rootField.getLinkedRecord('notification');
-			// Add it to a connection
-			const viewer = store.getRoot().getLinkedRecord('me');
-			const notifications =ConnectionHandler.getConnection(viewer, 'notifications');
-			const edge = ConnectionHandler.createEdge(
-				store,
-				notifications,
-				notification,
-				'<TypeOfCommentEdge>',
-			);
-			ConnectionHandler.insertEdgeAfter(notifications, edge);
-		}
-	})),
 )(Comment)

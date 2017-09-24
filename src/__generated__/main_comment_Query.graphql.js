@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 922a89d3ffe8d6dbf1a6c2263153c9b8
+ * @relayHash 4f53aaaab67066c539b7420160355c01
  */
 
 /* eslint-disable */
@@ -38,6 +38,7 @@ fragment comment on App {
     edges {
       node {
         content
+        type
         createdAt
         author {
           id
@@ -234,6 +235,13 @@ const batch /*: ConcreteBatch*/ = {
                             "kind": "ScalarField",
                             "alias": null,
                             "args": null,
+                            "name": "type",
+                            "storageKey": null
+                          },
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
                             "name": "createdAt",
                             "storageKey": null
                           },
@@ -361,7 +369,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_comment_Query(\n  $id: ObjectID!\n  $count: Int = 10\n  $cursor: String\n) {\n  me {\n    id\n    app(_id: $id) {\n      ...comment\n      id\n    }\n  }\n}\n\nfragment comment on App {\n  comments(last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
+  "text": "query main_comment_Query(\n  $id: ObjectID!\n  $count: Int = 10\n  $cursor: String\n) {\n  me {\n    id\n    app(_id: $id) {\n      ...comment\n      id\n    }\n  }\n}\n\nfragment comment on App {\n  comments(last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
 };
 
 module.exports = batch;

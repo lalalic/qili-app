@@ -13,6 +13,7 @@ export type comment = {|
     +edges: ?$ReadOnlyArray<?{|
       +node: ?{|
         +content: string;
+        +type: ?"text" | "photo";
         +createdAt: any;
         +author: {|
           +id: string;
@@ -87,6 +88,13 @@ const fragment /*: ConcreteFragment*/ = {
                   "alias": null,
                   "args": null,
                   "name": "content",
+                  "storageKey": null
+                },
+                {
+                  "kind": "ScalarField",
+                  "alias": null,
+                  "args": null,
+                  "name": "type",
                   "storageKey": null
                 },
                 {
