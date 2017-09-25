@@ -66,7 +66,7 @@ export const REDUCER=(state={},{type,payload})=>{
 	case `@@${DOMAIN}/NEXT_APP`:
 		let current=state.current
 		let next=current
-		return {...state, current:next}	
+		return {...state, current:next}
 	}
 
 	return state
@@ -165,7 +165,7 @@ export default compose(
 			}
 		})
 	}),
-	
+
 	branch(({appId})=>!appId,renderComponent(({theme})=>
 		<UI muiTheme={theme}>
 			<Empty icon={null}>
@@ -224,7 +224,7 @@ export default compose(
 			dispatch(ACTION.MESSAGE(m))
 		}
 	})),
-	
+
 	withContext({
 			is: PropTypes.object,
 			project: PropTypes.object,
@@ -239,7 +239,7 @@ export default compose(
 			loading,
 			showMessage,
 		})
-	),	
+	),
 
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
 		renderComponent(({tutorial,tutorialize,theme,store, })=>
@@ -265,12 +265,13 @@ export default compose(
 			fetcher(opt){
 				return fetch(service,{
 					method: 'POST',
+					...opt,
 					headers: {
 						'content-type': 'application/json',
 						"X-Application-ID": appId,
 						"X-Session-Token": token,
+						...(opt&&opt.headers||null)
 					},
-					...opt
 				})
 			}
 		})),
