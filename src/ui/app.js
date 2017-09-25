@@ -152,7 +152,10 @@ export default compose(
 		getContext({router: PropTypes.object}),
 	)(Creator)),
 
-	getContext({router: PropTypes.object}),
+	getContext({
+		router: PropTypes.object,
+		showMessage: PropTypes.func,
+	}),
 
 	withFragment(graphql`
 		fragment app on App{
@@ -195,7 +198,7 @@ export default compose(
 	connect(state=>({
 			removable:state.current!="qiliAdmin"
 		}),
-		(dispatch,{doRemove,doUpload,name, router,params:{id}})=>({
+		(dispatch,{doRemove,doUpload,name, router,showMessage, switchApp, params:{id}})=>({
 			syncCurrent(newAppID){
 				if(newAppID!=id)
 					dispatch(Admin.ACTION.CURRENT_APP(newAppID))
@@ -205,12 +208,12 @@ export default compose(
 				if(removing && removing==name){
 					doRemove()
 					router.replace("/")
-					dispatch(Admin.ACTION.NEXT_APP())
+					switchApp()
 				}else{
-					dispatch(Admin.ACTION.MESSAGE({
+					showMessage({
 						message:"name is not correct, cancel removing",
 						level:"warning",
-					}))
+					})
 				}
 			},
 

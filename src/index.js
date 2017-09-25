@@ -166,18 +166,6 @@ export default compose(
 		})
 	}),
 	
-	withContext({
-			is: PropTypes.object,
-			project: PropTypes.object,
-		},
-		({project})=>({
-			is:{
-				app: typeof(cordova)!=="undefined"
-			},
-			project,
-		})
-	),
-	
 	branch(({appId})=>!appId,renderComponent(({theme})=>
 		<UI muiTheme={theme}>
 			<Empty icon={null}>
@@ -222,27 +210,69 @@ export default compose(
 	connect(state=>state[DOMAIN],(dispatch, {project})=>({
 		checkVersion(){
 			dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+		},
+		tutorialize(){
+			dispatch(ACTION.TUTORIALIZED)
+		},
+		setUser(user){
+			dispatch(ACTION.CURRENT_USER(user))
+		},
+		loading(a){
+			dispatch(ACTION.LOADING(a))
+		},
+		showMessage(m){
+			dispatch(ACTION.MESSAGE(m))
 		}
 	})),
+	
+	withContext({
+			is: PropTypes.object,
+			project: PropTypes.object,
+			loading: PropTypes.func,
+			showMessage: PropTypes.func,
+		},
+		({project,loading,showMessage})=>({
+			is:{
+				app: typeof(cordova)!=="undefined"
+			},
+			project,
+			loading,
+			showMessage,
+		})
+	),	
 
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
-		renderComponent(({tutorial,theme,dispatch,store})=>
+		renderComponent(({tutorial,tutorialize,theme,store, })=>
 			<Provider store={store}>
 				<UI muiTheme={theme}>
-					<Tutorial slides={tutorial} onEnd={e=>dispatch(ACTION.TUTORIALIZED)}/>
+					<Tutorial slides={tutorial} onEnd={tutorialize}/>
 				 </UI>
 			</Provider>
 	)),
 	withGraphqlClient("relay-modern"),
-	branch(({user})=>!user||!user.token,renderComponent(({dispatch,theme, store})=>
+	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
 				<Authentication
-					onSuccess={user=>dispatch(ACTION.CURRENT_USER(user))}/>
+					onSuccess={setUser}/>
 				<Loading/>
 				<Message/>
 			 </UI>
 		</Provider>
 	)),
+	withContext({fetcher:PropTypes.func},
+		({service, appId, user:{token}})=>({
+			fetcher(opt){
+				return fetch(service,{
+					method: 'POST',
+					headers: {
+						'content-type': 'application/json',
+						"X-Application-ID": appId,
+						"X-Session-Token": token,
+					},
+					...opt
+				})
+			}
+		})),
 	pure
 )(QiliApp)

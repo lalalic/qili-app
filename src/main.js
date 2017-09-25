@@ -5,7 +5,7 @@ import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {combineReducers} from "redux"
 import {connect} from "react-redux"
 
-import {compose, withProps, withContext, getContext, setStatic} from "recompose"
+import {compose, withProps, withContext, getContext, setStatic, branch, createEagerFactory,renderNothing} from "recompose"
 import {graphql, withFragment, withQuery, withInit, withMutation, withPagination} from "tools/recompose"
 
 import Logo from 'icons/logo'
@@ -17,6 +17,7 @@ import My from "ui/my"
 import Setting from "ui/setting"
 import App from "ui/app"
 import Comment from "components/comment"
+import Cloud from "ui/cloud"
 
 const {DOMAIN,REDUCER}=qili
 
@@ -24,11 +25,7 @@ export const ACTION={
 	CURRENT_APP: payload=>({
 		type:`@@${DOMAIN}/CURRENT_APP`,
 		payload,
-	}),
-	NEXT_APP: payload=>({
-		type:`@@${DOMAIN}/CURRENT_APP`,
-		payload,
-	}),
+	})
 }
 
 const reducer=(state={},{type,payload})=>{
@@ -36,22 +33,14 @@ const reducer=(state={},{type,payload})=>{
 	switch(type){
 	case `@@${DOMAIN}/CURRENT_APP`:
 		return {...state, current:payload}
-	case `@@${DOMAIN}/NEXT_APP`:
-		let current=state.current
-		let next=current
-		return {...state, current:next}
 	}
-
 	return state
 }
 
-const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJyb290IiwidXNlcm5hbWUiOiJyb290MSIsImlhdCI6MTUwNTkyMjkwMiwiZXhwIjoxNTM3NDgwNTAyfQ.g8kZP6BCiL7eoZaTCawxpHabp9objwxxTlVjGE8bg28"
 const QiliAdmin=compose(
 	withProps(()=>({
 		project: require("../package.json"),
 		appId:"qiliAdmin",
-		service: "http://localhost:8080/1/graphql",
-		user:{token},
 		reducers:{
 			[DOMAIN]:reducer
 		}
@@ -66,6 +55,7 @@ const QiliAdmin=compose(
 						id
 						name
 						uname
+						cloudCode
 						apiKey
 					}
 				}
@@ -81,13 +71,39 @@ const QiliAdmin=compose(
 	}),
 )(QiliApp)
 
+const Current=compose(
+	connect(({qili:{current}})=>({id:current})),
+	branch(({id})=>!id, renderNothing),
+	getContext({client: PropTypes.object}),
+	withProps(({dispatch, client,id})=>({
+		name: client.get(id).name,
+		switchApp(){
+			let apps=client.getAll("App")
+			let i=apps.findIndex(a=>a.id==id)
+			dispatch(ACTION.CURRENT_APP(apps.length ? apps[(i+1)%apps.length].id : null))
+		}
+	})),
+)(({name,switchApp})=>(
+	<FloatingActionButton className="sticky top right" mini={true}
+		style={{fontSize:"xx-small"}}
+		onClick={switchApp}>
+		{name}
+	</FloatingActionButton>
+))
+
+const withCurrent=()=>BaseComponent=>{
+	const factory=createEagerFactory(BaseComponent)
+	const WithCurrent=props=>(<div><Current/>{factory(props)}</div>)
+	return WithCurrent
+}
+
 const router=(
 	<Router history={hashHistory}>
 		<Route path="/">
-			<IndexRoute component={Dashboard}/>
+			<IndexRoute component={withCurrent()(Dashboard)}/>
 
 			<Route path="my">
-				<IndexRoute  contextual={false} component={
+				<IndexRoute  component={
 						compose(
 							withQuery({
 								spread:false,
@@ -105,7 +121,7 @@ const router=(
 
 				<Route path="setting" component={Setting}/>
 
-				<Route path="profile" contextual={false} component={
+				<Route path="profile" component={
 						compose(
 							withQuery({
 								spread:false,
@@ -122,7 +138,7 @@ const router=(
 					}/>
 			</Route>
 
-			<Route path="app" contextual={false}>
+			<Route path="app">
 				<IndexRoute component={App.Creator}/>
 				<Route path=":id" component={
 						compose(
@@ -140,7 +156,17 @@ const router=(
 									}
 								`,
 							})),
-							withProps(({me})=>({data:me.app})),
+							connect(({qili:{current}})=>({current})),
+							getContext({client:PropTypes.object}),
+							withProps(({me,client,current,dispatch})=>({
+								data:me.app,
+								switchApp(){
+									let apps=client.getAll("App")
+									dispatch(ACTION.CURRENT_APP(apps.length ? apps[0].id : null))
+								},
+								client:undefined,
+								current:undefined,
+							})),
 						)(App)
 					}/>
 			</Route>
@@ -164,17 +190,23 @@ const router=(
 					currentUserId: me && me.id && me.id.split(":").pop(),
 					id,
 				})),
+				withCurrent(),
 			)(Comment)}/>
+			
+			<Route path="cloud" component={compose(
+				getContext({client:PropTypes.object}),
+				connect(({qili:{current}}, {client})=>({
+					id:current,
+					cloudCode: client.get(current).cloudCode
+				})),
+				withCurrent(),
+			)(Cloud)}/>
+			
 		</Route>
 	</Router>
 )
 
 /**
-
-
-
-			<Route path="cloud" component={connect(state=>({cloudCode:getCurrentApp(state).cloudCode}))(CloudUI)}/>
-
 			<Route path="data"
 				component={connect(state=>({...state.ui.data,app:getCurrentApp(state)._id}))(DataUI)}>
 				<IndexRedirect to={`${User._name}`}/>
@@ -186,9 +218,6 @@ const router=(
 				<IndexRedirect to="all"/>
 				<Route path=":level"/>
 			</Route>
-
-
-
 * */
 
 QiliApp.render(<QiliAdmin>{router}</QiliAdmin>)

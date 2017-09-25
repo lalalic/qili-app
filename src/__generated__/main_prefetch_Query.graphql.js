@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 9214b3429216e0d3ae165e55b86c70b1
+ * @relayHash 6c8f060ebe9f55448c530fbb6949f4e6
  */
 
 /* eslint-disable */
@@ -17,6 +17,7 @@ export type main_prefetch_QueryResponse = {|
       +id: string;
       +name: string;
       +uname: ?string;
+      +cloudCode: ?string;
       +apiKey: string;
     |}>;
   |};
@@ -33,6 +34,7 @@ query main_prefetch_Query {
       id
       name
       uname
+      cloudCode
       apiKey
     }
     id
@@ -96,6 +98,13 @@ const batch /*: ConcreteBatch*/ = {
                 "alias": null,
                 "args": null,
                 "name": "uname",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "cloudCode",
                 "storageKey": null
               },
               {
@@ -179,6 +188,13 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
+                "name": "cloudCode",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
                 "name": "apiKey",
                 "storageKey": null
               }
@@ -197,7 +213,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_prefetch_Query {\n  me {\n    name\n    token\n    apps {\n      id\n      name\n      uname\n      apiKey\n    }\n    id\n  }\n}\n"
+  "text": "query main_prefetch_Query {\n  me {\n    name\n    token\n    apps {\n      id\n      name\n      uname\n      cloudCode\n      apiKey\n    }\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

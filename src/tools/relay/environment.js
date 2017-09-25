@@ -6,7 +6,7 @@ const handlerProvider = null;
 
 const environments={}
 	
-export default function createEnvironment(appId, token){
+export default function createEnvironment(service, appId, token){
 	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
@@ -16,7 +16,7 @@ export default function createEnvironment(appId, token){
 		  cacheConfig,
 		  uploadables,
 		) {
-		  return fetch('http://localhost:8080/1/graphql', {
+		  return fetch(service, {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json',
