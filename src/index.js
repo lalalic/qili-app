@@ -230,14 +230,16 @@ export default compose(
 			project: PropTypes.object,
 			loading: PropTypes.func,
 			showMessage: PropTypes.func,
+			theme: PropTypes.object
 		},
-		({project,loading,showMessage})=>({
+		({project,loading,showMessage,theme})=>({
 			is:{
 				app: typeof(cordova)!=="undefined"
 			},
 			project,
 			loading,
 			showMessage,
+			theme,
 		})
 	),
 

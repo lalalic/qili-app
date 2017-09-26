@@ -2,12 +2,15 @@ import React, {Component, PropTypes} from "react"
 import {compose, getContext, pure} from "recompose"
 import {withMutation, graphql} from "tools/recompose" 
 
+
+import CodeMirror from "react-codemirror"
 import CommandBar from 'components/command-bar'
 import file from "components/file"
 
 import UploadIcon from "material-ui/svg-icons/file/file-upload"
 import SaveIcon from "material-ui/svg-icons/content/save"
 
+require("codemirror/mode/javascript/javascript")
 export class Cloud extends Component{
 	constructor(){
 		super(...arguments)
@@ -30,16 +33,29 @@ export class Cloud extends Component{
 	}
 
 	render(){
-		const {mutate}=this.props
+		const {mutate, theme}=this.props
 		const {cloudCode}=this.state
 		
 		return (
 			<div>
-				<textarea value={cloudCode||""}
-					onChange={({target:{value}})=>this.setState({cloudCode:value})}
-					placeholder="Cloud nodejs code"
-					style={{position:'absolute', height: '100%', top:0,lineHeight:'2em',
-						margin:0,width:'100%', padding:10, paddingBottom:51,border:0}}/>
+				<CodeMirror
+					value={cloudCode||""}
+					autoFocus={true}
+					autoSave={true}
+					onChange={cloudCode=>this.setState({cloudCode})}
+					options={{
+						lineNumbers:true,
+						mode:"javascript",
+						dragDrop:true,
+						allowDropFileTypes:[".js",".json",".jsx"],
+					}}
+					ref={a=>{
+						if(a){
+							let container=document.querySelector('.CodeMirror')
+							container.style.height=`${theme.page.height-theme.footbar.height}px`
+						}
+					}}
+					/>
 				<CommandBar className="footbar"
 					items={[
 						{action:"Back"}
@@ -69,5 +85,8 @@ export default compose(
 			}
 		`
 	})),
-	getContext({showMessage: PropTypes.func})
+	getContext({
+		showMessage: PropTypes.func,
+		theme: PropTypes.object,
+	}),
 )(Cloud)

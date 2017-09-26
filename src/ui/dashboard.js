@@ -11,11 +11,21 @@ import CheckUpdate from "components/check-update"
 import CommandBar from "components/command-bar"
 import Empty from "components/empty"
 import GraphiQL from 'graphiql'
-require("graphiql/graphiql.css")
 
-export const Dashboard=({router, fetcher})=>(
+export const Dashboard=({router, fetcher,theme})=>(
 	<div>
-		<GraphiQL fetcher={fetcher}/>
+		<GraphiQL 
+			ref={ql=>{
+				if(ql){
+					let a=document.querySelector('.graphiql-container')
+					a.style.position="absolute"
+					a.style.height=`${theme.page.height-theme.footbar.height}px`
+					ql.setState({docExplorerOpen:false})
+				}
+			}} 
+			fetcher={fetcher}
+			query="query{schema}"
+			/>
 		<CommandBar  className="footbar"
 			onSelect={cmd=>router.push(`/${cmd.toLowerCase()}`)}
 			items={[
@@ -29,7 +39,11 @@ export const Dashboard=({router, fetcher})=>(
 )
 
 export default compose(
-	getContext({router:PropTypes.object, fetcher: PropTypes.func}),
+	getContext({
+		router:PropTypes.object, 
+		fetcher: PropTypes.func,
+		theme: PropTypes.object,
+	}),
 	connect(({qili:{current}},{fetcher})=>({
 		fetcher(params){
 			return fetcher({
@@ -37,7 +51,8 @@ export default compose(
 				headers:{
 					"X-Application-ID2": current.split(":").pop()
 				}
-			}).then(res=>res.json())
+			})
+			.then(res=>res.json())
 		}
 	})),
 )(Dashboard)
