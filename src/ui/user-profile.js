@@ -7,6 +7,8 @@ import CommandBar from "components/command-bar"
 import Photo from "components/photo"
 import {InfoForm, Field} from "components/info-form"
 import {TextField} from "material-ui"
+import {ACTION} from "qili"
+
 import IconQuit from "material-ui/svg-icons/file/cloud-off"
 
 export const Profile=({
@@ -104,6 +106,11 @@ export default compose(
 				file_link(url:$url, id:$id, field:$field)
 			}
 		`
+	})),
+	connect(null,(dispatch)=>({
+		logout(){
+			dispatch(ACTION.LOGOUT)
+		}
 	})),
 	pure,
 )(Profile)

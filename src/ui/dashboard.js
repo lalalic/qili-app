@@ -29,7 +29,6 @@ export const Dashboard=({router, fetcher,theme})=>(
 		<CommandBar  className="footbar"
 			onSelect={cmd=>router.push(`/${cmd.toLowerCase()}`)}
 			items={[
-				{action:"Data", icon:<IconData/>},
 				{action:"Cloud", icon:<IconCloud/>},
 				{action:"Log", icon:<IconLog/>},
 				{action:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}

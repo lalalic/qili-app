@@ -59,13 +59,6 @@ export class Cloud extends Component{
 				<CommandBar className="footbar"
 					items={[
 						{action:"Back"}
-						,{action:"Upload", icon:<UploadIcon/>,
-							onSelect:e=>file.selectTextFile()
-								.then(({data:cloudCode})=>{
-									this.setState({cloudCode})
-									this.update()
-								})
-						}
 						,{action:"Save",icon:<SaveIcon/>,
 							onSelect:e=>this.update()
 						}

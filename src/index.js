@@ -277,5 +277,5 @@ export default compose(
 				})
 			}
 		})),
-	pure
+	pure,
 )(QiliApp)

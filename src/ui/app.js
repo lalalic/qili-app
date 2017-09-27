@@ -186,15 +186,6 @@ export default compose(
 			}
 		`,
 	})),
-	/*
-	withMutation({
-		mutation:graphql`
-			mutation app_upload_mutation(){
-				app_upload()
-			}
-		`
-	}),
-	*/
 	connect(state=>({
 			removable:state.current!="qiliAdmin"
 		}),
@@ -215,11 +206,6 @@ export default compose(
 						level:"warning",
 					})
 				}
-			},
-
-			upload(){
-				file.select()
-					.then(doUpload)
 			}
 		})
 	)

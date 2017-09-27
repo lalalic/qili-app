@@ -64,7 +64,7 @@ const QiliAdmin=compose(
 		onSuccess(response,dispatch){
 			const {me:{apps, token,name}}=response
 			dispatch(qili.ACTION.CURRENT_USER({name,token}))
-			if(apps.length>0){
+			if(apps && apps.length>0){
 				dispatch(ACTION.CURRENT_APP(apps[0].id))
 			}
 		}
