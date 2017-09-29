@@ -124,16 +124,24 @@ const router=(
 				<Route path="profile" component={
 						compose(
 							withQuery({
-								spread:false,
 								query:graphql`
 									query main_userProfile_me_Query{
 										me{
-											...userProfile
+											id
+											username
+											birthday
+											gender
+											location
+											photo
+											signature
 										}
 									}
 									`,
 							}),
-							withProps(({me})=>({data:me})),
+							withProps(({me})=>({
+								...me,
+								birthday: me&&me.birthday ? new Date(me.birthday) : undefined
+							})),
 						)(Profile)
 					}/>
 			</Route>

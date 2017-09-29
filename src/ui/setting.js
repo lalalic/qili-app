@@ -12,30 +12,35 @@ import IconLogo from "material-ui/svg-icons/action/android"
 
 
 import CheckUpdate from "components/check-update"
+import CommandBar from "components/command-bar"
 
 export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=>(
-    <List>
-		{app && (<ListItem primaryText="去评价" leftIcon={<IconRate/>}/>)}
+	<div>
+		<List>
+			{app && (<ListItem primaryText="去评价" leftIcon={<IconRate/>}/>)}
 
-        <ListItem primaryText="建议" leftIcon={<IconBug/>}/>
+			<ListItem primaryText="建议" leftIcon={<IconBug/>}/>
 
-		<ListItem primaryText={app ? `${latestVersion && version!=latestVersion ? <CheckUpdate>当前{lastVersion},更新到{version}</CheckUpdate> : "已是最新v"+version}`:`下载App [V${version}]`} leftIcon={<IconLogo/>}
-            onClick={e=>{
-				if(app && (!latestVersion || version==latestVersion))
-					return
-        		let a=document.createElement("a")
-        		a.href=`${homepage}/app.apk`
-        		a.download="app.apk"
-        		a.style.position="absolute"
-        		a.top=-1000;
-        		document.body.appendChild(a)
-        		a.click()
-        		document.body.removeChild(a)
-        	}}
-		/>
+			<ListItem primaryText={app ? `${latestVersion && version!=latestVersion ? <CheckUpdate>当前{lastVersion},更新到{version}</CheckUpdate> : "已是最新v"+version}`:`下载App [V${version}]`} leftIcon={<IconLogo/>}
+				onClick={e=>{
+					if(app && (!latestVersion || version==latestVersion))
+						return
+					let a=document.createElement("a")
+					a.href=`${homepage}/app.apk`
+					a.download="app.apk"
+					a.style.position="absolute"
+					a.top=-1000;
+					document.body.appendChild(a)
+					a.click()
+					document.body.removeChild(a)
+				}}
+			/>
 
-        <ListItem primaryText="关于" leftIcon={<IconAbout/>}/>
-    </List>
+			<ListItem primaryText="关于" leftIcon={<IconAbout/>}/>
+		</List>
+		
+		<CommandBar className="footbar" items={[{action:"back"}]}/>
+	</div>
 )
 
 export default compose(

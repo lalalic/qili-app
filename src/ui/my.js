@@ -9,8 +9,8 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 import Account from "components/account"
 import CommandBar from "components/command-bar"
 	
-export const My=({data, apps, router})=>(
-	<Account data={data}>
+export const My=({id, username, photo, apps, router})=>(
+	<Account {...{id, username, photo}}>
 		<ListItem
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
@@ -33,7 +33,9 @@ export const My=({data, apps, router})=>(
 export default compose(
 	withFragment(graphql`
 		fragment my on User{
-			...account			
+			id
+			username
+			photo			
 			apps{
 				id
 				name

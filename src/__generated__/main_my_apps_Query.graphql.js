@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash d82f095906c450e5247e95038684ad6c
+ * @relayHash 334a7f2b2ffdd14469ccca78e3ddf1de
  */
 
 /* eslint-disable */
@@ -24,17 +24,13 @@ query main_my_apps_Query {
 }
 
 fragment my on User {
-  ...account
+  id
+  username
+  photo
   apps {
     id
     name
   }
-}
-
-fragment account on User {
-  id
-  username
-  photo
 }
 */
 
@@ -139,7 +135,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_my_apps_Query {\n  me {\n    ...my\n    id\n  }\n}\n\nfragment my on User {\n  ...account\n  apps {\n    id\n    name\n  }\n}\n\nfragment account on User {\n  id\n  username\n  photo\n}\n"
+  "text": "query main_my_apps_Query {\n  me {\n    ...my\n    id\n  }\n}\n\nfragment my on User {\n  id\n  username\n  photo\n  apps {\n    id\n    name\n  }\n}\n"
 };
 
 module.exports = batch;

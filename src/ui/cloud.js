@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from "react"
-import {compose, getContext, pure} from "recompose"
+import {compose, getContext} from "recompose"
 import {withMutation, graphql} from "tools/recompose" 
 
 
@@ -39,9 +39,8 @@ export class Cloud extends Component{
 		return (
 			<div>
 				<CodeMirror
-					value={cloudCode||""}
-					autoFocus={true}
-					autoSave={true}
+					value={cloudCode}
+					preserveScrollPosition={true}
 					onChange={cloudCode=>this.setState({cloudCode})}
 					options={{
 						lineNumbers:true,
@@ -51,6 +50,9 @@ export class Cloud extends Component{
 					}}
 					ref={a=>{
 						if(a){
+							if(a.codeMirror.getValue()!=cloudCode){//why
+								a.codeMirror.setValue(cloudCode)
+							}
 							let container=document.querySelector('.CodeMirror')
 							container.style.height=`${theme.page.height-theme.footbar.height}px`
 						}

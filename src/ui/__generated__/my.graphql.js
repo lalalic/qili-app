@@ -9,6 +9,9 @@
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
 export type my = {|
+  +id: string;
+  +username: ?string;
+  +photo: ?string;
   +apps: $ReadOnlyArray<?{|
     +id: string;
     +name: string;
@@ -24,9 +27,25 @@ const fragment /*: ConcreteFragment*/ = {
   "name": "my",
   "selections": [
     {
-      "kind": "FragmentSpread",
-      "name": "account",
-      "args": null
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "id",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "username",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "photo",
+      "storageKey": null
     },
     {
       "kind": "LinkedField",

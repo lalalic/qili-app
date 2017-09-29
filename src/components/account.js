@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from "react"
 import {compose,getContext,withProps} from "recompose"
-import {graphql, withMutation, withFragment} from "tools/recompose"
+import {graphql, withMutation} from "tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Link} from "react-router"
@@ -46,14 +46,6 @@ export const Account=({photo, username, children,router, setPhoto})=>{
 
 export default compose(
 	getContext({router: PropTypes.object}),
-	withFragment(graphql`
-		fragment account on User{
-			id
-			username
-			photo
-		}
-	`),
-	withProps(({data})=>data),
 	withMutation(({id},{url})=>({
 		name:"setPhoto",
 		variables:{

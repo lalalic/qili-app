@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 88c4c875dc2acd4aed34360059f6d5c0
+ * @relayHash 7023bc33642bf3cad57f9875bf92649b
  */
 
 /* eslint-disable */
@@ -9,20 +9,20 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type userProfile_setPhoto_MutationVariables = {|
+export type recompose_setPhoto_MutationVariables = {|
   url: string;
   id: string;
   field?: ?string;
 |};
 
-export type userProfile_setPhoto_MutationResponse = {|
+export type recompose_setPhoto_MutationResponse = {|
   +file_link: ?boolean;
 |};
 */
 
 
 /*
-mutation userProfile_setPhoto_Mutation(
+mutation recompose_setPhoto_Mutation(
   $url: String!
   $id: ID!
   $field: String = "photo"
@@ -55,7 +55,7 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "userProfile_setPhoto_Mutation",
+    "name": "recompose_setPhoto_Mutation",
     "selections": [
       {
         "kind": "ScalarField",
@@ -89,7 +89,7 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "userProfile_setPhoto_Mutation",
+  "name": "recompose_setPhoto_Mutation",
   "query": {
     "argumentDefinitions": [
       {
@@ -112,7 +112,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "userProfile_setPhoto_Mutation",
+    "name": "recompose_setPhoto_Mutation",
     "operation": "mutation",
     "selections": [
       {
@@ -143,7 +143,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation userProfile_setPhoto_Mutation(\n  $url: String!\n  $id: ID!\n  $field: String = \"photo\"\n) {\n  file_link(url: $url, id: $id, field: $field)\n}\n"
+  "text": "mutation recompose_setPhoto_Mutation(\n  $url: String!\n  $id: ID!\n  $field: String = \"photo\"\n) {\n  file_link(url: $url, id: $id, field: $field)\n}\n"
 };
 
 module.exports = batch;

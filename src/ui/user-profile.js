@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
-import {graphql, withFragment, withMutation} from "tools/recompose"
+import {graphql, withFragment, withMutation, setPhoto} from "tools/recompose"
 
 import CommandBar from "components/command-bar"
 import Photo from "components/photo"
@@ -72,18 +72,6 @@ export const Profile=({
 
 
 export default compose(
-	withFragment(graphql`
-		fragment userProfile on User{
-			id
-			username
-			birthday
-			gender
-			location
-			photo
-			signature
-		}
-	`),
-	withProps(({data})=>({...data, birthday: new Date(data.birthday)})),
 	withMutation(({id}, data)=>{
 		return {
 			patch4:id,
@@ -94,23 +82,9 @@ export default compose(
 			`
 		}
 	}),
-	withMutation(({id},{url})=>({
-		name:"setPhoto",
-		variables:{
-			id,
-			url,
-		},
-		patch4:id,
-		mutation:graphql`
-			mutation userProfile_setPhoto_Mutation($url:String!, $id:ID!, $field:String="photo"){
-				file_link(url:$url, id:$id, field:$field)
-			}
-		`
-	})),
+	setPhoto(),
 	connect(null,(dispatch)=>({
-		logout(){
-			dispatch(ACTION.LOGOUT)
-		}
+		logout:()=>dispatch(ACTION.LOGOUT),
 	})),
 	pure,
 )(Profile)
