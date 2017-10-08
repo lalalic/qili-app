@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash b4be57904e214c17b84efd0259447617
+ * @relayHash 291cb19b35daac6ad0ec7b6e3c6792fb
  */
 
 /* eslint-disable */
@@ -12,7 +12,7 @@ import type {ConcreteBatch} from 'relay-runtime';
 export type comment_update_MutationVariables = {|
   id: string;
   content: string;
-  type?: ?"text" | "photo";
+  type?: ?"photo" | "text";
 |};
 
 export type comment_update_MutationResponse = {|

@@ -13,7 +13,7 @@ export type comment = {|
     +edges: ?$ReadOnlyArray<?{|
       +node: ?{|
         +content: string;
-        +type: ?"text" | "photo";
+        +type: ?"photo" | "text";
         +createdAt: any;
         +author: {|
           +id: string;

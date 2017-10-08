@@ -152,24 +152,14 @@ export default class CommandBar extends Component{
         }
     }
 
-    static Comment=class extends Component{
-        render(){
-			const {type:{_name}, model:{_id}}=this.props
-			const {router}=this.context
-            return (<CommandBar.Command
-				label="评论"
-				onSelect={a=>router.push(`/comment/${_name}/${_id}`)}
-                icon={<CommentIcon/>}
-				{...this.props}/>)
-        }
-
-        static contextTypes={router:React.PropTypes.object}
-        static propTypes={
-            type:React.PropTypes.func.isRequired,
-            model:React.PropTypes.object.isRequired
-        }
-    }
-
+    static Comment=({toComment, ...props})=>(
+		<CommandBar.Command
+			label="评论"
+			onSelect={toComment}
+			icon={<CommentIcon/>}
+			{...props}/>
+	)
+	
     static Share=connect()(class extends Component{
         render(){
             return (<CommandBar.Command
