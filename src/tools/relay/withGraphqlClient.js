@@ -11,9 +11,9 @@ export const withGraphqlClient=options=>BaseComponent=>{
 		)
 	
 	const WithGraphqlClient=props=>{
-		let {client:environment,service, appId, user}=props
+		let {client:environment,service, appId, user,loading,showMessage}=props
 		if(!environment){
-			environment=createEnvironment(service, appId, user? user.token : undefined)
+			environment=createEnvironment(service, appId, user? user.token : undefined,loading,showMessage)
 		}else if(typeof(environment)=="function"){
 			environment=environment(props)
 		}

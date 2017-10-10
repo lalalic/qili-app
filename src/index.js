@@ -40,7 +40,7 @@ export const ACTION={
 	}),
 	TUTORIALIZED:({type:`@@${DOMAIN}/TUTORIALIZED`}),
 	LOGOUT:({type:`@@${DOMAIN}/LOGOUT`}),
-	LOADING: payload=>({type:`@@${DOMAIN}/LOADING`,payload:a}),
+	LOADING: payload=>({type:`@@${DOMAIN}/LOADING`,payload}),
 	MESSAGE: payload=>({
 		type:`@@${DOMAIN}/MESSAGE`,
 		payload: typeof(payload)=="string" ? {message:payload}:payload
@@ -207,7 +207,7 @@ export default compose(
 		}
 	}),
 
-	connect(state=>state[DOMAIN],(dispatch, {project})=>({
+	connect(({qili:{loading,message, ...others}})=>others,(dispatch, {project})=>({
 		checkVersion(){
 			dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
 		},
@@ -251,7 +251,7 @@ export default compose(
 				 </UI>
 			</Provider>
 	)),
-	withGraphqlClient("relay-modern"),
+	withGraphqlClient("relay modern"),
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
