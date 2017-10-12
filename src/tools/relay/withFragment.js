@@ -42,3 +42,12 @@ function isPagination(gql){
 	let {metadata}=gql[Object.keys(gql)[0]]()
 	return metadata && metadata.connection && metadata.connection.length>0
 }
+
+const trim=o=>Object.keys(o).reduce((o,k)=>{
+  if(o[k]===null){
+	  o[k]=undefined
+  }else if(typeof(o[k])=="object"){
+	  trim(o[k])
+  }
+  return o
+},o)

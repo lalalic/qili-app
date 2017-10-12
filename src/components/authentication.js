@@ -148,6 +148,7 @@ export default compose(
 		mutation: graphql`
 			mutation authentication_login_Mutation($contact:String!, $token: String!, $name: String){
 				login(contact:$contact, token:$token, name: $name){
+					id
 					token
 				}
 			}

@@ -7,26 +7,26 @@ type App implements Node {
   author: User
   createdAt: Date!
   updatedAt: Date
-  comments(last: Int, before: String): CommentConnection
 }
 
-type Comment implements Node {
+type AppComment implements Node {
   id: ID!
   content: String!
   type: CommentType
   author: User!
   createdAt: Date!
-  host: ID!
+  parent: ObjectID!
+  isOwner: Boolean
 }
 
-type CommentConnection {
-  edges: [CommentEdge]
+type AppCommentConnection {
+  edges: [AppCommentEdge]
   pageInfo: PageInfo
 }
 
-type CommentEdge {
-  node: Comment
-  cursor: String
+type AppCommentEdge {
+  node: AppComment
+  cursor: JSON
 }
 
 enum CommentType {
@@ -66,12 +66,12 @@ type Mutation {
   role_user_add(_id: ObjectID!, users: [String!]!): Date
   role_user_remove(_id: ObjectID!, users: [String!]!): Date
   file_link(url: String!, id: ID!, field: String!): Boolean
-  file_token(key: String): FileToken
+  file_tokens(count: Int): [FileToken]
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
   app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): Date
   app_remove(_id: ObjectID!): Boolean
-  comment(host: ID!, content: String!, type: CommentType): Comment
+  app_create_comment(parent: ObjectID, content: String!, type: CommentType): AppComment
 }
 
 interface Named {
@@ -89,9 +89,9 @@ scalar ObjectID
 
 type PageInfo {
   hasNextPage: Boolean
-  endCursor: String
+  endCursor: JSON
   hasPreviousPage: Boolean
-  startCursor: String
+  startCursor: JSON
 }
 
 type Query {
@@ -99,6 +99,7 @@ type Query {
   node(id: ID!): Node
   schema: String!
   me: User!
+  app_comments(parent: ObjectID, last: Int, before: JSON): AppCommentConnection
 }
 
 type Role implements Node {

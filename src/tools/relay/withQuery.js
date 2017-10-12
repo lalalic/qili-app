@@ -30,7 +30,7 @@ export const withQuery=option=>BaseComponent=>{
 					if(props){
 						return (
 							<Wrapper handle={()=>onSuccess && onSuccess(props,dispatch)}>
-								<BaseComponent {...others} {...props}/>
+								<BaseComponent {...others} {...props} data={props}/>
 							</Wrapper>
 						)
 					}else if(error){

@@ -8,8 +8,8 @@
 
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
-export type comment = {|
-  +comments: ?{|
+export type main_appComments = {|
+  +app_comments: ?{|
     +edges: ?$ReadOnlyArray<?{|
       +node: ?{|
         +content: string;
@@ -20,11 +20,12 @@ export type comment = {|
           +name: ?string;
           +photo: ?string;
         |};
+        +isOwner: ?boolean;
       |};
     |}>;
     +pageInfo: ?{|
       +hasPreviousPage: ?boolean;
-      +startCursor: ?string;
+      +startCursor: ?any;
     |};
   |};
 |};
@@ -35,13 +36,18 @@ const fragment /*: ConcreteFragment*/ = {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
+      "name": "parent",
+      "type": "ObjectID"
+    },
+    {
+      "kind": "RootArgument",
       "name": "count",
       "type": "Int"
     },
     {
       "kind": "RootArgument",
       "name": "cursor",
-      "type": "String"
+      "type": "JSON"
     }
   ],
   "kind": "Fragment",
@@ -52,26 +58,33 @@ const fragment /*: ConcreteFragment*/ = {
         "cursor": "cursor",
         "direction": "backward",
         "path": [
-          "comments"
+          "app_comments"
         ]
       }
     ]
   },
-  "name": "comment",
+  "name": "main_appComments",
   "selections": [
     {
       "kind": "LinkedField",
-      "alias": "comments",
-      "args": null,
-      "concreteType": "CommentConnection",
-      "name": "__comment_comments_connection",
+      "alias": "app_comments",
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "parent",
+          "variableName": "parent",
+          "type": "ObjectID"
+        }
+      ],
+      "concreteType": "AppCommentConnection",
+      "name": "__main_app_comments_connection",
       "plural": false,
       "selections": [
         {
           "kind": "LinkedField",
           "alias": null,
           "args": null,
-          "concreteType": "CommentEdge",
+          "concreteType": "AppCommentEdge",
           "name": "edges",
           "plural": true,
           "selections": [
@@ -79,7 +92,7 @@ const fragment /*: ConcreteFragment*/ = {
               "kind": "LinkedField",
               "alias": null,
               "args": null,
-              "concreteType": "Comment",
+              "concreteType": "AppComment",
               "name": "node",
               "plural": false,
               "selections": [
@@ -140,6 +153,13 @@ const fragment /*: ConcreteFragment*/ = {
                   "kind": "ScalarField",
                   "alias": null,
                   "args": null,
+                  "name": "isOwner",
+                  "storageKey": null
+                },
+                {
+                  "kind": "ScalarField",
+                  "alias": null,
+                  "args": null,
                   "name": "__typename",
                   "storageKey": null
                 }
@@ -185,7 +205,7 @@ const fragment /*: ConcreteFragment*/ = {
       "storageKey": null
     }
   ],
-  "type": "App"
+  "type": "Query"
 };
 
 module.exports = fragment;

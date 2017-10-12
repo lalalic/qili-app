@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 291cb19b35daac6ad0ec7b6e3c6792fb
+ * @relayHash fd7ba081da179dc45ed189baf89e0c16
  */
 
 /* eslint-disable */
@@ -9,14 +9,14 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type comment_update_MutationVariables = {|
-  id: string;
+export type main_comment_create_MutationVariables = {|
+  parent: any;
   content: string;
   type?: ?"photo" | "text";
 |};
 
-export type comment_update_MutationResponse = {|
-  +comment: ?{|
+export type main_comment_create_MutationResponse = {|
+  +app_create_comment: ?{|
     +id: string;
     +createdAt: any;
   |};
@@ -25,12 +25,12 @@ export type comment_update_MutationResponse = {|
 
 
 /*
-mutation comment_update_Mutation(
-  $id: ID!
+mutation main_comment_create_Mutation(
+  $parent: ObjectID!
   $content: String!
   $type: CommentType
 ) {
-  comment(host: $id, content: $content, type: $type) {
+  app_create_comment(parent: $parent, content: $content, type: $type) {
     id
     createdAt
   }
@@ -42,8 +42,8 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "id",
-        "type": "ID!",
+        "name": "parent",
+        "type": "ObjectID!",
         "defaultValue": null
       },
       {
@@ -61,7 +61,7 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "comment_update_Mutation",
+    "name": "main_comment_create_Mutation",
     "selections": [
       {
         "kind": "LinkedField",
@@ -75,9 +75,9 @@ const batch /*: ConcreteBatch*/ = {
           },
           {
             "kind": "Variable",
-            "name": "host",
-            "variableName": "id",
-            "type": "ID!"
+            "name": "parent",
+            "variableName": "parent",
+            "type": "ObjectID"
           },
           {
             "kind": "Variable",
@@ -86,8 +86,8 @@ const batch /*: ConcreteBatch*/ = {
             "type": "CommentType"
           }
         ],
-        "concreteType": "Comment",
-        "name": "comment",
+        "concreteType": "AppComment",
+        "name": "app_create_comment",
         "plural": false,
         "selections": [
           {
@@ -113,13 +113,13 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "comment_update_Mutation",
+  "name": "main_comment_create_Mutation",
   "query": {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "id",
-        "type": "ID!",
+        "name": "parent",
+        "type": "ObjectID!",
         "defaultValue": null
       },
       {
@@ -136,7 +136,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "comment_update_Mutation",
+    "name": "main_comment_create_Mutation",
     "operation": "mutation",
     "selections": [
       {
@@ -151,9 +151,9 @@ const batch /*: ConcreteBatch*/ = {
           },
           {
             "kind": "Variable",
-            "name": "host",
-            "variableName": "id",
-            "type": "ID!"
+            "name": "parent",
+            "variableName": "parent",
+            "type": "ObjectID"
           },
           {
             "kind": "Variable",
@@ -162,8 +162,8 @@ const batch /*: ConcreteBatch*/ = {
             "type": "CommentType"
           }
         ],
-        "concreteType": "Comment",
-        "name": "comment",
+        "concreteType": "AppComment",
+        "name": "app_create_comment",
         "plural": false,
         "selections": [
           {
@@ -185,7 +185,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation comment_update_Mutation(\n  $id: ID!\n  $content: String!\n  $type: CommentType\n) {\n  comment(host: $id, content: $content, type: $type) {\n    id\n    createdAt\n  }\n}\n"
+  "text": "mutation main_comment_create_Mutation(\n  $parent: ObjectID!\n  $content: String!\n  $type: CommentType\n) {\n  app_create_comment(parent: $parent, content: $content, type: $type) {\n    id\n    createdAt\n  }\n}\n"
 };
 
 module.exports = batch;

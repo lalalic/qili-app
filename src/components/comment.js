@@ -38,7 +38,6 @@ function smartFormat(d){
 export class Comment extends Component{
 	static propTypes={
 		data: PropTypes.arrayOf(PropTypes.object),
-		currentUserId: PropTypes.string,
 		commentText: PropTypes.func,
 		commentPhoto: PropTypes.func,
 		loadMore: PropTypes.func
@@ -58,7 +57,7 @@ export class Comment extends Component{
 		}
 	}
     render(){
-        let {data, currentUserId, commentText, commentPhoto, template,loadMore,hint="说两句", system}=this.props
+        let {data, commentText, commentPhoto, template,loadMore,hint="说两句", system}=this.props
 		const {comment}=this.state
         const {muiTheme:{page: {height}}}=this.context
         const create=()=>commentText({content:comment}).then(a=>this.setState({comment:""}))
@@ -94,7 +93,7 @@ export class Comment extends Component{
                     {data.reduce((state,a,i)=>{
 							let createdAt=new Date(a.createdAt)
 							let {comments,last}=state
-							let props={comment:a,key:i, system, currentUserId}
+							let props={comment:a,key:i, system}
 							if(!last || (createdAt.getTime()-last.getTime())>1000*60){
 								props.time=createdAt
 							}
@@ -129,14 +128,13 @@ export class Comment extends Component{
 	}
 
     static defaultProps={
-        template: ({comment, system={}, time, currentUserId})=>{
+        template: ({comment, system={}, time})=>{
 			let name, left, right, text
-			const isOwner=comment.author._id==currentUserId
             if(comment.system){
                 name=(<span style={{fontSize:'x-small'}}>{system.name}</span>)
 				left=(<Avatar src={system.thumbnail}/>)
 				right=(<span/>)
-            }else if(isOwner){
+            }else if(comment.isOwner){
 				left=(<span/>)
 				right=(<Avatar src={comment.author.thumbnail}/>)
 			}else{
@@ -162,7 +160,7 @@ export class Comment extends Component{
 						<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
 						<div style={{padding:5,verticalAlign:"top"}}>
 							<div>{name}</div>
-							<p className={`content ${!comment.system&&isOwner?"owner":""}`}>
+							<p className={`content ${!comment.system&&comment.isOwner?"owner":""}`}>
 							{
 								((content,type)=>{
 									switch(type){
@@ -184,49 +182,15 @@ export class Comment extends Component{
 }
 
 export default compose(
-	withMutation({
-		promise:true,
-		mutation:graphql`
-			mutation comment_update_Mutation($id:ID!, $content:String!, $type: CommentType){
-				comment(host:$id, content:$content, type:$type){
-					id
-					createdAt
-				}
-			}
-		`
-	}),
-	withProps(({id, mutate})=>({
+	withProps(({mutate})=>({
 		commentText({content}){
-			return mutate({id,content})
+			return mutate({content})
 		},
 		commentPhoto({url}){
-			return mutate({id,content:url, type:"photo"})
+			return mutate({content:url, type:"photo"})
 		}
 	})),
-	withFragment(graphql`
-        fragment comment on App{
-            comments(last:$count, before: $cursor)@connection(key:"comment_comments"){
-                edges{
-					node{
-						content
-						type
-						createdAt
-						author{
-							id
-							name
-							photo
-						}
-					}
-                }
-                pageInfo{
-                    hasPreviousPage
-                    startCursor
-                }
-            }
-        }
-    `),
-	withProps(({data, relay})=>({
-		data:data.comments.edges.map(({node})=>node),
+	withProps(({relay})=>({
 		loadMore(ok){
 			if(relay.hasMore() && !relay.isLoading()){
 				relay.loadMore(10, e=>{

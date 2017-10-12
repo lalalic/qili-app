@@ -165,8 +165,11 @@ const router=(
 								`,
 							})),
 							connect(({qili:{current}})=>({current})),
-							getContext({client:PropTypes.object}),
-							withProps(({me,client,current,dispatch})=>({
+							getContext({
+								client:PropTypes.object,
+								router:PropTypes.object,
+							}),
+							withProps(({me,client,current,dispatch,router,params:{id}})=>({
 								data:me.app,
 								switchApp(){
 									let apps=client.getAll("App")
@@ -174,29 +177,60 @@ const router=(
 								},
 								client:undefined,
 								current:undefined,
+								toComment: ()=>router.push(`/comment/${id}`),
 							})),
 						)(App)
 					}/>
 			</Route>
 
 			<Route path="comment/:id" component={compose(
-				withPagination(({params:{id}})=>({
-					variables:{id},
-					query: graphql`
-				        query main_comment_Query($id:ObjectID!, $count: Int=10, $cursor: String=null){
-				            me{
+				withMutation(({params:{id:parent}})=>({
+					variables:{parent},
+					mutation:graphql`
+						mutation main_comment_create_Mutation($parent:ObjectID!, $content:String!, $type: CommentType){
+							app_create_comment(parent:$parent, content:$content, type:$type){
 								id
-				                app(_id:$id){
-				                    ...comment
-				                }
-				            }
+								createdAt
+							}
+						}
+					`
+				})),
+				withPagination(({params:{id:parent}})=>({
+					variables:{parent},
+					query: graphql`
+				        query main_comment_Query($parent:ObjectID!, $count: Int=10, $cursor: JSON){
+				            ...main_appComments
 				        }
 				    `,
 				})),
-				withProps(({me, params:{id}})=>({
-					data:me && me.app,
-					currentUserId: me && me.id && me.id.split(":").pop(),
-					id,
+				withProps(({data})=>({
+					appComments:data,
+				})),
+				withFragment(graphql`
+					fragment main_appComments on Query{
+						app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"main_app_comments"){
+							edges{
+								node{
+									content
+									type
+									createdAt
+									author{
+										id
+										name
+										photo
+									}
+									isOwner
+								}
+							}
+							pageInfo{
+								hasPreviousPage
+								startCursor
+							}
+						}
+					}
+				`),
+				withProps(({appComments})=>({
+					data:appComments.app_comments.edges.map(({node})=>node),
 				})),
 				withCurrent(),
 			)(Comment)}/>

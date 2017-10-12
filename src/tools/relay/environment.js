@@ -16,7 +16,7 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 		  cacheConfig,
 		  uploadables,
 		) {
-			loading(true)
+			//loading(true)
 		  return fetch(service, {
 			method: 'POST',
 			headers: {
@@ -31,14 +31,14 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 		  })
 		  .then(res=>res.json())
 		  .then(res=>{
-			  loading(false)
+			  //loading(false)
 			  if(res.errors){
 				  showMessage({message:"server error!",level:"error"})
 				  console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
 			  }
 			  return res
 		  },e=>{
-			  loading(false)
+			  //loading(false)
 			  showMessage({message:"server error!",level:"error"})
 			  console.error("server error:"+e.message)
 			  throw e

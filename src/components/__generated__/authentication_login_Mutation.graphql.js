@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 3266faac37d0747bc8c3c010c1da440e
+ * @relayHash eddbf72cd3e25c78f260b9e1010d2570
  */
 
 /* eslint-disable */
@@ -17,6 +17,7 @@ export type authentication_login_MutationVariables = {|
 
 export type authentication_login_MutationResponse = {|
   +login: ?{|
+    +id: string;
     +token: ?string;
   |};
 |};
@@ -30,8 +31,8 @@ mutation authentication_login_Mutation(
   $name: String
 ) {
   login(contact: $contact, token: $token, name: $name) {
-    token
     id
+    token
   }
 }
 */
@@ -89,6 +90,13 @@ const batch /*: ConcreteBatch*/ = {
         "name": "login",
         "plural": false,
         "selections": [
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "id",
+            "storageKey": null
+          },
           {
             "kind": "ScalarField",
             "alias": null,
@@ -162,14 +170,14 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
-            "name": "token",
+            "name": "id",
             "storageKey": null
           },
           {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
-            "name": "id",
+            "name": "token",
             "storageKey": null
           }
         ],
@@ -177,7 +185,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation authentication_login_Mutation(\n  $contact: String!\n  $token: String!\n  $name: String\n) {\n  login(contact: $contact, token: $token, name: $name) {\n    token\n    id\n  }\n}\n"
+  "text": "mutation authentication_login_Mutation(\n  $contact: String!\n  $token: String!\n  $name: String\n) {\n  login(contact: $contact, token: $token, name: $name) {\n    id\n    token\n  }\n}\n"
 };
 
 module.exports = batch;

@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 4f53aaaab67066c539b7420160355c01
+ * @relayHash 42f5db747c686cdc8e4ea81fa5391783
  */
 
 /* eslint-disable */
@@ -9,32 +9,21 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type main_comment_QueryResponse = {|
-  +me: {|
-    +id: string;
-    +app: ?{| |};
-  |};
-|};
+export type main_comment_QueryResponse = {| |};
 */
 
 
 /*
 query main_comment_Query(
-  $id: ObjectID!
+  $parent: ObjectID!
   $count: Int = 10
-  $cursor: String
+  $cursor: JSON
 ) {
-  me {
-    id
-    app(_id: $id) {
-      ...comment
-      id
-    }
-  }
+  ...main_appComments
 }
 
-fragment comment on App {
-  comments(last: $count, before: $cursor) {
+fragment main_appComments on Query {
+  app_comments(parent: $parent, last: $count, before: $cursor) {
     edges {
       node {
         content
@@ -45,6 +34,7 @@ fragment comment on App {
           name
           photo
         }
+        isOwner
         id
         __typename
       }
@@ -63,7 +53,7 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "id",
+        "name": "parent",
         "type": "ObjectID!",
         "defaultValue": null
       },
@@ -76,7 +66,7 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LocalArgument",
         "name": "cursor",
-        "type": "String",
+        "type": "JSON",
         "defaultValue": null
       }
     ],
@@ -85,45 +75,9 @@ const batch /*: ConcreteBatch*/ = {
     "name": "main_comment_Query",
     "selections": [
       {
-        "kind": "LinkedField",
-        "alias": null,
-        "args": null,
-        "concreteType": "User",
-        "name": "me",
-        "plural": false,
-        "selections": [
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "kind": "LinkedField",
-            "alias": null,
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "_id",
-                "variableName": "id",
-                "type": "ObjectID!"
-              }
-            ],
-            "concreteType": "App",
-            "name": "app",
-            "plural": false,
-            "selections": [
-              {
-                "kind": "FragmentSpread",
-                "name": "comment",
-                "args": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
+        "kind": "FragmentSpread",
+        "name": "main_appComments",
+        "args": null
       }
     ],
     "type": "Query"
@@ -136,7 +90,7 @@ const batch /*: ConcreteBatch*/ = {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
-        "name": "id",
+        "name": "parent",
         "type": "ObjectID!",
         "defaultValue": null
       },
@@ -149,7 +103,7 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LocalArgument",
         "name": "cursor",
-        "type": "String",
+        "type": "JSON",
         "defaultValue": null
       }
     ],
@@ -160,205 +114,153 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LinkedField",
         "alias": null,
-        "args": null,
-        "concreteType": "User",
-        "name": "me",
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "before",
+            "variableName": "cursor",
+            "type": "JSON"
+          },
+          {
+            "kind": "Variable",
+            "name": "last",
+            "variableName": "count",
+            "type": "Int"
+          },
+          {
+            "kind": "Variable",
+            "name": "parent",
+            "variableName": "parent",
+            "type": "ObjectID"
+          }
+        ],
+        "concreteType": "AppCommentConnection",
+        "name": "app_comments",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "id",
-            "storageKey": null
-          },
-          {
             "kind": "LinkedField",
             "alias": null,
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "_id",
-                "variableName": "id",
-                "type": "ObjectID!"
-              }
-            ],
-            "concreteType": "App",
-            "name": "app",
-            "plural": false,
+            "args": null,
+            "concreteType": "AppCommentEdge",
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "kind": "LinkedField",
                 "alias": null,
-                "args": [
-                  {
-                    "kind": "Variable",
-                    "name": "before",
-                    "variableName": "cursor",
-                    "type": "String"
-                  },
-                  {
-                    "kind": "Variable",
-                    "name": "last",
-                    "variableName": "count",
-                    "type": "Int"
-                  }
-                ],
-                "concreteType": "CommentConnection",
-                "name": "comments",
+                "args": null,
+                "concreteType": "AppComment",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "LinkedField",
+                    "kind": "ScalarField",
                     "alias": null,
                     "args": null,
-                    "concreteType": "CommentEdge",
-                    "name": "edges",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "kind": "LinkedField",
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "Comment",
-                        "name": "node",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "kind": "ScalarField",
-                            "alias": null,
-                            "args": null,
-                            "name": "content",
-                            "storageKey": null
-                          },
-                          {
-                            "kind": "ScalarField",
-                            "alias": null,
-                            "args": null,
-                            "name": "type",
-                            "storageKey": null
-                          },
-                          {
-                            "kind": "ScalarField",
-                            "alias": null,
-                            "args": null,
-                            "name": "createdAt",
-                            "storageKey": null
-                          },
-                          {
-                            "kind": "LinkedField",
-                            "alias": null,
-                            "args": null,
-                            "concreteType": "User",
-                            "name": "author",
-                            "plural": false,
-                            "selections": [
-                              {
-                                "kind": "ScalarField",
-                                "alias": null,
-                                "args": null,
-                                "name": "id",
-                                "storageKey": null
-                              },
-                              {
-                                "kind": "ScalarField",
-                                "alias": null,
-                                "args": null,
-                                "name": "name",
-                                "storageKey": null
-                              },
-                              {
-                                "kind": "ScalarField",
-                                "alias": null,
-                                "args": null,
-                                "name": "photo",
-                                "storageKey": null
-                              }
-                            ],
-                            "storageKey": null
-                          },
-                          {
-                            "kind": "ScalarField",
-                            "alias": null,
-                            "args": null,
-                            "name": "id",
-                            "storageKey": null
-                          },
-                          {
-                            "kind": "ScalarField",
-                            "alias": null,
-                            "args": null,
-                            "name": "__typename",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      },
-                      {
-                        "kind": "ScalarField",
-                        "alias": null,
-                        "args": null,
-                        "name": "cursor",
-                        "storageKey": null
-                      }
-                    ],
+                    "name": "content",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "type",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "createdAt",
                     "storageKey": null
                   },
                   {
                     "kind": "LinkedField",
                     "alias": null,
                     "args": null,
-                    "concreteType": "PageInfo",
-                    "name": "pageInfo",
+                    "concreteType": "User",
+                    "name": "author",
                     "plural": false,
                     "selections": [
                       {
                         "kind": "ScalarField",
                         "alias": null,
                         "args": null,
-                        "name": "hasPreviousPage",
+                        "name": "id",
                         "storageKey": null
                       },
                       {
                         "kind": "ScalarField",
                         "alias": null,
                         "args": null,
-                        "name": "startCursor",
+                        "name": "name",
+                        "storageKey": null
+                      },
+                      {
+                        "kind": "ScalarField",
+                        "alias": null,
+                        "args": null,
+                        "name": "photo",
                         "storageKey": null
                       }
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "isOwner",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "__typename",
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
               },
               {
-                "kind": "LinkedHandle",
+                "kind": "ScalarField",
                 "alias": null,
-                "args": [
-                  {
-                    "kind": "Variable",
-                    "name": "before",
-                    "variableName": "cursor",
-                    "type": "String"
-                  },
-                  {
-                    "kind": "Variable",
-                    "name": "last",
-                    "variableName": "count",
-                    "type": "Int"
-                  }
-                ],
-                "handle": "connection",
-                "name": "comments",
-                "key": "comment_comments",
-                "filters": null
+                "args": null,
+                "name": "cursor",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "args": null,
+            "concreteType": "PageInfo",
+            "name": "pageInfo",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "hasPreviousPage",
+                "storageKey": null
               },
               {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "id",
+                "name": "startCursor",
                 "storageKey": null
               }
             ],
@@ -366,10 +268,40 @@ const batch /*: ConcreteBatch*/ = {
           }
         ],
         "storageKey": null
+      },
+      {
+        "kind": "LinkedHandle",
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "before",
+            "variableName": "cursor",
+            "type": "JSON"
+          },
+          {
+            "kind": "Variable",
+            "name": "last",
+            "variableName": "count",
+            "type": "Int"
+          },
+          {
+            "kind": "Variable",
+            "name": "parent",
+            "variableName": "parent",
+            "type": "ObjectID"
+          }
+        ],
+        "handle": "connection",
+        "name": "app_comments",
+        "key": "main_app_comments",
+        "filters": [
+          "parent"
+        ]
       }
     ]
   },
-  "text": "query main_comment_Query(\n  $id: ObjectID!\n  $count: Int = 10\n  $cursor: String\n) {\n  me {\n    id\n    app(_id: $id) {\n      ...comment\n      id\n    }\n  }\n}\n\nfragment comment on App {\n  comments(last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
+  "text": "query main_comment_Query(\n  $parent: ObjectID!\n  $count: Int = 10\n  $cursor: JSON\n) {\n  ...main_appComments\n}\n\nfragment main_appComments on Query {\n  app_comments(parent: $parent, last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        isOwner\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
 };
 
 module.exports = batch;
