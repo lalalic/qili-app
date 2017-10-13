@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 551bcdd9e204d470e1e6c7a759824974
+ * @relayHash dc2b701fe0149bfcd093d8a4a9776e7c
  */
 
 /* eslint-disable */
@@ -9,14 +9,14 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type main_comment_create_MutationVariables = {|
-  parent: any;
+export type comment_create_MutationVariables = {|
+  parent: string;
   content: string;
   type?: ?"photo" | "text";
 |};
 
-export type main_comment_create_MutationResponse = {|
-  +app_create_comment: ?{|
+export type comment_create_MutationResponse = {|
+  +comment: ?{|
     +id: string;
     +content: string;
     +type: ?"photo" | "text";
@@ -33,12 +33,13 @@ export type main_comment_create_MutationResponse = {|
 
 
 /*
-mutation main_comment_create_Mutation(
-  $parent: ObjectID!
+mutation comment_create_Mutation(
+  $parent: ID!
   $content: String!
   $type: CommentType
 ) {
-  app_create_comment(parent: $parent, content: $content, type: $type) {
+  comment: comment_create(parent: $parent, content: $content, type: $type) {
+    __typename
     id
     content
     type
@@ -59,7 +60,7 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LocalArgument",
         "name": "parent",
-        "type": "ObjectID!",
+        "type": "ID!",
         "defaultValue": null
       },
       {
@@ -77,11 +78,11 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "main_comment_create_Mutation",
+    "name": "comment_create_Mutation",
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "comment",
         "args": [
           {
             "kind": "Variable",
@@ -93,7 +94,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "Variable",
             "name": "parent",
             "variableName": "parent",
-            "type": "ObjectID"
+            "type": "ID"
           },
           {
             "kind": "Variable",
@@ -102,8 +103,8 @@ const batch /*: ConcreteBatch*/ = {
             "type": "CommentType"
           }
         ],
-        "concreteType": "AppComment",
-        "name": "app_create_comment",
+        "concreteType": null,
+        "name": "comment_create",
         "plural": false,
         "selections": [
           {
@@ -182,13 +183,13 @@ const batch /*: ConcreteBatch*/ = {
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "main_comment_create_Mutation",
+  "name": "comment_create_Mutation",
   "query": {
     "argumentDefinitions": [
       {
         "kind": "LocalArgument",
         "name": "parent",
-        "type": "ObjectID!",
+        "type": "ID!",
         "defaultValue": null
       },
       {
@@ -205,12 +206,12 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "main_comment_create_Mutation",
+    "name": "comment_create_Mutation",
     "operation": "mutation",
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "comment",
         "args": [
           {
             "kind": "Variable",
@@ -222,7 +223,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "Variable",
             "name": "parent",
             "variableName": "parent",
-            "type": "ObjectID"
+            "type": "ID"
           },
           {
             "kind": "Variable",
@@ -231,10 +232,17 @@ const batch /*: ConcreteBatch*/ = {
             "type": "CommentType"
           }
         ],
-        "concreteType": "AppComment",
-        "name": "app_create_comment",
+        "concreteType": null,
+        "name": "comment_create",
         "plural": false,
         "selections": [
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "__typename",
+            "storageKey": null
+          },
           {
             "kind": "ScalarField",
             "alias": null,
@@ -307,7 +315,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation main_comment_create_Mutation(\n  $parent: ObjectID!\n  $content: String!\n  $type: CommentType\n) {\n  app_create_comment(parent: $parent, content: $content, type: $type) {\n    id\n    content\n    type\n    createdAt\n    author {\n      id\n      name\n      photo\n    }\n    isOwner\n  }\n}\n"
+  "text": "mutation comment_create_Mutation(\n  $parent: ID!\n  $content: String!\n  $type: CommentType\n) {\n  comment: comment_create(parent: $parent, content: $content, type: $type) {\n    __typename\n    id\n    content\n    type\n    createdAt\n    author {\n      id\n      name\n      photo\n    }\n    isOwner\n  }\n}\n"
 };
 
 module.exports = batch;

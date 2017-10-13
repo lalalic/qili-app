@@ -34,16 +34,21 @@ export const withGraphqlClient=options=>BaseComponent=>{
 		}
 		
 		
-		environment.connection=function(store,key,filter,type,id="client:root"){
+		environment.connection=function(store,key,filter,id="client:root"){
 			const record=store.get(id)
 			const connection=ConnectionHandler.getConnection(record,key,filter)
+			const type=node=>{
+				let typeComments=node.id.split(":")[0]
+				let TypeComment=typeComments[0].toUpperCase()+typeComments.substr(1,typeComments.length-2)
+				return TypeComment+'Edge'
+			}
 			return {
 				append(node){
-					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type)
+					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type(node))
 					ConnectionHandler.insertEdgeAfter(connection,edge)
 				},
 				prepend(node){
-					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type)
+					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type(node))
 					ConnectionHandler.insertEdgeBefore(connection,edge)
 				}
 			}

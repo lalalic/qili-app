@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from "react"
-import {compose,withProps} from "recompose"
-import {graphql, withMutation, withFragment} from "tools/recompose"
+import {compose,mapProps,getContext} from "recompose"
+import {withMutation} from "tools/recompose"
 
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"
@@ -37,10 +37,11 @@ function smartFormat(d){
 
 export class Comment extends Component{
 	static propTypes={
-		data: PropTypes.arrayOf(PropTypes.object),
+		data: PropTypes.arrayOf(PropTypes.object).isRequired,
 		commentText: PropTypes.func,
 		commentPhoto: PropTypes.func,
-		loadMore: PropTypes.func
+		loadMore: PropTypes.func,
+		minHeight: PropTypes.number,
 	}
 	first=true
     state={comment:""}
@@ -57,9 +58,8 @@ export class Comment extends Component{
 		}
 	}
     render(){
-        let {data, commentText, commentPhoto, template,loadMore,hint="说两句", system}=this.props
+        const {data, commentText, commentPhoto, template,loadMore,hint="说两句", system,minHeight}=this.props
 		const {comment}=this.state
-        const {muiTheme:{page: {height}}}=this.context
         const create=()=>commentText({content:comment}).then(a=>this.setState({comment:""}))
 
         let save={
@@ -82,13 +82,8 @@ export class Comment extends Component{
         if(comment.trim())
             action=save
 
-		let elEnd=null
-		if(data.length && this.first){
-			elEnd=(<div ref={el=>this.end=el}/>)
-		}
-
 		return (
-            <div className="comment" style={{minHeight:height, backgroundColor:bg}}>
+            <div className="comment" style={{minHeight, backgroundColor:bg}}>
                 <PullToRefresh onRefresh={loadMore}>
                     {data.reduce((state,a,i)=>{
 							let createdAt=new Date(a.createdAt)
@@ -182,15 +177,41 @@ export class Comment extends Component{
 }
 
 export default compose(
-	withProps(({mutate})=>({
+	withMutation(({parent,connection},data,client)=>({
+		promise:true,
+		variables:{parent},
+		mutation:graphql`
+			mutation comment_create_Mutation($parent:ID!, $content:String!, $type: CommentType){
+				comment:comment_create(parent:$parent, content:$content, type:$type){
+					id
+					content
+					type
+					createdAt
+					author{
+						id
+						name
+						photo
+					}
+					isOwner
+				}
+			}
+		`,
+		updater(store,data){
+			client.connection(store,connection,{parent})
+				.append(data.comment)
+		},
+		
+	})),
+	getContext({muiTheme:PropTypes.object}),
+	mapProps(({muiTheme,minHeight,mutate,data,relay,hint,system,template})=>({
+		hint,system,template,
+		data:data.comments.edges.map(({node})=>node),
 		commentText({content}){
 			return mutate({content})
 		},
 		commentPhoto({url}){
 			return mutate({content:url, type:"photo"})
-		}
-	})),
-	withProps(({relay})=>({
+		},
 		loadMore(ok){
 			if(relay.hasMore() && !relay.isLoading()){
 				relay.loadMore(10, e=>{
@@ -200,6 +221,7 @@ export default compose(
 					}
 				})
 			}
-		}
+		},
+		minHeight: minHeight||muiTheme.page.height,
 	})),
 )(Comment)

@@ -9,7 +9,7 @@ type App implements Node {
   updatedAt: Date
 }
 
-type AppComment implements Node {
+type AppComment implements Comment, Node {
   id: ID!
   content: String!
   type: CommentType
@@ -27,6 +27,16 @@ type AppCommentConnection {
 type AppCommentEdge {
   node: AppComment
   cursor: JSON
+}
+
+interface Comment {
+  id: ID!
+  content: String!
+  type: CommentType
+  author: User!
+  createdAt: Date!
+  parent: ObjectID!
+  isOwner: Boolean
 }
 
 enum CommentType {
@@ -71,7 +81,7 @@ type Mutation {
   app_create(name: String!, uname: String): App
   app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): Date
   app_remove(_id: ObjectID!): Boolean
-  app_create_comment(parent: ObjectID, content: String!, type: CommentType): AppComment
+  comment_create(parent: ID, content: String!, type: CommentType): Comment
 }
 
 interface Named {

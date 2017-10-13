@@ -192,14 +192,12 @@ const router=(
 				        }
 				    `,
 				})),
-				withProps(({data})=>({
-					appComments:data,
-				})),
-				withFragment(graphql`
+				withFragment({data:graphql`
 					fragment main_appComments on Query{
 						comments:app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"main_app_comments"){
 							edges{
 								node{
+									id
 									content
 									type
 									createdAt
@@ -217,47 +215,11 @@ const router=(
 							}
 						}
 					}
-				`),	
-				connect(state=>({user:state.qili.user.id})),
-				withProps(({appComments})=>({
-					data:appComments.comments.edges.map(({node})=>node),
+				`}),	
+				withProps(({params:{id:parent}})=>({
+					parent,
+					connection:"main_app_comments"
 				})),
-				
-				withMutation(({params:{id:parent},user},data,client)=>({
-					promise:true,
-					variables:{parent},
-					mutation:graphql`
-						mutation main_comment_create_Mutation($parent:ObjectID!, $content:String!, $type: CommentType){
-							app_create_comment(parent:$parent, content:$content, type:$type){
-								id
-								content
-								type
-								createdAt
-								author{
-									id
-									name
-									photo
-								}
-								isOwner
-							}
-						}
-					`,
-					optimisticResponse:{
-						id:new Date().toString(),
-						...data,
-						createdAt:new Date(),
-						author:user ? (()=>{
-							const {photo}=client.get(user)
-							return {photo}
-						})() : {},
-						isOwner:true,
-					},
-					updater(store,{app_create_comment:comment}){
-						client.connection(store,"main_app_comments",{parent},"AppCommentEdge")
-							.append(comment)
-					},
-					
-				})),				
 				withCurrent(),
 			)(Comment)}/>
 			
