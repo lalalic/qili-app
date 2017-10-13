@@ -184,17 +184,6 @@ const router=(
 			</Route>
 
 			<Route path="comment/:id" component={compose(
-				withMutation(({params:{id:parent}})=>({
-					variables:{parent},
-					mutation:graphql`
-						mutation main_comment_create_Mutation($parent:ObjectID!, $content:String!, $type: CommentType){
-							app_create_comment(parent:$parent, content:$content, type:$type){
-								id
-								createdAt
-							}
-						}
-					`
-				})),
 				withPagination(({params:{id:parent}})=>({
 					variables:{parent},
 					query: graphql`
@@ -208,7 +197,7 @@ const router=(
 				})),
 				withFragment(graphql`
 					fragment main_appComments on Query{
-						app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"main_app_comments"){
+						comments:app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"main_app_comments"){
 							edges{
 								node{
 									content
@@ -228,10 +217,47 @@ const router=(
 							}
 						}
 					}
-				`),
+				`),	
+				connect(state=>({user:state.qili.user.id})),
 				withProps(({appComments})=>({
-					data:appComments.app_comments.edges.map(({node})=>node),
+					data:appComments.comments.edges.map(({node})=>node),
 				})),
+				
+				withMutation(({params:{id:parent},user},data,client)=>({
+					promise:true,
+					variables:{parent},
+					mutation:graphql`
+						mutation main_comment_create_Mutation($parent:ObjectID!, $content:String!, $type: CommentType){
+							app_create_comment(parent:$parent, content:$content, type:$type){
+								id
+								content
+								type
+								createdAt
+								author{
+									id
+									name
+									photo
+								}
+								isOwner
+							}
+						}
+					`,
+					optimisticResponse:{
+						id:new Date().toString(),
+						...data,
+						createdAt:new Date(),
+						author:user ? (()=>{
+							const {photo}=client.get(user)
+							return {photo}
+						})() : {},
+						isOwner:true,
+					},
+					updater(store,{app_create_comment:comment}){
+						client.connection(store,"main_app_comments",{parent},"AppCommentEdge")
+							.append(comment)
+					},
+					
+				})),				
 				withCurrent(),
 			)(Comment)}/>
 			

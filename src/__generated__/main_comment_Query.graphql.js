@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 42f5db747c686cdc8e4ea81fa5391783
+ * @relayHash cd05c3b9bcd76888c99e31f5d9aa827f
  */
 
 /* eslint-disable */
@@ -23,7 +23,7 @@ query main_comment_Query(
 }
 
 fragment main_appComments on Query {
-  app_comments(parent: $parent, last: $count, before: $cursor) {
+  comments: app_comments(parent: $parent, last: $count, before: $cursor) {
     edges {
       node {
         content
@@ -113,7 +113,7 @@ const batch /*: ConcreteBatch*/ = {
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "comments",
         "args": [
           {
             "kind": "Variable",
@@ -271,7 +271,7 @@ const batch /*: ConcreteBatch*/ = {
       },
       {
         "kind": "LinkedHandle",
-        "alias": null,
+        "alias": "comments",
         "args": [
           {
             "kind": "Variable",
@@ -301,7 +301,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_comment_Query(\n  $parent: ObjectID!\n  $count: Int = 10\n  $cursor: JSON\n) {\n  ...main_appComments\n}\n\nfragment main_appComments on Query {\n  app_comments(parent: $parent, last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        isOwner\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
+  "text": "query main_comment_Query(\n  $parent: ObjectID!\n  $count: Int = 10\n  $cursor: JSON\n) {\n  ...main_appComments\n}\n\nfragment main_appComments on Query {\n  comments: app_comments(parent: $parent, last: $count, before: $cursor) {\n    edges {\n      node {\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        isOwner\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
 };
 
 module.exports = batch;

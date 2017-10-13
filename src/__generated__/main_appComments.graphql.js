@@ -9,7 +9,7 @@
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
 export type main_appComments = {|
-  +app_comments: ?{|
+  +comments: ?{|
     +edges: ?$ReadOnlyArray<?{|
       +node: ?{|
         +content: string;
@@ -58,7 +58,7 @@ const fragment /*: ConcreteFragment*/ = {
         "cursor": "cursor",
         "direction": "backward",
         "path": [
-          "app_comments"
+          "comments"
         ]
       }
     ]
@@ -67,7 +67,7 @@ const fragment /*: ConcreteFragment*/ = {
   "selections": [
     {
       "kind": "LinkedField",
-      "alias": "app_comments",
+      "alias": "comments",
       "args": [
         {
           "kind": "Variable",

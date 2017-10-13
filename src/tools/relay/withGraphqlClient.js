@@ -1,5 +1,6 @@
 import React, {PropTypes} from "react"
 import {compose, withContext, setDisplayName, wrapDisplayName,createEagerFactory} from "recompose"
+import {ConnectionHandler} from "relay-runtime"
 import createEnvironment from "./environment"
 
 export const withGraphqlClient=options=>BaseComponent=>{
@@ -30,6 +31,23 @@ export const withGraphqlClient=options=>BaseComponent=>{
 			return source.getRecordIDs()
 				.filter(id=>id.startsWith(ex))
 				.map(id=>source.get(id))
+		}
+		
+		
+		environment.connection=function(store,key,filter,type,id="client:root"){
+			const record=store.get(id)
+			const connection=ConnectionHandler.getConnection(record,key,filter)
+			return {
+				append(node){
+					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type)
+					ConnectionHandler.insertEdgeAfter(connection,edge)
+				},
+				prepend(node){
+					let edge=ConnectionHandler.createEdge(store,connection,store.get(node.id),type)
+					ConnectionHandler.insertEdgeBefore(connection,edge)
+				}
+			}
+			
 		}
 		
 		return factory({client:environment,...props})

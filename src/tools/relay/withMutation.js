@@ -1,6 +1,7 @@
 import React, {PropTypes} from "react"
 import {compose,withProps, getContext, setDisplayName, wrapDisplayName,createEagerFactory } from "recompose"
 import {commitMutation} from "react-relay"
+
 import spreadResponse from "tools/spread-response"
 
 const isDate=date=>typeof date.getMonth === 'function'
@@ -25,7 +26,7 @@ export const withMutation=option=>BaseComponent=>{
 	const factory=createEagerFactory(BaseComponent)
 	const WithMutation=getContext({client:PropTypes.object})(
 		({client:environment,...others})=>{
-			const {name="mutate",mutation}=typeof(option)=="function" ? option(others, {}) : option
+			const {name="mutate",mutation}=typeof(option)=="function" ? option(others, {},environment) : option
 
 			//////hack: make variables default undefined as undefined
 			mutation().query.argumentDefinitions.forEach(def=>{
@@ -37,7 +38,7 @@ export const withMutation=option=>BaseComponent=>{
 				const {spread, variables, patch4, patchData,
 					shouldPatch=o=>Object.keys(o).reduce((a,k)=>o[k]!==null&&a,true),
 					promise,dateFields=[], 
-					...mutation}=typeof(option)=="function" ? option(others, ...arguments) : option
+					...mutation}=typeof(option)=="function" ? option(others, data, environment) : option
 				let smart={}
 				if(patch4){
 					const updater=(id,data)=>(store,res)=>{

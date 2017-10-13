@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash fd7ba081da179dc45ed189baf89e0c16
+ * @relayHash 551bcdd9e204d470e1e6c7a759824974
  */
 
 /* eslint-disable */
@@ -18,7 +18,15 @@ export type main_comment_create_MutationVariables = {|
 export type main_comment_create_MutationResponse = {|
   +app_create_comment: ?{|
     +id: string;
+    +content: string;
+    +type: ?"photo" | "text";
     +createdAt: any;
+    +author: {|
+      +id: string;
+      +name: ?string;
+      +photo: ?string;
+    |};
+    +isOwner: ?boolean;
   |};
 |};
 */
@@ -32,7 +40,15 @@ mutation main_comment_create_Mutation(
 ) {
   app_create_comment(parent: $parent, content: $content, type: $type) {
     id
+    content
+    type
     createdAt
+    author {
+      id
+      name
+      photo
+    }
+    isOwner
   }
 }
 */
@@ -101,7 +117,60 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
+            "name": "content",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "type",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
             "name": "createdAt",
+            "storageKey": null
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "args": null,
+            "concreteType": "User",
+            "name": "author",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "photo",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "isOwner",
             "storageKey": null
           }
         ],
@@ -177,7 +246,60 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "ScalarField",
             "alias": null,
             "args": null,
+            "name": "content",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "type",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
             "name": "createdAt",
+            "storageKey": null
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "args": null,
+            "concreteType": "User",
+            "name": "author",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "photo",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "isOwner",
             "storageKey": null
           }
         ],
@@ -185,7 +307,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation main_comment_create_Mutation(\n  $parent: ObjectID!\n  $content: String!\n  $type: CommentType\n) {\n  app_create_comment(parent: $parent, content: $content, type: $type) {\n    id\n    createdAt\n  }\n}\n"
+  "text": "mutation main_comment_create_Mutation(\n  $parent: ObjectID!\n  $content: String!\n  $type: CommentType\n) {\n  app_create_comment(parent: $parent, content: $content, type: $type) {\n    id\n    content\n    type\n    createdAt\n    author {\n      id\n      name\n      photo\n    }\n    isOwner\n  }\n}\n"
 };
 
 module.exports = batch;
