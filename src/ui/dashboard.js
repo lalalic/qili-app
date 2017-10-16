@@ -14,7 +14,7 @@ import GraphiQL from 'graphiql'
 
 export const Dashboard=({router, fetcher,theme})=>(
 	<div>
-		<GraphiQL 
+		<GraphiQL
 			ref={ql=>{
 				if(ql){
 					let a=document.querySelector('.graphiql-container')
@@ -22,7 +22,7 @@ export const Dashboard=({router, fetcher,theme})=>(
 					a.style.height=`${theme.page.height-theme.footbar.height}px`
 					ql.setState({docExplorerOpen:false})
 				}
-			}} 
+			}}
 			fetcher={fetcher}
 			query="query{schema}"
 			/>
@@ -39,19 +39,23 @@ export const Dashboard=({router, fetcher,theme})=>(
 
 export default compose(
 	getContext({
-		router:PropTypes.object, 
+		router:PropTypes.object,
 		fetcher: PropTypes.func,
 		theme: PropTypes.object,
+		client: PropTypes.object
 	}),
-	connect(({qili:{current}},{fetcher})=>({
-		fetcher(params){
-			return fetcher({
-				body:JSON.stringify(params),
-				headers:{
-					"X-Application-ID2": current.split(":").pop()
-				}
-			})
-			.then(res=>res.json())
+	connect(({qili:{current}},{fetcher,client})=>{
+		let apiKey=client.get(current).apiKey
+		return {
+			fetcher(params){
+				return fetcher({
+					body:JSON.stringify(params),
+					headers:{
+						"X-Application-ID2": apiKey
+					}
+				})
+				.then(res=>res.json())
+			}
 		}
-	})),
+	}),
 )(Dashboard)

@@ -200,12 +200,12 @@ export default compose(
 			client.connection(store,connection,{parent})
 				.append(data.comment)
 		},
-		
+
 	})),
 	getContext({muiTheme:PropTypes.object}),
 	mapProps(({muiTheme,minHeight,mutate,data,relay,hint,system,template})=>({
 		hint,system,template,
-		data:data.comments.edges.map(({node})=>node),
+		data:data ? data.comments.edges.map(({node})=>node) : [],
 		commentText({content}){
 			return mutate({content})
 		},
