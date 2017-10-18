@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.7.7",
+  "version": "0.8.0",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -80,7 +80,8 @@
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "relay": "relay-compiler --src ./src --schema ./schema.graphql"
+    "relay": "relay-compiler --src ./src --schema ./schema.graphql",
+	"persist": "node scripts/persisted-query.js src cloud"
   },
   "repository": {
     "type": "git",
