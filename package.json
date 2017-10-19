@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -15,7 +15,6 @@
     "material-ui": "^0.16.0",
     "pull-to-refresh2": "^0.0.2",
     "react": "^15.1.0",
-    "react-apollo": "^1.4.15",
     "react-codemirror": "^1.0.0",
     "react-dom": "^15.1.0",
     "react-motion": "^0.5.1",
@@ -81,7 +80,7 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
-	"persist": "node scripts/persisted-query.js src cloud"
+    "persist": "node scripts/persisted-query.js src cloud"
   },
   "repository": {
     "type": "git",
@@ -95,6 +94,7 @@
   "jest": {
     "testPathDirs": [
       "__tests__"
-    ]
+    ],
+	"watchman":false
   }
 }

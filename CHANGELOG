@@ -27,4 +27,9 @@ refactor to <QiliApp><Router>...</Router></QiliApp> to make sure init success
 * fix inline comment creation bug
 * enter to create comment
 
+1.0.0
+===
+* graphql client
+* with relay
+
 
