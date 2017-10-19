@@ -41,6 +41,7 @@ const schema=("node_modules/qili-app/src,"+src).split(",")
 	
 fs.writeFileSync(
 	path.join(path.resolve(dest),"persisted-query.js"),
-	"module.exports="+JSON.stringify(schema,null,4),
+`//generated from persisted-query.js, don't edit it	
+module.exports=${JSON.stringify(schema,null,4)}`,
 	{encoding:"utf8"}
 )

@@ -142,12 +142,13 @@ export default compose(
 			container=document.createElement('div')
 			container.id='app'
 			document.body.appendChild(container)
-			let style=document.createElement("style")
-			document.getElementsByTagName("head")[0].appendChild(style)
-			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-			container.style.height=window.innerHeight+'px'
 		}
-
+		
+		let style=document.createElement("style")
+		document.getElementsByTagName("head")[0].appendChild(style)
+		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+		container.style.height=window.innerHeight+'px'
+		
 		supportTap()
 
 		return render(app,container)

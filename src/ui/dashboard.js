@@ -30,7 +30,6 @@ export const Dashboard=({router, fetcher,theme})=>(
 			onSelect={cmd=>router.push(`/${cmd.toLowerCase()}`)}
 			items={[
 				{action:"Cloud", icon:<IconCloud/>},
-				{action:"Log", icon:<IconLog/>},
 				{action:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}
 				]}
 			/>

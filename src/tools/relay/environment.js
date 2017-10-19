@@ -26,6 +26,7 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 			},
 			body: JSON.stringify({
 			  query: operation.text, // GraphQL text from input
+			  id: operation.name,
 			  variables,
 			}),
 		  })
