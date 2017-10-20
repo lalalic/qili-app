@@ -1,168 +1,60 @@
-jest.mock("../src/db/user")
-const React=require("react")
-const {ACTION,DOMAIN,REDUCER, QiliApp}=require("../src/qiliApp")
-
+import React from "react"
+import QiliApp, * as qili from "qili"
+import Tutorial from "components/tutorial"
+import Empty from "components/empty"
+import Authentication from "components/authentication"
+import {mount} from "enzyme"
+	
 describe("qili application", function(){
-    const {Carousel}=require("../src/components/tutorial")
-    const {Account}=require("../src/account")
-    const {shallow}=require("enzyme")
+	it("has render function", ()=>{
+		expect(QiliApp.render).toBeDefined()
+	})
 
     describe("component", function(){
-        /**
-         * {
-            service: PropTypes.string.isRequired,//with default
-            appId:PropTypes.string.isRequired,
-            theme: PropTypes.object.isRequired, //with default
-            init:PropTypes.func,
-            tutorial:PropTypes.array,
-            title: PropTypes.string,
-            project: PropTypes.object
-        }
-         *
-         * */
-
-        let props={
+        const props={
             appId: "test",
- 			tutorial:["a.jpg"],
- 			title: "test",
- 			project: {
-                homepage:"http://homepage"
-            }
         }
+		
+		it("no appid", ()=>{
+			let app=mount(<QiliApp/>)
+			expect(app.find(Empty).length).toBe(1)
+		})
 
-        it("{inited:false}", function(){
-            let app=shallow(<QiliApp {...props} {...{inited:false}}/>)
-            const CircularProgress=require('material-ui/CircularProgress')
-            expect(app.find(CircularProgress)).toBeDefined()
+        it("{tutorialized:false,tutorial:[...]}", function(){
+			let app=mount(<QiliApp {...props} tutorialized={false} tutorial={["a.jpg"]}/>)
+			expect(app.find(Tutorial).length).toBe(1)
         })
 
-        fit("{inited:false,initedError:'no network'}", function(){
-            let app=shallow(<QiliApp {...props} {...{inited:false,initedError:'no network'}}/>)
-            const Empty=require("../src/components/empty")
-            expect(app.find(Empty).props().children).toContain("no network")
+        it("{tutorialized:true}", function(){
+            let app=mount(<QiliApp {...props} tutorialized={true}/>)
+            expect(app.find(Authentication).length).toBe(1)
+        })
+		
+		it("{tutorialized:true,user:{name:'hello'}}", function(){
+            let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{name:'test'}}}/>)
+            expect(app.find(Authentication).length).toBe(1)
         })
 
-        it("{inited:true,tutorialized:false,tutorial:[...]}", function(){
-            let app=shallow(<QiliApp {...props} {...{inited:true,tutorialized:false}}/>)
-            expect(app.find(Carousel).props().slides).toBe(props.tutorial)
-        })
-
-        it("{inited:true,tutorialized:true,user:null}", function(){
-            let app=shallow(<QiliApp {...props} {...{inited:true,tutorialized:true,user:null}}/>)
-            expect(app.find(Account).props().user).toBeFalsy()
-        })
-
-        it("{inited:true,tutorialized:true,user:{username:'test'}}", function(){
-            let app=shallow(<QiliApp {...props} {...{inited:true,tutorialized:true,user:{username:'test'}}}/>)
-            expect(app.find(Account).props().user.username).toBe('test')
+        it("{tutorialized:true,user:{token:'hello'}}", function(){
+            let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{token:'test'}}}/>)
+            expect(app.find(qili.QiliApp).length).toBe(1)
         })
     })
 
     describe("actions",function(){
-        const User=require("../src/db/user")
-        describe("INIT_APP",function(){
-            it("('no network')",function(){
-                let initedError="no network"
-                let action=ACTION.INIT_APP(initedError)
-                expect(action.type).toBe(`@@${DOMAIN}/initedError`)
-                expect(action.payload.error).toBe(initedError)
-                let initState={}
-                let state=REDUCER(initState,action)
-                expect(state.initedError).toBe(initedError)
-                expect(state.inited).toBe(initState.inited)
-                expect(state).not.toBe(initState)
-            })
-
-            it("(null[succeed],tutorialized=false)",function(){
-                let action=ACTION.INIT_APP(null,false)
-                expect(action.type).toBe(`@@${DOMAIN}/inited`)
-                expect(action.payload.tutorialized).toBe(false)
-                let initState={}
-                let state=REDUCER(initState,action)
-                expect(state.inited).toBe(true)
-                expect(state.tutorialized).toBe(false)
-                expect(state).not.toBe(initState)
-            })
-
-            it("(null[succeed],tutorialized=true)",()=>{
-                let action=ACTION.INIT_APP(null,true)
-                expect(action.type).toBe(`@@${DOMAIN}/inited`)
-                expect(action.payload.tutorialized).toBe(true)
-                let initState={}
-                let state=REDUCER(initState,action)
-                expect(state.inited).toBe(true)
-                expect(state.tutorialized).toBe(true)
-                expect(state).not.toBe(initState)
-            })
+		const {REDUCER, ACTION}=qili
+		const user={token:"xxx"}
+        it("LOGOUT",()=>{
+            expect(REDUCER({user},ACTION.LOGOUT).user.token).not.toBeDefined()
         })
 
-        it("can LOGOUT",()=>{
-            ACTION.LOGOUT()
-            expect(User.logout).toHaveBeenCalled()
+        it("CURRENT_USER",()=>{
+            expect(REDUCER({},ACTION.CURRENT_USER(user)).user.token).toBe(user.token)
         })
 
-        it("can USER_CHANGED",()=>{
-            let user={username:"test"}
-            expect(REDUCER({},ACTION.USER_CHANGED(user)).user).toBe(user)
-        })
-
-        it.skip("can CHECK_VERSION",()=>{
-
-        })
-
-        it("can TUTORIALIZED",()=>{
+        it("TUTORIALIZED",()=>{
             expect(REDUCER({},ACTION.TUTORIALIZED).tutorialized).toBe(true)
         })
     })
 
-	describe("state", function(){
-		const reducers=QiliApp.enhanceReducers()
-		const INIT_STATE=QiliApp.INIT_STATE
-
-		describe("normalized data", function(){
-			it("{entities:{}}",function(){
-				let next={
-					type: 'NORMALIZED_DATA',
-					payload: {
-						books: {
-							mine:{},
-							yours:{}
-						}
-					}
-				}
-				let state = reducers(INIT_STATE, next)
-				expect(state).toEqual(Object.assign({},INIT_STATE,{entities:next.payload}))
-			})
-
-			it("books on entities:{authors:{}}",function(){
-				let next={
-					type: 'NORMALIZED_DATA',
-					payload: {
-						books: {
-							mine:{},
-							yours:{}
-						}
-					}
-				}
-				let authors = {authors:{raymond:{}}}
-				let state=reducers(Object.assign({},INIT_STATE,{entities:authors}), next)
-				expect(state.entities).toEqual(Object.assign({},next.payload,authors))
-			})
-
-			it("books on entities:{books:{his:{}}}",function(){
-				let next={
-					type: 'NORMALIZED_DATA',
-					payload: {
-						books: {
-							mine:{},
-							yours:{}
-						}
-					}
-				}
-				let books = {books:{his:{}}}
-				let state=reducers(Object.assign({},INIT_STATE,{entities:books}), next)
-				expect(state.entities.books).toEqual(Object.assign({},next.payload.books,books.books))
-			})
-		})
-	})
 })

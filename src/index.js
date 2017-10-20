@@ -1,7 +1,9 @@
 import React, {Component, PropTypes} from "react"
 import {render} from "react-dom"
+import {persistStore, autoRehydrate} from 'redux-persist'
 
-import {compose, pure,withState,branch,renderComponent,withProps, defaultProps, withContext, setStatic} from "recompose"
+import {compose, pure,withState,branch,renderComponent,
+		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
 import {withGraphqlClient} from "tools/recompose"
 
 import {createStore, applyMiddleware, combineReducers, compose as  redux_compose} from "redux"
@@ -61,12 +63,6 @@ export const REDUCER=(state={},{type,payload})=>{
 		return {...state,loading:!!payload}
 	case `@@${DOMAIN}/MESSAGE`:
 		return {...state, message:payload}
-	case `@@${DOMAIN}/CURRENT_APP`:
-		return {...state, current:payload}
-	case `@@${DOMAIN}/NEXT_APP`:
-		let current=state.current
-		let next=current
-		return {...state, current:next}
 	}
 
 	return state
@@ -121,21 +117,29 @@ export class QiliApp extends Component{
 		}
 		checkVersion()
 	}
+	
+	componentWillUnmount(){
+		persistStore(this.props.store)
+	}
 
 	static propsTypes={
-		service: PropTypes.string.isRequired,
-		appId:PropTypes.string.isRequired,
 		theme: PropTypes.object.isRequired,
 		store: PropTypes.object.isRequired,
-		client: PropTypes.object.isRequired,
-		user: PropTypes.object,
-		tutorial:PropTypes.array,
-		title: PropTypes.string,
-		project: PropTypes.object
+		checkVersion: PropTypes.func.isRequired,
+		title: PropTypes.string
 	}
 }
 
 export default compose(
+	setPropTypes({
+		appId: PropTypes.string.isRequired,
+		service: PropTypes.string,
+		store: PropTypes.object,
+		theme: PropTypes.object,
+		tutorial: PropTypes.arrayOf(PropTypes.string),
+		project: PropTypes.object
+	}),
+	
 	setStatic("render", (app)=>{
 		let container=document.getElementById('app')
 		if(!container){
@@ -201,7 +205,7 @@ export default compose(
 					[DOMAIN]:REDUCER,
 					...reducers
 				}),
-				composeEnhancers(applyMiddleware(thunk))
+				composeEnhancers(applyMiddleware(thunk),autoRehydrate())
 			)
 
 			return {store}
@@ -210,7 +214,7 @@ export default compose(
 
 	connect(({qili:{loading,message, ...others}})=>others,(dispatch, {project})=>({
 		checkVersion(){
-			dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+			project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
 		},
 		tutorialize(){
 			dispatch(ACTION.TUTORIALIZED)
@@ -278,5 +282,6 @@ export default compose(
 				})
 			}
 		})),
+	mapProps(({title,theme,checkVersion,store,children})=>({title,theme,checkVersion,store,children})),
 	pure,
 )(QiliApp)

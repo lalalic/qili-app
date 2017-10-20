@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -26,6 +26,7 @@
     "react-tap-event-plugin": "^2.0.0",
     "recompose": "^0.25.0",
     "redux": "^3.6.0",
+    "redux-persist": "^4.10.1",
     "redux-thunk": "^2.1.0",
     "relay-runtime": "^1.3.0"
   },
@@ -47,7 +48,7 @@
     "enzyme": "^2.7.0",
     "fakexmlhttprequest": "0.0.1",
     "jasmine-core": "^2.3.4",
-    "jest": "^18.1.0",
+    "jest": "^21.2.1",
     "less": "^2.7.2",
     "less-loader": "^2.2.3",
     "react-addons-test-utils": "^15.4.2",
@@ -92,9 +93,9 @@
   "main": "lib",
   "readme": "README.md",
   "jest": {
-    "testPathDirs": [
+    "roots": [
       "__tests__"
     ],
-	"watchman":false
+    "watchman": false
   }
 }
