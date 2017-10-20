@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from "react"
 import {FlatButton,TextField} from "material-ui"
-import {validate as isEmail} from "isemail"
+import isEmail from "is-valid-email"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
 import {graphql, withMutation} from "tools/recompose"
 

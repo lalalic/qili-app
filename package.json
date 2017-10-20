@@ -10,7 +10,7 @@
   "dependencies": {
     "babel-plugin-module-resolver": "^2.7.1",
     "graphiql": "^0.11.5",
-    "isemail": "^3.0.0",
+    "is-valid-email": "^0.0.2",
     "material-auto-rotating-carousel": "1.1.0",
     "material-ui": "^0.16.0",
     "pull-to-refresh2": "^0.0.2",
@@ -73,7 +73,7 @@
     "compile": "babel src -d lib",
     "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib",
     "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
-    "build.release": "webpack -p && node scripts/allin1.js",
+    "build.release": "webpack -p&& node scripts/allin1.js",
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --inline -d --entry=./.test.mongo.js",
     "test": "jest",
