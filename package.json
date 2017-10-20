@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
