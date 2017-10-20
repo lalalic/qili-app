@@ -117,7 +117,7 @@ export class QiliApp extends Component{
 		}
 		checkVersion()
 	}
-	
+
 	componentWillUnmount(){
 		persistStore(this.props.store)
 	}
@@ -139,7 +139,7 @@ export default compose(
 		tutorial: PropTypes.arrayOf(PropTypes.string),
 		project: PropTypes.object
 	}),
-	
+
 	setStatic("render", (app)=>{
 		let container=document.getElementById('app')
 		if(!container){
@@ -147,19 +147,19 @@ export default compose(
 			container.id='app'
 			document.body.appendChild(container)
 		}
-		
+
 		let style=document.createElement("style")
 		document.getElementsByTagName("head")[0].appendChild(style)
 		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
 		container.style.height=window.innerHeight+'px'
-		
+
 		supportTap()
 
 		return render(app,container)
 	}),
 
 	defaultProps({
-		service:"http://qili2.com/1/",
+		service:"http://qili2.com/1/graphql",
 		theme:getMuiTheme(LightBaseTheme,{
 			footbar:{
 				height: 50
