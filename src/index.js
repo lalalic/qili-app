@@ -260,8 +260,9 @@ export default compose(
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
-				<Authentication
-					onSuccess={setUser}/>
+				<div style={{margin:10}}>
+					<Authentication onSuccess={setUser}/>
+				</div>
 				<Loading/>
 				<Message/>
 			 </UI>
