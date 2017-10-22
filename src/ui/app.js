@@ -29,7 +29,7 @@ export class App extends Component{
 	}
 
 	render(){
-		const {id, name,uname,apiKey, update, upload, remove, toComment,removable}=this.props
+		const {id, name,uname,apiKey, update, remove, toComment,removable}=this.props
 		const {nameError, unameError}=this.state
 		let commandBar
 		if(removable)
@@ -37,10 +37,6 @@ export class App extends Component{
 				items={[
 						{action:"Back"}
 
-						,{action:"Upload"
-							,icon:<IconUpload/>
-							,onSelect:upload
-						}
 						,{action:"Remove"
 							,icon:<IconRemove/>
 							,onSelect: remove
@@ -166,9 +162,11 @@ export default compose(
 	`),
 	withProps(({data})=>({...data})),
 
-	withMutation(({id},data)=>({
+	withMutation(({id})=>({
+		promise:true,
 		name:"update",
 		patch4:id,
+		variables:{id},
 		mutation:graphql`
 			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String){
 				app_update(_id:$id, name:$name, uname: $uname)
@@ -177,6 +175,7 @@ export default compose(
 	})),
 
 	withMutation(({id})=>({
+		promise:true,
 		name:"doRemove",
 		variables:{id},
 		mutation:graphql`

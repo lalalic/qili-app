@@ -248,7 +248,7 @@ const router=(
 				getContext({client:PropTypes.object}),
 				connect(({qili:{current}}, {client})=>({
 					id:current,
-					cloudCode: client.get(current).cloudCode
+					cloudCode: client.get(current).cloudCode||"//your cloud code to extend server"
 				})),
 				withCurrent(),
 			)(Cloud)}/>
