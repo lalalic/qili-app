@@ -105,7 +105,7 @@ export class App extends Component{
 export class Creator extends Component{
 	state={error:null}
 	render(){
-		const {router, bFirst, create}=this.props
+		const {toApp, create}=this.props
 		const {error}=this.state
 		let refName,refUname
 		return (
@@ -123,8 +123,8 @@ export class Creator extends Component{
 					items={[
 						{action:"Back"}
 						,{action:"Save", label:"保存", icon:<IconSave/>
-							,onSelect:a=>create({name: refName.getValue, uname: refUname.getValue()})
-								.then(({_id})=>router.replace(!bFirst ? `/app/${_id}` : "/"), error=>this.setState({error}))
+							,onSelect:a=>create({name: refName.getValue(), uname: refUname.getValue()})
+								.then(({id})=>toApp(id), error=>this.setState({error}))
 						}
 					]}
 					/>
@@ -148,8 +148,7 @@ export default compose(
 					}
 				}
 			`,
-		}),
-		getContext({router: PropTypes.object}),
+		})
 	)(Creator)),
 
 	getContext({

@@ -8,7 +8,7 @@ const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJyb290IiwidXNlcm5hbW
 const _render=QiliApp.render
 QiliApp.render=function(app){
 	_render(React.cloneElement(app, {
-		service: "http://localhost:8080/1/graphql",
+		service: "http://localhost:9080/1/graphql",
 		user:{token},
 	}))
 }

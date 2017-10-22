@@ -5,7 +5,8 @@ import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {combineReducers} from "redux"
 import {connect} from "react-redux"
 
-import {compose, withProps, withContext, getContext, setStatic, branch, createEagerFactory,renderNothing} from "recompose"
+import {compose, withProps, withContext, getContext, setStatic, mapProps,
+		branch, createEagerFactory,renderNothing,renderComponent} from "recompose"
 import {graphql, withFragment, withQuery, withInit, withMutation, withPagination} from "tools/recompose"
 
 import Logo from 'icons/logo'
@@ -68,7 +69,7 @@ const QiliAdmin=compose(
 				dispatch(ACTION.CURRENT_APP(apps[0].id))
 			}
 		}
-	}),
+	})
 )(QiliApp)
 
 const Current=compose(
@@ -99,7 +100,23 @@ const withCurrent=()=>BaseComponent=>{
 
 const router=(
 	<Router history={hashHistory}>
-		<Route path="/">
+		<Route path="/" component={compose(
+				connect(state=>({hasApp:!!state.qili.current})),
+				branch(({hasApp})=>!hasApp,renderComponent(compose(
+						getContext({router:PropTypes.object}),
+						mapProps(({router,...others})=>({
+							toApp: id=>router.replace(`/`),
+							...others
+						})),
+					)(props=>(
+					<div>
+						<center style={{height:50, color:"lightgray", margin:20}}>
+							start from creating your first App!
+						</center>
+
+						<App.Creator {...props} style={{margin:"0px 100px"}}/>
+					</div>)))),
+			)(({children})=><div>{children}</div>)}>
 			<IndexRoute component={withCurrent()(Dashboard)}/>
 
 			<Route path="my">
@@ -147,7 +164,13 @@ const router=(
 			</Route>
 
 			<Route path="app">
-				<IndexRoute component={App.Creator}/>
+				<IndexRoute component={compose(
+					getContext({router:PropTypes.object}),
+					mapProps(({router,...others})=>({
+						toApp: id=>router.replace(`/app/${id}`),
+						...others
+					})),
+				)(App.Creator)}/>
 				<Route path=":id" component={
 						compose(
 							withQuery(({params:{id}})=>({
@@ -215,14 +238,14 @@ const router=(
 							}
 						}
 					}
-				`}),	
+				`}),
 				withProps(({params:{id:parent}})=>({
 					parent,
 					connection:"main_app_comments"
 				})),
 				withCurrent(),
 			)(Comment)}/>
-			
+
 			<Route path="cloud" component={compose(
 				getContext({client:PropTypes.object}),
 				connect(({qili:{current}}, {client})=>({
@@ -231,7 +254,7 @@ const router=(
 				})),
 				withCurrent(),
 			)(Cloud)}/>
-			
+
 		</Route>
 	</Router>
 )
