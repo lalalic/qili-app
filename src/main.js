@@ -103,10 +103,8 @@ const router=(
 		<Route path="/" component={compose(
 				connect(state=>({hasApp:!!state.qili.current})),
 				branch(({hasApp})=>!hasApp,renderComponent(compose(
-						getContext({router:PropTypes.object}),
-						mapProps(({router,...others})=>({
-							toApp: id=>router.replace(`/`),
-							...others
+						withProps(({dispatch})=>({
+							toApp: id=>dispatch(ACTION.CURRENT_APP(id))
 						})),
 					)(props=>(
 					<div>
