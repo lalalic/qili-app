@@ -133,7 +133,8 @@ export default compose(
 		store: PropTypes.object,
 		theme: PropTypes.object,
 		tutorial: PropTypes.arrayOf(PropTypes.string),
-		project: PropTypes.object
+		project: PropTypes.object,
+		isDev: PropTypes.bool,
 	}),
 
 	setStatic("render", (app)=>{
@@ -192,16 +193,16 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,reducers})=>{
+	withProps(({store,reducers,appId})=>{
 		if(!store){
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(
 				combineReducers({[DOMAIN]:REDUCER,...reducers}),
 				composeEnhancers(applyMiddleware(thunk),autoRehydrate())
 			)
-			
-			persistStore(store)
-			
+
+			persistStore(store,{keyPrefix:`${appId}:`})
+
 			return {store}
 		}
 	}),

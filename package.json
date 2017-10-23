@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -14,6 +14,7 @@
     "material-auto-rotating-carousel": "1.1.0",
     "material-ui": "^0.16.0",
     "pull-to-refresh2": "^0.0.2",
+    "qili-app": "^0.3.6",
     "react": "^15.1.0",
     "react-codemirror": "^1.0.0",
     "react-dom": "^15.1.0",

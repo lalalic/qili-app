@@ -5,8 +5,8 @@ const store = new Store(source);
 const handlerProvider = null;
 
 const environments={}
-	
-export default function createEnvironment(service, appId, token, loading=a=>a, showMessage=console.log){
+
+export default function createEnvironment(service, appId, token, loading=a=>a, showMessage=console.log, isDev){
 	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
@@ -25,7 +25,7 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 				"X-Session-Token": token,
 			},
 			body: JSON.stringify({
-			  query: operation.text, // GraphQL text from input
+			  query: isDev===true ? operation.text : undefined, // GraphQL text from input
 			  id: operation.name,
 			  variables,
 			}),
@@ -45,10 +45,10 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 			  throw e
 		  })
 		}); // see note below
-		
+
 	return environments[key]=new Environment({
 	  handlerProvider, // Can omit.
 	  network,
 	  store,
-	});	
+	});
 }

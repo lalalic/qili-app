@@ -1,5 +1,14 @@
-//generated from persisted-query.js, don't edit it	
-module.exports={
+Cloud.isDev=true
+
+const AppComment=Cloud.buildComment("App")
+
+Cloud.typeDefs=`
+    ${AppComment.typeDefs}
+`
+
+Cloud.resolver=Cloud.merge(AppComment.resolver)
+
+Cloud.persistedQuery={
     "account_setPhoto_Mutation": "mutation account_setPhoto_Mutation(\n  $url: String!\n  $id: ID!\n  $field: String = \"photo\"\n) {\n  file_link(url: $url, id: $id, field: $field)\n}\n",
     "authentication_login_Mutation": "mutation authentication_login_Mutation(\n  $contact: String!\n  $token: String!\n  $name: String\n) {\n  login(contact: $contact, token: $token, name: $name) {\n    id\n    token\n  }\n}\n",
     "authentication_requestToken_Mutation": "mutation authentication_requestToken_Mutation(\n  $contact: String!\n) {\n  requestToken(contact: $contact)\n}\n",

@@ -10,20 +10,20 @@ export const withGraphqlClient=options=>BaseComponent=>{
 				({client})=>({client})
 			)((BaseComponent))
 		)
-	
+
 	const WithGraphqlClient=props=>{
-		let {client:environment,service, appId, user,loading,showMessage}=props
+		let {client:environment,service, appId, user,loading,showMessage, isDev}=props
 		if(!environment){
-			environment=createEnvironment(service, appId, user? user.token : undefined,loading,showMessage)
+			environment=createEnvironment(service, appId, user? user.token : undefined,loading,showMessage,isDev)
 		}else if(typeof(environment)=="function"){
 			environment=environment(props)
 		}
-		
+
 		environment.get=function(id){
 			let store=this.getStore()
 			return store.getSource().get(id)
 		}
-		
+
 		environment.getAll=function(type){
 			let store=this.getStore()
 			let source=store.getSource()
@@ -32,8 +32,8 @@ export const withGraphqlClient=options=>BaseComponent=>{
 				.filter(id=>id.startsWith(ex))
 				.map(id=>source.get(id))
 		}
-		
-		
+
+
 		environment.connection=function(store,key,filter,id="client:root"){
 			const record=store.get(id)
 			const connection=ConnectionHandler.getConnection(record,key,filter)
@@ -52,16 +52,16 @@ export const withGraphqlClient=options=>BaseComponent=>{
 					ConnectionHandler.insertEdgeBefore(connection,edge)
 				}
 			}
-			
+
 		}
-		
+
 		return factory({client:environment,...props})
 	}
-	
+
 	if (process.env.NODE_ENV !== 'production') {
 		return setDisplayName(wrapDisplayName(BaseComponent, 'withGraphqlClient'))(WithGraphqlClient)
 	}
-	
+
 	return WithGraphqlClient
 }
 
