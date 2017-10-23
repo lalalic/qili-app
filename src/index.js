@@ -6,7 +6,7 @@ import {compose, pure,withState,branch,renderComponent,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
 import {withGraphqlClient} from "tools/recompose"
 
-import {createStore, applyMiddleware, combineReducers, compose as  redux_compose} from "redux"
+import {createStore, applyMiddleware, combineReducers} from "redux"
 
 import {connect, Provider} from "react-redux"
 import thunk from 'redux-thunk'
