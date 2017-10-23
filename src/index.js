@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from "react"
 import {render} from "react-dom"
 import {persistStore, autoRehydrate} from 'redux-persist'
-import {REHYDRATE} from 'redux-persist/constants'
 
 import {compose, pure,withState,branch,renderComponent,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
@@ -117,10 +116,6 @@ export class QiliApp extends Component{
 			document.title=title
 		}
 		checkVersion()
-	}
-
-	componentWillUnmount(){
-		persistStore(this.props.store)
 	}
 
 	static propsTypes={
