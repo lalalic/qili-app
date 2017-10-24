@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 
 import {Avatar, Dialog} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
-import {selectImageFile, upload} from 'components/file'
+import {selectImageFile, upload,withGetToken} from 'components/file'
 
-export default class Photo extends Component{
+export class Photo extends Component{
     state={url:this.props.src}
 
     render(){
@@ -43,15 +43,14 @@ export default class Photo extends Component{
     }
 
     selectPhoto(){
-        var {onPhoto, onFail, width, height, autoUpload}=this.props
+        var {onPhoto, onFail, width, height, autoUpload,getToken}=this.props
         selectImageFile(width, height).
             then(({url,binary})=>{
                 this.setState({url})
                 if(autoUpload){
-                    upload(url)
-                        .then(url=>{
-                            onPhoto && onPhoto(url)
-                        })
+                    getToken()
+                        .then(token=>upload(url,autoUpdate,token))
+                        .then(url=>onPhoto && onPhoto(url))
                 }else {
                     onPhoto && onPhoto(url)
                 }
@@ -59,16 +58,15 @@ export default class Photo extends Component{
     }
 
     takePhoto(){
-        var {onPhoto, onFail, width, height, cameraOptions, autoUpload}=this.props
+        var {onPhoto, onFail, width, height, cameraOptions, autoUpload,getToken}=this.props
         cameraOptions.targetWidth=width
         cameraOptions.targetHeight=height
         navigator.camera.getPicture(url=>{
                 this.setState({url})
                 if(autoUpload){
-                    dbFile.upload(url)
-                        .then(({url})=>{
-                            onPhoto && onPhoto(url)
-                        })
+                    getToken()
+                        .then(token=>upload(url,autoUpdate,token))
+                        .then(url=>onPhoto && onPhoto(url))
                 } else {
                     onPhoto && onPhoto(url)
                 }
@@ -89,7 +87,7 @@ export default class Photo extends Component{
         height:1024,
         iconRatio:0.5,
         overwritable:false,
-        autoUpload:true,
+        autoUpload:false,
 		cameraOptions: typeof(Camera)!='undefined' ? {
 				quality : 75,
 				destinationType : Camera.DestinationType.FILE_URI,
@@ -100,5 +98,6 @@ export default class Photo extends Component{
 				saveToPhotoAlbum: false
 			}:{}
     }
-
 }
+
+export default withGetToken(Photo)

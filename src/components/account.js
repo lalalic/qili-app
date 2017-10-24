@@ -15,17 +15,19 @@ import CheckUpdate from "components/check-update"
 import Photo from "components/photo"
 
 
-export const Account=({photo, username, children,router, setPhoto})=>{
+export const Account=({id, photo, username, children,toSetting,toProfile,mutate})=>{
 	return (
 		<div>
 			<List>
 				<ListItem primaryText={username}
 					leftAvatar={
-						<Photo src={photo} iconRatio={2/3} width={40} height={40}
-							onPhoto={url=>setPhoto({url})}/>
+						<Photo src={photo}
+							autoUpload={{id,key:"photo.jpg"}}
+							iconRatio={2/3} width={40} height={40}
+							onPhoto={url=>mutate({photo})}/>
 					}
 					rightIcon={<IconRightArrow/>}
-					onClick={e=>router.push("/my/profile")}
+					onClick={toProfile}
 					/>
 
 				<Divider inset={true}/>
@@ -37,7 +39,7 @@ export const Account=({photo, username, children,router, setPhoto})=>{
 				<ListItem primaryText={<CheckUpdate>设置</CheckUpdate>}
 					leftIcon={<IconSetting/>}
 					rightIcon={<IconRightArrow/>}
-					onClick={e=>router.push("/my/setting")}
+					onClick={toSetting}
 					/>
 			</List>
 		</div>
@@ -45,18 +47,14 @@ export const Account=({photo, username, children,router, setPhoto})=>{
 }
 
 export default compose(
-	getContext({router: PropTypes.object}),
-	withMutation(({id},{url})=>({
-		name:"setPhoto",
-		variables:{
-			id,
-			url,
-		},
-		patch4:id,
-		mutation:graphql`
-			mutation account_setPhoto_Mutation($url:String!, $id:ID!, $field:String="photo"){
-				file_link(url:$url, id:$id, field:$field)
-			}
-		`
-	}))
+	withMutation(({id}, data)=>{
+		return {
+			patch4:id,
+			mutation: graphql`
+				mutation account_update_Mutation($photo:String){
+					user_update(photo:$photo)
+				}
+			`
+		}
+	})
 )(Account)

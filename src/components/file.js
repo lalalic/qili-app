@@ -1,6 +1,6 @@
-var instance,
-    IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length,
-    input,_imgSizer;
+import {withMutation} from "tools/recompose"
+const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
+var instance,input,_imgSizer;
 
 function main(type="json", width, height){
     //return Promise.as("http://ts2.mm.bing.net/th?id=JN.tzKlieg4w8eYJfDBkEHoAw&pid=15.1")
@@ -145,8 +145,16 @@ module.exports={//for testable
 		var blob = new Blob(byteArrays, {type: contentType});
 		return blob;
 	},
+    root:null,//injected later
     upload(data, props, token, url="http://up.qiniu.com"){
         return new Promise((resolve, reject)=>{
+            props=props||{}
+            if(!props.id || !props.key){
+                reject("upload must have id and key in props")
+            }
+            if(module.exports.root){
+                props={...props,key:`${module.exports.root}/${props.id}/${props.key}`}
+            }
 			dataAsBlob(data).then(data=>{
                 var formData=new FormData()
                 formData.append('file',data)
@@ -168,5 +176,17 @@ module.exports={//for testable
                 xhr.send(formData)
             })
         })
-    }
+    },
+    withGetToken:withMutation({
+		name:"getToken",
+		promise:true,
+		mutation:graphql`
+			mutation file_token_Mutation{
+				file_token{
+					token
+					id
+				}
+			}
+		`,
+	}),
 }

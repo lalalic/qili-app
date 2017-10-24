@@ -8,9 +8,9 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import Account from "components/account"
 import CommandBar from "components/command-bar"
-	
-export const My=({id, username, photo, apps, router})=>(
-	<Account {...{id, username, photo}}>
+
+export const My=({id, username, photo, apps, toApp, toProfile, toSetting})=>(
+	<Account {...{id, username, photo,toProfile,toSetting}} >
 		<ListItem
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
@@ -22,7 +22,7 @@ export const My=({id, username, photo, apps, router})=>(
 						<ListItem primaryText={a.name} key={a.id}
 							leftIcon={<span/>}
 							rightIcon={<IconItem/>}
-							onClick={e=>router.push(`/app/${a.id}`)}/>
+							onClick={e=>toApp(a)}/>
 				))
 			}
 		/>
@@ -35,13 +35,12 @@ export default compose(
 		fragment my on User{
 			id
 			username
-			photo			
+			photo
 			apps{
 				id
 				name
 			}
 		}
 	`),
-	withProps(({data})=>data),
-	getContext({router:PropTypes.object}),	
+	withProps(({data})=>data)	
 )(My)

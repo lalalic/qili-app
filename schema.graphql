@@ -55,6 +55,7 @@ type File {
 type FileToken {
   token: String!
   expires: Int!
+  id: ObjectID
 }
 
 enum Gender {
@@ -69,14 +70,14 @@ type Mutation {
   requestToken(contact: String!): Boolean
   login(contact: String!, token: String!, name: String): User
   logout: Boolean
-  user_update(username: String, birthday: Date, gender: Gender, location: String, signature: String): Date
+  user_update(photo:String,username: String, birthday: Date, gender: Gender, location: String, signature: String): Date
   role_create(name: String): Role
   role_update(_id: ObjectID!, name: String): Date
   role_remove(_id: ObjectID!): Boolean
   role_user_add(_id: ObjectID!, users: [String!]!): Date
   role_user_remove(_id: ObjectID!, users: [String!]!): Date
   file_link(url: String!, id: ID!, field: String!): Boolean
-  file_tokens(count: Int): [FileToken]
+  file_token: FileToken
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
   app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): Date

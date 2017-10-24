@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
-import {graphql, withFragment, withMutation, setPhoto} from "tools/recompose"
+import {graphql, withFragment, withMutation} from "tools/recompose"
 
 import CommandBar from "components/command-bar"
 import Photo from "components/photo"
@@ -12,7 +12,7 @@ import {ACTION} from "qili"
 import IconQuit from "material-ui/svg-icons/file/cloud-off"
 
 export const Profile=({
-	username,birthday,gender,location,photo,signature,
+	id,username,birthday,gender,location,photo,signature,
 	children,
 	valueStyle={color:"lightgray"},
 	mutate: update,
@@ -23,7 +23,8 @@ export const Profile=({
 			<Field primaryText="头像"
 				rightAvatar={
 					<Photo src={photo}
-						onPhoto={url=>setPhoto({url})}
+						autoUpdate={{id,key:'photo.jpg'}}
+						onPhoto={url=>update({photo})}
 						iconRatio={2/3} width={100} height={100}/>
 					}
 				style={{height:100}}/>
@@ -76,13 +77,12 @@ export default compose(
 		return {
 			patch4:id,
 			mutation: graphql`
-				mutation userProfile_update_Mutation($username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
-					user_update(username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature)
+				mutation userProfile_update_Mutation($photo:String,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
+					user_update(photo:$photo,username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature)
 				}
 			`
 		}
 	}),
-	setPhoto(),
 	connect(null,(dispatch)=>({
 		logout:()=>dispatch(ACTION.LOGOUT),
 	})),

@@ -9,7 +9,7 @@ const _render=QiliApp.render
 QiliApp.render=function(app){
 	_render(React.cloneElement(app, {
 		service: "http://localhost:9080/1/graphql",
-		user:{token},
+		//user:{token},
 		isDev:false
 	}))
 }
