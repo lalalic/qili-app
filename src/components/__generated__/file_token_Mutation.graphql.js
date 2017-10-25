@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 6b896c8bf6b94c02dbcb00ce3b781fca
+ * @relayHash 97227e97df0f5ab1e27ccd62a0888ed5
  */
 
 /* eslint-disable */
@@ -14,7 +14,7 @@ export type file_token_MutationVariables = {| |};
 export type file_token_MutationResponse = {|
   +file_token: ?{|
     +token: string;
-    +id: ?any;
+    +id: ?string;
   |};
 |};
 */

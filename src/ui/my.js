@@ -9,13 +9,13 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 import Account from "components/account"
 import CommandBar from "components/command-bar"
 
-export const My=({id, username, photo, apps, toApp, toProfile, toSetting})=>(
+export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetting})=>(
 	<Account {...{id, username, photo,toProfile,toSetting}} >
 		<ListItem
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
 			autoGenerateNestedIndicator={false}
-			onTouchTap={a=>router.push("app")}
+			onTouchTap={toCreate}
 			leftIcon={<IconAdd/>}
 			nestedItems={
 				apps.map(a=>(

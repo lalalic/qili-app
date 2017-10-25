@@ -131,12 +131,13 @@ const router=(
 								`
 							}),
 							withProps(({me})=>({data:me})),
-							withContext({router:PropTypes.object}),
+							getContext({router:PropTypes.object}),
 							mapProps(({router,...others})=>({
 								...others,
+								toCreate: ()=>router.push(`/app`),
 								toApp:a=>router.push(`/app/${a.id}`),
-								toSetting: ()=>router.push('/setting'),
-								toProfile: ()=>router.push('/profile')
+								toSetting: ()=>router.push('/my/setting'),
+								toProfile: ()=>router.push('/my/profile')
 							}))
 						)(My)
 					}/>

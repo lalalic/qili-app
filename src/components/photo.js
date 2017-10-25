@@ -11,7 +11,7 @@ export class Photo extends Component{
         var {url}=this.state,
             {width, height, iconSize, style={},
 				cameraOptions, overwritable,iconRatio,
-				onPhoto, autoUpload,
+				onPhoto, autoUpload, getToken,
 				...others}=this.props;
         if(!iconSize){
             style.width=width
@@ -35,11 +35,17 @@ export class Photo extends Component{
                 style={style}
                 color="lightgray"
                 hoverColor="lightblue"
-                onClick={e=>this.doPhoto()}/>)
+                onClick={this.doPhoto.bind(this)}/>)
     }
 
-    doPhoto(){
-        typeof(navigator.camera)!='undefined' ? this.takePhoto() : this.selectPhoto()
+    doPhoto(e){
+		e.stopPropagation()
+        if(typeof(navigator.camera)!='undefined'){
+			this.takePhoto()
+		}else{
+			this.selectPhoto()
+		}
+		return false
     }
 
     selectPhoto(){
@@ -49,7 +55,7 @@ export class Photo extends Component{
                 this.setState({url})
                 if(autoUpload){
                     getToken()
-                        .then(token=>upload(url,autoUpdate,token))
+                        .then(token=>upload(url,autoUpload,token.token))
                         .then(url=>onPhoto && onPhoto(url))
                 }else {
                     onPhoto && onPhoto(url)
@@ -65,7 +71,7 @@ export class Photo extends Component{
                 this.setState({url})
                 if(autoUpload){
                     getToken()
-                        .then(token=>upload(url,autoUpdate,token))
+                        .then(token=>upload(url,autoUpdate,token.token))
                         .then(url=>onPhoto && onPhoto(url))
                 } else {
                     onPhoto && onPhoto(url)

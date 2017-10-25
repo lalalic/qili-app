@@ -23,8 +23,8 @@ export const Profile=({
 			<Field primaryText="头像"
 				rightAvatar={
 					<Photo src={photo}
-						autoUpdate={{id,key:'photo.jpg'}}
-						onPhoto={url=>update({photo})}
+						autoUpload={{id,key:'photo.jpg'}}
+						onPhoto={photo=>update({photo})}
 						iconRatio={2/3} width={100} height={100}/>
 					}
 				style={{height:100}}/>

@@ -55,7 +55,7 @@ type File {
 type FileToken {
   token: String!
   expires: Int!
-  id: ObjectID
+  id: String
 }
 
 enum Gender {
@@ -66,11 +66,23 @@ enum Gender {
 # The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 scalar JSON
 
+type Log implements Node {
+  id: ID!
+  type: String
+  operation: String
+  variables: JSON
+  status: Int
+  startedAt: Date
+  time: Int
+  report: JSON
+  author: User
+}
+
 type Mutation {
   requestToken(contact: String!): Boolean
   login(contact: String!, token: String!, name: String): User
   logout: Boolean
-  user_update(photo:String,username: String, birthday: Date, gender: Gender, location: String, signature: String): Date
+  user_update(photo: String, username: String, birthday: Date, gender: Gender, location: String, signature: String): Date
   role_create(name: String): Role
   role_update(_id: ObjectID!, name: String): Date
   role_remove(_id: ObjectID!): Boolean

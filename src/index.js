@@ -195,7 +195,7 @@ export default compose(
 	)),
 
 	withProps(({store,reducers,appId})=>{
-		File.root=app.props.appId
+		File.root=appId
 		if(!store){
 			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(

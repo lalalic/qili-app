@@ -20,11 +20,11 @@ export const Account=({id, photo, username, children,toSetting,toProfile,mutate}
 		<div>
 			<List>
 				<ListItem primaryText={username}
-					leftAvatar={
+					leftIcon={
 						<Photo src={photo}
 							autoUpload={{id,key:"photo.jpg"}}
 							iconRatio={2/3} width={40} height={40}
-							onPhoto={url=>mutate({photo})}/>
+							onPhoto={photo=>mutate({photo})}/>
 					}
 					rightIcon={<IconRightArrow/>}
 					onClick={toProfile}
