@@ -39,21 +39,19 @@ export const Dashboard=({router, fetcher,theme})=>(
 export default compose(
 	getContext({
 		router:PropTypes.object,
-		fetcher: PropTypes.func,
 		theme: PropTypes.object,
 		client: PropTypes.object
 	}),
-	connect(({qili:{current}},{fetcher,client})=>{
+	connect(({qili:{current}},{client})=>{
 		let apiKey=client.get(current).apiKey
 		return {
 			fetcher(params){
-				return fetcher({
+				return client.fetcher({
 					body:JSON.stringify(params),
 					headers:{
 						"X-Application-ID2": apiKey
 					}
 				})
-				.then(res=>res.json())
 			}
 		}
 	}),

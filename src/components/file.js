@@ -157,7 +157,7 @@ module.exports={//for testable
             }
 			props['x:id']=props.id
 			delete  props.id
-			
+
 			const getToken=()=>{
 				if(typeof(token)=="string"){
 					return Promise.resolve(token)
@@ -165,7 +165,7 @@ module.exports={//for testable
 					return token({key:props.key}).then(({token})=>token)
 				}
 			}
-			
+
 			getToken().then(token=>{
 				dataAsBlob(data).then(data=>{
 					var formData=new FormData()
@@ -202,12 +202,19 @@ module.exports={//for testable
 			}
 		`,
 	}),
-	
-	withFileCreate: graphql`
-		mutation file_create_Mutation($_id:String!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
-			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
-				url
-			}
-		}
-	`
+    getToken(client,key){
+        key=typeof(key)=="string" ? {key} : key
+        return client.runQL({id:"file_token_Mutation",variables:key})
+    },
+	withFileCreate: withMutation({
+        name:"createFile",
+        promise:true,
+        mutation:graphql`
+    		mutation file_create_Mutation($_id:String!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
+    			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
+    				url
+    			}
+    		}
+    	`
+    })
 }

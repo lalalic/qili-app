@@ -25,7 +25,7 @@ export const Profile=({
 					<Photo src={photo}
 						autoUpload={{id,key:'photo.jpg'}}
 						onPhoto={photo=>update({photo})}
-						iconRatio={2/3} width={100} height={100}/>
+						width={100} height={100}/>
 					}
 				style={{height:100}}/>
 

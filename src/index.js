@@ -265,21 +265,6 @@ export default compose(
 			 </UI>
 		</Provider>
 	)),
-	withContext({fetcher:PropTypes.func},
-		({service, appId, user:{token}})=>({
-			fetcher(opt){
-				return fetch(service,{
-					method: 'POST',
-					...opt,
-					headers: {
-						'content-type': 'application/json',
-						"X-Application-ID": appId,
-						"X-Session-Token": token,
-						...(opt&&opt.headers||null)
-					},
-				})
-			}
-		})),
 	mapProps(({title,theme,checkVersion,store,children})=>({title,theme,checkVersion,store,children})),
 	pure,
 )(QiliApp)

@@ -10,45 +10,55 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
+
+	const fetcher=opt=>fetch(service,{
+		method: 'POST',
+		...opt,
+		headers: {
+			'content-type': 'application/json',
+			"X-Application-ID": appId,
+			"X-Session-Token": token,
+			...(opt?opt.headers:null)
+		},
+	})
+	.then(res=>res.json())
+	.then(res=>{
+		//loading(false)
+		if(res.errors){
+			showMessage({message:"server error!",level:"error"})
+			console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
+		}
+		return res
+	},e=>{
+		//loading(false)
+		showMessage({message:"server error!",level:"error"})
+		console.error("server error:"+e.message)
+		throw e
+	})
+
 	const network = Network.create(function fetchQuery(
 		  operation,
 		  variables,
 		  cacheConfig,
 		  uploadables,
 		) {
-			//loading(true)
-		  return fetch(service, {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-				"X-Application-ID": appId,
-				"X-Session-Token": token,
-			},
+		  return fetcher({
 			body: JSON.stringify({
 			  query: isDev===true ? operation.text : undefined, // GraphQL text from input
 			  id: operation.name,
 			  variables,
 			}),
 		  })
-		  .then(res=>res.json())
-		  .then(res=>{
-			  //loading(false)
-			  if(res.errors){
-				  showMessage({message:"server error!",level:"error"})
-				  console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
-			  }
-			  return res
-		  },e=>{
-			  //loading(false)
-			  showMessage({message:"server error!",level:"error"})
-			  console.error("server error:"+e.message)
-			  throw e
-		  })
 		}); // see note below
 
-	return environments[key]=new Environment({
-	  handlerProvider, // Can omit.
-	  network,
-	  store,
+	return environments[key]=Object.assign(new Environment({
+		handlerProvider, // Can omit.
+		network,
+		store,
+	}),{
+		fetcher,
+		runQL(query){
+			return fetcher({body:JSON.stringify(query)})
+		}
 	});
 }
