@@ -178,7 +178,7 @@ module.exports={//for testable
 					xhr.onreadystatechange = function () {
 						if (xhr.readyState === 4) {
 							if (xhr.status >= 200 && xhr.status < 300)
-								resolve(JSON.parse(xhr.responseText).data.file_create)
+								resolve(JSON.parse(xhr.responseText).data.file_create.url)
 							else
 								reject(xhr.responseText);
 						}
