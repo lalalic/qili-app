@@ -157,34 +157,45 @@ module.exports={//for testable
             }
 			props['x:id']=props.id
 			delete  props.id
-            dataAsBlob(data).then(data=>{
-                var formData=new FormData()
-                formData.append('file',data)
-                formData.append('token',token)
-                Object.keys(props)
-                    .forEach(a=>formData.append(a,props[a]))
+			
+			const getToken=()=>{
+				if(typeof(token)=="string"){
+					return Promise.resolve(token)
+				}else{
+					return token(props.key).then(({token})=>token)
+				}
+			}
+			
+			getToken().then(token=>{
+				dataAsBlob(data).then(data=>{
+					var formData=new FormData()
+					formData.append('file',data)
+					formData.append('token',token)
+					Object.keys(props)
+						.forEach(a=>formData.append(a,props[a]))
 
-                var xhr=new XMLHttpRequest()
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status >= 200 && xhr.status < 300)
-                            resolve(JSON.parse(xhr.responseText).data.file_create)
-                        else
-                            reject(xhr.responseText);
-                    }
-                }
+					var xhr=new XMLHttpRequest()
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState === 4) {
+							if (xhr.status >= 200 && xhr.status < 300)
+								resolve(JSON.parse(xhr.responseText).data.file_create)
+							else
+								reject(xhr.responseText);
+						}
+					}
 
-                xhr.open('POST',url,true)
-                xhr.send(formData)
-            })
+					xhr.open('POST',url,true)
+					xhr.send(formData)
+				})
+			})
         })
     },
     withGetToken:withMutation({
 		name:"getToken",
 		promise:true,
 		mutation:graphql`
-			mutation file_token_Mutation{
-				file_token{
+			mutation file_token_Mutation($key:String){
+				file_token(key:$key){
 					token
 					id
 				}
@@ -193,7 +204,7 @@ module.exports={//for testable
 	}),
 	
 	withFileCreate: graphql`
-		mutation file_create_Mutation($_id:ObjectID!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
+		mutation file_create_Mutation($_id:String!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
 			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
 				url
 			}

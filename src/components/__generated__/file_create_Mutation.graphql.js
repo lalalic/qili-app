@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 54bcc8f504b93b9d866538533b899d5a
+ * @relayHash 7d343a95ccef4cf1497277fd5d9c24a5
  */
 
 /* eslint-disable */
@@ -10,7 +10,7 @@
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
 export type file_create_MutationVariables = {|
-  _id: any;
+  _id: string;
   host: string;
   bucket?: ?string;
   size?: ?number;
@@ -29,7 +29,7 @@ export type file_create_MutationResponse = {|
 
 /*
 mutation file_create_Mutation(
-  $_id: ObjectID!
+  $_id: String!
   $host: ID!
   $bucket: String
   $size: Int
@@ -50,7 +50,7 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LocalArgument",
         "name": "_id",
-        "type": "ObjectID!",
+        "type": "String!",
         "defaultValue": null
       },
       {
@@ -102,7 +102,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "Variable",
             "name": "_id",
             "variableName": "_id",
-            "type": "ObjectID!"
+            "type": "String!"
           },
           {
             "kind": "Variable",
@@ -167,7 +167,7 @@ const batch /*: ConcreteBatch*/ = {
       {
         "kind": "LocalArgument",
         "name": "_id",
-        "type": "ObjectID!",
+        "type": "String!",
         "defaultValue": null
       },
       {
@@ -219,7 +219,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "Variable",
             "name": "_id",
             "variableName": "_id",
-            "type": "ObjectID!"
+            "type": "String!"
           },
           {
             "kind": "Variable",
@@ -281,7 +281,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation file_create_Mutation(\n  $_id: ObjectID!\n  $host: ID!\n  $bucket: String\n  $size: Int\n  $crc: Int\n  $mimeType: String\n  $imageInfo: JSON\n) {\n  file_create(_id: $_id, host: $host, bucket: $bucket, size: $size, crc: $crc, mimeType: $mimeType, imageInfo: $imageInfo) {\n    url\n    id\n  }\n}\n"
+  "text": "mutation file_create_Mutation(\n  $_id: String!\n  $host: ID!\n  $bucket: String\n  $size: Int\n  $crc: Int\n  $mimeType: String\n  $imageInfo: JSON\n) {\n  file_create(_id: $_id, host: $host, bucket: $bucket, size: $size, crc: $crc, mimeType: $mimeType, imageInfo: $imageInfo) {\n    url\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

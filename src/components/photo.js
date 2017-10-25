@@ -22,7 +22,7 @@ export class Photo extends Component{
 
         if(url){
             if(overwritable)
-                others.onClick=this.doPhoto.bind(this)
+                others.onClick=this.selectOrTakePhoto.bind(this)
             return (<Avatar  {...others} src={url} style={style}/>)
         }
 
@@ -35,10 +35,10 @@ export class Photo extends Component{
                 style={style}
                 color="lightgray"
                 hoverColor="lightblue"
-                onClick={this.doPhoto.bind(this)}/>)
+                onClick={this.selectOrTakePhoto.bind(this)}/>)
     }
 
-    doPhoto(e){
+    selectOrTakePhoto(e){
 		e.stopPropagation()
         if(typeof(navigator.camera)!='undefined'){
 			this.takePhoto()
@@ -47,36 +47,29 @@ export class Photo extends Component{
 		}
 		return false
     }
+	
+	handlePhoto(url){
+		const {onPhoto,autoUpload,getToken}=this.props
+		this.setState({url})
+		if(autoUpload){
+			upload(url,autoUpload,getToken)
+				.then(url=>onPhoto && onPhoto(url))
+		}else {
+			onPhoto && onPhoto(url)
+		}
+	}
 
     selectPhoto(){
-        var {onPhoto, onFail, width, height, autoUpload,getToken}=this.props
+        const {onFail, width, height}=this.props
         selectImageFile(width, height).
-            then(({url,binary})=>{
-                this.setState({url})
-                if(autoUpload){
-                    getToken()
-                        .then(token=>upload(url,autoUpload,token.token))
-                        .then(url=>onPhoto && onPhoto(url))
-                }else {
-                    onPhoto && onPhoto(url)
-                }
-            }, onFail)
+            then(({url,binary})=>this.handlePhoto(url), onFail)
     }
 
     takePhoto(){
-        var {onPhoto, onFail, width, height, cameraOptions, autoUpload,getToken}=this.props
+        const {onFail, width, height, cameraOptions}=this.props
         cameraOptions.targetWidth=width
         cameraOptions.targetHeight=height
-        navigator.camera.getPicture(url=>{
-                this.setState({url})
-                if(autoUpload){
-                    getToken()
-                        .then(token=>upload(url,autoUpdate,token.token))
-                        .then(url=>onPhoto && onPhoto(url))
-                } else {
-                    onPhoto && onPhoto(url)
-                }
-            }, onFail, cameraOptions)
+        navigator.camera.getPicture(url=>this.handlePhoto(url), onFail, cameraOptions)
     }
 
     getValue(){
