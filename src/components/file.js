@@ -152,12 +152,12 @@ module.exports={//for testable
             if(!props.id || !props.key){
                 reject("upload must have id and key in props")
             }
-			props['x:id']=props.id
-			delete  props.id
-            if(module.exports.root){
+			if(module.exports.root){
                 props={...props,key:`${module.exports.root}/${props.id}/${props.key}`}
             }
-			dataAsBlob(data).then(data=>{
+			props['x:id']=props.id
+			delete  props.id
+            dataAsBlob(data).then(data=>{
                 var formData=new FormData()
                 formData.append('file',data)
                 formData.append('token',token)
