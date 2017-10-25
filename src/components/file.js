@@ -162,7 +162,7 @@ module.exports={//for testable
 				if(typeof(token)=="string"){
 					return Promise.resolve(token)
 				}else{
-					return token(props.key).then(({token})=>token)
+					return token({key:props.key}).then(({token})=>token)
 				}
 			}
 			
