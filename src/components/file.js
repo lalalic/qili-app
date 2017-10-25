@@ -168,7 +168,7 @@ module.exports={//for testable
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4) {
                         if (xhr.status >= 200 && xhr.status < 300)
-                            resolve(JSON.parse(xhr.responseText))
+                            resolve(JSON.parse(xhr.responseText).data.file_create)
                         else
                             reject(xhr.responseText);
                     }
@@ -191,4 +191,12 @@ module.exports={//for testable
 			}
 		`,
 	}),
+	
+	withFileCreate: graphql`
+		mutation file_create_Mutation($_id:ObjectID!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
+			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
+				url
+			}
+		}
+	`
 }

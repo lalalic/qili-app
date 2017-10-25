@@ -90,6 +90,7 @@ type Mutation {
   role_user_remove(_id: ObjectID!, users: [String!]!): Date
   file_link(url: String!, id: ID!, field: String!): Boolean
   file_token: FileToken
+  file_create(_id: ObjectID!, host: ID!, bucket: String, size: Int, crc: Int, mimeType: String, imageInfo: JSON): File
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
   app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): Date
