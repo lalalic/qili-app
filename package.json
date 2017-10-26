@@ -99,7 +99,7 @@
     "watchman": false
   },
   "bin": {
-	"persist-query": "./scripts/persisted-query.js",
-	"allin1": "./scripts/allin1.js"
+	"qili-persist": "./scripts/persisted-query.js",
+	"qili-allin1": "./scripts/allin1.js"
   }
 }
