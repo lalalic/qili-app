@@ -7,7 +7,6 @@ import {Link} from "react-router"
 
 import RefreshIcon from "material-ui/svg-icons/navigation/refresh"
 import DefaultIcon from "material-ui/svg-icons/action/favorite-border"
-import HomeIcon from "material-ui/svg-icons/action/home"
 import BackIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 import CommentIcon from "material-ui/svg-icons/communication/comment"
 import ShareIcon from "material-ui/svg-icons/social/share"

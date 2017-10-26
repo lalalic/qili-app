@@ -2,57 +2,46 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from "react-redux"
 import {getContext,compose} from "recompose"
 
-import IconData from "material-ui/svg-icons/action/dashboard"
-import IconCloud from "material-ui/svg-icons/file/cloud"
-import IconLog from "material-ui/svg-icons/action/assignment"
-import IconAccount from 'material-ui/svg-icons/action/account-box'
-
-import CheckUpdate from "components/check-update"
-import CommandBar from "components/command-bar"
-import Empty from "components/empty"
 import GraphiQL from 'graphiql'
 
-export const Dashboard=({router, fetcher,theme})=>(
-	<div>
-		<GraphiQL
-			ref={ql=>{
-				if(ql){
-					let a=document.querySelector('.graphiql-container')
-					a.style.position="absolute"
-					a.style.height=`${theme.page.height-theme.footbar.height}px`
-					ql.setState({docExplorerOpen:false})
-				}
-			}}
-			fetcher={fetcher}
-			query="query{schema}"
-			/>
-		<CommandBar  className="footbar"
-			onSelect={cmd=>router.push(`/${cmd.toLowerCase()}`)}
-			items={[
-				{action:"Cloud", icon:<IconCloud/>},
-				{action:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}
-				]}
-			/>
-	</div>
+export const Dashboard=({fetcher,height})=>(
+	<GraphiQL
+		ref={ql=>{
+			if(ql){
+				let a=document.querySelector('.graphiql-container')
+				a.style.position="absolute"
+				a.style.height=`${height}px`
+				ql.setState({docExplorerOpen:false})
+			}
+		}}
+		fetcher={fetcher}
+
+		/>
 )
 
 export default compose(
 	getContext({
-		router:PropTypes.object,
 		theme: PropTypes.object,
-		client: PropTypes.object
+		client: PropTypes.object,
+		showMessage: PropTypes.func
 	}),
-	connect(({qili:{current}},{client})=>{
+	connect(({qili:{current}},{client,theme,showMessage})=>{
+		let height=theme.page.height-theme.footbar.height
 		let apiKey=client.get(current).apiKey
 		return {
 			fetcher(params){
-				return client.fetcher({
-					body:JSON.stringify(params),
-					headers:{
-						"X-Application-ID2": apiKey
-					}
-				})
-			}
+				if(apiKey){
+					return client.fetcher({
+						body:JSON.stringify(params),
+						headers:{
+							"X-Application-ID2": apiKey
+						}
+					})
+				}else{
+					showMessage({level:"error",message:`system  error`})
+				}
+			},
+			height
 		}
 	}),
 )(Dashboard)

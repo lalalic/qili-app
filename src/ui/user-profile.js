@@ -22,10 +22,9 @@ export const Profile=({
 		<InfoForm style={{padding:5}}>
 			<Field primaryText="头像"
 				rightAvatar={
-					<Photo src={photo}
+					<Photo src={photo} size={100}
 						autoUpload={{id,key:'photo.jpg'}}
-						onPhoto={photo=>update({photo})}
-						width={100} height={100}/>
+						onPhoto={photo=>update({photo})}/>
 					}
 				style={{height:100}}/>
 

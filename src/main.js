@@ -12,6 +12,16 @@ import {graphql, withFragment, withQuery, withInit, withMutation, withPagination
 import Logo from 'icons/logo'
 import QiliApp, * as qili from 'qili'
 
+
+import CommandBar from "components/command-bar"
+import CheckUpdate from "components/check-update"
+import IconHome from "material-ui/svg-icons/action/home"
+import IconData from "material-ui/svg-icons/action/dashboard"
+import IconCloud from "material-ui/svg-icons/file/cloud"
+import IconLog from "material-ui/svg-icons/action/assignment"
+import IconAccount from 'material-ui/svg-icons/action/account-box'
+import IconSchema from 'material-ui/svg-icons/editor/insert-link'
+
 import Profile from "ui/user-profile"
 import Dashboard from "ui/dashboard"
 import My from "ui/my"
@@ -19,6 +29,7 @@ import Setting from "ui/setting"
 import App from "ui/app"
 import Comment from "components/comment"
 import Cloud from "ui/cloud"
+import Schema from "ui/schema"
 
 const {DOMAIN,REDUCER}=qili
 
@@ -55,8 +66,6 @@ const QiliAdmin=compose(
 					apps{
 						id
 						name
-						uname
-						cloudCode
 						apiKey
 					}
 				}
@@ -98,6 +107,22 @@ const withCurrent=()=>BaseComponent=>{
 	return WithCurrent
 }
 
+const Navigator=()=>(
+	<CommandBar  className="footbar"
+		items={[
+			{link:"/",action:"dashboard",label:"Home", icon:<IconHome/>},
+			{link:"/cloud",action:"cloud", label:"Cloud", icon:<IconCloud/>},
+			{link:"/my",action:"my",label:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}
+			]}
+		/>
+)
+
+const withNavigator=()=>BaseComponent=>{
+	const factory=createEagerFactory(BaseComponent)
+	const WithNavigator=props=>(<div>{factory(props)}<Navigator/></div>)
+	return WithNavigator
+}
+
 const router=(
 	<Router history={hashHistory}>
 		<Route path="/" component={compose(
@@ -115,7 +140,7 @@ const router=(
 						<App.Creator {...props} style={{margin:"0px 100px"}}/>
 					</div>)))),
 			)(({children})=><div>{children}</div>)}>
-			<IndexRoute component={withCurrent()(Dashboard)}/>
+			<IndexRoute component={compose(withCurrent(),withNavigator())(Dashboard)}/>
 
 			<Route path="my">
 				<IndexRoute  component={
@@ -138,7 +163,8 @@ const router=(
 								toApp:a=>router.push(`/app/${a.id}`),
 								toSetting: ()=>router.push('/my/setting'),
 								toProfile: ()=>router.push('/my/profile')
-							}))
+							})),
+							withNavigator(),
 						)(My)
 					}/>
 
@@ -177,6 +203,7 @@ const router=(
 						...others
 					})),
 				)(App.Creator)}/>
+				
 				<Route path=":id" component={
 						compose(
 							withQuery(({params:{id}})=>({
@@ -210,6 +237,7 @@ const router=(
 							})),
 						)(App)
 					}/>
+				
 			</Route>
 
 			<Route path="comment/:id" component={compose(
@@ -253,10 +281,24 @@ const router=(
 			)(Comment)}/>
 
 			<Route path="cloud" component={compose(
-				getContext({client:PropTypes.object}),
-				connect(({qili:{current}}, {client})=>({
-					id:current,
-					cloudCode: client.get(current).cloudCode||"//your cloud code to extend server"
+				connect(({qili:{current}})=>({
+					id:current
+				})),
+				withQuery(({id})=>({
+					variables:{id},
+					query:graphql`
+						query main_cloud_Query($id:ObjectID!){
+							me{
+								app(_id:$id){
+									...cloud_app
+								}
+							}
+						}
+					`
+				})),
+				mapProps(({data,...others})=>({
+					app:data.me.app,
+					...others
 				})),
 				withCurrent(),
 			)(Cloud)}/>

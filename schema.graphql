@@ -7,6 +7,7 @@ type App implements Node {
   author: User
   createdAt: Date!
   updatedAt: Date
+  schema: String
 }
 
 type AppComment implements Comment, Node {
@@ -93,7 +94,7 @@ type Mutation {
   file_create(_id: String!, host: ID!, bucket: String, size: Int, crc: Int, mimeType: String, imageInfo: JSON): File
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
-  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): Date
+  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String): App
   app_remove(_id: ObjectID!): Boolean
   comment_create(parent: ID, content: String!, type: CommentType): Comment
 }

@@ -23,7 +23,6 @@ export const Account=({id, photo, username, children,toSetting,toProfile,mutate}
 					leftIcon={
 						<Photo src={photo}
 							autoUpload={{id,key:"photo.jpg"}}
-							width={40} height={40}
 							onPhoto={photo=>mutate({photo})}/>
 					}
 					rightIcon={<IconRightArrow/>}

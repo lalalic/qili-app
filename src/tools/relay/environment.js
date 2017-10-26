@@ -11,30 +11,33 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 	if(environments[key])
 		return environments[key]
 
-	const fetcher=opt=>fetch(service,{
-		method: 'POST',
-		...opt,
-		headers: {
-			'content-type': 'application/json',
-			"X-Application-ID": appId,
-			"X-Session-Token": token,
-			...(opt?opt.headers:null)
-		},
-	})
-	.then(res=>res.json())
-	.then(res=>{
-		//loading(false)
-		if(res.errors){
+	const fetcher=opt=>{
+		return fetch(service,{
+			method: 'POST',
+			...opt,
+			headers: {
+				'content-type': 'application/json',
+				"X-Application-ID": appId,
+				"X-Session-Token": token,
+				...(opt?opt.headers:null)
+			},
+		})
+		.then(res=>res.json())
+		.then(res=>{
+			//loading(false)
+			if(res.errors){
+				showMessage({message:"server error!",level:"error"})
+				console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
+			}
+			return res
+		},e=>{
+			//loading(false)
 			showMessage({message:"server error!",level:"error"})
-			console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
-		}
-		return res
-	},e=>{
-		//loading(false)
-		showMessage({message:"server error!",level:"error"})
-		console.error("server error:"+e.message)
-		throw e
-	})
+			console.error("server error:"+e.message)
+			throw e
+		})
+	}
+	
 
 	const network = Network.create(function fetchQuery(
 		  operation,
@@ -45,7 +48,7 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 		  return fetcher({
 			body: JSON.stringify({
 			  query: isDev===true ? operation.text : undefined, // GraphQL text from input
-			  id: operation.name,
+			  id: isDev===true ? undefined : operation.name,
 			  variables,
 			}),
 		  })

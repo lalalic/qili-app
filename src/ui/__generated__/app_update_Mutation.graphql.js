@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 7080700d0f9b2d334ec05f1d04feb25c
+ * @relayHash fbf2131bd0d01368721dca067929087e
  */
 
 /* eslint-disable */
@@ -16,7 +16,9 @@ export type app_update_MutationVariables = {|
 |};
 
 export type app_update_MutationResponse = {|
-  +app_update: ?any;
+  +app_update: ?{|
+    +updatedAt: ?any;
+  |};
 |};
 */
 
@@ -27,7 +29,10 @@ mutation app_update_Mutation(
   $name: String
   $uname: String
 ) {
-  app_update(_id: $id, name: $name, uname: $uname)
+  app_update(_id: $id, name: $name, uname: $uname) {
+    updatedAt
+    id
+  }
 }
 */
 
@@ -58,7 +63,7 @@ const batch /*: ConcreteBatch*/ = {
     "name": "app_update_Mutation",
     "selections": [
       {
-        "kind": "ScalarField",
+        "kind": "LinkedField",
         "alias": null,
         "args": [
           {
@@ -80,7 +85,18 @@ const batch /*: ConcreteBatch*/ = {
             "type": "String"
           }
         ],
+        "concreteType": "App",
         "name": "app_update",
+        "plural": false,
+        "selections": [
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "updatedAt",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -116,7 +132,7 @@ const batch /*: ConcreteBatch*/ = {
     "operation": "mutation",
     "selections": [
       {
-        "kind": "ScalarField",
+        "kind": "LinkedField",
         "alias": null,
         "args": [
           {
@@ -138,12 +154,30 @@ const batch /*: ConcreteBatch*/ = {
             "type": "String"
           }
         ],
+        "concreteType": "App",
         "name": "app_update",
+        "plural": false,
+        "selections": [
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "updatedAt",
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ]
   },
-  "text": "mutation app_update_Mutation(\n  $id: ObjectID!\n  $name: String\n  $uname: String\n) {\n  app_update(_id: $id, name: $name, uname: $uname)\n}\n"
+  "text": "mutation app_update_Mutation(\n  $id: ObjectID!\n  $name: String\n  $uname: String\n) {\n  app_update(_id: $id, name: $name, uname: $uname) {\n    updatedAt\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

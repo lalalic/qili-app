@@ -6,22 +6,21 @@ import {selectImageFile, upload,withGetToken} from 'components/file'
 
 export class Photo extends Component{
     state={url:this.props.src}
-
     render(){
         const {url}=this.state
-        const {width=24, height=24, cameraOptions, overwritable,onPhoto, autoUpload, getToken,...others}=this.props
+        const {size=24, cameraOptions, overwritable,onPhoto, autoUpload, getToken, src,...others}=this.props
         others.onClick=this.selectOrTakePhoto.bind(this)
+		others.style={...others.style,width:size,height:size}
+		
         if(url){
             return (
-                <SvgIcon  {...others} viewBox={`0 0 ${width} ${height}`}>
-                    <image xlinkHref={url} height={height} width={width}/>
+                <SvgIcon  {...others} viewBox={`0 0 ${size} ${size}`}>
+                    <image xlinkHref={url} height={size} width={size}/>
                 </SvgIcon>
             )
         }
 
-        return (<IconCamera {...others}
-                color="lightgray"
-                hoverColor="lightblue"/>)
+        return (<IconCamera {...others} color="lightgray"  hoverColor="lightblue"/>)
     }
 
     selectOrTakePhoto(e){

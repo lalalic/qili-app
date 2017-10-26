@@ -7,7 +7,6 @@ import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import Account from "components/account"
-import CommandBar from "components/command-bar"
 
 export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetting})=>(
 	<Account {...{id, username, photo,toProfile,toSetting}} >
@@ -26,7 +25,6 @@ export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetti
 				))
 			}
 		/>
-		<CommandBar className="footbar" items={[{action:"Back"}]}/>
 	</Account>
 )
 

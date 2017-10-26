@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 6c8f060ebe9f55448c530fbb6949f4e6
+ * @relayHash f536e4ddbcc55201418f08f6c2cc1125
  */
 
 /* eslint-disable */
@@ -16,8 +16,6 @@ export type main_prefetch_QueryResponse = {|
     +apps: $ReadOnlyArray<?{|
       +id: string;
       +name: string;
-      +uname: ?string;
-      +cloudCode: ?string;
       +apiKey: string;
     |}>;
   |};
@@ -33,8 +31,6 @@ query main_prefetch_Query {
     apps {
       id
       name
-      uname
-      cloudCode
       apiKey
     }
     id
@@ -91,20 +87,6 @@ const batch /*: ConcreteBatch*/ = {
                 "alias": null,
                 "args": null,
                 "name": "name",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "uname",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "cloudCode",
                 "storageKey": null
               },
               {
@@ -181,20 +163,6 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "uname",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "cloudCode",
-                "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
                 "name": "apiKey",
                 "storageKey": null
               }
@@ -213,7 +181,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_prefetch_Query {\n  me {\n    name\n    token\n    apps {\n      id\n      name\n      uname\n      cloudCode\n      apiKey\n    }\n    id\n  }\n}\n"
+  "text": "query main_prefetch_Query {\n  me {\n    name\n    token\n    apps {\n      id\n      name\n      apiKey\n    }\n    id\n  }\n}\n"
 };
 
 module.exports = batch;
