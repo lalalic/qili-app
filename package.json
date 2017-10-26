@@ -97,5 +97,9 @@
       "__tests__"
     ],
     "watchman": false
+  },
+  "bin": {
+	"persist-query": "./scripts/persisted-query.js",
+	"allin1": "./scripts/allin1.js"
   }
 }

@@ -153,10 +153,13 @@ module.exports={//for testable
                 reject("upload must have id and key in props")
             }
 			if(module.exports.root){
-                props={...props,key:`${module.exports.root}/${props.id}/${props.key}`.replace(':','/')}
+                props={...props,key:`${module.exports.root}/${props.id}/${props.key}`}
             }
 			props['x:id']=props.id
 			delete  props.id
+			
+			if(props.key)
+				props.key=props.key.replace(':','/')
 
 			const getToken=()=>{
 				if(typeof(token)=="string"){

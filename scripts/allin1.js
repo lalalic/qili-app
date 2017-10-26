@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var fileName="dist/allin1.html";
 console.log("Starting merge all into "+fileName)
 var fs=require('fs')

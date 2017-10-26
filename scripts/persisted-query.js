@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs =require('fs')
 const path =require('path')
 const GENERATED="__generated__"
@@ -22,7 +23,7 @@ const collect=root=>{
 	}
 }
 
-const schema=("node_modules/qili-app/src,"+src).split(",")
+const schema=src.split(",").filter(a=>a)
 	.reduce((found,a)=>[...found,...collect(path.resolve(a))],[])
 	.reduce((schema,root)=>{
 		fs.readdirSync(root)
