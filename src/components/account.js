@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from "react"
-import {compose,getContext,withProps} from "recompose"
+import {compose,getContext,withProps,setPropTypes} from "recompose"
 import {graphql, withMutation} from "tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
@@ -46,6 +46,13 @@ export const Account=({id, photo, username, children,toSetting,toProfile,mutate}
 }
 
 export default compose(
+	setPropTypes({
+		id: PropTypes.string.isRequired,
+		photo: PropTypes.string.isRequired, 
+		username: PropTypes.string.isRequired, 
+		toSetting: PropTypes.func.isRequired,
+		toProfile: PropTypes.func.isRequired
+	}),
 	withMutation(({id}, data)=>{
 		return {
 			patch4:id,
