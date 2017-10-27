@@ -91,16 +91,17 @@ function dataAsBlob(data){
 	return new Promise((resolve,reject)=>{
 		switch(typeof(data)){
 		case 'string':
-			if(data.startsWith("file://")){
+			if(data.startsWith("file:")){
 				window.resolveLocalFileSystemURL(data, entry=>entry.file(file=>{
 					let reader=new FileReader()
 					reader.onload=e=>resolve(new Blob([new Uint8Array(reader.result)],{type:file.type}))
 					reader.readAsArrayBuffer(file)
 				},reject), reject)
-			}else if(data.startsWith("data:image/jpeg;base64,")){
+			}else if(data.startsWith("data:")){
 				resolve(module.exports.toBlob(data))
-			}else
-				resolve(data)
+			}else{
+				fetch(data).then(res=>res.blob()).then(resolve,reject)
+			}
 		break
 		default:
 			resolve(data)
