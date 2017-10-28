@@ -39,10 +39,14 @@ const schema=src.split(",").filter(a=>a)
 			})
 		return schema
 	},{})
-	
+
 fs.writeFileSync(
 	path.join(path.resolve(dest),"persisted-query.js"),
-`//generated from persisted-query.js, don't edit it	
-module.exports=${JSON.stringify(schema,null,4)}`,
+`//generated from persisted-query.js, don't edit it
+module.exports={
+	${
+		Object.keys(schema).map(k=>`"${k}":\`${schema[k].replace(/\n/g,"\n\t\t")}\``).join(',\n\t')
+	}
+}`,
 	{encoding:"utf8"}
 )
