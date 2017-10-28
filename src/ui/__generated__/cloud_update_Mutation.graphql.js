@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash ac9f099b1c4cb69b8939ce91d991c480
+ * @relayHash 7e355620813e1b05db072f0ab4365354
  */
 
 /* eslint-disable */
@@ -13,7 +13,6 @@ export type cloud_update_MutationVariables = {|
   id: any;
   cloudCode: string;
 |};
-
 export type cloud_update_MutationResponse = {|
   +app_update: ?{|
     +cloudCode: ?string;

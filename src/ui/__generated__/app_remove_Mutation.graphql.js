@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash e6d19913e3e8b2f8d5c2b46b85d059c8
+ * @relayHash 7c4a359166239c8d5d056125676d6fe3
  */
 
 /* eslint-disable */
@@ -12,7 +12,6 @@ import type {ConcreteBatch} from 'relay-runtime';
 export type app_remove_MutationVariables = {|
   id: any;
 |};
-
 export type app_remove_MutationResponse = {|
   +app_remove: ?boolean;
 |};

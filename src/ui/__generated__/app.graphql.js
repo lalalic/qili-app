@@ -13,6 +13,7 @@ export type app = {|
   +name: string;
   +uname: ?string;
   +apiKey: string;
+  +isDev: ?boolean;
 |};
 */
 
@@ -49,6 +50,13 @@ const fragment /*: ConcreteFragment*/ = {
       "alias": null,
       "args": null,
       "name": "apiKey",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "isDev",
       "storageKey": null
     }
   ],

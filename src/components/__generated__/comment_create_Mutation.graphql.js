@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash dc2b701fe0149bfcd093d8a4a9776e7c
+ * @relayHash e64dff3ca82b894ecb43a108b88fd718
  */
 
 /* eslint-disable */
@@ -14,7 +14,6 @@ export type comment_create_MutationVariables = {|
   content: string;
   type?: ?"photo" | "text";
 |};
-
 export type comment_create_MutationResponse = {|
   +comment: ?{|
     +id: string;

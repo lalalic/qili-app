@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash cb308d8c22c365ff1a51ee0bb13ff14d
+ * @relayHash 80e18cf92e5d470f385f62c996878e9b
  */
 
 /* eslint-disable */
@@ -17,7 +17,6 @@ export type userProfile_update_MutationVariables = {|
   location?: ?string;
   signature?: ?string;
 |};
-
 export type userProfile_update_MutationResponse = {|
   +user_update: ?any;
 |};

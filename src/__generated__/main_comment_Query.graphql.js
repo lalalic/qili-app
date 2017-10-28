@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 6157988d07146c0d6299c351a94a5269
+ * @relayHash 062de5216b50e04b096f28583170e0ce
  */
 
 /* eslint-disable */
@@ -26,6 +26,7 @@ fragment main_appComments on Query {
   comments: app_comments(parent: $parent, last: $count, before: $cursor) {
     edges {
       node {
+        __typename
         id
         content
         type
@@ -36,7 +37,6 @@ fragment main_appComments on Query {
           photo
         }
         isOwner
-        __typename
       }
       cursor
     }
@@ -158,6 +158,13 @@ const batch /*: ConcreteBatch*/ = {
                     "kind": "ScalarField",
                     "alias": null,
                     "args": null,
+                    "name": "__typename",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
                     "name": "id",
                     "storageKey": null
                   },
@@ -219,13 +226,6 @@ const batch /*: ConcreteBatch*/ = {
                     "alias": null,
                     "args": null,
                     "name": "isOwner",
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "args": null,
-                    "name": "__typename",
                     "storageKey": null
                   }
                 ],
@@ -301,7 +301,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_comment_Query(\n  $parent: ObjectID!\n  $count: Int = 10\n  $cursor: JSON\n) {\n  ...main_appComments\n}\n\nfragment main_appComments on Query {\n  comments: app_comments(parent: $parent, last: $count, before: $cursor) {\n    edges {\n      node {\n        id\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        isOwner\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
+  "text": "query main_comment_Query(\n  $parent: ObjectID!\n  $count: Int = 10\n  $cursor: JSON\n) {\n  ...main_appComments\n}\n\nfragment main_appComments on Query {\n  comments: app_comments(parent: $parent, last: $count, before: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        content\n        type\n        createdAt\n        author {\n          id\n          name\n          photo\n        }\n        isOwner\n      }\n      cursor\n    }\n    pageInfo {\n      hasPreviousPage\n      startCursor\n    }\n  }\n}\n"
 };
 
 module.exports = batch;

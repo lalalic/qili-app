@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash f6165d6e5f9cd0cb50ca3db8bd9e013e
+ * @relayHash a64817fa8a21ff7e7a354096ced99c8c
  */
 
 /* eslint-disable */
@@ -35,6 +35,7 @@ fragment app on App {
   name
   uname
   apiKey
+  isDev
 }
 */
 
@@ -156,6 +157,13 @@ const batch /*: ConcreteBatch*/ = {
                 "args": null,
                 "name": "apiKey",
                 "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "isDev",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -172,7 +180,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query main_app_update_Query(\n  $id: ObjectID!\n) {\n  me {\n    app(_id: $id) {\n      ...app\n      id\n    }\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n}\n"
+  "text": "query main_app_update_Query(\n  $id: ObjectID!\n) {\n  me {\n    app(_id: $id) {\n      ...app\n      id\n    }\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n  isDev\n}\n"
 };
 
 module.exports = batch;

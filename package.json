@@ -13,6 +13,7 @@
     "is-valid-email": "^0.0.2",
     "material-auto-rotating-carousel": "1.1.0",
     "material-ui": "^0.16.0",
+    "prop-types": "^15.6.0",
     "pull-to-refresh2": "^0.0.2",
     "react": "^15.1.0",
     "react-codemirror": "^1.0.0",
@@ -99,7 +100,7 @@
     "watchman": false
   },
   "bin": {
-	"qili-persist": "./scripts/persisted-query.js",
-	"qili-allin1": "./scripts/allin1.js"
+    "qili-persist": "./scripts/persisted-query.js",
+    "qili-allin1": "./scripts/allin1.js"
   }
 }

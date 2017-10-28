@@ -3,7 +3,7 @@ import {compose, setStatic, getContext, withProps} from "recompose"
 import {graphql, withFragment, withMutation} from "tools/recompose"
 import {connect} from "react-redux"
 
-import {TextField} from 'material-ui'
+import {TextField,Toggle,Divider} from 'material-ui'
 
 import IconUpload from "material-ui/svg-icons/file/file-upload"
 import IconDownload from "material-ui/svg-icons/file/file-download"
@@ -29,7 +29,8 @@ export class App extends Component{
 	}
 
 	render(){
-		const {id, name,uname,apiKey, update, remove, toComment,removable}=this.props
+		const {id, name,uname,apiKey, isDev,
+			update, remove, toComment,removable}=this.props
 		const {nameError, unameError}=this.state
 		let commandBar
 		if(removable)
@@ -92,6 +93,14 @@ export class App extends Component{
 					fullWidth={true}
 					value={`http://qili2.com/1/${apiKey}/wechat`}/>
 
+				<div style={{margin:50}}>
+					<Toggle
+						label="It's in development"
+						toggled={isDev}
+						fullWidth={true}
+						onToggle={(e,isDev)=>update({isDev})}
+						/>
+					</div>
 				{commandBar}
 			</div>
 		)
@@ -137,10 +146,7 @@ export default compose(
 			mutation:graphql`
 				mutation app_create_Mutation($name:String!, $uname: String){
 					app_create(name:$name, uname:$uname){
-						id
-						name
-						uname
-						apiKey
+						...app
 					}
 				}
 			`,
@@ -158,6 +164,7 @@ export default compose(
 			name
 			uname
 			apiKey
+			isDev
 		}
 	`),
 	withProps(({data})=>({...data})),

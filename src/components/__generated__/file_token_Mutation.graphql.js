@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 17db04349a57bebacc47fafb45d7562a
+ * @relayHash 65c0d89ce4a98b24ba92083cabbebdab
  */
 
 /* eslint-disable */
@@ -12,7 +12,6 @@ import type {ConcreteBatch} from 'relay-runtime';
 export type file_token_MutationVariables = {|
   key?: ?string;
 |};
-
 export type file_token_MutationResponse = {|
   +file_token: ?{|
     +token: string;
