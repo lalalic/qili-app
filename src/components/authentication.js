@@ -35,7 +35,7 @@ export class Authentication extends Component{
         if(this._t)
             clearInterval(this._t)
     }
-	
+
 	requestCode(){
 		const {contact, setToken,requestToken}=this.props
 		if(contact){
@@ -49,9 +49,10 @@ export class Authentication extends Component{
 				.catch(e=>this.setState({error:e.message}))
 		}
 	}
-	
+
 	login(){
 		const {contact, token, name, success, onSuccess,login}=this.props
+		const {exists}=this.state
 		if(contact && (name || exists) && token){
 			this.setState({error:undefined})
 			login({contact, token, name})
