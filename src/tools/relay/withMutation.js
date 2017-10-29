@@ -24,8 +24,12 @@ const isDate=date=>typeof date.getMonth === 'function'
 
 export const withMutation=option=>BaseComponent=>{
 	const factory=createEagerFactory(BaseComponent)
-	const WithMutation=getContext({client:PropTypes.object})(
-		({client:environment,...others})=>{
+	const WithMutation=getContext({
+			client:PropTypes.object,
+			showMessage: PropTypes.func,
+			loading: PropTypes.func,
+		})(
+		({client:environment, showMessage, loading,...others})=>{
 			const {name="mutate",mutation}=typeof(option)=="function" ? option(others, {},environment) : option
 
 			//////hack: make variables default undefined as undefined
@@ -35,9 +39,10 @@ export const withMutation=option=>BaseComponent=>{
 			})
 
 			function mutate(data){
+				loading(true)
 				const {spread, variables, patch4, patchData,
 					shouldPatch=o=>Object.keys(o).reduce((a,k)=>o[k]!==null&&a,true),
-					promise,dateFields=[], 
+					promise,dateFields=[],
 					...mutation}=typeof(option)=="function" ? option(others, data, environment) : option
 				let smart={}
 				if(patch4){
@@ -65,9 +70,11 @@ export const withMutation=option=>BaseComponent=>{
 						...mutation,
 						onError: reject,
 						onCompleted(res, error){
+							loading(false)
 							if(error){
 								reject(error)
 							}else{
+								showMessage("Successful!")
 								resolve(spreadResponse(res, spread, others))
 							}
 						},

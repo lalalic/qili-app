@@ -85,10 +85,10 @@ const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
 	</div>
 ))
 
-const Message=connect(state=>({level:"info",duration:4000,...state[DOMAIN].message}))(({level,message,dispatch,duration})=>(
+const Message=connect(state=>({level:"info",duration:2000,...state[DOMAIN].message}))(({level,message,dispatch,duration})=>(
 	<Snackbar
           open={!!message}
-		  contentStyle={{color: level=="info" ? "auto" : "red"}}
+		  contentStyle={{color: level=="info" ? "white" : "red"}}
           message={message||""}
           autoHideDuration={duration}
           onRequestClose={e=>dispatch(ACTION.MESSAGE())}
