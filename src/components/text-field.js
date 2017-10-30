@@ -13,7 +13,7 @@ export default class TextFieldx extends Component{
 		try{
 			this.setState({value})
 		}catch(e){
-			console.error(e)
+			
 		}
     }
 
@@ -21,7 +21,7 @@ export default class TextFieldx extends Component{
 		try{
 			this.refs.main.setState({errorText})
 		}catch(e){
-			console.error(e)
+			
 		}
     }
 

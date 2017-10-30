@@ -19,9 +19,9 @@ const Log=({data:logs, loadMore})=>(
 				</thead>
 				<tbody>
 			{
-				logs.map(({type,operation,status,startedAt})=>{
+				logs.map(({id,type,operation,status,startedAt})=>{
 					return (
-						<tr>
+						<tr key={id}>
 							<td>{new Date(startedAt).smartFormat()}</td>						
 							<td>{type}</td>
 							<td>{operation}</td>
