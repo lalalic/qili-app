@@ -97,7 +97,6 @@ export class App extends Component{
 					<Toggle
 						label="It's in development"
 						toggled={isDev}
-						fullWidth={true}
 						onToggle={(e,isDev)=>update({isDev})}
 						/>
 					</div>

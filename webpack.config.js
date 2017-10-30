@@ -1,8 +1,17 @@
 var path = require('path');
 var webpack = require("webpack");
+var webpack = require("webpack");
 
-module.exports=env=>env ? require(`./webpack.${env}.js`) : {
-	entry:"./src/main.js",
+function envwebpack(env){
+	try{
+		return require(`./webpack.${env}.js`)
+	}catch(e){
+		return {}
+	}
+}
+
+module.exports=env=>Object.assign({
+	entry:["babel-polyfill","./style/index.less","./style/console.less","./src/main.js"],
 	output:{
 		filename:"index.js",
 		path:path.resolve(__dirname, 'dist')
@@ -33,4 +42,4 @@ module.exports=env=>env ? require(`./webpack.${env}.js`) : {
 		compress: true,
 		port: 9082
 	}
-}
+},envwebpack(env))

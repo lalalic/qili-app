@@ -4,11 +4,12 @@ type App implements Node {
   name: String!
   uname: String
   cloudCode: String
+  isDev: Boolean
   author: User
   createdAt: Date!
   updatedAt: Date
   schema: String
-  isDev: Boolean
+  logs(status: String, first: Int, after: JSON): LogConnection
 }
 
 type AppComment implements Comment, Node {
@@ -80,6 +81,16 @@ type Log implements Node {
   author: User
 }
 
+type LogConnection {
+  edges: [LogEdge]
+  pageInfo: PageInfo
+}
+
+type LogEdge {
+  node: Log
+  cursor: JSON
+}
+
 type Mutation {
   requestToken(contact: String!): Boolean
   login(contact: String!, token: String!, name: String): User
@@ -90,12 +101,11 @@ type Mutation {
   role_remove(_id: ObjectID!): Boolean
   role_user_add(_id: ObjectID!, users: [String!]!): Date
   role_user_remove(_id: ObjectID!, users: [String!]!): Date
-  file_link(url: String!, id: ID!, field: String!): Boolean
   file_token(key: String): FileToken
   file_create(_id: String!, host: ID!, bucket: String, size: Int, crc: Int, mimeType: String, imageInfo: JSON): File
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
-  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String, isDev:Boolean): App
+  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String, isDev: Boolean): App
   app_remove(_id: ObjectID!): Boolean
   comment_create(parent: ID, content: String!, type: CommentType): Comment
 }

@@ -1,4 +1,3 @@
-require('../style/index.less')
 import React, {Component, PropTypes} from "react"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
@@ -30,6 +29,7 @@ import App from "ui/app"
 import Comment from "components/comment"
 import Cloud from "ui/cloud"
 import Schema from "ui/schema"
+import Log from "ui/log"
 
 const {DOMAIN,REDUCER}=qili
 
@@ -112,6 +112,7 @@ const Navigator=()=>(
 		items={[
 			{link:"/",action:"dashboard",label:"Home", icon:<IconHome/>},
 			{link:"/cloud",action:"cloud", label:"Cloud", icon:<IconCloud/>},
+			{link:"/log",action:"log", label:"Log", icon:<IconLog/>},
 			{link:"/my",action:"my",label:"My", icon:<CheckUpdate><IconAccount/></CheckUpdate>}
 			]}
 		/>
@@ -302,6 +303,56 @@ const router=(
 				})),
 				withCurrent(),
 			)(Cloud)}/>
+			
+			<Route path="log" component={compose(
+				connect(({qili:{current}})=>({
+					id:current
+				})),
+				withPagination(({id,status})=>({
+					variables:{id,status},
+					query:graphql`
+						query main_log_Query($id:ObjectID!,$status:String, $count:Int, $cursor:JSON){
+							me{
+								app(_id:$id){
+									...main_logApp
+								}
+							}
+						}
+					`
+				})),
+				withProps(({data})=>({logApp:data.me.app})),
+				withFragment(graphql`
+					fragment main_logApp on App{
+						logs(status:$status, first:$count, after:$cursor)@connection(key:"main_logs"){
+							edges{
+								node{
+									...log
+								}
+								cursor
+							}
+							pageInfo{
+								hasPreviousPage
+								startCursor
+							}
+						}
+					}
+				`),
+				mapProps(({logApp,data,relay})=>({
+					data:logApp.logs.edges.map(a=>a.node),
+					loadMore(ok){
+						if(relay.hasMore() && !relay.isLoading()){
+							relay.loadMore(10, e=>{
+								ok()
+								if(e){
+									console.error(e)
+								}
+							})
+						}
+					},
+				})),
+				withCurrent(),
+				withNavigator(),
+			)(Log)}/>
 
 		</Route>
 	</Router>

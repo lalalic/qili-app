@@ -6,7 +6,7 @@ const handlerProvider = null;
 
 const environments={}
 
-export default function createEnvironment(service, appId, token, loading=a=>a, showMessage=console.log, isDev){
+export default function createEnvironment(service, appId, token, showMessage=console.log, isDev){
 	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
@@ -24,14 +24,12 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 		})
 		.then(res=>res.json())
 		.then(res=>{
-			//loading(false)
 			if(res.errors){
 				showMessage({message:"server error!",level:"error"})
 				console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
 			}
 			return res
 		},e=>{
-			//loading(false)
 			showMessage({message:"server error!",level:"error"})
 			console.error("server error:"+e.message)
 			throw e

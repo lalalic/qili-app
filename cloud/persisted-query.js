@@ -1,40 +1,5 @@
 //generated from persisted-query.js, don't edit it
 module.exports={
-	"comment_create_Mutation":`mutation comment_create_Mutation(
-		  $parent: ID!
-		  $content: String!
-		  $type: CommentType
-		) {
-		  comment: comment_create(parent: $parent, content: $content, type: $type) {
-		    __typename
-		    id
-		    content
-		    type
-		    createdAt
-		    author {
-		      id
-		      name
-		      photo
-		    }
-		    isOwner
-		  }
-		}
-		`,
-	"file_create_Mutation":`mutation file_create_Mutation(
-		  $_id: String!
-		  $host: ID!
-		  $bucket: String
-		  $size: Int
-		  $crc: Int
-		  $mimeType: String
-		  $imageInfo: JSON
-		) {
-		  file_create(_id: $_id, host: $host, bucket: $bucket, size: $size, crc: $crc, mimeType: $mimeType, imageInfo: $imageInfo) {
-		    url
-		    id
-		  }
-		}
-		`,
 	"app_create_Mutation":`mutation app_create_Mutation(
 		  $name: String!
 		  $uname: String
@@ -77,6 +42,84 @@ module.exports={
 		  app_update(_id: $id, cloudCode: $cloudCode) {
 		    cloudCode
 		    schema
+		    id
+		  }
+		}
+		`,
+	"userProfile_update_Mutation":`mutation userProfile_update_Mutation(
+		  $photo: String
+		  $username: String
+		  $birthday: Date
+		  $gender: Gender
+		  $location: String
+		  $signature: String
+		) {
+		  user_update(photo: $photo, username: $username, birthday: $birthday, gender: $gender, location: $location, signature: $signature)
+		}
+		`,
+	"account_update_Mutation":`mutation account_update_Mutation(
+		  $photo: String
+		) {
+		  user_update(photo: $photo)
+		}
+		`,
+	"authentication_login_Mutation":`mutation authentication_login_Mutation(
+		  $contact: String!
+		  $token: String!
+		  $name: String
+		) {
+		  login(contact: $contact, token: $token, name: $name) {
+		    id
+		    token
+		  }
+		}
+		`,
+	"authentication_requestToken_Mutation":`mutation authentication_requestToken_Mutation(
+		  $contact: String!
+		) {
+		  requestToken(contact: $contact)
+		}
+		`,
+	"comment_create_Mutation":`mutation comment_create_Mutation(
+		  $parent: ID!
+		  $content: String!
+		  $type: CommentType
+		) {
+		  comment: comment_create(parent: $parent, content: $content, type: $type) {
+		    __typename
+		    id
+		    content
+		    type
+		    createdAt
+		    author {
+		      id
+		      name
+		      photo
+		    }
+		    isOwner
+		  }
+		}
+		`,
+	"file_create_Mutation":`mutation file_create_Mutation(
+		  $_id: String!
+		  $host: ID!
+		  $bucket: String
+		  $size: Int
+		  $crc: Int
+		  $mimeType: String
+		  $imageInfo: JSON
+		) {
+		  file_create(_id: $_id, host: $host, bucket: $bucket, size: $size, crc: $crc, mimeType: $mimeType, imageInfo: $imageInfo) {
+		    url
+		    id
+		  }
+		}
+		`,
+	"file_token_Mutation":`mutation file_token_Mutation(
+		  $key: String
+		) {
+		  file_token(key: $key) {
+		    token
 		    id
 		  }
 		}
@@ -155,6 +198,46 @@ module.exports={
 		  }
 		}
 		`,
+	"main_log_Query":`query main_log_Query(
+		  $id: ObjectID!
+		  $status: String
+		  $count: Int
+		  $cursor: JSON
+		) {
+		  me {
+		    app(_id: $id) {
+		      ...main_logApp
+		      id
+		    }
+		    id
+		  }
+		}
+		
+		fragment main_logApp on App {
+		  logs(status: $status, first: $count, after: $cursor) {
+		    edges {
+		      node {
+		        __typename
+		        ...log
+		        id
+		      }
+		      cursor
+		    }
+		    pageInfo {
+		      hasPreviousPage
+		      startCursor
+		      endCursor
+		      hasNextPage
+		    }
+		  }
+		}
+		
+		fragment log on Log {
+		  id
+		  type
+		  operation
+		}
+		`,
 	"main_my_apps_Query":`query main_my_apps_Query {
 		  me {
 		    ...my
@@ -182,6 +265,18 @@ module.exports={
 		      apiKey
 		    }
 		    id
+		  }
+		}
+		`,
+	"main_userProfile_me_Query":`query main_userProfile_me_Query {
+		  me {
+		    id
+		    username
+		    birthday
+		    gender
+		    location
+		    photo
+		    signature
 		  }
 		}
 		`

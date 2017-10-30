@@ -76,7 +76,7 @@
     "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
     "build.release": "webpack -p&& node scripts/allin1.js",
     "build.debug": "webpack -d",
-    "dev": "webpack-dev-server --inline -d --entry=./.test.mongo.js",
+    "dev": "webpack-dev-server --hot --inline --env=dev",
     "test": "jest",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d",
     "storybook": "start-storybook -p 6006",

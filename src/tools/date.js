@@ -29,7 +29,7 @@ Object.assign(Date.prototype,{
 			return value[type!='M' ? type.toLowerCase() : type] || ""
 		})
 	},
-	smartFormat(reToday="?? HH:mm", reThisYear="MM?DD?", reYearsAgo="YYYY?MM?DD?"){
+	smartFormat(reToday="HH:mm", reThisYear="MM月DD日", reYearsAgo="YYYY年MM月DD日"){
 		let now=new Date()
 		return this.format(this.isSameDate(now) ? reToday :
 							this.getFullYear()==now.getFullYear() ? reThisYear : reYearsAgo)

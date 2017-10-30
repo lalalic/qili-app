@@ -10,11 +10,19 @@ export default class TextFieldx extends Component{
     }
 
     set value(value){
-        this.setState({value})
+		try{
+			this.setState({value})
+		}catch(e){
+			console.error(e)
+		}
     }
 
     set errorText(errorText){
-        this.refs.main.setState({errorText})
+		try{
+			this.refs.main.setState({errorText})
+		}catch(e){
+			console.error(e)
+		}
     }
 
     getValue(){

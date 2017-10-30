@@ -8,18 +8,25 @@
 
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
-export type log = {|
+export type log = $ReadOnlyArray<{|
   +id: string;
+  +startedAt: ?any;
   +type: ?string;
   +operation: ?string;
-|};
+  +status: ?number;
+  +time: ?number;
+  +variables: ?any;
+  +report: ?any;
+|}>;
 */
 
 
 const fragment /*: ConcreteFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "plural": true
+  },
   "name": "log",
   "selections": [
     {
@@ -27,6 +34,13 @@ const fragment /*: ConcreteFragment*/ = {
       "alias": null,
       "args": null,
       "name": "id",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "startedAt",
       "storageKey": null
     },
     {
@@ -41,6 +55,34 @@ const fragment /*: ConcreteFragment*/ = {
       "alias": null,
       "args": null,
       "name": "operation",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "status",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "time",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "variables",
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "args": null,
+      "name": "report",
       "storageKey": null
     }
   ],
