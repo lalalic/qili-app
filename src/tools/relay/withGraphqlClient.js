@@ -15,10 +15,10 @@ export const withGraphqlClient=options=>BaseComponent=>{
 		)
 
 	const WithGraphqlClient=props=>{
-		let {client:environment,service, appId, user,loading,showMessage, isDev}=props
+		let {client:environment,service, appId, user,showMessage, isDev}=props
 		const token=user ? user.token : undefined
 		if(!environment){
-			environment=createEnvironment(service, appId, token,loading,showMessage,isDev)
+			environment=createEnvironment(service, appId, token,showMessage,isDev)
 			environment.get=function(id){
 				let store=this.getStore()
 				return store.getSource().get(id)

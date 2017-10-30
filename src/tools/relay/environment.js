@@ -1,4 +1,4 @@
-import {Environment, Network, RecordSource,  Store, RecordSourceInspector} from 'relay-runtime'
+import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
 
 const source = new RecordSource();
 const store = new Store(source);
@@ -65,3 +65,5 @@ export default function createEnvironment(service, appId, token, loading=a=>a, s
 		}
 	});
 }
+
+
