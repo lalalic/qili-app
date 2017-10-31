@@ -11,7 +11,6 @@ import IconSave from "material-ui/svg-icons/content/save"
 import IconRemove from "material-ui/svg-icons/action/delete"
 import IconComment from "material-ui/svg-icons/editor/mode-comment"
 
-import TextFieldx from "components/text-field"
 import CommandBar from "components/command-bar"
 import file from "components/file"
 
@@ -20,14 +19,7 @@ import * as Admin from "main"
 const ENTER=13
 
 export class App extends Component{
-	state={
-		nameError:null,
-		unameError:null
-	}
-	componentWillReceiveProps(next){
-		next.syncCurrent(next.params.id)
-	}
-
+	state={nameError:null, unameError:null}
 	render(){
 		const {id, name,uname,apiKey, isDev,
 			update, remove, toComment,removable}=this.props
@@ -58,26 +50,23 @@ export class App extends Component{
 		const changeUName=value=>value!=uname && update({uname:value})
 			.then(a=>this.setState({unameError:null}),error=>this.setState({unameError:error}))
 
-		let refName, refUname
 		return (
 			<div className="form">
-				<TextFieldx ref={a=>refName=a}
+				<TextField
 					floatingLabelText="application name"
 					fullWidth={true}
 					disabled={!removable}
-					value={name||""}
+					defaultValue={name}
 					errorText={nameError}
-					onChange={({target:{value}})=>refName.value=value}
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
 					onBlur={({target:{value}})=>changeName(value.trim())}/>
 
-				<TextFieldx ref={a=>refUname=a}
+				<TextField
 					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 					fullWidth={true}
 					disabled={!removable}
-					value={uname||""}
+					defaultValue={uname}
 					errorText={unameError}
-					onChange={({target:{value}})=>refUname.value=value}
 					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
 					onBlur={({target:{value}})=>changeUName(value.trim())}/>
 

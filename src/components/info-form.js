@@ -1,10 +1,11 @@
 import React, {Component, PropTypes} from "react"
+import {withStateHandlers} from "recompose"
+
 import {List, ListItem, Divider, Dialog, DatePicker,
-		AppBar,RaisedButton,IconButton,
+		AppBar,RaisedButton,IconButton, TextField,
 		RadioButtonGroup, RadioButton} from "material-ui"
 import NavigationBack from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 
-import TextField from "components/text-field"
 import FullPage from "components/full-page"
 
 
@@ -84,16 +85,24 @@ const Value=({value,style={}})=>(
 
 export const Field=()=>null
 
-const _onEdit=(v,onEdit, onCancel, onError)=>{
-	let p=onEdit(v)
-	if(p && p.then)
-		p.then(onCancel, e=>refEditor.errorText=e)
-	else
-		onCancel()
-}
-
 const Editor={
-	input({onEdit, onCancel, hintText,value,primaryText, page}){
+	input:withStateHandlers(({value})=>({
+			value:value||"",
+			errorText:null,
+			isChange: !!value
+		}),{
+			setState:()=>state=>state,
+			onEdit:({value:changing},{onEdit, onCancel, value})=>setState=>{
+				if(value!=changing){
+					Promise.resolve(onEdit(changing))
+						.then(onCancel)
+						.catch(e=>setState({errorText:e}))
+				}else{
+					onCancel()
+				}
+			}
+		})(
+		({onEdit, onCancel, isChange, setState, errorText,hintText,value,primaryText, page})=>{
 		let props={}
 		if(hintText){
 			props={
@@ -101,23 +110,22 @@ const Editor={
 				floatingLabelText:hintText
 			}
 		}
-		let refEditor
 		return (
 			<FullPage>
-				<Title {...{onEdit:a=>{
-						if(value==refEditor.getValue()){
-							onCancel()
-							return
-						}
-						_onEdit(refEditor.getValue(), onEdit, onCancel, e=>refEditor.errorText=e)
-					}, onCancel, primaryText, isChange:!!value}}/>
+				<Title {...{onEdit:()=>onEdit(setState), onCancel, primaryText, isChange:!!value}}/>
 				<div style={{padding:5}}>
-					<TextField ref={a=>refEditor=a} {...props}
-						name={primaryText} fullWidth={true} defaultValue={value}/>
+					<TextField 
+						{...props}
+						name={primaryText} 
+						fullWidth={true}
+						errorText={errorText}
+						onChange={(e,value)=>setState({value})}
+						onKeyDown={e=>e.keyCode==13 && onEdit(setState)}
+						value={value}/>
 				</div>
 			</FullPage>
 		)
-	}
+	})
 	,single({onEdit, onCancel, hintText,value,primaryText, page, options, len=options.length}){
 		return (
 			<Dialog open={true}
@@ -128,9 +136,12 @@ const Editor={
 					labelPosition="left"
 					onChange={(e,newValue)=>{
 						if(newValue!==value){
-							onEdit(newValue)
+							Promise
+								.resolve(onEdit(newValue))
+								.then(onCancel)
+						}else{
+							onCancel()
 						}
-						onCancel()
 					}}>
 				{
 					options.map((opt,i)=>{
@@ -158,13 +169,18 @@ const Editor={
 			<Dialog open={true}
 				onRequestClose={onCancel}
 				title={<Title {...{
-						onEdit:a=>{
-							if(v1.length!=selecteds.length 
-								|| v1.findIndex((a,i)=>selecteds[i]!==a)!=-1){
-								onEdit(selecteds)
-							}
-							onCancel()
-						}, onCancel, primaryText, isChange:!!value}}/>}>
+							onEdit:()=>{
+								if(v1.length!=selecteds.length 
+									|| v1.findIndex((a,i)=>selecteds[i]!==a)!=-1){
+									Promise
+										.resolve(onEdit(selecteds))
+										.then(onCancel)
+								}else{
+									onCancel()
+								}
+							}, 
+							onCancel, primaryText, isChange:!!value
+						}}/>}>
 				{
 					options.map((opt,i)=>{
 						let value,label
@@ -207,38 +223,35 @@ const Editor={
 		let refEditor
 		return (
 			<FullPage>
-				<Title {...{onEdit:a=>{
+				<Title {...{
+					onEdit:()=>{
 						if(refEditor.getDate()==value){
 							onCancel()
-							return
+						}else{
+							Promise
+								.resolve(onEdit(refEditor.getDate()))
+								.then(onCancel)
 						}
-						onEdit(refEditor.getDate())
-						onCancel()
-					}, onCancel, primaryText, isChange:!!value}}/>
-					<div style={{padding:5}}>
-						<DatePicker ref={a=>refEditor=a} 
-							autoOk={true} 
-							name={primaryText} 
-							{...props} 
-							fullWidth={true}/>
-					</div>
+					}, 
+					onCancel, primaryText, isChange:!!value
+				}}/>
+				<div style={{padding:5}}>
+					<DatePicker ref={a=>refEditor=a} 
+						autoOk={true} 
+						name={primaryText} 
+						{...props} 
+						fullWidth={true}/>
+				</div>
 			</FullPage>
 		)
 	}
 	,customized({onEdit, onCancel, hintText,value,primaryText, children, page}){
-		let _onEdit=onEdit
-		if(onEdit){
-			_onEdit=a=>{
-				let p=_onEdit()
-				if(p && p.then)
-					p.then(onCancel)
-				else
-					onCancel()
-			}
-		}
 		return (
 			<FullPage>
-				<Title {...{onEdit:_onEdit, onCancel, primaryText, isChange:!!value}}/>
+				<Title {...{
+					onEdit:()=>Promise.resolve(onEdit()).then(onCancel), 
+					onCancel, primaryText, isChange:!!value
+				}}/>
 				{children}
 			</FullPage>
 		)
