@@ -48,7 +48,7 @@ export const Account=({id, photo, username, children,toSetting,toProfile,mutate}
 export default compose(
 	setPropTypes({
 		id: PropTypes.string.isRequired,
-		photo: PropTypes.string.isRequired, 
+		photo: PropTypes.string, 
 		username: PropTypes.string.isRequired, 
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired

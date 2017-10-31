@@ -40,7 +40,7 @@ export const withQuery=option=>BaseComponent=>{
 							</Wrapper>
 						)
 					}else {
-						return <div>loading...</div>
+						return null
 					}
 				},
 				environment,

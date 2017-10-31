@@ -146,6 +146,7 @@ const router=(
 			<Route path="my">
 				<IndexRoute  component={
 						compose(
+							withNavigator(),
 							withQuery({
 								spread:false,
 								query: graphql`
@@ -165,7 +166,7 @@ const router=(
 								toSetting: ()=>router.push('/my/setting'),
 								toProfile: ()=>router.push('/my/profile')
 							})),
-							withNavigator(),
+							
 						)(My)
 					}/>
 
@@ -242,6 +243,7 @@ const router=(
 			</Route>
 
 			<Route path="comment/:id" component={compose(
+				withCurrent(),
 				withPagination(({params:{id:parent}})=>({
 					variables:{parent},
 					query: graphql`
@@ -278,10 +280,11 @@ const router=(
 					parent,
 					connection:"main_app_comments"
 				})),
-				withCurrent(),
+				
 			)(Comment)}/>
 
 			<Route path="cloud" component={compose(
+				withCurrent(),
 				connect(({qili:{current}})=>({
 					id:current
 				})),
@@ -301,10 +304,12 @@ const router=(
 					app:data.me.app,
 					...others
 				})),
-				withCurrent(),
+				
 			)(Cloud)}/>
 			
 			<Route path="log" component={compose(
+				withCurrent(),
+				withNavigator(),
 				connect(({qili:{current}})=>({
 					id:current
 				})),
@@ -350,26 +355,10 @@ const router=(
 						}
 					},
 				})),
-				withCurrent(),
-				withNavigator(),
 			)(Log)}/>
 
 		</Route>
 	</Router>
 )
-
-/**
-			<Route path="data"
-				component={connect(state=>({...state.ui.data,app:getCurrentApp(state)._id}))(DataUI)}>
-				<IndexRedirect to={`${User._name}`}/>
-				<Route path=":name"/>
-			</Route>
-
-			<Route path="log"
-				component={connect(state=>state.ui.log)(LogUI)}>
-				<IndexRedirect to="all"/>
-				<Route path=":level"/>
-			</Route>
-* */
 
 QiliApp.render(<QiliAdmin>{router}</QiliAdmin>)

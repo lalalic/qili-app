@@ -24,6 +24,7 @@ import File from "components/file"
 import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
+import SplashAD from "components/splash-ad"
 
 export const DOMAIN="qili"
 
@@ -48,10 +49,13 @@ export const ACTION={
 		type:`@@${DOMAIN}/MESSAGE`,
 		payload: typeof(payload)=="string" ? {message:payload}:payload
 	}),
+	INITED: ({type:`@@${DOMAIN}/INITED`}),
 }
 
-export const REDUCER=(state={},{type,payload})=>{
+export const REDUCER=(state={inited:false},{type,payload})=>{
 	switch(type){
+	case `@@${DOMAIN}/INITED`:
+		return {...state, inited:true}
 	case `@@${DOMAIN}/USER_CHANGED`:
 		return {...state,user:payload}
 	case `@@${DOMAIN}/TUTORIALIZED`:
@@ -208,7 +212,7 @@ export default compose(
 			return {store}
 		}
 	}),
-
+	
 	connect(({qili:{loading,message, ...others}})=>others,(dispatch, {project})=>({
 		checkVersion(){
 			project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
@@ -224,9 +228,12 @@ export default compose(
 		},
 		showMessage(m){
 			dispatch(ACTION.MESSAGE(m))
+		},
+		ready(){
+			dispatch(ACTION.INITED)
 		}
 	})),
-
+	
 	withContext({
 			is: PropTypes.object,
 			project: PropTypes.object,
@@ -244,6 +251,8 @@ export default compose(
 			theme,
 		})
 	),
+	
+	branch(({inited})=>!inited,renderComponent(({ready})=><SplashAD n={10} onEnd={ready}/>)),
 
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
 		renderComponent(({tutorial,tutorialize,theme,store, })=>
