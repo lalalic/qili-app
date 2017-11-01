@@ -19,6 +19,7 @@ before_install:
 
 install:
  - yarn install
+ - rm -r node_modules/graphiql/node_modules/graphql
 
 script:
  - yarn test
