@@ -6,7 +6,18 @@ import {compose, mapProps} from "recompose"
 import {withFragment} from "tools/recompose"
 
 
-export const Schema=({schema})=>(<pre style={{margin:20}}>{schema}</pre>)
+export const Schema=({schema, style})=>(
+	<textarea 
+		disabled
+		
+		style={{
+			padding:20,
+			width:"100%",
+			border:0,
+			...style
+		}} 
+		value={schema}/>
+)
 
 export default compose(
 	withFragment(graphql`
@@ -14,5 +25,5 @@ export default compose(
 			schema
 		}
 	`),
-	mapProps(({app})=>({schema:app.schema}))
+	mapProps(({app,style})=>({schema:app.schema,style}))
 )(Schema)

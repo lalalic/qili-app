@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import PropTypes from "prop-types"
 
 import {Avatar, Dialog, SvgIcon} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'

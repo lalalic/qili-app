@@ -39,8 +39,6 @@ export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=
 
 			<ListItem primaryText="关于" leftIcon={<IconAbout/>}/>
 		</List>
-		
-		<CommandBar className="footbar" items={[{action:"back"}]}/>
 	</div>
 )
 

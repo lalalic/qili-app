@@ -171,7 +171,7 @@ const router=(
 						)(My)
 					}/>
 
-				<Route path="setting" component={Setting}/>
+				<Route path="setting" component={withNavigator()(Setting)}/>
 
 				<Route path="profile" component={
 						compose(

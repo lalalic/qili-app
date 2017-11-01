@@ -47,7 +47,7 @@ export class Cloud extends Component{
 							/>
 					</Tab>
 					<Tab label="Schema">
-						<Schema app={app}/>
+						<Schema app={app} style={{height}}/>
 					</Tab>
 				</Tabs>
 				<CommandBar className="footbar"
