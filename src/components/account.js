@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {compose,getContext,withProps,setPropTypes} from "recompose"
 import {graphql, withMutation} from "tools/recompose"
 

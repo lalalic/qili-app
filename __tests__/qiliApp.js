@@ -3,9 +3,16 @@ import QiliApp, * as qili from "qili"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
 import Authentication from "components/authentication"
+import SplashAD from "components/splash-ad"
+
 import {mount} from "enzyme"
 	
 describe("qili application", function(){
+	beforeAll(()=>{
+		console.warn=jest.fn()
+		console.error=jest.fn()
+	})
+	
 	it("has render function", ()=>{
 		expect(QiliApp.render).toBeDefined()
 	})
@@ -23,6 +30,15 @@ describe("qili application", function(){
         it("{tutorialized:false,tutorial:[...]}", function(){
 			let app=mount(<QiliApp {...props} tutorialized={false} tutorial={["a.jpg"]}/>)
 			expect(app.find(Tutorial).length).toBe(1)
+        })
+		
+		it("{tutorialized:true,adUrl}", function(){
+            let app=mount(<QiliApp {...props} {...{tutorialized:true,adUrl:"http://"}}/>)
+            expect(app.find(SplashAD).length).toBe(1)
+			app=mount(<QiliApp {...props} {...{tutorialized:true, adUrl:"http://", user:{token:'test'}}}/>)
+            expect(app.find(SplashAD).length).toBe(1)
+			app=mount(<QiliApp {...props} {...{tutorialized:true,AD:true, adUrl:"http://"}}/>)
+            expect(app.find(SplashAD).length).toBe(0)
         })
 
         it("{tutorialized:true}", function(){

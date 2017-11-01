@@ -1,4 +1,5 @@
-import React, {Component} from 'react'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {connect} from "react-redux"
 import * as QiliApp from "qili"
 
@@ -68,7 +69,7 @@ export default class CommandBar extends Component{
             </div>
         )
     }
-    static contextTypes={router:React.PropTypes.object}
+    static contextTypes={router:PropTypes.object}
 
     static DialogCommand=class extends Component{
         constructor(props){
@@ -176,7 +177,7 @@ export default class CommandBar extends Component{
                 dispatch(QiliApp.ACTION.MESSAGE({message:reason}))
             })
         }
-        static propTypes={message:React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.func])}
+        static propTypes={message:PropTypes.oneOfType([PropTypes.object,PropTypes.func])}
     })
 }
 

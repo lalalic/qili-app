@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {render} from "react-dom"
 import {persistStore, autoRehydrate} from 'redux-persist'
 
@@ -49,13 +50,13 @@ export const ACTION={
 		type:`@@${DOMAIN}/MESSAGE`,
 		payload: typeof(payload)=="string" ? {message:payload}:payload
 	}),
-	INITED: ({type:`@@${DOMAIN}/INITED`}),
+	AD_DONE: ({type:`@@${DOMAIN}/ADDONE`}),
 }
 
-export const REDUCER=(state={inited:false},{type,payload})=>{
+export const REDUCER=(state={},{type,payload})=>{
 	switch(type){
-	case `@@${DOMAIN}/INITED`:
-		return {...state, inited:true}
+	case `@@${DOMAIN}/ADDONE`:
+		return {...state, AD:{toJSON:()=>undefined}}
 	case `@@${DOMAIN}/USER_CHANGED`:
 		return {...state,user:payload}
 	case `@@${DOMAIN}/TUTORIALIZED`:
@@ -229,8 +230,8 @@ export default compose(
 		showMessage(m){
 			dispatch(ACTION.MESSAGE(m))
 		},
-		ready(){
-			dispatch(ACTION.INITED)
+		doneAD(){
+			dispatch(ACTION.AD_DONE)
 		}
 	})),
 	
@@ -252,8 +253,6 @@ export default compose(
 		})
 	),
 	
-	branch(({inited})=>!inited,renderComponent(({ready})=><SplashAD n={10} onEnd={ready}/>)),
-
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
 		renderComponent(({tutorial,tutorialize,theme,store, })=>
 			<Provider store={store}>
@@ -262,6 +261,9 @@ export default compose(
 				 </UI>
 			</Provider>
 	)),
+	
+	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
+
 	withGraphqlClient("relay modern"),
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>

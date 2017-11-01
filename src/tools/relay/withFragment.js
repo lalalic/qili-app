@@ -1,4 +1,5 @@
-import React,{PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {compose,withProps, getContext, setDisplayName, wrapDisplayName,createEagerFactory}  from "recompose"
 import {createFragmentContainer, createPaginationContainer} from "react-relay"
 

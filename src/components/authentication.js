@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {FlatButton,TextField} from "material-ui"
 import isEmail from "is-valid-email"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"

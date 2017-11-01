@@ -61,9 +61,9 @@ export class Photo extends Component{
         return this.state.url
     }
     static propTypes={
-        cameraOptions: React.PropTypes.object,
-        onPhoto: React.PropTypes.func,
-        onFail: React.PropTypes.func
+        cameraOptions: PropTypes.object,
+        onPhoto: PropTypes.func,
+        onFail: PropTypes.func
     }
 
     static defaultProps={

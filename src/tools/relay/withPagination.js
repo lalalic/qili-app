@@ -1,4 +1,5 @@
-import React, {PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {compose, createEagerFactory, withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
 import withQuery from "./withQuery"
 import withFragment from "./withFragment"

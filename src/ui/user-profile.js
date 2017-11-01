@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
 import {graphql, withFragment, withMutation} from "tools/recompose"

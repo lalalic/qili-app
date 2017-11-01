@@ -1,4 +1,5 @@
-import React, {PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {compose, withContext, setDisplayName, wrapDisplayName,createEagerFactory} from "recompose"
 import {ConnectionHandler} from "relay-runtime"
 import createEnvironment from "./environment"

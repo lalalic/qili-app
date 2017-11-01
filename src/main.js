@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from "react"
+import React, {Component} from "react"
+import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
 import {combineReducers} from "redux"
