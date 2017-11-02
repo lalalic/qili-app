@@ -101,7 +101,6 @@ type Mutation {
   role_remove(_id: ObjectID!): Boolean
   role_user_add(_id: ObjectID!, users: [String!]!): Date
   role_user_remove(_id: ObjectID!, users: [String!]!): Date
-  file_token(key: String): FileToken
   file_create(_id: String!, host: ID!, bucket: String, size: Int, crc: Int, mimeType: String, imageInfo: JSON): File
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
@@ -128,6 +127,7 @@ type Query {
   version: String!
   schema: String!
   me: User!
+  file_upload_token(key: String): FileToken
   app_comments(parent: ObjectID, last: Int, before: JSON): AppCommentConnection
 }
 

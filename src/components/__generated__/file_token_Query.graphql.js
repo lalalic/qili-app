@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 65c0d89ce4a98b24ba92083cabbebdab
+ * @relayHash 11735081de8757c85ea0a2c7e9b20a9b
  */
 
 /* eslint-disable */
@@ -9,11 +9,8 @@
 
 /*::
 import type {ConcreteBatch} from 'relay-runtime';
-export type file_token_MutationVariables = {|
-  key?: ?string;
-|};
-export type file_token_MutationResponse = {|
-  +file_token: ?{|
+export type file_token_QueryResponse = {|
+  +token: ?{|
     +token: string;
     +id: ?string;
   |};
@@ -22,10 +19,10 @@ export type file_token_MutationResponse = {|
 
 
 /*
-mutation file_token_Mutation(
+query file_token_Query(
   $key: String
 ) {
-  file_token(key: $key) {
+  token: file_upload_token(key: $key) {
     token
     id
   }
@@ -44,11 +41,11 @@ const batch /*: ConcreteBatch*/ = {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "file_token_Mutation",
+    "name": "file_token_Query",
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "token",
         "args": [
           {
             "kind": "Variable",
@@ -58,7 +55,7 @@ const batch /*: ConcreteBatch*/ = {
           }
         ],
         "concreteType": "FileToken",
-        "name": "file_token",
+        "name": "file_upload_token",
         "plural": false,
         "selections": [
           {
@@ -79,12 +76,12 @@ const batch /*: ConcreteBatch*/ = {
         "storageKey": null
       }
     ],
-    "type": "Mutation"
+    "type": "Query"
   },
   "id": null,
   "kind": "Batch",
   "metadata": {},
-  "name": "file_token_Mutation",
+  "name": "file_token_Query",
   "query": {
     "argumentDefinitions": [
       {
@@ -95,12 +92,12 @@ const batch /*: ConcreteBatch*/ = {
       }
     ],
     "kind": "Root",
-    "name": "file_token_Mutation",
-    "operation": "mutation",
+    "name": "file_token_Query",
+    "operation": "query",
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "token",
         "args": [
           {
             "kind": "Variable",
@@ -110,7 +107,7 @@ const batch /*: ConcreteBatch*/ = {
           }
         ],
         "concreteType": "FileToken",
-        "name": "file_token",
+        "name": "file_upload_token",
         "plural": false,
         "selections": [
           {
@@ -132,7 +129,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation file_token_Mutation(\n  $key: String\n) {\n  file_token(key: $key) {\n    token\n    id\n  }\n}\n"
+  "text": "query file_token_Query(\n  $key: String\n) {\n  token: file_upload_token(key: $key) {\n    token\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

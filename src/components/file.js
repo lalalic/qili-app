@@ -1,3 +1,5 @@
+import PropTypes from "prop-types"
+import {compose, getContext, mapProps} from "recompose"
 import {withMutation} from "tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
@@ -194,22 +196,19 @@ module.exports={//for testable
 			})
         })
     },
-    withGetToken:withMutation({
-		name:"getToken",
-		promise:true,
-		mutation:graphql`
-			mutation file_token_Mutation($key:String){
-				file_token(key:$key){
-					token
-					id
-				}
+	
+    withGetToken:compose(
+		getContext({client:PropTypes.object}),
+		mapProps(({client,...others})=>({
+			...others,
+			getToken(key){
+				key=typeof(key)=="string" ? {key} : key
+				return client.runQL({id:"file_token_Query",variables:key})
+					.then(({data:{token}})=>token)
 			}
-		`,
-	}),
-    getToken(client,key){
-        key=typeof(key)=="string" ? {key} : key
-        return client.runQL({id:"file_token_Mutation",variables:key})
-    },
+		}))
+	),
+	
 	withFileCreate: withMutation({
         name:"createFile",
         promise:true,
@@ -221,4 +220,14 @@ module.exports={//for testable
     		}
     	`
     })
+};
+
+{getToken:graphql`
+	query file_token_Query($key:String){
+		token:file_upload_token(key:$key){
+			token
+			id
+		}
+	}
+`
 }
