@@ -25,13 +25,18 @@ export default function createEnvironment(service, appId, token, showMessage=con
 		.then(res=>res.json())
 		.then(res=>{
 			if(res.errors){
-				showMessage({message:"server error!",level:"error"})
-				console.error("server error:"+res.errors.map(a=>a.message).join("\r\n"))
+				let {message,stack}=res.errors.reduce((state,a)=>{
+					state.message.add(a.message)
+					state.stack.add(a.stack)
+					return state
+				}, {message:new Set(), stack:new Set()})
+				showMessage({message:Array.from(message).join("|"),level:"error"})
+				console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
 			}
 			return res
 		},e=>{
-			showMessage({message:"server error!",level:"error"})
-			console.error("server error:"+e.message)
+			showMessage({message:e.message,level:"error"})
+			console.error(e)
 			throw e
 		})
 	}

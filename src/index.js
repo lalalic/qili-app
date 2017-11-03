@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import {render} from "react-dom"
 import {persistStore, autoRehydrate} from 'redux-persist'
 
-import {compose, pure,withState,branch,renderComponent,
+import {compose, pure,withState,branch,renderComponent, renderNothing,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
 import {withGraphqlClient} from "tools/recompose"
 
@@ -90,7 +90,8 @@ const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
 	</div>
 ))
 
-const Message=connect(state=>({level:"info",duration:2000,...state[DOMAIN].message}))(({level,message,dispatch,duration})=>(
+const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
+	({level,message,dispatch,duration=(level=="info" ? 1000 : 3000)})=>(
 	<Snackbar
           open={!!message}
 		  contentStyle={{color: level=="info" ? "white" : "red"}}
@@ -263,7 +264,8 @@ export default compose(
 	)),
 	
 	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
-
+	//branch(({inited})=>!inited, renderNothing),
+	
 	withGraphqlClient("relay modern"),
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
