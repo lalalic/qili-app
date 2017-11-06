@@ -6,11 +6,11 @@ const handlerProvider = null;
 
 const environments={}
 
-export default function createEnvironment(service, appId, token, showMessage=console.log, isDev){
+export default function createEnvironment(service, appId, token, showMessage=console.log, isDev,report=a=>a){
 	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
-
+	
 	const fetcher=opt=>{
 		return fetch(service,{
 			method: 'POST',
@@ -33,6 +33,8 @@ export default function createEnvironment(service, appId, token, showMessage=con
 				showMessage({message:Array.from(message).join("|"),level:"error"})
 				console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
 			}
+			if(res.extensions)
+				report(res.extensions.report)
 			return res
 		},e=>{
 			showMessage({message:e.message,level:"error"})

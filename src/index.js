@@ -51,10 +51,13 @@ export const ACTION={
 		payload: typeof(payload)=="string" ? {message:payload}:payload
 	}),
 	AD_DONE: ({type:`@@${DOMAIN}/ADDONE`}),
+	READY:({type:`@@${DOMAIN}/INITED`})
 }
 
 export const REDUCER=(state={},{type,payload})=>{
 	switch(type){
+	case `@@${DOMAIN}/INITED`:
+		return {...state, inited:{toJSON:()=>undefined}}
 	case `@@${DOMAIN}/ADDONE`:
 		return {...state, AD:{toJSON:()=>undefined}}
 	case `@@${DOMAIN}/USER_CHANGED`:
@@ -203,13 +206,13 @@ export default compose(
 	withProps(({store,reducers,appId})=>{
 		File.root=appId
 		if(!store){
-			const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(
 				combineReducers({[DOMAIN]:REDUCER,...reducers}),
 				composeEnhancers(applyMiddleware(thunk),autoRehydrate())
 			)
 
-			persistStore(store,{keyPrefix:`${appId}:`})
+			persistStore(store,{keyPrefix:`${appId}:`}, ()=>store.dispatch(ACTION.READY))
 
 			return {store}
 		}
@@ -264,7 +267,8 @@ export default compose(
 	)),
 	
 	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
-	//branch(({inited})=>!inited, renderNothing),
+	
+	branch(({inited})=>!inited, renderNothing),
 	
 	withGraphqlClient("relay modern"),
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
