@@ -32,29 +32,45 @@ describe("qili application", function(){
 			expect(app.find(Tutorial).length).toBe(1)
         })
 		
-		it("{tutorialized:true,adUrl}", function(){
-            let app=mount(<QiliApp {...props} {...{tutorialized:true,adUrl:"http://"}}/>)
-            expect(app.find(SplashAD).length).toBe(1)
-			app=mount(<QiliApp {...props} {...{tutorialized:true, adUrl:"http://", user:{token:'test'}}}/>)
-            expect(app.find(SplashAD).length).toBe(1)
-			app=mount(<QiliApp {...props} {...{tutorialized:true,AD:true, adUrl:"http://"}}/>)
-            expect(app.find(SplashAD).length).toBe(0)
-        })
-
-        it("{tutorialized:true}", function(){
-            let app=mount(<QiliApp {...props} tutorialized={true}/>)
-            expect(app.find(Authentication).length).toBe(1)
-        })
+		describe("tutorialized, AD branch", ()=>{
+			it("{tutorialized:true,adUrl}", function(){
+				let app=mount(<QiliApp {...props} {...{tutorialized:true,adUrl:"http://"}}/>)
+				expect(app.find(SplashAD).length).toBe(1)
+				app=mount(<QiliApp {...props} {...{tutorialized:true, adUrl:"http://", user:{token:'test'}}}/>)
+				expect(app.find(SplashAD).length).toBe(1)
+				app=mount(<QiliApp {...props} {...{tutorialized:true,AD:true, adUrl:"http://"}}/>)
+				expect(app.find(SplashAD).length).toBe(0)
+			})
+		})
 		
-		it("{tutorialized:true,user:{name:'hello'}}", function(){
-            let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{name:'test'}}}/>)
-            expect(app.find(Authentication).length).toBe(1)
-        })
+		
+		
+		describe("inited",()=>{
+			it("{tutorialized:true, inited:false}", function(){
+				let app=mount(<QiliApp {...props} tutorialized={true} inited={false}/>)
+				expect(app.find(Authentication).length).toBe(0)
+			})
+			
+			it("{tutorialized:true, inited:undefined}", function(){
+				let app=mount(<QiliApp {...props} tutorialized={true}/>)
+				expect(app.find(Authentication).length).toBe(0)
+			})
+			
+			it("{tutorialized:true, inited:true}", function(){
+				let app=mount(<QiliApp {...props} tutorialized={true} inited={true}/>)
+				expect(app.find(Authentication).length).toBe(1)
+			})
+			
+			it("{tutorialized:true,user:{name:'hello'}, inited:true}", function(){
+				let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{name:'test'}}} inited={true}/>)
+				expect(app.find(Authentication).length).toBe(1)
+			})
 
-        it("{tutorialized:true,user:{token:'hello'}}", function(){
-            let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{token:'test'}}}/>)
-            expect(app.find(qili.QiliApp).length).toBe(1)
-        })
+			it("{tutorialized:true,user:{token:'hello'}, inited:true}", function(){
+				let app=mount(<QiliApp {...props} {...{tutorialized:true,user:{token:'test'}}} inited={true}/>)
+				expect(app.find(qili.QiliApp).length).toBe(1)
+			})
+		})
     })
 
     describe("actions",function(){
