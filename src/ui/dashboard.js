@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {connect} from "react-redux"
-import {getContext,compose} from "recompose"
+import {getContext,compose,mapProps} from "recompose"
 
 import GraphiQL from 'graphiql'
 
@@ -26,7 +26,8 @@ export default compose(
 		client: PropTypes.object,
 		showMessage: PropTypes.func
 	}),
-	connect(({qili:{current}},{client,theme,showMessage})=>{
+	connect(({qili:{current}})=>({current})),
+	mapProps(({client,theme,showMessage,current})=>{
 		let height=theme.page.height-theme.footbar.height
 		let apiKey=client.get(current).apiKey
 		return {
@@ -44,5 +45,5 @@ export default compose(
 			},
 			height
 		}
-	}),
+	})
 )(Dashboard)

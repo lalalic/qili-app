@@ -312,7 +312,7 @@ article{
 
 	.nth(@pos, @n){
 		&._@{n}{
-			@{pos}: (1*(@floatActionWidth+2*@stickyOffset)+2*@stickyOffset)!important;
+			@{pos}: (1*(@floatActionWidth+@n*@stickyOffset)+@n*@stickyOffset)!important;
 		}
 	}
 

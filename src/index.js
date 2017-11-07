@@ -21,6 +21,7 @@ import Snackbar from 'material-ui/Snackbar'
 import supportTap from 'react-tap-event-plugin'
 import * as date from "tools/date"
 
+import Performance from "components/performance"
 import File from "components/file"
 import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
@@ -51,11 +52,14 @@ export const ACTION={
 		payload: typeof(payload)=="string" ? {message:payload}:payload
 	}),
 	AD_DONE: ({type:`@@${DOMAIN}/ADDONE`}),
-	READY:({type:`@@${DOMAIN}/INITED`})
+	READY:({type:`@@${DOMAIN}/INITED`}),
+	REPORT: report=>({type:`@@${DOMAIN}/OPTICS`,payload:report}),
 }
 
 export const REDUCER=(state={},{type,payload})=>{
 	switch(type){
+	case `@@${DOMAIN}/OPTICS`:
+		return {...state, optics:{toJSON:()=>undefined,...payload}}
 	case `@@${DOMAIN}/INITED`:
 		return {...state, inited:{toJSON:()=>undefined}}
 	case `@@${DOMAIN}/ADDONE`:
@@ -113,6 +117,7 @@ export class QiliApp extends Component{
 			<Provider store={store}>
 				<UI muiTheme={theme}>
 					{children}
+					<Performance/>
 					<Loading/>
 					<Message/>
 				 </UI>
@@ -218,7 +223,9 @@ export default compose(
 		}
 	}),
 	
-	connect(({qili:{loading,message, ...others}})=>others,(dispatch, {project})=>({
+	connect(({qili:{loading,message, inited,AD,tutorialized,user}})=>({
+		inited,AD,tutorialized,user
+	}),(dispatch, {project})=>({
 		checkVersion(){
 			project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
 		},
@@ -236,6 +243,9 @@ export default compose(
 		},
 		doneAD(){
 			dispatch(ACTION.AD_DONE)
+		},
+		optics(report){
+			dispatch(ACTION.REPORT(report))
 		}
 	})),
 	
@@ -244,9 +254,10 @@ export default compose(
 			project: PropTypes.object,
 			loading: PropTypes.func,
 			showMessage: PropTypes.func,
-			theme: PropTypes.object
+			theme: PropTypes.object,
+			optics: PropTypes.func,
 		},
-		({project,loading,showMessage,theme})=>({
+		({project,loading,showMessage,theme,optics})=>({
 			is:{
 				app: typeof(cordova)!=="undefined"
 			},
@@ -254,6 +265,7 @@ export default compose(
 			loading,
 			showMessage,
 			theme,
+			optics
 		})
 	),
 	
