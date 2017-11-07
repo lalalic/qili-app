@@ -73,9 +73,7 @@ export class Comment extends Component{
             action:"photo",
             label:"照片",
             icon: <IconCamera/>,
-            onSelect:e=>file.selectImageFile()
-                .then(url=>file.upload(url))
-                .then(url=>commentPhoto({url}))
+            onSelect:commentPhoto
         }
 
         let action=photo
@@ -182,8 +180,8 @@ export default compose(
 		promise:true,
 		variables:{parent},
 		mutation:graphql`
-			mutation comment_create_Mutation($parent:ID!, $content:String!, $type: CommentType){
-				comment:comment_create(parent:$parent, content:$content, type:$type){
+			mutation comment_create_Mutation($parent:ID!, $content:String!, $type: CommentType, $id:ObjectID){
+				comment:comment_create(parent:$parent, content:$content, type:$type, _id:$id){
 					id
 					content
 					type
@@ -203,15 +201,22 @@ export default compose(
 		},
 
 	})),
+	file.withGetToken,
 	getContext({muiTheme:PropTypes.object}),
-	mapProps(({muiTheme,minHeight,mutate,data,relay,hint,system,template})=>({
+	mapProps(({muiTheme,minHeight,mutate,data,relay,hint,system,template,getToken})=>({
 		hint,system,template,
 		data:data ? data.comments.edges.map(({node})=>node) : [],
 		commentText({content}){
 			return mutate({content})
 		},
-		commentPhoto({url}){
-			return mutate({content:url, type:"photo"})
+		commentPhoto(){
+			return file.selectImageFile()
+                .then(data=>getToken()
+					.then(({id,token})=>
+						file.upload(data,{id:parent,key:`comments:${id}/a.jpg`},token)
+						.then(url=>mutate({content:url, type:"photo",id}))
+					)
+				)
 		},
 		loadMore(ok){
 			if(relay.hasMore() && !relay.isLoading()){
