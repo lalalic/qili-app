@@ -208,7 +208,7 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,reducers,appId})=>{
+	withProps(({store,reducers,appId,project})=>{
 		File.root=appId
 		if(!store){
 			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -218,37 +218,35 @@ export default compose(
 			)
 
 			persistStore(store,{keyPrefix:`${appId}:`}, ()=>store.dispatch(ACTION.READY))
-
-			return {store}
+			
+			const dispatch=store.dispatch.bind(store)
+			
+			return {
+				store,
+				checkVersion(){
+					project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+				},
+				tutorialize(){
+					dispatch(ACTION.TUTORIALIZED)
+				},
+				setUser(user){
+					dispatch(ACTION.CURRENT_USER(user))
+				},
+				loading(a){
+					dispatch(ACTION.LOADING(a))
+				},
+				showMessage(m){
+					dispatch(ACTION.MESSAGE(m))
+				},
+				doneAD(){
+					dispatch(ACTION.AD_DONE)
+				},
+				optics(report){
+					dispatch(ACTION.REPORT(report))
+				}
+			}
 		}
 	}),
-	
-	connect(({qili:{loading,message, inited,AD,tutorialized,user}})=>({
-		inited,AD,tutorialized,user
-	}),(dispatch, {project})=>({
-		checkVersion(){
-			project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
-		},
-		tutorialize(){
-			dispatch(ACTION.TUTORIALIZED)
-		},
-		setUser(user){
-			dispatch(ACTION.CURRENT_USER(user))
-		},
-		loading(a){
-			dispatch(ACTION.LOADING(a))
-		},
-		showMessage(m){
-			dispatch(ACTION.MESSAGE(m))
-		},
-		doneAD(){
-			dispatch(ACTION.AD_DONE)
-		},
-		optics(report){
-			dispatch(ACTION.REPORT(report))
-		}
-	})),
-	
 	withContext({
 			is: PropTypes.object,
 			project: PropTypes.object,
@@ -269,6 +267,17 @@ export default compose(
 		})
 	),
 	
+	connect(({qili:{inited,AD,tutorialized}})=>{
+		let props={}
+		if(inited!=undefined)
+			props.inited=inited
+		if(AD!=undefined)
+			props.AD=AD
+		if(tutorialized!=undefined)
+			props.tutorialized=tutorialized
+		return props
+	}),
+
 	branch(({tutorialized,tutorial=[]})=>!tutorialized&&tutorial.length,
 		renderComponent(({tutorial,tutorialize,theme,store, })=>
 			<Provider store={store}>
@@ -282,7 +291,10 @@ export default compose(
 	
 	branch(({inited})=>!inited, renderNothing),
 	
+	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
+	
 	withGraphqlClient("relay modern"),
+		
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
