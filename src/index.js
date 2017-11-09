@@ -92,7 +92,7 @@ const UI=({muiTheme,children="hello Qili!"})=>(
 )
 
 const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
-	<div className="sticky top right">
+	<div className="sticky top right" style={{zIndex:1000}}>
 		<CircularProgress style={{display: loading ? undefined : "none"}}/>
 	</div>
 ))
@@ -112,14 +112,14 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
 export class QiliApp extends Component{
 	static displayName="QiliApp"
     render(){
-        let {theme, store, children}=this.props
+        let {theme, store, children,isDev}=this.props
         return (
 			<Provider store={store}>
 				<UI muiTheme={theme}>
 					{children}
-					<Performance/>
 					<Loading/>
 					<Message/>
+					{isDev ? <Performance/> : null}
 				 </UI>
 			</Provider>
         )
@@ -208,7 +208,7 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,reducers,appId,project})=>{
+	withProps(({store,reducers,appId,project,isDev})=>{
 		File.root=appId
 		if(!store){
 			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -242,7 +242,8 @@ export default compose(
 					dispatch(ACTION.AD_DONE)
 				},
 				optics(report){
-					dispatch(ACTION.REPORT(report))
+					if(isDev)
+						dispatch(ACTION.REPORT(report))
 				}
 			}
 		}
@@ -306,6 +307,6 @@ export default compose(
 			 </UI>
 		</Provider>
 	)),
-	mapProps(({title,theme,checkVersion,store,children})=>({title,theme,checkVersion,store,children})),
+	mapProps(({title,theme,checkVersion,store,children,isDev})=>({title,theme,checkVersion,store,children,isDev})),
 	pure,
 )(QiliApp)
