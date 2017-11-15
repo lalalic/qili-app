@@ -16,7 +16,7 @@ import Schema from "ui/schema"
 
 require("codemirror/mode/javascript/javascript")
 export class Cloud extends Component{
-	state={cloudCode:this.props.app.cloudCode}
+	state={cloudCode:this.props.app.cloudCode||""}
 	render(){
 		const {mutate, height,app}=this.props
 		const {cloudCode}=this.state

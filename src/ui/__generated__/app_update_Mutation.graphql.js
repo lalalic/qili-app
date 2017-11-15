@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash fffe8a270f07cb857e7afe26a1038fb1
+ * @relayHash b8f1762ecdb66678d3d33d25f006f796
  */
 
 /* eslint-disable */
@@ -13,6 +13,7 @@ export type app_update_MutationVariables = {|
   id: any;
   name?: ?string;
   uname?: ?string;
+  isDev?: ?boolean;
 |};
 export type app_update_MutationResponse = {|
   +app_update: ?{|
@@ -27,8 +28,9 @@ mutation app_update_Mutation(
   $id: ObjectID!
   $name: String
   $uname: String
+  $isDev: Boolean
 ) {
-  app_update(_id: $id, name: $name, uname: $uname) {
+  app_update(_id: $id, name: $name, uname: $uname, isDev: $isDev) {
     updatedAt
     id
   }
@@ -55,6 +57,12 @@ const batch /*: ConcreteBatch*/ = {
         "name": "uname",
         "type": "String",
         "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "isDev",
+        "type": "Boolean",
+        "defaultValue": null
       }
     ],
     "kind": "Fragment",
@@ -70,6 +78,12 @@ const batch /*: ConcreteBatch*/ = {
             "name": "_id",
             "variableName": "id",
             "type": "ObjectID!"
+          },
+          {
+            "kind": "Variable",
+            "name": "isDev",
+            "variableName": "isDev",
+            "type": "Boolean"
           },
           {
             "kind": "Variable",
@@ -124,6 +138,12 @@ const batch /*: ConcreteBatch*/ = {
         "name": "uname",
         "type": "String",
         "defaultValue": null
+      },
+      {
+        "kind": "LocalArgument",
+        "name": "isDev",
+        "type": "Boolean",
+        "defaultValue": null
       }
     ],
     "kind": "Root",
@@ -139,6 +159,12 @@ const batch /*: ConcreteBatch*/ = {
             "name": "_id",
             "variableName": "id",
             "type": "ObjectID!"
+          },
+          {
+            "kind": "Variable",
+            "name": "isDev",
+            "variableName": "isDev",
+            "type": "Boolean"
           },
           {
             "kind": "Variable",
@@ -176,7 +202,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "mutation app_update_Mutation(\n  $id: ObjectID!\n  $name: String\n  $uname: String\n) {\n  app_update(_id: $id, name: $name, uname: $uname) {\n    updatedAt\n    id\n  }\n}\n"
+  "text": "mutation app_update_Mutation(\n  $id: ObjectID!\n  $name: String\n  $uname: String\n  $isDev: Boolean\n) {\n  app_update(_id: $id, name: $name, uname: $uname, isDev: $isDev) {\n    updatedAt\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

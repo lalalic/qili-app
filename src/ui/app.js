@@ -164,8 +164,8 @@ export default compose(
 		patch4:id,
 		variables:{id},
 		mutation:graphql`
-			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String){
-				app_update(_id:$id, name:$name, uname: $uname){
+			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String, $isDev:Boolean){
+				app_update(_id:$id, name:$name, uname: $uname, isDev:$isDev){
 					updatedAt
 				}
 			}
