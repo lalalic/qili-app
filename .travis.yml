@@ -31,7 +31,7 @@ after_success:
  - rm dist/config.xml
  - rm dist/cordova.html
 
- - npm run build.debug
+ - yarn build.debug
  - node -p "require('./package.json').version" > dist/app.apk.version
  - mv dist $APP_NAME
  - cd $APP_NAME
