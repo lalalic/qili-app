@@ -1,17 +1,11 @@
-var path = require('path');
-var webpack = require("webpack");
-var webpack = require("webpack");
+const path = require('path');
+const {ContextReplacementPlugin} = require("webpack");
 
-function envwebpack(env){
-	try{
-		return require(`./webpack.${env}.js`)
-	}catch(e){
-		return {}
-	}
-}
 
 module.exports=env=>Object.assign({
-	entry:["babel-polyfill","./style/index.less","./style/console.less","./src/main.js"],
+	entry:{
+		index:["babel-polyfill","./style/index.less","./style/console.less","./src/main.js"],
+	},
 	output:{
 		filename:"index.js",
 		path:path.resolve(__dirname, 'dist')
@@ -36,10 +30,7 @@ module.exports=env=>Object.assign({
 			]
 		}]
 	},
-	plugins:[new webpack.ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/)],
-	devServer:{
-		contentBase: path.join(__dirname, "dist"),
-		compress: true,
-		port: 9082
-	}
-},envwebpack(env))
+	plugins:[
+		new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/)
+	],
+},env ? require(`./webpack.${env}.js`) : {})

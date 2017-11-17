@@ -75,7 +75,7 @@
     "compile": "babel src -d lib",
     "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib",
     "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
-    "build.release": "webpack -p&& node scripts/allin1.js",
+    "build.release": "webpack -p --verbose && node scripts/allin1.js",
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --hot --inline --env=dev",
     "test": "jest",
