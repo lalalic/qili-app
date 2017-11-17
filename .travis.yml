@@ -21,7 +21,6 @@ install:
  - yarn install
 
 script:
- - yarn test
  - echo "test done,ready to build"
  - yarn build.$BUILD_MODE
  - yarn run cordova
