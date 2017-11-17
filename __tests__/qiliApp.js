@@ -7,12 +7,7 @@ import SplashAD from "components/splash-ad"
 
 import {mount} from "enzyme"
 	
-describe("qili application", function(){
-	beforeAll(()=>{
-		console.warn=jest.fn()
-		console.error=jest.fn()
-	})
-	
+describe("qili application", function(){	
 	it("has render function", ()=>{
 		expect(QiliApp.render).toBeDefined()
 	})
