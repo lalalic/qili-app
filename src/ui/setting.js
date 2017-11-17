@@ -22,7 +22,7 @@ export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=
 
 			<ListItem primaryText="建议" leftIcon={<IconBug/>}/>
 
-			<ListItem primaryText={app ? `${latestVersion && version!=latestVersion ? <CheckUpdate>当前{lastVersion},更新到{version}</CheckUpdate> : "已是最新v"+version}`:`下载App [V${version}]`} leftIcon={<IconLogo/>}
+			<ListItem primaryText={app ? `${latestVersion && version!=latestVersion ? <CheckUpdate>当前{version},更新到{latestVersion}</CheckUpdate> : "已是最新v"+version}`:`下载App [V${version}]`} leftIcon={<IconLogo/>}
 				onClick={e=>{
 					if(app && (!latestVersion || version==latestVersion))
 						return

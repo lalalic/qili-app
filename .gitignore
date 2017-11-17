@@ -35,3 +35,4 @@ dist/.DS_Store
 package-lock.json
 src.bak/
 dist/cordova.html
+cloud/__generated.js
