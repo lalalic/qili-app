@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -49,6 +49,8 @@
     "css-loader": "^0.26.1",
     "enzyme": "^2.7.0",
     "fakexmlhttprequest": "0.0.1",
+    "html-webpack-harddisk-plugin": "^0.1.0",
+    "html-webpack-inline-source-plugin": "^0.0.9",
     "jasmine-core": "^2.3.4",
     "jest": "^21.2.1",
     "less": "^2.7.2",
@@ -61,21 +63,11 @@
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.1"
   },
-  "browserify": {
-    "transform": [
-      [
-        "node-lessify",
-        {
-          "plugins": []
-        }
-      ]
-    ]
-  },
   "scripts": {
     "compile": "babel src -d lib",
     "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib",
     "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
-    "build.release": "webpack -p --verbose && node scripts/allin1.js",
+    "build.release": "webpack -p",
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --hot --inline --env=dev",
     "test": "jest",
@@ -88,7 +80,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/lalalic/qili-app"
   },
   "engines": {
     "node": ">= 0.4.4"
@@ -102,7 +94,6 @@
     "watchman": false
   },
   "bin": {
-    "qili-persist": "./scripts/persisted-query.js",
-    "qili-allin1": "./scripts/allin1.js"
+    "qili-persist": "./scripts/persisted-query.js"
   }
 }

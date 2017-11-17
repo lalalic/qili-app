@@ -1,6 +1,13 @@
 const path = require('path');
 const {ContextReplacementPlugin} = require("webpack");
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
+const HtmlWebpackHarddiskPlugin=require('html-webpack-harddisk-plugin')
 
+const HTML={
+	template:'./dist/index.tmpl',
+	title:"七里云",
+	favicon: "./dist/favicon.ico",
+}
 
 module.exports=env=>Object.assign({
 	entry:{
@@ -31,6 +38,20 @@ module.exports=env=>Object.assign({
 		}]
 	},
 	plugins:[
-		new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/)
+		new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
+		new HtmlWebpackPlugin({
+			...HTML,
+			inlineSource: '.(js|css)$'
+		}),
+		
+		new HtmlWebpackPlugin({
+			...HTML,
+			extra: `<script type="text/javascript" src="cordova.js"></script>`,
+			filename:"cordova.html",
+			alwaysWriteToDisk: true,
+		}),
+		
+		new HtmlWebpackInlineSourcePlugin(),
+		new HtmlWebpackHarddiskPlugin(),
 	],
 },env ? require(`./webpack.${env}.js`) : {})
