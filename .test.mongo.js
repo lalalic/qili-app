@@ -1,17 +1,20 @@
 import React from "react"
 import project from "./package.json"
-import QiliApp from "./src"
+import Qili from "./src"
+import File from "./src/components/file"
 
-project.homepage="http://localhost:9082"
+const _upload=File.upload
+File.upload=function(){
+	return _upload(...arguments).catch(a=>a).then(a=>"images/icon.svg")
+}
 
-const token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJyb290IiwidXNlcm5hbWUiOiJyb290MSIsImlhdCI6MTUwNTkyMjkwMiwiZXhwIjoxNTM3NDgwNTAyfQ.g8kZP6BCiL7eoZaTCawxpHabp9objwxxTlVjGE8bg28"
-const _render=QiliApp.render
-QiliApp.render=function(app){
+const host=window._server||'localhost';
+project.homepage=`http://${host}:9082`
+
+const _render=Qili.render
+Qili.render=function(app){
 	_render(React.cloneElement(app, {
-		service: "http://localhost:9080/1/graphql",
-		//user:{token},
+		service:`http://${host}:9080/1/graphql`,
 		isDev:true
 	}))
 }
-
-require("./src/main")
