@@ -73,7 +73,7 @@
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --hot --inline --env=dev",
     "test": "jest",
-    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android -d",
+    "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",

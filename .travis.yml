@@ -22,10 +22,10 @@ install:
 
 script:
  - yarn build.$BUILD_MODE
- - yarn cordova
+ - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
 
 after_success:
- - mv cordova/platforms/android/build/outputs/apk/android-debug.apk $APP_NAME/app.apk
+ - zipalign -v 4 cordova/platforms/android/build/outputs/apk/android-release.apk $APP_NAME/app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME/app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
 
  - rm dist/config.xml
