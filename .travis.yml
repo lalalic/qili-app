@@ -25,7 +25,7 @@ script:
  - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
 
 after_success:
- - mv cordova/platforms/android/build/outputs/apk/android-release.apk $APP_NAME/app.apk
+ - mv cordova/platforms/android/build/outputs/apk/android-release.apk ./app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME/app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
 
  - rm dist/config.xml
