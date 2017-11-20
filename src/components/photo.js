@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from "prop-types"
 
-import {Avatar, Dialog, SvgIcon,FlatButton} from "material-ui"
+import {Avatar, Dialog, SvgIcon,IconButton} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconFile from 'material-ui/svg-icons/device/sd-storage'
 import {selectImageFile, upload,withGetToken} from 'components/file'
@@ -13,35 +13,47 @@ export class Photo extends Component{
         const {size=24, cameraOptions, overwritable,onPhoto, autoUpload, getToken, src,...others}=this.props
         others.onClick=this.selectOrTakePhoto.bind(this)
 		others.style={...others.style,width:size,height:size}
-		
+
+
 		let pic=null,selectOrTaker=null
 		if(selectOrTake){
-			selectOrTaker=(
+            const style={
+                button:{
+                    width:96,
+                    height:96,
+                    padding:24
+                },
+                icon:{
+                    width:60,
+                    height:60
+                }
+            }
+            selectOrTaker=(
 				<Dialog
-					contentStyle={{width:150}}
-					titleStyle={{height:0}}
+					titleStyle={{display:'hidden'}}
 					open={true}
 					modal={false}
-					actions={[
-						<FlatButton
-						label="选择"
-						primary={true}
-						icon={<IconFile sizee={60}/>}
-						onClick={()=>this.take(Camera.PictureSourceType.PHOTOLIBRARY)}
-					  />,
-					  <FlatButton
-						label="照相"
-						primary={true}
-						icon={<IconCamera size={60}/>}
-						onClick={()=>this.take(Camera.PictureSourceType.CAMERA)}
-					  />
-					]}
 					onRequestClose={()=>this.setState({selectOrTake:false})}
-				/>
+				    >
+                    <center className="grid">
+                        <IconButton
+                            iconStyle={style.icon}
+                            style={style.button}
+                            onClick={()=>this.take(Camera.PictureSourceType.PHOTOLIBRARY)}>
+                            <IconFile/>
+                        </IconButton>
+                        <IconButton
+                            iconStyle={style.icon}
+                            style={style.button}
+                            onClick={()=>this.take(Camera.PictureSourceType.CAMERA)}>
+                            <IconCamera/>
+                        </IconButton>
+                    </center>
+                </Dialog>
 			)
 		}
-		
-		
+
+
         if(url){
             pic=(
                 <SvgIcon  {...others} viewBox={`0 0 ${size} ${size}`}>
@@ -50,7 +62,7 @@ export class Photo extends Component{
             )
         }else
 			pic=(<IconCamera {...others} color="lightgray"  hoverColor="lightblue"/>)
-		
+
 		return (
 			<span>
 				{pic}
@@ -61,7 +73,7 @@ export class Photo extends Component{
 
     selectOrTakePhoto(e){
 		e.stopPropagation()
-        if(typeof(navigator.camera)!='undefined'){
+        if(true||typeof(navigator.camera)!='undefined'){
 			this.setState({selectOrTake:true})
 		}else{
 			this.selectPhoto()
