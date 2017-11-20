@@ -1,33 +1,68 @@
 import React, {Component} from 'react'
 import PropTypes from "prop-types"
 
-import {Avatar, Dialog, SvgIcon} from "material-ui"
+import {Avatar, Dialog, SvgIcon,FlatButton} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
+import IconFile from 'material-ui/svg-icons/device/sd-storage'
 import {selectImageFile, upload,withGetToken} from 'components/file'
 
 export class Photo extends Component{
-    state={url:this.props.src}
+    state={url:this.props.src, selectOrTake:false}
     render(){
-        const {url}=this.state
+        const {url,selectOrTake}=this.state
         const {size=24, cameraOptions, overwritable,onPhoto, autoUpload, getToken, src,...others}=this.props
         others.onClick=this.selectOrTakePhoto.bind(this)
 		others.style={...others.style,width:size,height:size}
 		
+		let pic=null,selectOrTaker=null
+		if(selectOrTake){
+			selectOrTaker=(
+				<Dialog
+					contentStyle={{width:150}}
+					titleStyle={{height:0}}
+					open={true}
+					modal={false}
+					actions={[
+						<FlatButton
+						label="选择"
+						primary={true}
+						icon={<IconFile sizee={60}/>}
+						onClick={()=>this.take(Camera.PictureSourceType.PHOTOLIBRARY)}
+					  />,
+					  <FlatButton
+						label="照相"
+						primary={true}
+						icon={<IconCamera size={60}/>}
+						onClick={()=>this.take(Camera.PictureSourceType.CAMERA)}
+					  />
+					]}
+					onRequestClose={()=>this.setState({selectOrTake:false})}
+				/>
+			)
+		}
+		
+		
         if(url){
-            return (
+            pic=(
                 <SvgIcon  {...others} viewBox={`0 0 ${size} ${size}`}>
                     <image xlinkHref={url} height={size} width={size}/>
                 </SvgIcon>
             )
-        }
-
-        return (<IconCamera {...others} color="lightgray"  hoverColor="lightblue"/>)
+        }else
+			pic=(<IconCamera {...others} color="lightgray"  hoverColor="lightblue"/>)
+		
+		return (
+			<span>
+				{pic}
+				{selectOrTaker}
+			</span>
+		)
     }
 
     selectOrTakePhoto(e){
 		e.stopPropagation()
         if(typeof(navigator.camera)!='undefined'){
-			this.takePhoto()
+			this.setState({selectOrTake:true})
 		}else{
 			this.selectPhoto()
 		}
@@ -35,6 +70,7 @@ export class Photo extends Component{
     }
 
 	handlePhoto(url){
+		this.setState({selectOrTake:false})
 		const {onPhoto,autoUpload,getToken}=this.props
 		this.setState({url})
 		if(autoUpload){
@@ -51,10 +87,11 @@ export class Photo extends Component{
             then(({url,binary})=>this.handlePhoto(url), onFail)
     }
 
-    takePhoto(){
+    takePhoto(sourceType=Camera.PictureSourceType.CAMERA){
         const {onFail, width, height, cameraOptions}=this.props
         cameraOptions.targetWidth=width
         cameraOptions.targetHeight=height
+		cameraOptions.sourceType=sourceType
         navigator.camera.getPicture(url=>this.handlePhoto(url), onFail, cameraOptions)
     }
 
@@ -74,7 +111,7 @@ export class Photo extends Component{
 		cameraOptions: typeof(Camera)!='undefined' ? {
 				quality : 75,
 				destinationType : Camera.DestinationType.FILE_URI,
-				sourceType : Camera.PictureSourceType.CAMERA,
+				sourceType : Camera.PictureSourceType.CAMERA,//PHOTOLIBRARY
 				allowEdit : true,
 				encodingType: Camera.EncodingType.JPEG,
 				popoverOptions: null,
