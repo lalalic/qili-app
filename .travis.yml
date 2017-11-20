@@ -22,7 +22,7 @@ install:
 
 script:
  - yarn build.$BUILD_MODE
- - yarn run cordova
+ - yarn cordova
 
 after_success:
  - mv cordova/platforms/android/build/outputs/apk/android-debug.apk $APP_NAME/app.apk
@@ -30,8 +30,9 @@ after_success:
 
  - rm dist/config.xml
  - rm dist/cordova.html
+ - rm dist/index.tmpl
+ - rm dist/index.js
 
- - yarn build.debug
  - node -p "require('./package.json').version" > dist/app.apk.version
  - mv dist $APP_NAME
  - cd $APP_NAME
