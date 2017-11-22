@@ -73,14 +73,16 @@ export class App extends Component{
 
 				<TextField
 					floatingLabelText="API key: value of http header 'x-application-id'"
-					disabled={true}
 					fullWidth={true}
+					onFocus={({target})=>target.select()}
+					inputStyle={{color:"gray"}}
 					value={apiKey||""}/>
 
 				<TextField
 					floatingLabelText="wechat url: use it to accept message from wechat"
-					disabled={true}
+					onFocus={({target})=>target.select()}
 					fullWidth={true}
+					inputStyle={{color:"gray"}}
 					value={`http://qili2.com/1/${apiKey}/wechat`}/>
 
 				<div style={{margin:50}}>
@@ -135,11 +137,11 @@ export default compose(
 			mutation:graphql`
 				mutation app_create_Mutation($name:String!, $uname: String){
 					app_create(name:$name, uname:$uname){
-						...app
+						id
 					}
 				}
 			`,
-		})
+		}),
 	)(Creator)),
 
 	getContext({

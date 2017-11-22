@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 0d44e3f76ed12857864b03edb5155a00
+ * @relayHash fcb8497966242fc6de224777f7baf163
  */
 
 /* eslint-disable */
@@ -14,7 +14,9 @@ export type app_create_MutationVariables = {|
   uname?: ?string;
 |};
 export type app_create_MutationResponse = {|
-  +app_create: ?{| |};
+  +app_create: ?{|
+    +id: string;
+  |};
 |};
 */
 
@@ -25,17 +27,8 @@ mutation app_create_Mutation(
   $uname: String
 ) {
   app_create(name: $name, uname: $uname) {
-    ...app
     id
   }
-}
-
-fragment app on App {
-  id
-  name
-  uname
-  apiKey
-  isDev
 }
 */
 
@@ -81,9 +74,11 @@ const batch /*: ConcreteBatch*/ = {
         "plural": false,
         "selections": [
           {
-            "kind": "FragmentSpread",
-            "name": "app",
-            "args": null
+            "kind": "ScalarField",
+            "alias": null,
+            "args": null,
+            "name": "id",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -141,41 +136,13 @@ const batch /*: ConcreteBatch*/ = {
             "args": null,
             "name": "id",
             "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "uname",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "apiKey",
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "args": null,
-            "name": "isDev",
-            "storageKey": null
           }
         ],
         "storageKey": null
       }
     ]
   },
-  "text": "mutation app_create_Mutation(\n  $name: String!\n  $uname: String\n) {\n  app_create(name: $name, uname: $uname) {\n    ...app\n    id\n  }\n}\n\nfragment app on App {\n  id\n  name\n  uname\n  apiKey\n  isDev\n}\n"
+  "text": "mutation app_create_Mutation(\n  $name: String!\n  $uname: String\n) {\n  app_create(name: $name, uname: $uname) {\n    id\n  }\n}\n"
 };
 
 module.exports = batch;
