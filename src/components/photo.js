@@ -7,16 +7,17 @@ import IconFile from 'material-ui/svg-icons/device/sd-storage'
 import {selectImageFile, upload,withGetToken} from 'components/file'
 
 export class Photo extends Component{
-    state={url:this.props.src, selectOrTake:false}
+    state={url:this.props.src, toSelectWay:false}
     render(){
-        const {url,selectOrTake}=this.state
-        const {size=24, cameraOptions, overwritable,onPhoto, autoUpload, getToken, src,...others}=this.props
-        others.onClick=this.selectOrTakePhoto.bind(this)
+        const {url,toSelectWay}=this.state
+        const {size=24, cameraOptions, overwritable,onPhoto, 
+			autoUpload, getToken, src, onClick, ...others}=this.props
+        others.onClick=onClick || this.toSelectWay.bind(this)
 		others.style={...others.style,width:size,height:size}
 
 
-		let pic=null,selectOrTaker=null
-		if(selectOrTake){
+		let pic=null,toSelectWayr=null
+		if(toSelectWay){
             const style={
                 button:{
                     width:96,
@@ -28,24 +29,24 @@ export class Photo extends Component{
                     height:60
                 }
             }
-            selectOrTaker=(
+            toSelectWayr=(
 				<Dialog
 					titleStyle={{display:'hidden'}}
 					open={true}
 					modal={false}
-					onRequestClose={()=>this.setState({selectOrTake:false})}
+					onRequestClose={()=>this.setState({toSelectWay:false})}
 				    >
                     <center className="grid">
                         <IconButton
                             iconStyle={style.icon}
                             style={style.button}
-                            onClick={()=>this.take(Camera.PictureSourceType.PHOTOLIBRARY)}>
+                            onClick={()=>this.selectPhoto()}>
                             <IconFile/>
                         </IconButton>
                         <IconButton
                             iconStyle={style.icon}
                             style={style.button}
-                            onClick={()=>this.take(Camera.PictureSourceType.CAMERA)}>
+                            onClick={()=>this.takePhoto()}>
                             <IconCamera/>
                         </IconButton>
                     </center>
@@ -66,15 +67,15 @@ export class Photo extends Component{
 		return (
 			<span>
 				{pic}
-				{selectOrTaker}
+				{toSelectWayr}
 			</span>
 		)
     }
 
-    selectOrTakePhoto(e){
+    toSelectWay(e){
 		e.stopPropagation()
-        if(true||typeof(navigator.camera)!='undefined'){
-			this.setState({selectOrTake:true})
+        if(this.context.is.app){
+			this.setState({toSelectWay:true})
 		}else{
 			this.selectPhoto()
 		}
@@ -82,18 +83,23 @@ export class Photo extends Component{
     }
 
 	handlePhoto(url){
-		this.setState({selectOrTake:false})
+		this.setState({toSelectWay:false})
 		const {onPhoto,autoUpload,getToken}=this.props
 		this.setState({url})
 		if(autoUpload){
 			upload(url,autoUpload,getToken)
 				.then(url=>onPhoto && onPhoto(url))
 		}else {
-			onPhoto && onPhoto(url)
+			onPhoto && onPhoto(url, (id,key,token)=>upload(url,{id,key},token||getToken))
 		}
 	}
 
     selectPhoto(){
+		if(this.context.is.app){
+			this.takePhoto(Camera.PictureSourceType.PHOTOLIBRARY)
+			return 
+		}
+			
         const {onFail, width, height}=this.props
         selectImageFile(width, height).
             then(({url,binary})=>this.handlePhoto(url), onFail)
@@ -110,10 +116,14 @@ export class Photo extends Component{
     getValue(){
         return this.state.url
     }
+	static contextTypes={
+		is: PropTypes.object,
+	}
     static propTypes={
         cameraOptions: PropTypes.object,
         onPhoto: PropTypes.func,
-        onFail: PropTypes.func
+        onFail: PropTypes.func,
+		getToken: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired,
     }
 
     static defaultProps={
