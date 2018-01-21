@@ -149,6 +149,10 @@
   version "16.0.18"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.18.tgz#c08eea79ada55bf10b5353e18c21797dd17afa23"
 
+"@types/zen-observable@0.5.3":
+  version "0.5.3"
+  resolved "http://registry.npm.taobao.org/@types/zen-observable/download/@types/zen-observable-0.5.3.tgz#91b728599544efbb7386d8b6633693a3c2e7ade5"
+
 Base64@~0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/Base64/-/Base64-0.2.1.tgz#ba3a4230708e186705065e66babdd4c35cf60028"
@@ -308,6 +312,18 @@ anymatch@^1.3.0:
   dependencies:
     micromatch "^2.1.5"
     normalize-path "^2.0.0"
+
+apollo-link@^1.0.0:
+  version "1.0.7"
+  resolved "http://registry.npm.taobao.org/apollo-link/download/apollo-link-1.0.7.tgz#42cd38a7378332fc3e41a214ff6a6e5e703a556f"
+  dependencies:
+    "@types/zen-observable" "0.5.3"
+    apollo-utilities "^1.0.0"
+    zen-observable "^0.6.0"
+
+apollo-utilities@^1.0.0, apollo-utilities@^1.0.1:
+  version "1.0.4"
+  resolved "http://registry.npm.taobao.org/apollo-utilities/download/apollo-utilities-1.0.4.tgz#560009ea5541b9fdc4ee07ebb1714ee319a76c15"
 
 append-transform@^0.4.0:
   version "0.4.0"
@@ -3108,6 +3124,10 @@ depd@1.1.1, depd@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/depd/-/depd-1.1.1.tgz#5783b4e1c459f06fa5ca27f991f3d06e7a310359"
 
+deprecated-decorator@^0.1.6:
+  version "0.1.6"
+  resolved "http://registry.npm.taobao.org/deprecated-decorator/download/deprecated-decorator-0.1.6.tgz#00966317b7a12fe92f3cc831f7583af329b86c37"
+
 deps-sort@^1.3.7:
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/deps-sort/-/deps-sort-1.3.9.tgz#29dfff53e17b36aecae7530adbbbf622c2ed1a71"
@@ -3426,7 +3446,7 @@ es6-map@^0.1.3:
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
 
-es6-promise@^4.1.0:
+es6-promise@^4.1.0, es6-promise@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.1.1.tgz#8811e90915d9a0dba36274f0b242dbda78f9c92a"
 
@@ -3675,10 +3695,6 @@ extglob@^2.0.2:
 extsprintf@1.3.0, extsprintf@^1.2.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.3.0.tgz#96918440e3041a7a414f8c52e3c574eb3c3e1e05"
-
-fakexmlhttprequest@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/fakexmlhttprequest/-/fakexmlhttprequest-0.0.1.tgz#bfa52e2ca2b4e1f2de1471cd4e340226208f1b96"
 
 falafel@^1.0.1:
   version "1.2.0"
@@ -4222,6 +4238,23 @@ graphql-language-service-utils@0.0.17:
     graphql "^0.10.1"
     graphql-language-service-types "0.0.21"
 
+graphql-subscriptions@^0.5.6:
+  version "0.5.6"
+  resolved "http://registry.npm.taobao.org/graphql-subscriptions/download/graphql-subscriptions-0.5.6.tgz#0d8e960fbaaf9ecbe7900366e86da2fc143fc5b2"
+  dependencies:
+    es6-promise "^4.1.1"
+    iterall "^1.1.3"
+
+graphql-tools@^2.18.0:
+  version "2.18.0"
+  resolved "http://registry.npm.taobao.org/graphql-tools/download/graphql-tools-2.18.0.tgz#8e2d6436f9adba1d579c1a1710ae95e7f5e7248b"
+  dependencies:
+    apollo-link "^1.0.0"
+    apollo-utilities "^1.0.1"
+    deprecated-decorator "^0.1.6"
+    graphql-subscriptions "^0.5.6"
+    uuid "^3.1.0"
+
 graphql@^0.10.1:
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.10.5.tgz#c9be17ca2bdfdbd134077ffd9bbaa48b8becd298"
@@ -4231,6 +4264,12 @@ graphql@^0.10.1:
 graphql@^0.11.3:
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.7.tgz#e5abaa9cb7b7cccb84e9f0836bf4370d268750c6"
+  dependencies:
+    iterall "1.1.3"
+
+graphql@^0.12.3:
+  version "0.12.3"
+  resolved "http://registry.npm.taobao.org/graphql/download/graphql-0.12.3.tgz#11668458bbe28261c0dcb6e265f515ba79f6ce07"
   dependencies:
     iterall "1.1.3"
 
@@ -5161,7 +5200,7 @@ istanbul-reports@^1.1.3:
   dependencies:
     handlebars "^4.0.3"
 
-iterall@1.1.3, iterall@^1.1.0:
+iterall@1.1.3, iterall@^1.1.0, iterall@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.1.3.tgz#1cbbff96204056dde6656e2ed2e2226d0e6d72c9"
 
@@ -9857,3 +9896,7 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+zen-observable@^0.6.0:
+  version "0.6.1"
+  resolved "http://registry.npm.taobao.org/zen-observable/download/zen-observable-0.6.1.tgz#01dbed3bc8d02cbe9ee1112c83e04c807f647244"

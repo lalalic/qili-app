@@ -32,13 +32,10 @@ export const DOMAIN="qili"
 
 export const ACTION={
 	CHECK_VERSION:(homepage,currentVersion)=>dispatch=>{
-		if(document.location.hostname=="localhost")
-			return
-		require("http").get(`${homepage}/app.apk.version`, res=>{
-			res.on("data", data=>{
-				dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:new Buffer(data).toString().trim()})
-			})
-		}).end()
+		fetch(`${homepage}/app.apk.version`)
+			.then(res=>res.text())
+			.then(version=>dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:ver}))
+			.catch(e=>e)
 	},
 	CURRENT_USER:user=>({
         type:`@@${DOMAIN}/USER_CHANGED`
@@ -54,9 +51,11 @@ export const ACTION={
 	AD_DONE: ({type:`@@${DOMAIN}/ADDONE`}),
 	READY:({type:`@@${DOMAIN}/INITED`}),
 	REPORT: report=>({type:`@@${DOMAIN}/OPTICS`,payload:report}),
+	ONLINE: ()=>({type:`@@${DOMAIN}/ONLINE`}),
+	OFFLINE: ()=>({type:`@@${DOMAIN}/OFFLINE`}),
 }
 
-export const REDUCER=(state={},{type,payload})=>{
+export const REDUCER=(state={network:"online"},{type,payload})=>{
 	switch(type){
 	case `@@${DOMAIN}/OPTICS`:
 		return {...state, optics:{toJSON:()=>undefined,...payload}}
@@ -76,6 +75,10 @@ export const REDUCER=(state={},{type,payload})=>{
 		return {...state,loading:!!payload}
 	case `@@${DOMAIN}/MESSAGE`:
 		return {...state, message:payload}
+	case `@@${DOMAIN}/OFFLINE`:
+		return {...state, network:"offline"}
+	case `@@${DOMAIN}/ONLINE`:
+		return {...state, network:"online"}
 	}
 
 	return state
@@ -217,10 +220,13 @@ export default compose(
 				composeEnhancers(applyMiddleware(thunk),autoRehydrate())
 			)
 
-			persistStore(store,{keyPrefix:`${appId}:`}, ()=>store.dispatch(ACTION.READY))
-			
+			persistStore(store,{keyPrefix:`${appId}:`}, ()=>{
+				store.dispatch(ACTION.ONLINE())
+				store.dispatch(ACTION.READY)
+			})
+
 			const dispatch=store.dispatch.bind(store)
-			
+
 			return {
 				store,
 				checkVersion(){
@@ -244,6 +250,12 @@ export default compose(
 				optics(report){
 					if(isDev)
 						dispatch(ACTION.REPORT(report))
+				},
+				offline(){
+					dispatch(ACTION.OFFLINE())
+				},
+				online(){
+					dispatch(ACTION.ONLINE())
 				}
 			}
 		}
@@ -267,7 +279,7 @@ export default compose(
 			optics
 		})
 	),
-	
+
 	connect(({qili:{inited,AD,tutorialized}})=>{
 		let props={}
 		if(inited!=undefined)
@@ -287,15 +299,15 @@ export default compose(
 				 </UI>
 			</Provider>
 	)),
-	
+
 	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
-	
+
 	branch(({inited})=>!inited, renderNothing),
-	
-	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
-	
-	withGraphqlClient("relay modern"),
-		
+
+	connect(({qili:{user,network}})=>(user!==undefined ? {user,network} : {network})),
+
+	withGraphqlClient(),
+
 	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>

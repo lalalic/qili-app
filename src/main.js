@@ -56,7 +56,8 @@ const QiliAdmin=compose(
 		appId:"qiliAdmin",
 		reducers:{
 			[DOMAIN]:reducer
-		}
+		},
+		supportOffline:true,
 	})),
 	withInit({
 		query:graphql`
@@ -167,7 +168,7 @@ const router=(
 								toSetting: ()=>router.push('/my/setting'),
 								toProfile: ()=>router.push('/my/profile')
 							})),
-							
+
 						)(My)
 					}/>
 
@@ -206,7 +207,7 @@ const router=(
 						...others
 					})),
 				)(App.Creator)}/>
-				
+
 				<Route path=":id" component={
 						compose(
 							withQuery(({params:{id}})=>({
@@ -240,7 +241,7 @@ const router=(
 							})),
 						)(App)
 					}/>
-				
+
 			</Route>
 
 			<Route path="comment/:id" component={compose(
@@ -281,7 +282,7 @@ const router=(
 					parent,
 					connection:"main_app_comments"
 				})),
-				
+
 			)(Comment)}/>
 
 			<Route path="cloud" component={compose(
@@ -305,9 +306,9 @@ const router=(
 					app:data.me.app,
 					...others
 				})),
-				
+
 			)(Cloud)}/>
-			
+
 			<Route path="log" component={compose(
 				withCurrent(),
 				withNavigator(),

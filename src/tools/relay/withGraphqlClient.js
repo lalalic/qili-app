@@ -4,7 +4,7 @@ import {compose, withContext, setDisplayName, wrapDisplayName,createEagerFactory
 import {ConnectionHandler} from "relay-runtime"
 import createEnvironment from "./environment"
 
-export const withGraphqlClient=options=>BaseComponent=>{
+export const withGraphqlClient=(options={})=>BaseComponent=>{
 	const factory=createEagerFactory(
 			withContext({
 					client: PropTypes.object,
@@ -18,10 +18,10 @@ export const withGraphqlClient=options=>BaseComponent=>{
 		)
 
 	const WithGraphqlClient=props=>{
-		let {client:environment,service, appId, user,showMessage, isDev,optics}=props
-		const token=user ? user.token : undefined
+		let {client:environment}=props
+		let clientOpts=typeof(options)=="function" ? options(props) : options
 		if(!environment){
-			environment=createEnvironment(service, appId, token,showMessage,isDev,optics)
+			environment=createEnvironment({...props,...clientOpts})
 			environment.get=function(id){
 				let store=this.getStore()
 				return store.getSource().get(id)

@@ -7,15 +7,15 @@ import {withFragment} from "tools/recompose"
 
 
 export const Schema=({schema, style})=>(
-	<textarea 
-		disabled
-		
+	<textarea
+		readOnly="readonly"
 		style={{
 			padding:20,
 			width:"100%",
 			border:0,
 			...style
-		}} 
+		}}
+		onFocus={({target})=>target.select()}
 		value={schema}/>
 )
 
