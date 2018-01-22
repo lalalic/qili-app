@@ -18,10 +18,10 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 		)
 
 	const WithGraphqlClient=props=>{
-		let {client:environment}=props
+		let {client:environment,network}=props
 		let clientOpts=typeof(options)=="function" ? options(props) : options
 		if(!environment){
-			environment=createEnvironment({...props,...clientOpts})
+			environment=createEnvironment({...props,...clientOpts, isOnline:()=>network=="online"})
 			environment.get=function(id){
 				let store=this.getStore()
 				return store.getSource().get(id)
