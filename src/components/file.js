@@ -203,7 +203,18 @@ module.exports={//for testable
 			...others,
 			getToken(key){
 				key=typeof(key)=="string" ? {key} : key
-				return client.runQL({id:"file_token_Query",variables:key})
+				return client.runQL({
+						id:"file_token_Query",
+						variables:key,
+						query: (graphql`
+							query file_token_Query($key:String){
+								token:file_upload_token(key:$key){
+									token
+									id
+								}
+							}
+						`)().text
+					})
 					.then(({data:{token}})=>token)
 			}
 		}))
@@ -220,14 +231,4 @@ module.exports={//for testable
     		}
     	`
     })
-};
-
-{getToken:graphql`
-	query file_token_Query($key:String){
-		token:file_upload_token(key:$key){
-			token
-			id
-		}
-	}
-`
 }

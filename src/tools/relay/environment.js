@@ -8,58 +8,88 @@ const environments={}
 export default function createEnvironment(props){
 	let {user, appId, network, supportOffline}=props
 	const token=user ? user.token : null
-	let key=`${appId}-${!!token}-${network}`
+	let key=`${appId}-${!!token}`
 	if(environments[key])
 		return environments[key]
 
-	let offlineRunQL=null
 	if(supportOffline){
-		if(supportOffline===true){
-			supportOffline=require("tools/offline").default
-		}
-		offlineRunQL=supportOffline(source, user, appId)
+		supportOffline.user=user
 	}
+	
+	function fetchQueryOnline(){
+
+	}
+
+	function fetchQueryOffline(operation, variables, cacheConfig,uploadables,){
+		
+	}
+
+	function fetchQuery(){
+		
+	}
+	
+	let network=Network.create(fetchQuery)
+	
+	return Object.assign(new Environment({
+		handlerProvider,
+		network,
+		store,
+	}),{
+		type:"online",
+		fetcher,
+		runQL(query){
+			return fetcher({body:JSON.stringify(query)})
+		}
+	});
+	
 
 	switch(network){
 		case "online":
-			return environments[key]=createOnlineEnvironment({token,...props})
+			return environments[key]=createOnlineEnvironment(supportOffline, {token,...props})
 		case "offline":
-			return environments[key]=createOfflineEnvironment(offlineRunQL)
+			return environments[key]=createOfflineEnvironment(supportOffline, props)
 	}
 }
 
-function createOnlineEnvironment({service, appId, token, showMessage=console.log, isDev,report=a=>a,offline,online}){
+function handleErrors(errors, showMessage){
+	let {message,stack}=errors.reduce((state,a)=>{
+		state.message.add(a.message)
+		state.stack.add(a.stack)
+		return state
+	}, {message:new Set(), stack:new Set()})
+	showMessage({message:Array.from(message).join("|"),level:"error"})
+	console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
+}
+
+function createOnlineEnvironment(supportOffline, {service, appId, token, showMessage=console.log, isDev,report=a=>a,offline,online}){
 	const fetcher=opt=>{
-		try{
-			return fetch(service,{
-				method: 'POST',
-				...opt,
-				headers: {
-					'content-type': 'application/json',
-					"X-Application-ID": appId,
-					"X-Session-Token": token,
-					...(opt?opt.headers:null)
-				},
-			})
-			.then(res=>res.json())
-			.then(res=>{
-				if(res.errors){
-					let {message,stack}=res.errors.reduce((state,a)=>{
-						state.message.add(a.message)
-						state.stack.add(a.stack)
-						return state
-					}, {message:new Set(), stack:new Set()})
-					showMessage({message:Array.from(message).join("|"),level:"error"})
-					console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
-				}
-				if(res.extensions)
-					report(res.extensions.report)
-				online()
-				return res
-			},offline)
-		}catch(e){
-			offline(e)
-		}
+		if(supportOffline)
+			supportOffline.setSource(source)
+
+		return fetch(service,{
+			method: 'POST',
+			...opt,
+			headers: {
+				'content-type': 'application/json',
+				"X-Application-ID": appId,
+				"X-Session-Token": token,
+				...(opt?opt.headers:null)
+			},
+		})
+		.then(res=>{
+			if(!res.ok){
+				throw new Error(res.statusText)
+			}
+			return res.json()
+		})
+		.then(res=>{
+			if(res.errors)
+				handleErrors(res.errors, showMessage)
+			
+			if(res.extensions)
+				report(res.extensions.report)
+			return res
+		})
 	}
 
 	const network = Network.create(function fetchQuery(
@@ -75,6 +105,22 @@ function createOnlineEnvironment({service, appId, token, showMessage=console.log
 			  variables,
 			}),
 		  })
+			.catch(e=>{
+				offline()
+				
+				if(supportOffline){
+					supportOffline.unsetSource(source)  
+					return supportOffline.runQL(operation.text, variables)
+						.then(res=>{
+							if(res.errors)
+								handleErrors(res.errors, showMessage)
+				
+							return res
+						})
+				}
+				
+				return e
+			})
 		}); // see note below
 
 	return Object.assign(new Environment({
@@ -82,6 +128,7 @@ function createOnlineEnvironment({service, appId, token, showMessage=console.log
 		network,
 		store,
 	}),{
+		type:"online",
 		fetcher,
 		runQL(query){
 			return fetcher({body:JSON.stringify(query)})
@@ -89,14 +136,21 @@ function createOnlineEnvironment({service, appId, token, showMessage=console.log
 	});
 }
 
-function createOfflineEnvironment(runQL){
-	const network = Network.create((
-		  operation,
-		  variables,
-		  cacheConfig,
-		  uploadables,
-	  ) =>{
-			return runQL(operation.text, variables)
+function createOfflineEnvironment(supportOffline, {showMessage}){
+	const network = Network.create(function(
+			  operation,
+			  variables,
+			  cacheConfig,
+			  uploadables,
+		  ){
+			supportOffline.unsetSource(source)  
+			return supportOffline.runQL(operation.text, variables)
+				.then(res=>{
+					if(res.errors)
+						handleErrors(res.errors, showMessage)
+		
+					return res
+				})
 		});
 
 	return Object.assign(new Environment({
@@ -104,9 +158,11 @@ function createOfflineEnvironment(runQL){
 		network,
 		store,
 	}),{
+		type:"offline",
 		fetcher(){
 			throw new Error("not supported")
 		},
-		runQL
+		runQL:supportOffline.runQL.bind(supportOffline)
 	});
 }
+

@@ -5,7 +5,7 @@ import {commitMutation} from "react-relay"
 
 import spreadResponse from "tools/spread-response"
 
-const isDate=date=>typeof date.getMonth === 'function'
+const isDate=date=>date && typeof date.getMonth === 'function'
 
 /**
  * options:
@@ -42,7 +42,7 @@ export const withMutation=option=>BaseComponent=>{
 			function mutate(data){
 				loading(true)
 				const {spread, variables, patch4, patchData,
-					shouldPatch=o=>Object.keys(o).reduce((a,k)=>o[k]!==null&&a,true),
+					shouldPatch,
 					promise,dateFields=[],
 					...mutation}=typeof(option)=="function" ? option(others, data, environment) : option
 				let smart={}

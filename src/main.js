@@ -31,6 +31,7 @@ import Comment from "components/comment"
 import Cloud from "ui/cloud"
 import Schema from "ui/schema"
 import Log from "ui/log"
+import Offline from "tools/offline"
 
 const {DOMAIN,REDUCER}=qili
 
@@ -50,6 +51,23 @@ const reducer=(state={},{type,payload})=>{
 	return state
 }
 
+class QiliAdminOffline extends Offline{
+	onSetUser(_id, record, {app,apps}){
+		super.onSetUser(_id,record)
+		if(app){
+			this.onSet(app,{author:_id, id:app})
+		}
+		
+		if(apps){
+			apps.forEach(a=>this.onSet(a, {author:_id, id:a}))
+		}
+	}
+	
+	onSetLog(){
+		
+	}
+}
+
 const QiliAdmin=compose(
 	withProps(()=>({
 		project: require("../package.json"),
@@ -57,7 +75,29 @@ const QiliAdmin=compose(
 		reducers:{
 			[DOMAIN]:reducer
 		},
-		supportOffline:true,
+		supportOffline: new QiliAdminOffline(
+			"qiliAdmin", 
+			require("imports-loader?Cloud=../src/tools/offline/schema!../cloud")
+				.makeSchema(
+					require("text-loader!../schema.graphql"),
+					{
+						User:{
+							async apps(parent,{},{app,user:{_id}}){
+								return await app.findEntity("apps",{author:_id})
+							},
+
+							async app(_, {_id}, {app,user}){
+								return await app.get1Entity("apps",{_id, author:user._id})
+							}
+						},
+						App:{
+							logs(){
+								return []
+							}
+						}
+					}
+				)
+		),
 	})),
 	withInit({
 		query:graphql`

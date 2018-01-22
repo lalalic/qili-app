@@ -11,7 +11,9 @@ export default class extends DataService{
                 state TEXT NOT NULL,
                 doc TEXT,
                 PRIMARY KEY (col, id)
-            )`,[], (tx)=>console.log(`database[${id}] created!`),
+            )`,
+			[], 
+			null,
             (tx, error)=>console.error(error)))
     }
 
@@ -22,7 +24,7 @@ export default class extends DataService{
     createEntity(cols,{_id, ...doc}){
         _id=_id||this.makeId()
         const data={_id, ...doc}
-        return new Promise((resolve, reject)=>{
+		return new Promise((resolve, reject)=>{
                 this.db.transaction(tx=>tx.executeSql(
                     `insert or replace into docs(col,id,doc,state) values(?, ?, ?, ?)`,
                     [cols, _id, JSON.stringify(data), "upserted"],
@@ -80,7 +82,7 @@ export default class extends DataService{
 
     findEntity(cols,query={},filter=cursor=>cursor){
         return new Promise((resolve, reject)=>this.db.transaction(tx=>tx.executeSql(
-                `select doc from col=?`,
+                `select doc from docs where col=?`,
                 [cols],
                 (tx, {rows})=>{
                         let filtered=[]

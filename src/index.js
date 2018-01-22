@@ -84,8 +84,8 @@ export const REDUCER=(state={network:"online"},{type,payload})=>{
 	return state
 }
 
-const UI=({muiTheme,children="hello Qili!"})=>(
-	<MuiThemeProvider muiTheme={muiTheme}>
+const UI=({network, muiTheme,children="hello Qili!"})=>(
+	<MuiThemeProvider muiTheme={network=="online" ? muiTheme : {...muiTheme, appBar:{...muiTheme.appBar, color:"gray"}}}>
 		<div className="withFootbar">
 			<div id="container" style={{overflowY:"scroll"}}>
 			{children}

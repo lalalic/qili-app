@@ -16,7 +16,7 @@
                 "ui":"./ui",
 				"components":"./components",
 				"icons":"./icons",
-				"tools": "./tools",
+				"tools": "./tools"
 			},
 			"cwd":"babelrc"
 		}]
