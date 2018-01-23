@@ -7,7 +7,7 @@ const environments={}
 const NoService=new Error("Network error")
 
 export default function createEnvironment(props){
-	let {user, appId, supportOffline, isOnline, showMessage}=props
+	let {user, appId, supportOffline, network, showMessage, loading}=props
 	const token=user ? user.token : null
 	let key=`${appId}-${!!token}`
 	if(environments[key])
@@ -16,7 +16,7 @@ export default function createEnvironment(props){
 	if(supportOffline){
 		supportOffline.user=user
 	}
-
+	
 	function fetcherOnline(opt){
 		if(supportOffline)
 			supportOffline.setSource(source)
@@ -50,7 +50,7 @@ export default function createEnvironment(props){
 	}
 
 	function fetchQueryOnline(operation, variables, cacheConfig,uploadables){
-		const {isDev, offline, online}=props
+		const {isDev}=props
 		return fetcherOnline({
 			body: JSON.stringify({
 				query: isDev===true ? operation.text : undefined, // GraphQL text from input
@@ -59,7 +59,7 @@ export default function createEnvironment(props){
 			}),
 		})
 		.catch(e=>{
-			offline()
+			network("offline")
 
 			if(supportOffline)
 				return fetchQueryOffline(operation, variables, cacheConfig,uploadables)
@@ -79,38 +79,68 @@ export default function createEnvironment(props){
 	}
 
 	function fetchQuery(){
-		if(isOnline())
-			return fetchQueryOnline(...arguments)
-		else if(supportOffline)
-			return fetchQueryOffline(...arguments)
-		else
-			return Promise.resolve(NoService)
+		loading(true)
+		return (()=>{
+			if(network()=="online")
+				return fetchQueryOnline(...arguments)
+			else if(supportOffline)
+				return fetchQueryOffline(...arguments)
+			else
+				return Promise.resolve(NoService)
+		})().catch(e=>{
+			loading(false)
+			showMessage({message:e.message, level:"error"})
+			return e
+		}).then(res=>{
+			loading(false)
+			return res
+		})
 	}
 
-	let network=Network.create(fetchQuery)
 
 	return Object.assign(new Environment({
 		handlerProvider,
-		network,
+		network:Network.create(fetchQuery),
 		store,
 	}),{
-		fetcher(){
-			if(isOnline()){
-				return fetcherOnline(...arguments)
-			}else if(supportOffline){
-				return supportOffline.runQL()
-			}else{
-				return Promise.resolve(NoService)
-			}
+		fetcher(req){
+			loading(true)
+			return (()=>{
+				if(network()=="online"){
+					return fetcherOnline(...arguments)
+				}else if(supportOffline){
+					let {query, variables}=JSON.parse(req.body)
+					return supportOffline.runQL(query, variables)
+				}else{
+					return Promise.resolve(NoService)
+				}
+			})().catch(e=>{
+				loading(false)
+				showMessage({message:e.message, level:"error"})
+				return e
+			}).then(res=>{
+				loading(false)
+				return res
+			})
 		},
 		runQL(query, variables){
-			if(isOnline()){
-				return fetcherOnline({body:JSON.stringify(query)})
-			}else if(supportOffline){
-				return supportOffline.runQL(query, variables)
-			}else {
-				return Promise.resolve(NoService)
-			}
+			loading(true)
+			return (()=>{
+				if(network()=="online"){
+					return fetcherOnline({body:JSON.stringify(query)})
+				}else if(supportOffline){
+					return supportOffline.runQL(query, variables)
+				}else {
+					return Promise.resolve(NoService)
+				}
+			})().catch(e=>{
+				loading(false)
+				showMessage({message:e.message, level:"error"})
+				return e
+			}).then(res=>{
+				loading(false)
+				return res
+			})
 		}
 	});
 }

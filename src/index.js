@@ -17,6 +17,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import LightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import CircularProgress from 'material-ui/CircularProgress'
 import Snackbar from 'material-ui/Snackbar'
+import IconOffline from "material-ui/svg-icons/file/cloud-off"
 
 import supportTap from 'react-tap-event-plugin'
 import * as date from "tools/date"
@@ -55,7 +56,7 @@ export const ACTION={
 	OFFLINE: ()=>({type:`@@${DOMAIN}/OFFLINE`}),
 }
 
-export const REDUCER=(state={network:"online"},{type,payload})=>{
+export const REDUCER=(state={networkStatus:"online"},{type,payload})=>{
 	switch(type){
 	case `@@${DOMAIN}/OPTICS`:
 		return {...state, optics:{toJSON:()=>undefined,...payload}}
@@ -76,16 +77,16 @@ export const REDUCER=(state={network:"online"},{type,payload})=>{
 	case `@@${DOMAIN}/MESSAGE`:
 		return {...state, message:payload}
 	case `@@${DOMAIN}/OFFLINE`:
-		return {...state, network:"offline"}
+		return {...state, networkStatus:"offline"}
 	case `@@${DOMAIN}/ONLINE`:
-		return {...state, network:"online"}
+		return {...state, networkStatus:"online"}
 	}
 
 	return state
 }
 
-const UI=({network, muiTheme,children="hello Qili!"})=>(
-	<MuiThemeProvider muiTheme={network=="online" ? muiTheme : {...muiTheme, appBar:{...muiTheme.appBar, color:"gray"}}}>
+const UI=({muiTheme,children="hello Qili!"})=>(
+	<MuiThemeProvider muiTheme={muiTheme}>
 		<div className="withFootbar">
 			<div id="container" style={{overflowY:"scroll"}}>
 			{children}
@@ -110,6 +111,15 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
           onRequestClose={e=>dispatch(ACTION.MESSAGE())}
         />
 ))
+
+export const notSupportOffline=(NoSupport=()=>(<Empty icon={<IconOffline/>}>Not Support Offline</Empty>))=>BaseComponent=>{
+	
+	const NetworkSensitive=connect(state=>({offline:state[DOMAIN].networkStatus=="offline"}))(({offline, ...props})=>(
+		offline ? <NoSupport/> : <BaseComponent {...props}/>
+	))
+	
+	return NetworkSensitive
+}
 
 
 export class QiliApp extends Component{
@@ -251,11 +261,18 @@ export default compose(
 					if(isDev)
 						dispatch(ACTION.REPORT(report))
 				},
-				offline(){
-					dispatch(ACTION.OFFLINE())
-				},
-				online(){
-					dispatch(ACTION.ONLINE())
+				network(status){
+					switch(status){
+						case  "online":
+							dispatch(ACTION.ONLINE())
+						break
+						case  "offline":
+							dispatch(ACTION.OFFLINE())
+						break
+						default:
+							return store.getState().qili.networkStatus
+							
+					}
 				}
 			}
 		}
@@ -304,7 +321,7 @@ export default compose(
 
 	branch(({inited})=>!inited, renderNothing),
 
-	connect(({qili:{user,network}})=>(user!==undefined ? {user,network} : {network})),
+	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
 
 	withGraphqlClient(),
 

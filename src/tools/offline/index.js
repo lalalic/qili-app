@@ -117,8 +117,19 @@ export class Offline{
 	}
 	
 	runQL(query, variables){
+		if(query.startsWith("mutation "))
+			return Promise.reject(new Error("offline not support this action"))
+		
 		return Promise.all([Promise.resolve(this.getApp()), Promise.resolve(this.getUser())])
 			.then(([app,user])=>graphql(this.schema, query, {}, {user,app}, variables))
+			.then(result=>{
+				console.dir({
+					query,
+					variables,
+					result
+				})
+				return result
+			})
 			.catch(e=>{
 				console.error(e)
 				return e

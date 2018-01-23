@@ -90,10 +90,15 @@ const QiliAdmin=compose(
 								return await app.get1Entity("apps",{_id, author:user._id})
 							}
 						},
+						
 						App:{
 							logs(){
-								return []
-							}
+								return {
+									edges:[]
+								}
+							},
+							cloudCode:({cloudCode})=>cloudCode||"/**Not support offline**/",
+							schema:()=>"Not support offline"
 						}
 					}
 				)
@@ -353,8 +358,9 @@ const router=(
 				withCurrent(),
 				withNavigator(),
 				connect(({qili:{current}})=>({
-					id:current
+					id:current,
 				})),
+				qili.notSupportOffline(),
 				withPagination(({id,status})=>({
 					variables:{id,status},
 					query:graphql`
