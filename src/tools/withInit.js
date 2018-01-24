@@ -6,11 +6,15 @@ import {withQuery} from "tools/recompose"
 export const withInit=options=>BaseComponent=>{
 	let factory=createEagerFactory(BaseComponent)
 	
-	const WithInit=({children,...others})=>{
-		const Init=withQuery(options)(()=><div>{children}</div>)
-		others.children=(<Init/>)
-		return factory(others)
-	}
+	const Init=withQuery(options)(({children})=><div>{children}</div>)
+		
+	const WithInit=({children,...others})=>(
+		<BaseComponent {...others}>
+			<Init>
+				{children}
+			</Init>
+		</BaseComponent>
+	)
 	
 	if (process.env.NODE_ENV !== 'production') {
 		return setDisplayName(wrapDisplayName(BaseComponent, 'WithInit'))(WithInit)
@@ -20,5 +24,3 @@ export const withInit=options=>BaseComponent=>{
 }
 
 export default withInit
-
-

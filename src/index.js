@@ -1,6 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {render} from "react-dom"
+import merge from "lodash.merge"
 import {persistStore, autoRehydrate} from 'redux-persist'
 
 import {compose, pure,withState,branch,renderComponent, renderNothing,
@@ -28,6 +29,16 @@ import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
 import SplashAD from "components/splash-ad"
+
+export const THEME=getMuiTheme(LightBaseTheme,{
+	footbar:{
+		height: 50
+	},
+	page:{
+		width: window.innerWidth > 960 ? 960 : window.innerWidth,
+		height:window.innerHeight
+	}
+})
 
 export const DOMAIN="qili"
 
@@ -112,14 +123,14 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
         />
 ))
 
-export const notSupportOffline=(NoSupport=()=>(<Empty icon={<IconOffline/>}>Not Support Offline</Empty>))=>BaseComponent=>{
-	
-	const NetworkSensitive=connect(state=>({offline:state[DOMAIN].networkStatus=="offline"}))(({offline, ...props})=>(
-		offline ? <NoSupport/> : <BaseComponent {...props}/>
-	))
-	
-	return NetworkSensitive
-}
+export const notSupportOffline=(NoSupport=()=>(<Empty icon={<IconOffline/>}>Not Support Offline</Empty>))=>
+	BaseComponent=>{
+		const NetworkSensitive=connect(state=>({offline:state[DOMAIN].networkStatus=="offline"}))(({offline, ...props})=>(
+			offline ? <NoSupport/> : <BaseComponent {...props}/>
+		))
+		
+		return NetworkSensitive
+	}
 
 
 export class QiliApp extends Component{
@@ -160,6 +171,7 @@ export default compose(
 		service: PropTypes.string,
 		store: PropTypes.object,
 		theme: PropTypes.object,
+		offlineTheme: PropTypes.object,
 		tutorial: PropTypes.arrayOf(PropTypes.string),
 		project: PropTypes.object,
 		isDev: PropTypes.bool,
@@ -175,25 +187,23 @@ export default compose(
 
 		let style=document.createElement("style")
 		document.getElementsByTagName("head")[0].appendChild(style)
-		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-		container.style.height=window.innerHeight+'px'
-
+		
+		function size(){
+			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+			container.style.height=window.innerHeight+'px'
+			THEME.page.height=window.innerHeight
+		}
+		
+		size()
 		supportTap()
+		window.addEventListener("resize", size)
 
 		return render(app,container)
 	}),
 
 	defaultProps({
 		service:"http://qili2.com/1/graphql",
-		theme:getMuiTheme(LightBaseTheme,{
-			footbar:{
-				height: 50
-			},
-			page:{
-				width: window.innerWidth > 960 ? 960 : window.innerWidth
-				,height:window.innerHeight
-			}
-		})
+		theme:THEME
 	}),
 
 	branch(({appId})=>!appId,renderComponent(({theme})=>
@@ -231,13 +241,13 @@ export default compose(
 			)
 
 			persistStore(store,{keyPrefix:`${appId}:`}, ()=>{
-				store.dispatch(ACTION.ONLINE())
+				store.dispatch(window.navigator.onLine===false ? ACTION.OFFLINE() : ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})
 
 			const dispatch=store.dispatch.bind(store)
 
-			return {
+			const props={
 				store,
 				checkVersion(){
 					project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
@@ -275,6 +285,11 @@ export default compose(
 					}
 				}
 			}
+			
+			window.addEventListener('online',  ()=>props.network("online"))
+			window.addEventListener('offline', ()=>props.network("offline"))
+			
+			return props
 		}
 	}),
 	withContext({
@@ -336,6 +351,7 @@ export default compose(
 			 </UI>
 		</Provider>
 	)),
+	
 	mapProps(({title,theme,checkVersion,store,children,isDev})=>({title,theme,checkVersion,store,children,isDev})),
 	pure,
 )(QiliApp)

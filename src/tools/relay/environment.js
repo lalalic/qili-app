@@ -7,7 +7,7 @@ const environments={}
 const NoService=new Error("Network error")
 
 export default function createEnvironment(props){
-	let {user, appId, supportOffline, network, showMessage, loading}=props
+	let {user, appId, supportOffline, network, showMessage, loading, isDev}=props
 	const token=user ? user.token : null
 	let key=`${appId}-${!!token}`
 	if(environments[key])
@@ -16,6 +16,21 @@ export default function createEnvironment(props){
 	if(supportOffline){
 		supportOffline.user=user
 	}
+	
+	function handleErrors(errors){
+		let {message,stack}=errors.reduce((state,a)=>{
+			state.message.add(a.message)
+			state.stack.add(a.stack)
+			return state
+		}, {message:new Set(), stack:new Set()})
+		if(isDev){
+			showMessage({message:Array.from(message).join("|"),level:"error"})
+			console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
+		}else{
+			showMessage({message:Array.from(message).join("|"),level:"warn"})
+		}
+	}
+
 	
 	function fetcherOnline(opt){
 		if(supportOffline)
@@ -50,7 +65,6 @@ export default function createEnvironment(props){
 	}
 
 	function fetchQueryOnline(operation, variables, cacheConfig,uploadables){
-		const {isDev}=props
 		return fetcherOnline({
 			body: JSON.stringify({
 				query: isDev===true ? operation.text : undefined, // GraphQL text from input
@@ -59,11 +73,12 @@ export default function createEnvironment(props){
 			}),
 		})
 		.catch(e=>{
+			
 			network("offline")
 
 			if(supportOffline)
 				return fetchQueryOffline(operation, variables, cacheConfig,uploadables)
-
+			
 			return e
 		})
 	}
@@ -74,6 +89,14 @@ export default function createEnvironment(props){
 			.then(res=>{
 				if(res.errors)
 					handleErrors(res.errors, showMessage)
+				
+				if(isDev){
+					console.dir({
+						query:operation.text,
+						variables,
+						result:res
+					})
+				}
 				return res
 			})
 	}
@@ -111,6 +134,16 @@ export default function createEnvironment(props){
 				}else if(supportOffline){
 					let {query, variables}=JSON.parse(req.body)
 					return supportOffline.runQL(query, variables)
+						.then(result=>{
+							if(isDev){
+								console.dir({
+									query,
+									variables,
+									result
+								})
+							}
+							return result
+						})
 				}else{
 					return Promise.resolve(NoService)
 				}
@@ -130,6 +163,16 @@ export default function createEnvironment(props){
 					return fetcherOnline({body:JSON.stringify(query)})
 				}else if(supportOffline){
 					return supportOffline.runQL(query, variables)
+						.then(result=>{
+							if(isDev){
+								console.dir({
+									query,
+									variables,
+									result
+								})
+							}
+							return result
+						})
 				}else {
 					return Promise.resolve(NoService)
 				}
@@ -143,14 +186,4 @@ export default function createEnvironment(props){
 			})
 		}
 	});
-}
-
-function handleErrors(errors, showMessage){
-	let {message,stack}=errors.reduce((state,a)=>{
-		state.message.add(a.message)
-		state.stack.add(a.stack)
-		return state
-	}, {message:new Set(), stack:new Set()})
-	showMessage({message:Array.from(message).join("|"),level:"error"})
-	console.error("Server Error\r\n"+Array.from(stack).join("\r\n"))
 }

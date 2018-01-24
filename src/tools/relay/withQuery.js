@@ -3,6 +3,9 @@ import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
 import {compose, createEagerFactory, setDisplayName, wrapDisplayName, getContext} from "recompose"
 
+import Empty from "components/empty"
+import IconError from "material-ui/svg-icons/alert/error"
+
 class Wrapper extends PureComponent{
 	componentWillMount(){
 		this.props.handle()
@@ -36,7 +39,7 @@ export const withQuery=option=>BaseComponent=>{
 					}else if(error){
 						return (
 							<Wrapper handle={()=>onError && onError(error,dispatch)}>
-								<div>error: {error.toString()}</div>
+								<Empty icon={<IconError color="red"/>}>error: {error.toString()}</Empty>
 							</Wrapper>
 						)
 					}else {

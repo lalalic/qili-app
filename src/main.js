@@ -33,7 +33,7 @@ import Schema from "ui/schema"
 import Log from "ui/log"
 import Offline from "tools/offline"
 
-const {DOMAIN,REDUCER}=qili
+const {DOMAIN,REDUCER,notSupportOffline}=qili
 
 export const ACTION={
 	CURRENT_APP: payload=>({
@@ -92,11 +92,6 @@ const QiliAdmin=compose(
 						},
 						
 						App:{
-							logs(){
-								return {
-									edges:[]
-								}
-							},
 							cloudCode:({cloudCode})=>cloudCode||"/**Not support offline**/",
 							schema:()=>"Not support offline"
 						}
@@ -188,7 +183,12 @@ const router=(
 						<App.Creator {...props} style={{margin:"0px 100px"}}/>
 					</div>)))),
 			)(({children})=><div>{children}</div>)}>
-			<IndexRoute component={compose(withCurrent(),withNavigator())(Dashboard)}/>
+			
+			<IndexRoute component={compose(
+							withCurrent(),
+							withNavigator(),
+							notSupportOffline(),
+							)(Dashboard)}/>
 
 			<Route path="my">
 				<IndexRoute  component={
@@ -357,10 +357,10 @@ const router=(
 			<Route path="log" component={compose(
 				withCurrent(),
 				withNavigator(),
+				notSupportOffline(),
 				connect(({qili:{current}})=>({
 					id:current,
 				})),
-				qili.notSupportOffline(),
 				withPagination(({id,status})=>({
 					variables:{id,status},
 					query:graphql`
