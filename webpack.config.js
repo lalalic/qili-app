@@ -36,6 +36,9 @@ module.exports=env=>{
 					'style-loader',
 					{ loader: 'css-loader', options: { importLoaders: 1 } }
 				]
+			},{
+				test:/.graphql?$/,
+				use: 'text-loader'
 			}]
 		},
 		plugins:[

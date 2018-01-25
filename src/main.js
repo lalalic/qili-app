@@ -79,7 +79,7 @@ const QiliAdmin=compose(
 			"qiliAdmin", 
 			require("imports-loader?Cloud=../src/tools/offline/schema!../cloud")
 				.makeSchema(
-					require("text-loader!../schema.graphql"),
+					require("../schema.graphql"),
 					{
 						User:{
 							async apps(parent,{},{app,user:{_id}}){

@@ -47,8 +47,8 @@ export class Offline{
 		return this
 	}
 	
-	set user(user){
-		this._user=user
+	set user({id}){
+		this._user={id}
 	}	
 	
 	set(id, {__id, __typename, ...record}){

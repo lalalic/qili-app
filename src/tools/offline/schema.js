@@ -8,7 +8,7 @@ const Scalar={
 		  return new Date(value); // value from the client
 		},
 		serialize(value) {
-		  return value.toISOString(); // value sent to the client
+		  return new Date(value); // value sent to the client
 		},
 		parseLiteral(ast) {
 		  if (ast.kind === Kind.INT) {
@@ -72,7 +72,7 @@ module.exports={
 			resolvers: merge({}, this.resolver,{					
 				User: {
 					name:({username,name})=>username||name,
-					username: ({username,name})=>username||name,
+					username: ({username,name})=>username||name||"",
 				},
 				Query: {
 					me:(_,a,{app,user})=>{
