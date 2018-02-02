@@ -2,7 +2,9 @@ import React, {Component} from "react"
 import PropTypes from "prop-types"
 
 export const FullPage=({style,children},{theme:{page,zIndex}})=>(
-	<div style={{background:"white", ...style,...page,zIndex:zIndex.dialog, position:"absolute", left:0, top:0}}>
+	<div 
+		className="sticky full"
+		style={{background:"white", ...style,...page,zIndex:zIndex.dialog, top:0}}>
 		{children}
 	</div>
 )
