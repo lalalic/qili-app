@@ -43,6 +43,8 @@ module.exports=env=>{
 		},
 		plugins:[
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
+			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
+			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
 				...HTML,
 				inlineSource: '.(js|css)$'
