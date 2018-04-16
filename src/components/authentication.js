@@ -4,6 +4,7 @@ import {FlatButton,TextField} from "material-ui"
 import isEmail from "is-valid-email"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
 import {graphql, withMutation} from "tools/recompose"
+import * as offline from "./offline"
 
 const ENTER=13
 const isPhone=v=>(/^(\+\d{2})?\d{11}$/g).test(v)
@@ -145,6 +146,7 @@ export default compose(
 	withState("contact","setContact"),
 	withState("token","setToken",""),
 	withState("name","setName"),
+	offline.notSupport,
 	withMutation({
 		name: "requestToken",
 		promise:true,

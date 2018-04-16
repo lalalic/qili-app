@@ -29,6 +29,7 @@ import Authentication from "components/authentication"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
 import SplashAD from "components/splash-ad"
+import * as offline from "components/offline"
 
 export const THEME=getMuiTheme(LightBaseTheme,{
 	footbar:{
@@ -136,10 +137,11 @@ export const notSupportOffline=(NoSupport=()=>(<Empty icon={<IconOffline/>}>Not 
 export class QiliApp extends Component{
 	static displayName="QiliApp"
     render(){
-        let {theme, store, children,isDev}=this.props
+        let {theme, store, children,isDev, notifyOffline=true}=this.props
         return (
 			<Provider store={store}>
 				<UI muiTheme={theme}>
+					{notifyOffline ? <offline.Notification/> : null}
 					{children}
 					<Loading/>
 					<Message/>
@@ -161,7 +163,8 @@ export class QiliApp extends Component{
 		theme: PropTypes.object.isRequired,
 		store: PropTypes.object.isRequired,
 		checkVersion: PropTypes.func.isRequired,
-		title: PropTypes.string
+		title: PropTypes.string,
+		notifyOffline: PropTypes.bool,
 	}
 }
 
@@ -175,6 +178,8 @@ export default compose(
 		tutorial: PropTypes.arrayOf(PropTypes.string),
 		project: PropTypes.object,
 		isDev: PropTypes.bool,
+		notifyOffline: PropTypes.bool,
+		supportOffline: PropTypes.object,
 	}),
 
 	setStatic("render", (app)=>{
@@ -241,7 +246,7 @@ export default compose(
 			)
 
 			persistStore(store,{keyPrefix:`${appId}:`}, ()=>{
-				store.dispatch(window.navigator.onLine===false ? ACTION.OFFLINE() : ACTION.ONLINE())
+				store.dispatch(ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})
 
@@ -259,7 +264,7 @@ export default compose(
 					dispatch(ACTION.CURRENT_USER(user))
 				},
 				loading(a){
-					dispatch(ACTION.LOADING(a))
+					//dispatch(ACTION.LOADING(a))
 				},
 				showMessage(m){
 					dispatch(ACTION.MESSAGE(m))
@@ -352,6 +357,8 @@ export default compose(
 		</Provider>
 	)),
 	
-	mapProps(({title,theme,checkVersion,store,children,isDev})=>({title,theme,checkVersion,store,children,isDev})),
+	mapProps(({title,theme,checkVersion,store,children,isDev,notifyOffline, supportOffline})=>(
+		{title,theme,checkVersion,store,children,isDev,notifyOffline,supportOffline}
+	)),
 	pure,
 )(QiliApp)

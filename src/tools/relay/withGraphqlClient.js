@@ -34,6 +34,7 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 				return source.getRecordIDs()
 					.filter(id=>id.startsWith(ex))
 					.map(id=>source.get(id))
+					.filter(a=>!!a)
 			}
 
 

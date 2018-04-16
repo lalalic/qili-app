@@ -41,9 +41,10 @@ export const withMutation=option=>BaseComponent=>{
 
 			function mutate(data){
 				loading(true)
-				const {spread, variables, patch4, patchData,
-					shouldPatch,
-					promise,dateFields=[],
+				const {spread, variables, 
+					patch4, patchData,shouldPatch,
+					delete4,
+					dateFields=[],
 					...mutation}=typeof(option)=="function" ? option(others, data, environment) : option
 				let smart={}
 				if(patch4){
@@ -62,9 +63,13 @@ export const withMutation=option=>BaseComponent=>{
 						}
 					}
 					smart.updater=smart.optimisticUpdater=updater(patch4, patchData||data)
+				}else if(delete4){
+					smart.updater=smart.optimisticUpdater=store=>{
+						store.delete(delete4)
+					}
 				}
 
-				let p=new Promise((resolve, reject)=>{
+				return new Promise((resolve, reject)=>{
 					commitMutation(environment,{
 						variables:{...variables,...data},
 						...smart,
@@ -82,9 +87,6 @@ export const withMutation=option=>BaseComponent=>{
 
 					})
 				})
-
-				if(promise)
-					return p
 			}
 			return factory({...others, [name]:mutate})
 		}
