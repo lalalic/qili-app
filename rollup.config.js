@@ -30,6 +30,7 @@ export default {
 				//"babel-plugin-add-module-exports",
 				"babel-plugin-transform-object-rest-spread",
 				"babel-plugin-transform-class-properties",
+				"babel-plugin-relay",
 			]
 		}),
 		commonjs({
