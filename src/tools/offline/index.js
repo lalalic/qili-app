@@ -16,11 +16,11 @@ export class Offline{
 	constructor(schema){
 		this.schema=schema
 	}
-	
+
 	setSource(mutableRecordSource){
 		if(mutableRecordSource.supportOffline)
 			return
-		
+
 		const support=(key, fn)=>{
 			let _fn=mutableRecordSource[key]
 			mutableRecordSource[`__${key}`]=_fn
@@ -36,7 +36,7 @@ export class Offline{
 		mutableRecordSource.supportOffline=true
 		return this
 	}
-	
+
 	unsetSource(mutableRecordSource){
 		if(mutableRecordSource.supportOffline){
 			mutableRecordSource.set=mutableRecordSource.__set
@@ -46,17 +46,21 @@ export class Offline{
 		}
 		return this
 	}
-	
-	set user({id}){
-		this._user={id}
-	}	
-	
+
+	set user(user){
+		if(user){
+			this._user={id:user.id}
+		}else{
+			this._user=null
+		}
+	}
+
 	set(id, {__id, __typename, ...record}){
 		if(id.startsWith("client:"))
-			return 
-		
+			return
+
 		const [Type, _id]=typed(id)
-		
+
 		const {data,refs}=Object.keys(record).reduce((state,k)=>{
 			const {data,refs}=state
 			let v=record[k]
@@ -71,13 +75,13 @@ export class Offline{
 			}
 			return state
 		},{data:{}, refs:{}})
-		
+
 		if(typeof(this[`onSet${Type}`])=="function")
 			return this[`onSet${Type}`](_id, data, refs)
 		else
 			return this.onSet(id, data, refs)
 	}
-	
+
 	remove(id){
 		const [Type, _id, types]=typed(id)
 		if(typeof(this[`onRemove${Type}`])=="function")
@@ -85,41 +89,41 @@ export class Offline{
 		else
 			return this.onRemove(id)
 	}
-	
+
 	onSet(id, record){
 		const [,_id,cols]=typed(id)
 		return this.createOrUpdateEntity(cols, _id, record)
 	}
-	
+
 	onSetUser(_id, {...record}){
 		return this.createOrUpdateEntity("users", _id, record)
 	}
-	
+
 	onRemove(id){
 		const [,_id,cols]=typed(id)
 		return this.removeEntity(cols,_id)
 	}
-	
+
 	createOrUpdateEntity(cols, _id, data){
 		throw new Error("createOrUpdateEntity must be implemented")
 	}
-	
+
 	removeEntity(id){
 		throw new Error("removeEntity must be implemented")
 	}
-	
+
 	getApp(){
 		throw new Error("getApp must be implemented")
 	}
-	
+
 	getUser(){
 		throw new Error("getUser must be implemented")
 	}
-	
+
 	runQL(query, variables){
 		if(query.startsWith("mutation "))
 			return Promise.reject(new Error("offline not support this action"))
-		
+
 		return Promise.all([Promise.resolve(this.getApp()), Promise.resolve(this.getUser())])
 			.then(([app,user])=>graphql(this.schema, query, {}, {user,app}, variables))
 			.catch(e=>{
@@ -135,15 +139,15 @@ export default class WebSQLOffline extends Offline{
 		this.db=new DB(appKey)
 		this.seq=Promise.resolve()
 	}
-	
+
 	getApp(){
 		return this.db
 	}
-	
+
 	getUser(){
 		return this.db.get1Entity("users",this._user)
 	}
-	
+
 	createOrUpdateEntity(cols, _id, data){
 		return this.seq=this.seq.then(()=>
 			this.db.get1Entity(cols,{_id})
@@ -151,7 +155,7 @@ export default class WebSQLOffline extends Offline{
 			.catch(console.error)
 		)
 	}
-	
+
 	removeEntity(cols,_id){
 		return this.seq=this.seq.then(()=>
 			this.db.remove1Entity(cols, {_id})

@@ -4,13 +4,13 @@ import PropTypes from "prop-types"
 import {Avatar, Dialog, SvgIcon,IconButton} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconFile from 'material-ui/svg-icons/device/sd-storage'
-import {selectImageFile, upload,withGetToken} from './file'
+import file from './file' 
 
 export class Photo extends Component{
     state={url:this.props.src, toSelectWay:false}
     render(){
         const {url,toSelectWay}=this.state
-        const {size=24, cameraOptions, overwritable,onPhoto, 
+        const {size=24, cameraOptions, overwritable,onPhoto,
 			autoUpload, getToken, src, onClick, ...others}=this.props
         others.onClick=onClick || this.toSelectWay.bind(this)
 		others.style={...others.style,width:size,height:size}
@@ -87,7 +87,7 @@ export class Photo extends Component{
 		const {onPhoto,autoUpload,getToken}=this.props
 		this.setState({url})
 		if(autoUpload){
-			upload(url,autoUpload,getToken)
+			file.upload(url,autoUpload,getToken)
 				.then(url=>onPhoto && onPhoto(url))
 		}else {
 			onPhoto && onPhoto(url, (id,key,token)=>upload(url,{id,key},token||getToken))
@@ -97,11 +97,11 @@ export class Photo extends Component{
     selectPhoto(){
 		if(this.context.is.app){
 			this.takePhoto(Camera.PictureSourceType.PHOTOLIBRARY)
-			return 
+			return
 		}
-			
+
         const {onFail, width, height}=this.props
-        selectImageFile(width, height).
+        file.selectImageFile(width, height).
             then(({url,binary})=>this.handlePhoto(url), onFail)
     }
 
@@ -142,4 +142,4 @@ export class Photo extends Component{
     }
 }
 
-export default withGetToken(Photo)
+export default file.withGetToken(Photo)

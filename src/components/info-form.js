@@ -10,7 +10,8 @@ import NavigationBack from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 import FullPage from "./full-page"
 
 
-export class InfoForm extends Component{
+export default class InfoForm extends Component{
+	static Field=()=>null
 	state={editing:0}
 	render(){
 		let {children, ...others}=this.props
@@ -31,7 +32,7 @@ export class InfoForm extends Component{
 				{
 					children.map((child,i)=>{
 						const {type:elementType, props:{onEdit,hintText,value, primaryText, type="input", options,children, ...others}}=child
-						if(elementType==Field){
+						if(elementType==InfoForm.Field){
 							others.primaryText=primaryText
 							if(value){
 								let display=value
@@ -84,8 +85,6 @@ const Value=({value,style={}})=>(
 	</span>
 )
 
-export const Field=()=>null
-
 const Editor={
 	input:withStateHandlers(({value})=>({
 			value:value||"",
@@ -115,9 +114,9 @@ const Editor={
 			<FullPage>
 				<Title {...{onEdit:()=>onEdit(setState), onCancel, primaryText, isChange:!!value}}/>
 				<div style={{padding:5}}>
-					<TextField 
+					<TextField
 						{...props}
-						name={primaryText} 
+						name={primaryText}
 						fullWidth={true}
 						errorText={errorText}
 						onChange={(e,value)=>setState({value})}
@@ -171,7 +170,7 @@ const Editor={
 				onRequestClose={onCancel}
 				title={<Title {...{
 							onEdit:()=>{
-								if(v1.length!=selecteds.length 
+								if(v1.length!=selecteds.length
 									|| v1.findIndex((a,i)=>selecteds[i]!==a)!=-1){
 									Promise
 										.resolve(onEdit(selecteds))
@@ -179,7 +178,7 @@ const Editor={
 								}else{
 									onCancel()
 								}
-							}, 
+							},
 							onCancel, primaryText, isChange:!!value
 						}}/>}>
 				{
@@ -233,14 +232,14 @@ const Editor={
 								.resolve(onEdit(refEditor.getDate()))
 								.then(onCancel)
 						}
-					}, 
+					},
 					onCancel, primaryText, isChange:!!value
 				}}/>
 				<div style={{padding:5}}>
-					<DatePicker ref={a=>refEditor=a} 
-						autoOk={true} 
-						name={primaryText} 
-						{...props} 
+					<DatePicker ref={a=>refEditor=a}
+						autoOk={true}
+						name={primaryText}
+						{...props}
 						fullWidth={true}/>
 				</div>
 			</FullPage>
@@ -250,7 +249,7 @@ const Editor={
 		return (
 			<FullPage>
 				<Title {...{
-					onEdit:()=>Promise.resolve(onEdit()).then(onCancel), 
+					onEdit:()=>Promise.resolve(onEdit()).then(onCancel),
 					onCancel, primaryText, isChange:!!value
 				}}/>
 				{children}

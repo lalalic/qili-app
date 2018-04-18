@@ -16,7 +16,7 @@ export default function createEnvironment(props){
 	if(supportOffline){
 		supportOffline.user=user
 	}
-	
+
 	function handleErrors(errors){
 		let {message,stack}=errors.reduce((state,a)=>{
 			state.message.add(a.message)
@@ -31,7 +31,7 @@ export default function createEnvironment(props){
 		}
 	}
 
-	
+
 	function fetcherOnline(opt){
 		if(supportOffline)
 			supportOffline.setSource(source)
@@ -73,12 +73,12 @@ export default function createEnvironment(props){
 			}),
 		})
 		.catch(e=>{
-			
+
 			network("offline")
 
 			if(supportOffline)
 				return fetchQueryOffline(operation, variables, cacheConfig,uploadables)
-			
+
 			return e
 		})
 	}
@@ -89,7 +89,7 @@ export default function createEnvironment(props){
 			.then(res=>{
 				if(res.errors)
 					handleErrors(res.errors, showMessage)
-				
+
 				if(isDev){
 					console.dir({
 						query:operation.text,
@@ -102,8 +102,8 @@ export default function createEnvironment(props){
 	}
 
 	function fetchQuery(){
-		loading(true)
 		return (()=>{
+			loading(true)
 			if(network()=="online")
 				return fetchQueryOnline(...arguments)
 			else if(supportOffline)
@@ -113,6 +113,7 @@ export default function createEnvironment(props){
 		})().catch(e=>{
 			loading(false)
 			showMessage({message:e.message, level:"error"})
+			console.debug({error, props, network:network()})
 			return e
 		}).then(res=>{
 			loading(false)

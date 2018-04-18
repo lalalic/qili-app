@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {connect} from "react-redux"
-import {ACTION} from ".."
+import {ACTION} from "../state"
 
 import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
 import {Link} from "react-router"
@@ -159,7 +159,7 @@ export default class CommandBar extends Component{
 			icon={<CommentIcon/>}
 			{...props}/>
 	)
-	
+
     static Share=connect()(class extends Component{
         render(){
             return (<CommandBar.Command

@@ -160,7 +160,7 @@ export default {//for testable
             }
 			props['x:id']=props.id
 			delete  props.id
-			
+
 			if(props.key)
 				props.key=props.key.replace(':','/')
 
@@ -196,7 +196,7 @@ export default {//for testable
 			})
         })
     },
-	
+
     withGetToken:compose(
 		getContext({client:PropTypes.object}),
 		mapProps(({client,...others})=>({
@@ -219,7 +219,7 @@ export default {//for testable
 			}
 		}))
 	),
-	
+
 	withFileCreate: withMutation({
         name:"createFile",
         promise:true,

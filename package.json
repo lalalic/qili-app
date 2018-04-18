@@ -77,16 +77,11 @@
     "webpack-dev-server": "^2.4.1"
   },
   "scripts": {
-    "compile": "babel src -d lib",
-    "compile-superdaddy": "babel src -d ../superdaddy/node_modules/qili-app/lib",
-    "compile-we-travel": "babel src -d ../we-travel/node_modules/qili-app/lib",
     "build.release": "webpack -p",
     "build.debug": "webpack -d",
     "dev": "webpack-dev-server --hot --inline --env=dev",
     "test": "jest",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
     "persist": "node scripts/persisted-query.js src ../qili/lib/admin && node scripts/persisted-query.js src cloud",
     "cloud": "watchify cloud/index.js -o cloud/__generated.js --node --noparse",
@@ -110,7 +105,9 @@
   "files": [
     "index.js",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "dist/index.tmpl",
+    "scripts/"
   ],
   "bin": {
     "qili-persist": "./scripts/persisted-query.js"

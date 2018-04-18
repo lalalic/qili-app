@@ -6,11 +6,12 @@ import {graphql, withFragment, withMutation} from "../tools/recompose"
 
 import CommandBar from "../components/command-bar"
 import Photo from "../components/photo"
-import {InfoForm, Field} from "../components/info-form"
+import InfoForm from "../components/info-form"
 import {TextField} from "material-ui"
-import {ACTION} from ".."
+import {ACTION} from "../state"
 
 import IconQuit from "material-ui/svg-icons/file/cloud-off"
+const {Field}=InfoForm
 
 export const Profile=({
 	id,username,birthday,gender,location,photo,signature,
