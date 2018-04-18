@@ -355,3 +355,7 @@ export default compose(
 	)),
 	pure,
 )(QiliApp)
+
+import * as recompose from "./tools/recompose"
+import * as components from "./components"
+export {recompose, components}

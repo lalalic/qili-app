@@ -1,4 +1,4 @@
-//export * as offline from "./offline"
+import * as offline from "./offline"
 export {default as CheckUpdate} from "./check-update"
 export {default as CommandBar} from "./command-bar"
 //export * as Comment from "./comment"
