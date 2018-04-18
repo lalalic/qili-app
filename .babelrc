@@ -1,24 +1,12 @@
 {
     "presets": [
-      "es2015",
+      "env",
       "react"
     ],
     "plugins": [
       "babel-plugin-add-module-exports",
       "babel-plugin-transform-object-rest-spread",
       "babel-plugin-transform-class-properties",
-	  "babel-plugin-relay",
-      ["module-resolver",{
-			"root": ["./src"],
-			"alias":{
-				"main": "main.js",
-				"qili": "index.js", 
-                "ui":"./ui",
-				"components":"./components",
-				"icons":"./icons",
-				"tools": "./tools"
-			},
-			"cwd":"babelrc"
-		}]
+	  "babel-plugin-relay"
     ]
  }

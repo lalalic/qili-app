@@ -7,7 +7,7 @@ import {List, ListItem, Divider, Dialog, DatePicker,
 		RadioButtonGroup, RadioButton} from "material-ui"
 import NavigationBack from "material-ui/svg-icons/hardware/keyboard-arrow-left"
 
-import FullPage from "components/full-page"
+import FullPage from "./full-page"
 
 
 export class InfoForm extends Component{

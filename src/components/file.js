@@ -1,6 +1,6 @@
 import PropTypes from "prop-types"
 import {compose, getContext, mapProps} from "recompose"
-import {withMutation} from "tools/recompose"
+import {withMutation} from "../tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
 
@@ -111,7 +111,7 @@ function dataAsBlob(data){
 	})
 }
 
-module.exports={//for testable
+export default {//for testable
     main,
     selectJsonFile(){
         return main("json")

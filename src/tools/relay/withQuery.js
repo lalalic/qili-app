@@ -3,7 +3,7 @@ import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
 import {compose, createEagerFactory, setDisplayName, wrapDisplayName, getContext} from "recompose"
 
-import Empty from "components/empty"
+import Empty from "../../components/empty"
 import IconError from "material-ui/svg-icons/alert/error"
 
 class Wrapper extends PureComponent{

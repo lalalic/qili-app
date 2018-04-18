@@ -1,13 +1,13 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {getContext,compose,withProps} from "recompose"
-import {graphql, withFragment} from "tools/recompose"
+import {graphql, withFragment} from "../tools/recompose"
 
 import {List, ListItem} from "material-ui"
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
-import Account from "components/account"
+import Account from "../components/account"
 
 export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetting})=>(
 	<Account {...{id, username, photo,toProfile,toSetting}} >

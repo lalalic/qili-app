@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 import {connect} from "react-redux"
 import {compose, mapProps} from "recompose"
-import {withFragment} from "tools/recompose"
+import {withFragment} from "../tools/recompose"
 
 
 export const Schema=({schema, style})=>(

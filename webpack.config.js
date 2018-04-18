@@ -11,11 +11,9 @@ const HTML={
 
 module.exports=env=>{
 	const base={
-		entry:{
-			index:["babel-polyfill","./style/index.less","./style/console.less","./src/main.js"],
-		},
+		entry:"./src/main.js",
 		output:{
-			filename:"index.js",
+			filename:"main.js",
 			path:path.resolve(__dirname, 'dist')
 		},
 		module:{

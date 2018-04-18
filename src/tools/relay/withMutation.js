@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import {compose,withProps, getContext, setDisplayName, wrapDisplayName,createEagerFactory } from "recompose"
 import {commitMutation} from "react-relay"
 
-import spreadResponse from "tools/spread-response"
+import spreadResponse from "../spread-response"
 
 const isDate=date=>date && typeof date.getMonth === 'function'
 

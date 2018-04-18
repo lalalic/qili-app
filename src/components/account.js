@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {compose,getContext,withProps,setPropTypes} from "recompose"
-import {graphql, withMutation} from "tools/recompose"
+import {graphql, withMutation} from "../tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Link} from "react-router"
@@ -12,8 +12,8 @@ import IconSetting from 'material-ui/svg-icons/action/settings'
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
-import CheckUpdate from "components/check-update"
-import Photo from "components/photo"
+import CheckUpdate from "./check-update"
+import Photo from "./photo"
 
 
 export const Account=({id, photo, username, children,toSetting,toProfile,mutate})=>{

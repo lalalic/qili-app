@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {compose,mapProps,getContext} from "recompose"
-import {withMutation} from "tools/recompose"
+import {withMutation} from "../tools/recompose"
 
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"
@@ -15,9 +15,9 @@ import IconSave from "material-ui/svg-icons/content/save"
 import IconEmptyComment from "material-ui/svg-icons/editor/mode-comment"
 import PullToRefresh from "pull-to-refresh2"
 
-import file from "components/file"
-import CommandBar from 'components/command-bar'
-import Empty from "components/empty"
+import file from "./file"
+import CommandBar from './command-bar'
+import Empty from "./empty"
 
 import {createPaginationContainer} from "react-relay"
 

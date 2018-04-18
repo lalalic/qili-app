@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {compose, createEagerFactory, setDisplayName, wrapDisplayName,} from "recompose"
-import {withQuery} from "tools/recompose"
+import {withQuery} from "./relay/withQuery"
 
 export const withInit=options=>BaseComponent=>{
 	let factory=createEagerFactory(BaseComponent)

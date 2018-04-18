@@ -1,18 +1,18 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {compose, getContext, mapProps} from "recompose"
-import {withMutation, graphql, withFragment} from "tools/recompose" 
-
-import CodeMirror from "react-codemirror"
-import CommandBar from 'components/command-bar'
-import file from "components/file"
-
 
 import {Tabs, Tab} from "material-ui/Tabs"
 import UploadIcon from "material-ui/svg-icons/file/file-upload"
 import SaveIcon from "material-ui/svg-icons/content/save"
 
-import Schema from "ui/schema"
+import CodeMirror from "react-codemirror"
+
+import {withMutation, graphql, withFragment} from "../tools/recompose" 
+import CommandBar from '../components/command-bar'
+import file from "../components/file"
+
+import Schema from "./schema"
 
 require("codemirror/mode/javascript/javascript")
 export class Cloud extends Component{

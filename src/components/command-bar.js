@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {connect} from "react-redux"
-import * as QiliApp from "qili"
+import {ACTION} from ".."
 
 import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
 import {Link} from "react-router"
@@ -174,7 +174,7 @@ export default class CommandBar extends Component{
             if(typeof(message)=='function')
                 message=message()
             WeChat.share(message,null,function(reason){
-                dispatch(QiliApp.ACTION.MESSAGE({message:reason}))
+                dispatch(ACTION.MESSAGE({message:reason}))
             })
         }
         static propTypes={message:PropTypes.oneOfType([PropTypes.object,PropTypes.func])}

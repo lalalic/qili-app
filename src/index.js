@@ -1,3 +1,5 @@
+import "babel-polyfill" 
+import "./style/index.less"
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {render} from "react-dom"
@@ -5,8 +7,9 @@ import merge from "lodash.merge"
 import {persistStore, autoRehydrate} from 'redux-persist'
 
 import {compose, pure,withState,branch,renderComponent, renderNothing,
+		setDisplayName,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
-import {withGraphqlClient} from "tools/recompose"
+import {withGraphqlClient} from "./tools/recompose"
 
 import {createStore, applyMiddleware, combineReducers} from "redux"
 
@@ -21,15 +24,15 @@ import Snackbar from 'material-ui/Snackbar'
 import IconOffline from "material-ui/svg-icons/file/cloud-off"
 
 import supportTap from 'react-tap-event-plugin'
-import * as date from "tools/date"
+import * as date from "./tools/date"
 
-import Performance from "components/performance"
-import File from "components/file"
-import Authentication from "components/authentication"
-import Tutorial from "components/tutorial"
-import Empty from "components/empty"
-import SplashAD from "components/splash-ad"
-import * as offline from "components/offline"
+import Performance from "./components/performance"
+import File from "./components/file"
+import Authentication from "./components/authentication"
+import Tutorial from "./components/tutorial"
+import Empty from "./components/empty"
+import SplashAD from "./components/splash-ad"
+import * as offline from "./components/offline"
 
 export const THEME=getMuiTheme(LightBaseTheme,{
 	footbar:{
@@ -124,21 +127,10 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
         />
 ))
 
-export const notSupportOffline=(NoSupport=()=>(<Empty icon={<IconOffline/>}>Not Support Offline</Empty>))=>
-	BaseComponent=>{
-		const NetworkSensitive=connect(state=>({offline:state[DOMAIN].networkStatus=="offline"}))(({offline, ...props})=>(
-			offline ? <NoSupport/> : <BaseComponent {...props}/>
-		))
-		
-		return NetworkSensitive
-	}
-
-
 export class QiliApp extends Component{
-	static displayName="QiliApp"
-    render(){
-        let {theme, store, children,isDev, notifyOffline=true}=this.props
-        return (
+	render(){
+		let {theme, store, children,isDev, notifyOffline=true}=this.props
+		return (
 			<Provider store={store}>
 				<UI muiTheme={theme}>
 					{notifyOffline ? <offline.Notification/> : null}
@@ -148,8 +140,8 @@ export class QiliApp extends Component{
 					{isDev ? <Performance/> : null}
 				 </UI>
 			</Provider>
-        )
-    }
+		)
+	}
 
 	componentDidMount(){
 		const {title, checkVersion}=this.props
@@ -169,6 +161,7 @@ export class QiliApp extends Component{
 }
 
 export default compose(
+	setDisplayName("QiliApp"),
 	setPropTypes({
 		appId: PropTypes.string.isRequired,
 		service: PropTypes.string,

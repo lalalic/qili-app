@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
-import CountDown from "components/count-down"
-import FullPage  from "components/full-page"
+import CountDown from "./count-down"
+import FullPage  from "./full-page"
 
 export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})=>(
 	<FullPage style={{

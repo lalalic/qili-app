@@ -12,8 +12,8 @@ import IconAbout from 'material-ui/svg-icons/action/info-outline'
 import IconLogo from "material-ui/svg-icons/action/android"
 
 
-import CheckUpdate from "components/check-update"
-import CommandBar from "components/command-bar"
+import CheckUpdate from "../components/check-update"
+import CommandBar from "../components/command-bar"
 
 export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=>(
 	<div>

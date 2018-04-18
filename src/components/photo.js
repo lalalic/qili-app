@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 import {Avatar, Dialog, SvgIcon,IconButton} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconFile from 'material-ui/svg-icons/device/sd-storage'
-import {selectImageFile, upload,withGetToken} from 'components/file'
+import {selectImageFile, upload,withGetToken} from './file'
 
 export class Photo extends Component{
     state={url:this.props.src, toSelectWay:false}
