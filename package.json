@@ -108,7 +108,7 @@
     "dist/index.tmpl",
     "scripts/"
   ],
-  "license":"MIT",
+  "license": "MIT",
   "bin": {
     "qili-persist": "./scripts/persisted-query.js"
   }
