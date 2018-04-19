@@ -21,6 +21,16 @@ before_install:
 install:
  - yarn install
 
+before_deploy:
+ - yarn rollup
+deploy:
+ provider: npm
+ email: "lalalic@139.com"
+ api_key: $NPM_KEY
+ on:
+  branch: master
+  tags: true
+
 script:
  - yarn build.$BUILD_MODE
  - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD

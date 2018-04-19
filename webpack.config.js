@@ -37,6 +37,9 @@ module.exports=env=>{
 			},{
 				test:/.graphql?$/,
 				use: 'text-loader'
+			},{
+				test:path.resolve("./cloud","index.js"),
+				use: "imports-loader?Cloud=../makeOfflineSchema"//path relative to test
 			}]
 		},
 		plugins:[

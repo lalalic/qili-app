@@ -1,6 +1,5 @@
-import merge from "lodash.merge"
-import {makeExecutableSchema} from 'graphql-tools'
-
+const merge=require("lodash.merge")
+const {makeExecutableSchema}=require('graphql-tools')
 
 const Scalar={
 	Date:{
@@ -36,7 +35,7 @@ const Scalar={
 }
 module.exports={
 	merge,
-	static:{
+	"static":{
 		on(path, callback){
 			
 		},

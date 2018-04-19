@@ -74,7 +74,7 @@ const QiliAdmin=compose(
 		},
 		supportOffline: new QiliAdminOffline(
 			"qiliAdmin", 
-			require("imports-loader?Cloud=../src/tools/offline/schema!../cloud")
+			require("../cloud")
 				.makeSchema(
 					require("../schema.graphql"),
 					{
