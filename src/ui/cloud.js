@@ -7,14 +7,13 @@ import UploadIcon from "material-ui/svg-icons/file/file-upload"
 import SaveIcon from "material-ui/svg-icons/content/save"
 
 import CodeMirror from "react-codemirror"
+import "codemirror/mode/javascript/javascript"
 
-import {withMutation, graphql, withFragment} from "../tools/recompose" 
-import CommandBar from '../components/command-bar'
-import file from "../components/file"
+import {withMutation, graphql, withFragment,CommandBar} from ".." 
 
 import Schema from "./schema"
 
-require("codemirror/mode/javascript/javascript")
+
 export class Cloud extends Component{
 	state={cloudCode:this.props.app.cloudCode||""}
 	render(){

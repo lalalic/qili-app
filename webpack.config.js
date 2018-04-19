@@ -11,7 +11,7 @@ const HTML={
 
 module.exports=env=>{
 	const base={
-		entry:"./src/main.js",
+		entry:["babel-polyfill","./src/main.js"],
 		output:{
 			filename:"main.js",
 			path:path.resolve(__dirname, 'dist')

@@ -74,7 +74,7 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
         />
 ))
 
-export default compose(
+const QiliApp=compose(
 	setDisplayName("QiliApp"),
 	setPropTypes({
 		appId: PropTypes.string.isRequired,
@@ -87,30 +87,6 @@ export default compose(
 		isDev: PropTypes.bool,
 		notifyOffline: PropTypes.bool,
 		supportOffline: PropTypes.object,
-	}),
-
-	setStatic("render", (app)=>{
-		let container=document.getElementById('app')
-		if(!container){
-			container=document.createElement('div')
-			container.id='app'
-			document.body.appendChild(container)
-		}
-
-		let style=document.createElement("style")
-		document.getElementsByTagName("head")[0].appendChild(style)
-
-		function size(){
-			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
-			container.style.height=window.innerHeight+'px'
-			THEME.page.height=window.innerHeight
-		}
-
-		size()
-		supportTap()
-		window.addEventListener("resize", size)
-
-		return render(app,container)
 	}),
 
 	defaultProps({
@@ -302,3 +278,29 @@ export default compose(
 		}
 	}
 )
+
+QiliApp.render=function(app){
+	let container=document.getElementById('app')
+	if(!container){
+		container=document.createElement('div')
+		container.id='app'
+		document.body.appendChild(container)
+	}
+
+	let style=document.createElement("style")
+	document.getElementsByTagName("head")[0].appendChild(style)
+
+	function size(){
+		style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+		container.style.height=window.innerHeight+'px'
+		THEME.page.height=window.innerHeight
+	}
+
+	size()
+	supportTap()
+	window.addEventListener("resize", size)
+
+	return render(app,container)
+}
+
+export default QiliApp

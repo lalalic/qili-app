@@ -85,7 +85,7 @@
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
     "persist": "node scripts/persisted-query.js src ../qili/lib/admin && node scripts/persisted-query.js src cloud",
     "cloud": "watchify cloud/index.js -o cloud/__generated.js --node --noparse",
-    "rollup": "rollup -c --no-treeshake -o ./index.js ./src/index.js -f cjs -m inline"
+    "rollup": "rollup -c --no-treeshake -o ./index.js -f cjs -m inline"
   },
   "repository": {
     "type": "git",
@@ -94,7 +94,6 @@
   "engines": {
     "node": ">= 0.4.4"
   },
-  "main": "lib",
   "readme": "README.md",
   "jest": {
     "roots": [
@@ -109,6 +108,7 @@
     "dist/index.tmpl",
     "scripts/"
   ],
+  "license":"MIT",
   "bin": {
     "qili-persist": "./scripts/persisted-query.js"
   }

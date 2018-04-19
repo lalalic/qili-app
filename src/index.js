@@ -1,8 +1,9 @@
-import "babel-polyfill"
 import * as wechat from "./components/wechat"
+import * as OfflineUI from "./components/offline"
 
 export * from "./state"
 export * from "./tools/recompose"
+export {default as Offline} from "./tools/offline"
 export {default as Setting} from "./ui/setting"
 export {default as Profile} from "./ui/user-profile"
 export {default as Comment} from "./components/comment"
@@ -13,5 +14,7 @@ export {default as Photo} from "./components/photo"
 export {default as CheckUpdate} from "./components/check-update"
 export {default as Account} from "./components/account"
 export {default as InfoForm} from "./components/info-form"
-export {wechat}
-export {default} from "./app"
+export {default as My} from "./ui/my"
+
+export {wechat, OfflineUI}
+export {default as QiliApp} from "./app"

@@ -3,8 +3,12 @@ const commonjs = require("rollup-plugin-commonjs");
 const resolve = require("rollup-plugin-node-resolve");
 const minify=require("rollup-plugin-uglify")
 const less =require('rollup-plugin-less')
-const _external=externals=>id=>!!externals.find(a=>id==a||id.startsWith(a+'/'))
 const {dependencies={}, peerDependencies={}}=require(`./package.json`)
+
+const _external=externals=>id=>{
+	//console.log(id)
+	return !!externals.find(a=>id==a||id.startsWith(a+'/'))
+}
 
 export default {
 	output:{
@@ -16,7 +20,12 @@ export default {
 		.filter(a=>!!a)
 	),
 	plugins: [
-		less({insert:true,output:a=>a}),
+		less({
+			insert:true,
+			output(code){
+				return code
+			}
+		}),
 		babel({
 			babelrc:false,
 			presets: [
@@ -33,6 +42,27 @@ export default {
 				"babel-plugin-relay",
 			]
 		}),
+		{
+			name:"relay-graphql",
+			transform(code,id){
+				const REG=/require\("(\.\/__generated__\/(.*)\.graphql)"\)/gi
+				
+				let imports=[]
+				code=code.replace(REG, function(match, required, key){
+					imports.push(`import * as ${key} from "${required}"`)
+					return key
+				})
+				
+				if(imports.length>0){
+					code=imports.join("\n")+'\n'+code
+				}
+
+				return {
+					code,
+					map:null
+				}
+			}
+		},
 		commonjs({
 			namedExports:{
 				'node_modules/react/index.js': [
@@ -48,5 +78,6 @@ export default {
 
 			}
 		}),
+		minify()
 	]
 }

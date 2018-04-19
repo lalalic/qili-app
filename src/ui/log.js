@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import Pull2Refresh from "pull-to-refresh2"
 
 import {compose} from "recompose"
-import {withFragment} from "../tools/recompose"
+import {withFragment} from ".."
 
 const Log=({data:logs, loadMore})=>(
     <Pull2Refresh onMore={loadMore}>

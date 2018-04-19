@@ -8,17 +8,7 @@ import {connect} from "react-redux"
 
 import {compose, withProps, withContext, getContext, setStatic, mapProps,
 		branch, createEagerFactory,renderNothing,renderComponent} from "recompose"
-import {graphql, withFragment, withQuery, 
-		withInit, withMutation, withPagination} from "./tools/recompose"
-
-import Logo from './components/logo'
-import Comment from "./components/comment"
-import {notSupport as notSupportOffline}from "./components/offline"
-import QiliApp, * as qili from '.'
-
-
-import CommandBar from "./components/command-bar"
-import CheckUpdate from "./components/check-update"
+		
 import IconHome from "material-ui/svg-icons/action/home"
 import IconData from "material-ui/svg-icons/action/dashboard"
 import IconCloud from "material-ui/svg-icons/file/cloud"
@@ -26,17 +16,21 @@ import IconLog from "material-ui/svg-icons/action/assignment"
 import IconAccount from 'material-ui/svg-icons/action/account-box'
 import IconSchema from 'material-ui/svg-icons/editor/insert-link'
 
-import Profile from "./ui/user-profile"
+import {
+	graphql, withFragment, withQuery, 
+	withInit, withMutation, withPagination,
+	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION, 
+	Comment, OfflineUI,CommandBar, CheckUpdate,
+	Setting, Profile, My,
+	Offline} from '.'
+
+import Logo from './components/logo'
 import Dashboard from "./ui/dashboard"
-import My from "./ui/my"
-import Setting from "./ui/setting"
 import App from "./ui/app"
 import Cloud from "./ui/cloud"
 import Schema from "./ui/schema"
 import Log from "./ui/log"
-import Offline from "./tools/offline"
 
-const {DOMAIN,REDUCER}=qili
 
 export const ACTION={
 	CURRENT_APP: payload=>({
@@ -118,7 +112,7 @@ const QiliAdmin=compose(
 		`,
 		onSuccess(response,dispatch){
 			const {me:{apps, token,name}}=response
-			dispatch(qili.ACTION.CURRENT_USER({name,token}))
+			dispatch(qiliACTION.CURRENT_USER({name,token}))
 			if(apps && apps.length>0){
 				dispatch(ACTION.CURRENT_APP(apps[0].id))
 			}
@@ -190,7 +184,7 @@ const router=(
 			<IndexRoute component={compose(
 							withCurrent(),
 							withNavigator(),
-							notSupportOffline,
+							OfflineUI.notSupport,
 							)(Dashboard)}/>
 
 			<Route path="my">
@@ -360,7 +354,7 @@ const router=(
 			<Route path="log" component={compose(
 				withCurrent(),
 				withNavigator(),
-				notSupportOffline,
+				OfflineUI.notSupport,
 				connect(({qili:{current}})=>({
 					id:current,
 				})),

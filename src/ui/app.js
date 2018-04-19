@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {compose, setStatic, getContext, withProps} from "recompose"
-import {graphql, withFragment, withMutation} from "../tools/recompose"
+import {graphql, withFragment, withMutation,CommandBar} from ".."
 import {connect} from "react-redux"
 
 import {TextField,Toggle,Divider} from 'material-ui'
@@ -11,9 +11,6 @@ import IconDownload from "material-ui/svg-icons/file/file-download"
 import IconSave from "material-ui/svg-icons/content/save"
 import IconRemove from "material-ui/svg-icons/action/delete"
 import IconComment from "material-ui/svg-icons/editor/mode-comment"
-
-import CommandBar from "../components/command-bar"
-import file from "../components/file"
 
 import * as Admin from "../main"
 
