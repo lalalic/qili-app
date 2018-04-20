@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili dashboard and application framework",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -107,7 +107,7 @@
     "CHANGELOG.md",
     "index.tmpl",
     "scripts/",
-	"styles/index.less",
+	"style/index.less",
 	"webpack.config.js",
 	"makeOfflineSchema.js"
   ],
