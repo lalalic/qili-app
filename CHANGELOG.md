@@ -32,4 +32,9 @@ refactor to <QiliApp><Router>...</Router></QiliApp> to make sure init success
 * graphql client
 * with relay
 
+1.2.0
+===
+* support offline
+* npm registry
+
 
