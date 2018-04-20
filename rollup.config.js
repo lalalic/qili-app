@@ -49,7 +49,7 @@ export default args=>{
 					
 					let imports=[]
 					code=code.replace(REG, function(match, required, key){
-						imports.push(`import * as ${key} from "${required}"`)
+						imports.push(`import ${key} from "${required}"`)
 						return key
 					})
 					
