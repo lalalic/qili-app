@@ -1,42 +1,85 @@
-qili console
-=========
+# qili-app
 
-qili console application to help you create application with qili server as backend, you can access it from http://app.qili2.com/console/.
+qili-app can help you create graphql client application with qili server as backend at http://app.qili2.com
 
-
-qili application
-=============
-it also includes qili application framework to help you handle data and user login.
-```javascript
-import React, {Component} from "react"
-import QiliApp from 'qili-app'
-export default class MyApp extends Component{
-    render(){
-        return (
-            <QiliApp appId="xxxx">
-				...
-			</QiliApp>
-        )
-    }
-}
-
-//to start your application with react-router routes
-QiliApp.render(<MyApp/>)
+## install
+```bash
+npm install qili-app
 ```
-graphql Hoc Components
-===
-	* withQuery(props=>({query:graphql`...`}))
-	
-	* withFragment(props=>({fragment:graphql`...`}))
-	
-	* withPagination(props=>({query:graphql`...`, fragment: graphql`...`}))
-	
-	* withInit(props=>({query:graphql`...`, onSuccess, onError}))
-	
-example
-===
 
-<pre>
+## features
+* graphql
+* persisted query
+* react-relay
+* hybrid app and web page
+* authentication and authorization out-of-box ready
+* offline supported
+* cloud code
+
+## API
+
+### State
+* DOMAIN
+* ACTION
+* REDUCER
+
+### Components
+* QiliApp: auto handle network/authentication/AD/splash/tutorial/...
+* OfflineUI
+* Offline
+* Comment
+* Empty
+* Setting
+* Profile
+* My
+* File
+* Photo
+* CheckUpdate
+* Account
+* InfoForm
+* wechat
+
+
+### Graphql Hoc Components
+* withQuery(props=>({query:graphql`...`}))
+* withFragment(props=>({fragment:graphql`...`}))
+* withPagination(props=>({query:graphql`...`, fragment: graphql`...`}))
+* withMutation(props=>({mutation:graphqql`...`}))
+* withInit(props=>({query:graphql`...`, onSuccess, onError}))
+
+### Cloud API
+* merge: tool to merge resolvers
+* static: to make app support web page 
+* wechat: to make wechat api
+* buildPagination for type
+* buildComment for type
+* isDev: to support graphql id only or graphql
+* typeDefs
+* resolver
+* persistedQuery to make server support graphql id for security and performance
+* makeSchema: only for client offline
+## License
+MIT
+
+## Example
+* hello world
+```javascript
+import React from "react"
+import {QiliApp} from 'qili-app'
+
+QiliApp.render(
+	<QiliApp appId="xxxx">
+		Hello world
+	</QiliApp>
+)
+```
+	
+* More formal application with initialization when user login/signup
+```js
+	import React from "react"
+	import {QiliApp, withInit} from 'qili-app'
+	import {compose, withProps} from "recompose"
+	import {Router, hashHistory, IndexRoute} from "react-router"
 	const MyApp=compose(
 		withProps(()=>({
 			project: require("../package.json"),
@@ -72,4 +115,4 @@ example
 			</Router>
 		</MyApp>
 	)
-</pre>
+```
