@@ -4,7 +4,7 @@ const {ContextReplacementPlugin} = require("webpack");
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 
 const HTML={
-	template:'./dist/index.tmpl',
+	template:'./index.tmpl',
 	title:"七里云",
 	favicon: "./dist/favicon.ico",
 }

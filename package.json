@@ -105,8 +105,9 @@
     "index.js",
     "README.md",
     "CHANGELOG.md",
-    "dist/index.tmpl",
+    "index.tmpl",
     "scripts/",
+	"styles/index.less",
 	"webpack.config.js",
 	"makeOfflineSchema.js"
   ],

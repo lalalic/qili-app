@@ -1,4 +1,4 @@
-import "./style/console.less"
+import "../style/console.less"
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
