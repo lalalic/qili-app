@@ -43,7 +43,7 @@ after_success:
 before_deploy:
  - yarn rollup
  - yarn info qili-app --json > qili-app.json
- - export LATEST=$(node -p "var a=require('./qili-app.json').data['dist-tags']; a ? a.latest : ''")
+ - export LATEST=$(node -p "require('./qili-app.json').data['dist-tags'].latest")
  - export CURRENT=$(node -p "require('./package.json').version")
 
 deploy:
