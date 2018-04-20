@@ -34,7 +34,6 @@ after_success:
 
  - node -p "require('./package.json').version" > dist/app.apk.version
  - mv dist $APP_NAME
- - rm $APP_NAME/index.tmpl
  - rm $APP_NAME/config.xml
  - cd $APP_NAME
  - tar cvfz ../$APP_NAME.tgz .
