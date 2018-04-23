@@ -4,23 +4,24 @@ const {ContextReplacementPlugin} = require("webpack");
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 
 const HTML={
-	template:'./index.tmpl',
+	template:'./packages/qili-app/index.tmpl',
 	title:"七里云",
-	favicon: "./dist/favicon.ico",
+	favicon: "./packages/console/dist/favicon.ico",
 }
 
 module.exports=env=>{
 	const base={
-		entry:["babel-polyfill","./src/main.js"],
+		entry:["babel-polyfill","./packages/console/src/index.js"],
 		output:{
-			filename:"main.js",
-			path:path.resolve(__dirname, 'dist')
+			filename:"index.js",
+			path:path.resolve(__dirname, 'packages/console/dist')
 		},
 		module:{
 			rules:[{
 				test: /.js?$/,
-				use: ['react-hot-loader','babel-loader'],
+				use: 'babel-loader',
 				exclude: /node_modules/,
+				include:/src/
 			},{
 				test:/.less?$/,
 				use: [
@@ -38,8 +39,8 @@ module.exports=env=>{
 				test:/.graphql?$/,
 				use: 'text-loader'
 			},{
-				test:path.resolve("./cloud","index.js"),
-				use: "imports-loader?Cloud=../makeOfflineSchema"//path relative to test
+				test:path.resolve("./packages/console/cloud","index.js"),
+				use: "imports-loader?Cloud=../../qili-app/makeOfflineSchema"//path relative to test
 			}]
 		},
 		plugins:[

@@ -3,7 +3,7 @@ const commonjs = require("rollup-plugin-commonjs");
 const resolve = require("rollup-plugin-node-resolve");
 const minify=require("rollup-plugin-uglify")
 const less =require('rollup-plugin-less')
-const {dependencies={}, peerDependencies={}}=require(`./package.json`)
+const {dependencies={}, peerDependencies={}}=require(`./packages/qili-app/package.json`)
 
 const _external=externals=>id=>{
 	return !!externals.find(a=>id==a||id.startsWith(a+'/'))

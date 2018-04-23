@@ -26,13 +26,4 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
-
-dist/test.js
-dist/allin1.html
-
-cordova/
-dist/.DS_Store
-package-lock.json
-src.bak/
-dist/cordova.html
-cloud/__generated.js
+__generated__/
