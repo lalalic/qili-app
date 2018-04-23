@@ -51,6 +51,7 @@
   ],
   "license": "MIT",
   "bin": {
-    "qili-persist": "./scripts/persisted-query.js"
+    "qili-persist": "./scripts/persisted-query.js",
+    "qili-init":"./scripts/generator/index.js"
   }
 }
