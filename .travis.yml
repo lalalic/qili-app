@@ -45,14 +45,15 @@ after_success:
  - rm $APP_NAME/config.xml
  - rm $APP_NAME/cordova.html
  
+ - ls $APP_NAME -l
  - cd $APP_NAME
  - tar cvfz ../$APP_NAME.tgz .
  - cd ..
- - ls $APP_NAME -l
+ - ls -l
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
  - sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "tar xvfz $DEPLOY_PATH/$APP_NAME.tgz -C $DEPLOY_PATH && rm $DEPLOY_PATH/$APP_NAME.tgz"
  - pwd
- - cd ~/qili-app
+ - cd ../..
 
 before_deploy:
  - pwd
