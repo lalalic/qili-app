@@ -45,29 +45,29 @@ module.exports=env=>{
 			}]
 		},
 		plugins:[
+			new UglifyJsPlugin(),
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
-			new UglifyJsPlugin(),
 			new HtmlWebpackPlugin({
 				...HTML,
 				inlineSource: '.(js|css)$'
 			}),
-			
+
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				inlineSource: '.(js|css)$',
 				filename:"cordova.html",
 			}),
-			
+
 			new HtmlWebpackInlineSourcePlugin(),
 		],
 	}
-	
+
 	if(env){
 		return require(`./webpack.${env}.js`)(base,HTML,9081)
 	}
-	
+
 	return base
 }

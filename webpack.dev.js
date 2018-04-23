@@ -28,8 +28,9 @@ module.exports=(base,HTML,port)=>{
 					exclude: /node_modules/,
 					include:/src/
 				},
-				...base.rules
+				...base.module.rules
 			]
-		}
+		},
+		plugins:base.plugins.slice(1)
 	}
 }
