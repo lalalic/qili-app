@@ -7,7 +7,7 @@ module.exports=(base,HTML,port)=>{
 		devtool: 'source-map',
 		resolve:{
 			alias:{
-				//"qili-app": path.resolve(__dirname,"packages/qili-app/src")
+				"qili-app": path.resolve(__dirname,"packages/qili-app/src")
 			}
 		},
 		devServer:{
