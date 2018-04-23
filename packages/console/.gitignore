@@ -1,1 +1,3 @@
 cloud/__generated.js
+dist/index.*
+dist/cordova.html

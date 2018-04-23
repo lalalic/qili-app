@@ -21,13 +21,15 @@ module.exports=(base,HTML,port)=>{
 		},
 		module:{
 			...base.module,
-			rules:base.module.rules.map((a,i)=>{
-				if(i==0){
-					a.use=["react-hot-loader",a.use]
-				}
-				
-				return a
-			})
+			rules:[
+				{
+					test: /.js?$/,
+					use: 'react-hot-loader',
+					exclude: /node_modules/,
+					include:/src/
+				},
+				...base.rules
+			]
 		}
 	}
 }

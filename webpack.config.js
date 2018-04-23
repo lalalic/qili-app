@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path');
 const {ContextReplacementPlugin} = require("webpack");
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const HTML={
 	template:'./packages/qili-app/index.tmpl',
@@ -47,6 +48,7 @@ module.exports=env=>{
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
+			new UglifyJsPlugin(),
 			new HtmlWebpackPlugin({
 				...HTML,
 				inlineSource: '.(js|css)$'
@@ -55,6 +57,7 @@ module.exports=env=>{
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
+				inlineSource: '.(js|css)$',
 				filename:"cordova.html",
 			}),
 			
