@@ -22,6 +22,7 @@ install:
  - yarn install
 
 script:
+ - yarn relay
  - yarn build
  - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
  - yarn info qili-app --json > qili-app.json
