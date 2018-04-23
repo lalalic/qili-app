@@ -1,0 +1,28 @@
+{
+  "name": "qili-app-console",
+  "description": "qili dashboard",
+  "version": "1.2.7",
+  "homepage": "http://app.qili2.com",
+  "author": {
+    "name": "Raymond Li",
+    "email": "lalalic@139.com"
+  },
+  "dependencies": {
+    "graphiql": "^0.11.10",
+    "material-ui": "^0.16.0",
+    "prop-types": "^15.6.0",
+    "react": "^15.6.0",
+    "react-codemirror": "^1.0.0",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.4.1",
+    "recompose": "^0.25.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalalic/qili-app"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,56 @@
+{
+  "name": "qili-app",
+  "description": "qili application framework",
+  "version": "1.2.8",
+  "homepage": "http://app.qili2.com",
+  "author": {
+    "name": "Raymond Li",
+    "email": "lalalic@139.com"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "graphql": "^0.11.0",
+    "graphql-tools": "^2.18.0",
+    "graphql-type-json": "^0.1.4",
+    "is-valid-email": "^0.0.2",
+    "lodash.merge": "^4.6.0",
+    "material-auto-rotating-carousel": "^1.7.0",
+    "material-ui": "^0.16.0",
+    "prop-types": "^15.6.0",
+    "pull-to-refresh2": "^0.0.2",
+    "react": "^15.6.0",
+    "react-dom": "^15.6.0",
+    "react-redux": "^4.4.5",
+    "react-relay": "^1.3.0",
+    "react-responsive": "^1.2.5",
+    "react-router": "^2.4.1",
+    "react-swipeable-views": "^0.12.13",
+    "react-tap-event-plugin": "^2.0.0",
+    "recompose": "^0.25.0",
+    "redux": "^3.6.0",
+    "redux-persist": "^4.10.1",
+    "redux-thunk": "^2.1.0",
+    "relay-runtime": "^1.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalalic/qili-app"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "readme": "README.md",
+  "files": [
+    "index.js",
+    "README.md",
+    "CHANGELOG.md",
+    "index.tmpl",
+    "scripts/",
+    "index.less",
+    "makeOfflineSchema.js"
+  ],
+  "license": "MIT",
+  "bin": {
+    "qili-persist": "./scripts/persisted-query.js"
+  }
+}
