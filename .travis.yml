@@ -17,6 +17,7 @@ before_install:
  - node --version
  - npm --version
  - nvm --version
+ - pwd
 
 install:
  - yarn install
@@ -25,6 +26,9 @@ script:
  - yarn relay
  - yarn api
  - yarn build
+ - rm packages/console/dist/index.js
+ - mv packages/console/dist/index.html .
+ - ls -l
  - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
  - yarn info qili-app --json > qili-app.json
  - export LATEST=$(node -p "require('./qili-app.json').data['dist-tags'].latest")
@@ -34,11 +38,11 @@ after_success:
  - mv cordova/platforms/android/build/outputs/apk/android-release.apk ./app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
 
+ - mv index.html packages/console/dist
  - cd packages/console
  - node -p "require('./package.json').version" > dist/app.apk.version
  - mv dist $APP_NAME
  - rm $APP_NAME/config.xml
- - rm $APP_NAME/index.js
  - rm $APP_NAME/cordova.html
  
  - cd $APP_NAME
@@ -47,8 +51,11 @@ after_success:
  - ls $APP_NAME -l
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $APP_NAME.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
  - sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$DEPLOY_HOST "tar xvfz $DEPLOY_PATH/$APP_NAME.tgz -C $DEPLOY_PATH && rm $DEPLOY_PATH/$APP_NAME.tgz"
+ - pwd
+ - cd ~/qili-app
 
 before_deploy:
+ - pwd
  - cd packages/qili-app
 
 deploy:
