@@ -31,6 +31,6 @@ module.exports=(base,HTML,port)=>{
 				...base.module.rules
 			]
 		},
-		plugins:base.plugins.slice(1)
+		plugins:base.plugins.slice(2)
 	}
 }

@@ -28,3 +28,4 @@ node_modules
 .lock-wscript
 __generated__/
 generator-qili
+.DS_Store
