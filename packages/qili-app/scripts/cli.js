@@ -1,5 +1,6 @@
 const program = require('commander');
 const QiliCloud=require("./qili-cloud)
+const prompt=require("prompt")
  
 program
 	.version('0.1.0')
@@ -17,16 +18,31 @@ program
 	
 program
 	.command('publish')
+	.action(function(cmd){
+		new QiliCloud(program.service, program.appId)
+			.publish()
+	})
 
 program
 	.command('log')
-
+	.action(function(cmd){
+		new QiliCloud(program.service, program.appId)
+			.log()
+	})
+	
 program
 	.command('list')
-
+	.action(function(cmd){
+		new QiliCloud(program.service)
+			.log()
+	})
+	
 program
 	.command('dev')
-
+	.action(function(cmd){
+		new QiliCloud(program.service, program.appId)
+			.dev()
+	})
 	.parse(process.argv);
  
 console.log('you ordered a pizza with:');
