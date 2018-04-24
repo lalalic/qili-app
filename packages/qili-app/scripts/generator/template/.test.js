@@ -1,10 +1,19 @@
-import React from "react"
-import project from "./package.json"
-import {QiliApp, File} from "qili-app"
-
-const _upload=File.upload
-File.upload=function(){
-	return _upload(...arguments).catch(a=>a).then(a=>"images/icon.svg")
-}
+const React= require("react")
+const project=require("./package.json")
+const {QiliApp, File}=require("qili-app")
 
 project.homepage=`http://localhost:${project.config.devPort}`
+
+const spy=(Target, key, wired)=>{
+	const _raw=Target[key]
+	Target[key]=wired(_raw)
+}
+
+spy(File,"upload,_upload=>function(){
+	return _upload(...arguments).catch(a=>a).then(a=>"images/icon.svg")
+})
+
+spy(QiliApp, "render", _render=>app=>_render(React.cloneElement(app, {
+	//service:`http://localhost:9080/1/graphql`,
+	isDev:true
+})))

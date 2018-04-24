@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -16,6 +16,7 @@
     "lodash.merge": "^4.6.0",
     "material-auto-rotating-carousel": "^1.7.0",
     "material-ui": "^0.16.0",
+    "ncp": "^2.0.0",
     "prop-types": "^15.6.0",
     "pull-to-refresh2": "^0.0.2",
     "react": "^15.6.0",
@@ -45,13 +46,13 @@
     "README.md",
     "CHANGELOG.md",
     "index.tmpl",
-    "scripts/",
+    "scripts/*",
     "index.less",
     "makeOfflineSchema.js"
   ],
   "license": "MIT",
   "bin": {
     "qili-persist": "./scripts/persisted-query.js",
-    "qili-init":"./scripts/generator/index.js"
+    "qili-init": "./scripts/generator/index.js"
   }
 }
