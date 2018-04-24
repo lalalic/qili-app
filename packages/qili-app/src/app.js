@@ -95,13 +95,37 @@ export default compose(
 			container=document.createElement('div')
 			container.id='app'
 			document.body.appendChild(container)
+			document.body.style=`
+				display:flex;
+				flex-direction:column;
+				overflow:hidden;
+				margin:0px auto;
+				padding:0;
+				background-color:lightgray;
+				position:absolute;
+				width:100%;
+				height:100%
+			`
+			container.style=`
+				flex:1;
+				background-color:white;
+				margin:0px auto;
+				position:relative;
+			`
 		}
 
 		let style=document.createElement("style")
 		document.getElementsByTagName("head")[0].appendChild(style)
 
 		function size(){
-			style.innerHTML=".page{min-height:"+window.innerHeight+"px}"
+			style.innerHTML=`
+				.page{
+					position:absolute;
+					width:100%;
+					height:100%;
+					min-height:${window.innerHeight}px
+				}
+			`
 			container.style.height=window.innerHeight+'px'
 			THEME.page.height=window.innerHeight
 		}
@@ -246,7 +270,14 @@ export default compose(
 
 	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
 
-	branch(({inited})=>!inited, renderNothing),
+	branch(({inited})=>!inited, renderComponent(()=>(
+		<center>
+			<div style={{width:300,height:300,margin:"100px auto"}}>
+				<img src="images/splash.svg"/>
+			</div>
+			<div className="spinner" id="loading"/>
+		</center>
+	))),
 
 	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
 

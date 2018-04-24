@@ -13,7 +13,6 @@
     "browserify": "^16.2.0",
     "cordova": "5.4.0",
     "css-loader": "^0.28.4",
-    "html-webpack-harddisk-plugin": "^0.1.0",
     "html-webpack-inline-source-plugin": "^0.0.9",
     "less": "2.7.2",
     "less-loader": "^4.0.5",

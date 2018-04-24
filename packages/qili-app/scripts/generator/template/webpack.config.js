@@ -1,8 +1,7 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const {ContextReplacementPlugin, DefinePlugin} = require("webpack")
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
-const HtmlWebpackHarddiskPlugin=require('html-webpack-harddisk-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const HTML={

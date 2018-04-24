@@ -1,4 +1,6 @@
-const path = require('path');
+const path = require('path')
+const {ContextReplacementPlugin} = require("webpack")
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 	return {
@@ -28,6 +30,19 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 				...base.module.rules
 			]
 		},
-		plugins:base.plugins.slice(2)
+		plugins:[
+			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
+			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
+			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
+			new HtmlWebpackPlugin({
+				...HTML
+			}),
+
+			new HtmlWebpackPlugin({
+				...HTML,
+				extra:'<script type="text/javascript" src="cordova.js"></script>',
+				filename:"cordova.html",
+			})
+		]
 	}
 }
