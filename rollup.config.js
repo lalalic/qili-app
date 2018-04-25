@@ -1,7 +1,5 @@
 const babel = require("rollup-plugin-babel");
 const commonjs = require("rollup-plugin-commonjs");
-const resolve = require("rollup-plugin-node-resolve");
-const minify=require("rollup-plugin-uglify")
 const less =require('rollup-plugin-less')
 const {dependencies={}, peerDependencies={}}=require(`./packages/qili-app/package.json`)
 
