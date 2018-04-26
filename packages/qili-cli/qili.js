@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-const program = require('commander');
+const program = require('commander')
 const prompts=require("prompts")
 const chalk=require("chalk")
 const fs=require("fs")
 const path=require("path")
 const cwd=process.cwd()
 const QiliCloud=require("./qili-cloud")
-const { execSync } = require('child_process');
+const { execSync } = require('child_process')
 const rc=require("rc")("qili",{service:"http://qili2.com/1/graphql"})
 
 function tryRequireProject(a){
@@ -35,19 +35,19 @@ async function need(name){
 		if(name=="appId" && rc.apps && rc.apps.length>0){
 			let {appId}=await prompts({
 				name:"appId",
-				type:"select", 
-				message:"select an app", 
+				type:"select",
+				message:"select an app",
 				choices: rc.apps.map(({name:title,apiKey:value})=>({title,value})),
 				initial: 1
 			})
 			program.appId=appId
-			return 
+			return
 		}
 		program.outputHelp()
-		console.log("\r\n")
+		console.log("\n")
 		console.log(chalk.red(name+" can't be empty"))
 		process.exit()
-		return 
+		return
 	}
 }
 
@@ -73,7 +73,7 @@ program
 		dest=path.resolve(cwd,dest)
 		const copy=require("ncp").ncp
 		const project=tryRequireProject(path.resolve(dest,"package.json"))
-		
+
 		function mergePackageJson(read, write, name){
 			try{
 				let that=require("./generator/template/package.json")
@@ -89,7 +89,7 @@ program
 				write.end()
 			}
 		}
-		
+
 		copy(path.resolve(__dirname,"generator/template"), dest, {
 				clobber:true,
 				transform(read,write,{name}){
@@ -101,7 +101,7 @@ program
 						default:
 							read.pipe(write)
 					}
-					
+
 				}
 			}, error=>{
 			if(error)
@@ -126,7 +126,7 @@ module.exports={
 		)
 		console.log(chalk.blue(`${dest}/persisted-query.js updated`))
 	})
-	
+
 program
 	.command('publish [codeFilePath]')
 	.description("publish cloud code change to server, default codeFilePath=cloud/__generated.js")
@@ -152,21 +152,21 @@ program
 		}else{
 			console.log(chalk.yellow("ignore relay compile"))
 		}
-		
+
 		if(persistQuery){
 			run("npm run persist")
 			console.log(chalk.blue("graphql query persisted"))
 		}else{
 			console.log(chalk.yellow("ignore persit graph query"))
 		}
-		
+
 		if(buildCloud){
 			run("npm run cloud")
 			console.log(chalk.blue("cloud code is ready"))
 		}else{
 			console.log(chalk.yellow("ignore build cloud code"))
 		}
-		
+
 		return (await getQili())
 			.publish(codeFilePath)
 			.then(schema=>{
@@ -195,7 +195,7 @@ program
 				console.log(chalk.red(e.message))
 			})
 	})
-	
+
 program
 	.command('dev [flag]')
 	.description("set/unset this QiliApp development node, support true[default]|false")
@@ -206,6 +206,6 @@ program
 				console.log(chalk.red(e.message))
 			})
 	})
-	
-	
+
+
 program.parse(process.argv);
