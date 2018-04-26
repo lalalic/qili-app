@@ -2,9 +2,19 @@
 
 qili-app can help you create graphql client application with qili server as backend at http://app.qili2.com
 
+
 ## install
 ```bash
 npm install qili-app
+```
+##qili-cli
+qili-cli can help to quick setup a QiliApp
+```bash
+npm install qili-cli -g
+cd <project dir>
+qili init
+npm install
+npm dev
 ```
 
 ## features
