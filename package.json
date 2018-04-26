@@ -51,8 +51,9 @@
     "test": "jest",
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
-    "persist": "qili-persist packages ../qili/lib/admin",
-    "api": "rollup -c --no-treeshake -o ./packages/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js"
+    "persist": "qili persist packages ../qili/lib/admin",
+    "api": "rollup -c --no-treeshake -o ./packages/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
+	"upload":"qili publish packages/console/cloud/index.js --no-build-cloud -f packages/console/schema.graphql"
   },
   "repository": {
     "type": "git",

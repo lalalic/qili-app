@@ -16,7 +16,6 @@
     "lodash.merge": "^4.6.0",
     "material-auto-rotating-carousel": "^1.7.0",
     "material-ui": "^0.16.0",
-    "ncp": "^2.0.0",
     "prop-types": "^15.6.0",
     "pull-to-refresh2": "^0.0.2",
     "react": "^15.6.0",

@@ -3,6 +3,7 @@ import React from "react"
 import {graphql} from "react-relay"
 
 import {withInit, QiliApp, ACTION as qiliACTION} from "qili"
+import project from "../package.json"
 
 const DOMAIN="myQili"
 
@@ -20,8 +21,8 @@ function reducer(state={},{type,payload}){
 
 const MyQili=compose(
 	withProps(()=>({
-		project: require("../package.json"),
-		appId:"",//get from app.qili2.com
+		project,
+		appId:project.config.appId,//get from app.qili2.com
 		reducers:{[DOMAIN]:reducer},
 		//supportOffline:
 		//tutorials:["",""]

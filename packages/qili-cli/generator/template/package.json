@@ -24,17 +24,20 @@
     "webpack-dev-server": "^2.6.1"
   },
   "scripts": {
-    "int":"qili-init",
+    "int":"qili init",
     "build": "webpack",
     "dev": "webpack-dev-server --env=dev",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cp www/phone.xml config.xml && cordova platform add android && cordova build android",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
-    "persist": "qili-persist src cloud",
-    "cloud": "browserify cloud/index.js -o cloud/__generated.js --node"
+    "persist": "qili persist src cloud",
+    "cloud": "browserify cloud/index.js -o cloud/__generated.js --node",
+	"sync":"qili publish"
   },
   "config":{
       "devPort":9082,
-      "serverPort":9080
+      "serverPort":9080,
+	  "service":"http://qili2.com/1/graphql",
+	  "appId":""
   },
   "keywords": ["qili"],
   "engines": {

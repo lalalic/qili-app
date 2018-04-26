@@ -1,0 +1,4 @@
+{
+	"appId":"qiliAdmin",
+	"service":"http://localhost:9080/1/graphql"
+}
