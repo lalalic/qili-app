@@ -14,21 +14,9 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 			port,
 			host:"0.0.0.0",
 			disableHostCheck:true,
-			setup(app){
+			before(app){
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
 			}
-		},
-		module:{
-			...base.module,
-			rules:[
-				{
-					test: /.js?$/,
-					use: 'react-hot-loader',
-					exclude: /node_modules/,
-					include:/src/
-				},
-				...base.module.rules
-			]
 		},
 		plugins:[
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),

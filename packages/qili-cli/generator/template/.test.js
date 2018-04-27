@@ -9,7 +9,7 @@ const spy=(Target, key, wired)=>{
 	Target[key]=wired(_raw)
 }
 
-spy(File,"upload,_upload=>function(){
+spy(File,"upload",_upload=>function(){
 	return _upload(...arguments).catch(a=>a).then(a=>"images/icon.svg")
 })
 

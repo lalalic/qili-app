@@ -17,7 +17,7 @@ function tryRequireProject(a){
 	}
 }
 
-const {config:{service,appId}}=tryRequireProject(path.resolve(cwd,"project.json"))
+const {config:{service,appId}}=tryRequireProject(path.resolve(cwd,"package.json"))
 if(service){
 	rc.service=service
 }
@@ -30,6 +30,7 @@ function run(cmd, stdio="ignore"){
 	execSync(cmd, {stdio})
 }
 
+<<<<<<< HEAD
 async function need(name){
 	if(!program[name]){
 		if(name=="appId" && rc.apps && rc.apps.length>0){
@@ -55,14 +56,17 @@ async function getQili(needAppId=true){
 	if(needAppId && !program.appId){
 		await need("appId")
 	}
+=======
+function getQili(){
+>>>>>>> d4c9654f3c40928720ddfd32dedad20fb02109c4
 	return new QiliCloud(program.service, program.appId)
 		.getToken(rc)
 }
 
 program
-	.version('0.1.0', '-v, --version')
+	.version(require("./package.json").version, '-v, --version')
 	.usage('[options] <command>')
-	.description("qili2 cloud cli")
+	.description(require("./package.json").description)
 	.option('-a, --appId <appId>', 'application id', rc.appId)
 	.option('-s, --service <endpoint>', 'server endpoint', rc.service)
 
