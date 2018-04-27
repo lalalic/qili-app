@@ -5,7 +5,7 @@ const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const HTML={
-	template:'./node_modules/qili-app/index.tmpl',
+	template:require.resolve('qili-app/index.tmpl'),
 	title:"QiLi App",
 	favicon: "./dist/favicon.ico",
 }

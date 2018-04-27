@@ -18,18 +18,6 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
 			}
 		},
-		module:{
-			...base.module,
-			rules:[
-				{
-					test: /.js?$/,
-					use: 'react-hot-loader',
-					exclude: /node_modules/,
-					include:/src/
-				},
-				...base.module.rules
-			]
-		},
 		plugins:[
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),

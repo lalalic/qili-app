@@ -1,4 +1,7 @@
 {
+  "dependencies":{
+	"qili-app":"latest"
+  },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-loader": "^7.1.1",
@@ -35,7 +38,6 @@
   },
   "config":{
       "devPort":9082,
-      "serverPort":9080,
 	  "service":"http://qili2.com/1/graphql",
 	  "appId":""
   },
