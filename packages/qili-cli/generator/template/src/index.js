@@ -1,8 +1,9 @@
 import "./index.less"
 import React from "react"
 import {graphql} from "react-relay"
+import {compose, withProps} from "recompose"
 
-import {withInit, QiliApp, ACTION as qiliACTION} from "qili"
+import {withInit, QiliApp, ACTION as qiliACTION} from "qili-app"
 import project from "../package.json"
 
 const DOMAIN="myQili"
