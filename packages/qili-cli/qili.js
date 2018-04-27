@@ -30,35 +30,7 @@ function run(cmd, stdio="ignore"){
 	execSync(cmd, {stdio})
 }
 
-<<<<<<< HEAD
-async function need(name){
-	if(!program[name]){
-		if(name=="appId" && rc.apps && rc.apps.length>0){
-			let {appId}=await prompts({
-				name:"appId",
-				type:"select",
-				message:"select an app",
-				choices: rc.apps.map(({name:title,apiKey:value})=>({title,value})),
-				initial: 1
-			})
-			program.appId=appId
-			return
-		}
-		program.outputHelp()
-		console.log("\n")
-		console.log(chalk.red(name+" can't be empty"))
-		process.exit()
-		return
-	}
-}
-
-async function getQili(needAppId=true){
-	if(needAppId && !program.appId){
-		await need("appId")
-	}
-=======
 function getQili(){
->>>>>>> d4c9654f3c40928720ddfd32dedad20fb02109c4
 	return new QiliCloud(program.service, program.appId)
 		.getToken(rc)
 }
