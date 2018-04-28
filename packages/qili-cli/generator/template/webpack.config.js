@@ -13,7 +13,7 @@ const HTML={
 module.exports=env=>{
 	const base={
 		entry:{
-			index:["babel-polyfill","./src/index.js"],
+			index:["babel-polyfill",require.resolve("./src/index.js")],
 		},
 		output:{
 			filename:"[name].js",
@@ -38,7 +38,7 @@ module.exports=env=>{
 				test:/.graphql?$/,
 				use: 'text-loader'
 			},{
-				test:path.resolve("./cloud","index.js"),
+				test:require.resolve("./cloud/index.js"),
 				use: "imports-loader?Cloud=qili-app/makeOfflineSchema"//path relative to test
 			}]
 		},

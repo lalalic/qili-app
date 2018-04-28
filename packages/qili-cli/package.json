@@ -1,12 +1,38 @@
 {
-  "name": "qili-cli",
-  "description": "qili cli",
-  "version": "1.2.14",
-  "homepage": "http://app.qili2.com",
+  "_from": "qili-cli",
+  "_id": "qili-cli@1.2.18",
+  "_inBundle": false,
+  "_integrity": "sha512-Gkkc5mwfX5PyxSDZbXBS56woh35QNeFm2icjbnRLP1mtrWDG2PKiftIWWr55/K6sHNNbAP14/7vaio9DsSG8qw==",
+  "_location": "/qili-cli",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "qili-cli",
+    "name": "qili-cli",
+    "escapedName": "qili-cli",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/qili-cli/-/qili-cli-1.2.18.tgz",
+  "_shasum": "b074b462ff5b660f166e1f2ed9f08be698597dac",
+  "_spec": "qili-cli",
+  "_where": "c:\\work\\spool\\qili-app",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
+  "bin": {
+    "qili": "./qili.js"
+  },
+  "bugs": {
+    "url": "https://github.com/lalalic/qili-app/issues"
+  },
+  "bundleDependencies": false,
   "dependencies": {
     "chalk": "^2.4.0",
     "commander": "^2.15.1",
@@ -15,16 +41,17 @@
     "prompts": "^0.1.8",
     "rc": "^1.2.6"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lalalic/qili-app"
-  },
+  "deprecated": false,
+  "description": "qili cli",
   "engines": {
     "node": ">= 8"
   },
+  "homepage": "http://app.qili2.com",
   "license": "MIT",
-  "bin": {
-    "qili": "./qili.js"
+  "name": "qili-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lalalic/qili-app.git"
   },
-  "readme": "README.md"
+  "version": "1.2.18"
 }
