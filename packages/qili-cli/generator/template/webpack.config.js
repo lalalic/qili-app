@@ -1,5 +1,5 @@
 const path = require('path')
-const {ContextReplacementPlugin, DefinePlugin} = require("webpack")
+const {ContextReplacementPlugin, DefinePlugin, IgnorePlugin} = require("webpack")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
@@ -64,6 +64,7 @@ module.exports=env=>{
 
 			new HtmlWebpackInlineSourcePlugin(),
 
+			//new IgnorePlugin(/^react-router$/)
 		]
 	}
 

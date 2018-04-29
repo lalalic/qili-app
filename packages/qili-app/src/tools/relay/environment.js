@@ -79,7 +79,7 @@ export default function createEnvironment(props){
 			if(supportOffline)
 				return fetchQueryOffline(operation, variables, cacheConfig,uploadables)
 
-			return e
+			throw e
 		})
 	}
 
@@ -114,7 +114,7 @@ export default function createEnvironment(props){
 			loading(false)
 			showMessage({message:e.message, level:"error"})
 			console.debug({error, props, network:network()})
-			return e
+			throw e
 		}).then(res=>{
 			loading(false)
 			return res

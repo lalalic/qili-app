@@ -48,7 +48,7 @@ export default compose(
 	setPropTypes({
 		id: PropTypes.string.isRequired,
 		photo: PropTypes.string,
-		username: PropTypes.string.isRequired,
+		username: PropTypes.string,
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired
 	}),

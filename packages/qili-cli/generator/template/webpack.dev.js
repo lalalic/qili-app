@@ -30,7 +30,8 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				filename:"cordova.html",
-			})
+			}),
+			//new IgnorePlugin(/^react-router$/)
 		]
 	}
 }

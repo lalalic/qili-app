@@ -20,7 +20,7 @@ import {
 	withInit, withMutation, withPagination,
 	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION,
 	Comment, OfflineUI,CommandBar, CheckUpdate,
-	Setting, Profile, My,
+	Setting, Profile,
 	Offline} from 'qili-app'
 
 import Dashboard from "./ui/dashboard"
@@ -28,6 +28,8 @@ import App from "./ui/app"
 import Cloud from "./ui/cloud"
 import Schema from "./ui/schema"
 import Log from "./ui/log"
+import My from "./ui/my"
+
 import {ACTION, reducer} from "./state"
 
 class QiliAdminOffline extends Offline{

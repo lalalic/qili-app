@@ -27,7 +27,7 @@ module.exports=function persist(src,dest){
 				.forEach(file=>{
 					file=path.join(root,file)
 					const {kind,text,name}=require(file)
-					if(kind=="Batch"){
+					if(kind!=="Fragment"){
 						if(schema[name]){
 							console.error(`operation[${name}] already exists in ${file}`)
 						}

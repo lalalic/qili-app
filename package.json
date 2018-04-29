@@ -54,7 +54,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "dev": "webpack-dev-server --hot --inline --env=dev",
+    "dev": "yarn relay && webpack-dev-server --env=dev",
     "test": "jest",
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
