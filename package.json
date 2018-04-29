@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "description": "qili dashboard and application framework",
-  "version": "1.2.7",
+  "version": "1.2.11",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",

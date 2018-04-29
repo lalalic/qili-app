@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -23,7 +23,6 @@
     "react-redux": "^4.4.5",
     "react-relay": "^1.6.0",
     "react-responsive": "^4.1.0",
-    "react-router": "^3.0.0",
     "react-swipeable-views": "^0.12.13",
     "react-tap-event-plugin": "^3.0.0",
     "recompose": "^0.27.0",
