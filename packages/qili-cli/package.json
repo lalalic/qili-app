@@ -7,6 +7,13 @@
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
+  "bin": {
+    "qili": "./qili.js"
+  },
+  "bugs": {
+    "url": "https://github.com/lalalic/qili-app/issues"
+  },
+  "bundleDependencies": false,
   "dependencies": {
     "chalk": "^2.4.0",
     "commander": "^2.15.1",
@@ -15,16 +22,17 @@
     "prompts": "^0.1.8",
     "rc": "^1.2.6"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lalalic/qili-app"
-  },
+  "deprecated": false,
+  "description": "qili cli",
   "engines": {
     "node": ">= 8"
   },
+  "homepage": "http://app.qili2.com",
   "license": "MIT",
-  "bin": {
-    "qili": "./qili.js"
+  "name": "qili-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lalalic/qili-app.git"
   },
-  "readme": "README.md"
+  "version": "1.2.18"
 }
