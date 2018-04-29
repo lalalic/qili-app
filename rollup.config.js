@@ -43,13 +43,15 @@ export default {
 			name:"relay-graphql",
 			transform(code,id){
 				const REG=/require\("(\.\/__generated__\/(.*)\.graphql)"\)/gi
-				
-				let imports=[]
+
+				let imports=new Set()
 				code=code.replace(REG, function(match, required, key){
-					imports.push(`import ${key} from "${required}"`)
+					imports.add(`import ${key} from "${required}"`)
 					return key
 				})
-				
+
+				imports=Array.from(imports)
+
 				if(imports.length>0){
 					code=imports.join("\n")+'\n'+code
 				}
@@ -77,4 +79,3 @@ export default {
 		})
 	]
 }
-

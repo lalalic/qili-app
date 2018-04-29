@@ -4,8 +4,6 @@ import {compose,getContext,withProps,setPropTypes} from "recompose"
 import {graphql, withMutation} from "../tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
-import {Link} from "react-router"
-
 
 import IconRightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import IconSetting from 'material-ui/svg-icons/action/settings'
@@ -50,7 +48,7 @@ export default compose(
 	setPropTypes({
 		id: PropTypes.string.isRequired,
 		photo: PropTypes.string,
-		username: PropTypes.string.isRequired, 
+		username: PropTypes.string.isRequired,
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired
 	}),
