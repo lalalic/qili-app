@@ -1,11 +1,11 @@
-import React, {Component} from "react"
+import React, {Component,createFactory} from "react"
 import PropTypes from "prop-types"
-import {compose, withContext, setDisplayName, wrapDisplayName,createEagerFactory} from "recompose"
+import {compose, withContext, setDisplayName, wrapDisplayName,} from "recompose"
 import {ConnectionHandler} from "relay-runtime"
 import createEnvironment from "./environment"
 
 export const withGraphqlClient=(options={})=>BaseComponent=>{
-	const factory=createEagerFactory(
+	const factory=createFactory(
 			withContext({
 					client: PropTypes.object,
 					optics: PropTypes.func,

@@ -12,11 +12,9 @@ export const Dashboard=({fetcher,height})=>(
 				let a=document.querySelector('.graphiql-container')
 				a.style.position="absolute"
 				a.style.height=`${height}px`
-				ql.setState({docExplorerOpen:false})
 			}
 		}}
 		fetcher={fetcher}
-
 		/>
 )
 

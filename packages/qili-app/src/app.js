@@ -136,7 +136,7 @@ export default compose(
 
 		return render(app,container)
 	}),
-	
+
 	defaultProps({
 		service:"http://qili2.com/1/graphql",
 		theme:THEME

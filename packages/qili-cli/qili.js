@@ -17,12 +17,16 @@ function tryRequireProject(a){
 	}
 }
 
-const {config:{service,appId}}=tryRequireProject(path.resolve(cwd,"package.json"))
-if(service){
-	rc.service=service
-}
-if(appId){
-	rc.appId=appId
+try{
+	const {config:{service,appId}}=tryRequireProject(path.resolve(cwd,"package.json"))
+	if(service){
+		rc.service=service
+	}
+	if(appId){
+		rc.appId=appId
+	}
+}catch(e){
+
 }
 
 
@@ -43,7 +47,7 @@ program
 	.option('-s, --service <endpoint>', 'server endpoint', rc.service)
 
 program
-	.command("init <dest>")
+	.command("init [dest]")
 	.description("initialize this QiliApp project, default dest=.")
 	.action(function(dest="."){
 		dest=path.resolve(cwd,dest)
@@ -58,6 +62,10 @@ program
 				if(program.appId){
 					merged.config.appId=program.appId
 				}
+				if(program.service){
+					merged.config.service=program.service
+				}
+
 				write.write(JSON.stringify(merged, null, 2))
 				write.end()
 			}catch(e){

@@ -1,13 +1,11 @@
-import React, {Component} from "react"
+import React, {Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose, createEagerFactory, setDisplayName, wrapDisplayName,} from "recompose"
+import {compose, setDisplayName, wrapDisplayName} from "recompose"
 import {withQuery} from "./relay/withQuery"
 
 export const withInit=options=>BaseComponent=>{
-	let factory=createEagerFactory(BaseComponent)
-	
-	const Init=withQuery(options)(({children})=><div>{children}</div>)
-		
+	const Init=withQuery(options)(({children})=><Fragment>{children}</Fragment>)
+
 	const WithInit=({children,...others})=>(
 		<BaseComponent {...others}>
 			<Init>
@@ -15,11 +13,11 @@ export const withInit=options=>BaseComponent=>{
 			</Init>
 		</BaseComponent>
 	)
-	
+
 	if (process.env.NODE_ENV !== 'production') {
 		return setDisplayName(wrapDisplayName(BaseComponent, 'WithInit'))(WithInit)
 	}
-	
+
 	return WithInit
 }
 

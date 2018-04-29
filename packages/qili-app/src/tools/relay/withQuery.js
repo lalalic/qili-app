@@ -1,10 +1,13 @@
-import React, {PureComponent, PropTypes} from "react"
+import React, {PureComponent,createFactory} from "react"
+import PropTypes from "prop-types"
 import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
-import {compose, createEagerFactory, setDisplayName, wrapDisplayName, getContext} from "recompose"
+import {compose, setDisplayName, wrapDisplayName, getContext} from "recompose"
 
 import Empty from "../../components/empty"
 import IconError from "material-ui/svg-icons/alert/error"
+
+import hack from "./hack-null-default-undefined"
 
 class Wrapper extends PureComponent{
 	componentWillMount(){
@@ -15,39 +18,35 @@ class Wrapper extends PureComponent{
 	}
 }
 export const withQuery=option=>BaseComponent=>{
-	const factory=createEagerFactory(QueryRenderer)
+	const factory=createFactory(QueryRenderer)
 	const WithQuery=compose(
-			getContext({client:PropTypes.object}),
-			connect(),
-		)(({client:environment,dispatch,...others})=>{
+			getContext({
+				client:PropTypes.object,
+				store: PropTypes.object
+			}),
+		)(({client:environment,store,...others})=>{
 			const {query, onSuccess, onError, ...more}=typeof(option)=="function" ? option(others) : option
-			//////hack: make variables default undefined as undefined
-			query().query.argumentDefinitions.forEach(def=>{
-				if(def.defaultValue===null){
-					def.defaultValue=undefined
-				}
-			})
 
 			return factory({
 				render({error, props}){
 					if(props){
 						return (
-							<Wrapper handle={()=>onSuccess && onSuccess(props,dispatch)}>
+							<Wrapper handle={()=>onSuccess && onSuccess(props,store.dispatch,store)}>
 								<BaseComponent {...others} {...props} data={props}/>
 							</Wrapper>
 						)
 					}else if(error){
 						return (
-							<Wrapper handle={()=>onError && onError(error,dispatch)}>
+							<Wrapper handle={()=>onError && onError(error,store.dispatch,store)}>
 								<Empty icon={<IconError color="red"/>}>error: {error.toString()}</Empty>
 							</Wrapper>
 						)
 					}else {
-						return null
+						return <div>loading...</div>
 					}
 				},
 				environment,
-				query,
+				query:hack(query),
 				...more,
 				})
 		})

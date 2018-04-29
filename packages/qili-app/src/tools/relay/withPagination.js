@@ -1,14 +1,11 @@
-import React, {Component} from "react"
+import React, {Component,createFactory} from "react"
 import PropTypes from "prop-types"
-import {compose, createEagerFactory, withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
+import {compose, withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
 import withQuery from "./withQuery"
 import withFragment from "./withFragment"
 
-import {createPaginationContainer} from "react-relay"
-
-
 export const withPagination=(options)=>BaseComponent=>{
-    const factory=createEagerFactory(
+    const factory=createFactory(
             withContext(
                 {pagination:PropTypes.any},
                 ()=>({pagination:options})

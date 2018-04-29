@@ -1,9 +1,11 @@
-import React, {Component} from "react"
+import React, {Component,createFactory} from "react"
 import PropTypes from "prop-types"
-import {compose,withProps, getContext, setDisplayName, wrapDisplayName,createEagerFactory } from "recompose"
+import {compose,withProps, getContext, setDisplayName, wrapDisplayName } from "recompose"
 import {commitMutation} from "react-relay"
 
 import spreadResponse from "../spread-response"
+
+import hack from "./hack-null-default-undefined"
 
 const isDate=date=>date && typeof date.getMonth === 'function'
 
@@ -24,28 +26,23 @@ const isDate=date=>date && typeof date.getMonth === 'function'
  */
 
 export const withMutation=option=>BaseComponent=>{
-	const factory=createEagerFactory(BaseComponent)
+	const factory=createFactory(BaseComponent)
 	const WithMutation=getContext({
 			client:PropTypes.object,
 			showMessage: PropTypes.func,
 			loading: PropTypes.func,
 		})(
 		({client:environment, showMessage, loading,...others})=>{
-			const {name="mutate",mutation}=typeof(option)=="function" ? option(others, {},environment) : option
-
-			//////hack: make variables default undefined as undefined
-			mutation().query.argumentDefinitions.forEach(def=>{
-				if(def.defaultValue===null)
-					def.defaultValue=undefined
-			})
+			const {name="mutate"}=typeof(option)=="function" ? option(others, {},environment) : option
 
 			function mutate(data){
 				loading(true)
-				const {spread, variables, 
+				const {spread, variables,
 					patch4, patchData,shouldPatch,
 					delete4,
 					dateFields=[],
-					...mutation}=typeof(option)=="function" ? option(others, data, environment) : option
+					mutation,
+					...mutationConfig}=typeof(option)=="function" ? option(others, data, environment) : option
 				let smart={}
 				if(patch4){
 					const updater=(id,data)=>(store,res)=>{
@@ -73,7 +70,8 @@ export const withMutation=option=>BaseComponent=>{
 					commitMutation(environment,{
 						variables:{...variables,...data},
 						...smart,
-						...mutation,
+						mutation:hack(mutation),
+						...mutationConfig,
 						onError: reject,
 						onCompleted(res, error){
 							loading(false)

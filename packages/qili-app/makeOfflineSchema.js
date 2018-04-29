@@ -25,7 +25,7 @@ const Scalar={
 			return id||name
 		}
 	},
-	JSON: require("graphql-type-json"),	
+	JSON: require("graphql-type-json"),
 	Node: {
 		__resolveType(obj, context, {variableValues:{id}}){
 			let [colName]=id.split(":")
@@ -37,20 +37,20 @@ module.exports={
 	merge,
 	"static":{
 		on(path, callback){
-			
+
 		},
-		
+
 		reply(req, res){
-			
+
 		}
 	},
 	wechat:{
 		on(event, callback){
-			
+
 		},
-		
+
 		reply(req, res){
-			
+
 		}
 	},
 	buildPagination:()=>({
@@ -67,8 +67,11 @@ module.exports={
 	persistedQuery:{},
 	makeSchema(typeDefs, resolvers={}){
 		return makeExecutableSchema({
+			resolverValidationOptions:{
+				requireResolversForResolveType: false
+			},
 			typeDefs: typeDefs||this.typeDefs,
-			resolvers: merge({}, this.resolver,{					
+			resolvers: merge({}, this.resolver,{
 				User: {
 					name:({username,name})=>username||name,
 					username: ({username,name})=>username||name||"",
@@ -77,7 +80,7 @@ module.exports={
 					me:(_,a,{app,user})=>{
 						return user
 					}
-				},			
+				},
 			},resolvers, Scalar)
 		})
 	}

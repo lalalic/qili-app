@@ -18,7 +18,7 @@
     "css-loader": "^0.28.4",
     "html-webpack-inline-source-plugin": "^0.0.9",
 	"html-webpack-plugin": "^2.30.1",
-    "imports-loader": "^0.7.1",	
+    "imports-loader": "^0.7.1",
     "less": "2.7.2",
     "less-loader": "^4.0.5",
     "relay-compiler": "1.4.1",
@@ -30,7 +30,7 @@
   "scripts": {
     "int":"qili init",
     "build": "webpack",
-    "dev": "webpack-dev-server --env=dev",
+    "dev": "yarn relay && webpack-dev-server --env=dev",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cp www/phone.xml config.xml && cordova platform add android && cordova build android",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
     "persist": "qili persist src cloud",
@@ -40,7 +40,7 @@
   "config":{
       "devPort":9083,
 	  "service":"http://qili2.com/1/graphql",
-	  "appId":"5ae2afbffd77cd6f5cd84a66"
+	  "appId":""
   },
   "keywords": ["qili"],
   "engines": {

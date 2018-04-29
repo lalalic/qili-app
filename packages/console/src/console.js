@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,createFactory} from "react"
 import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
@@ -6,8 +6,8 @@ import {combineReducers} from "redux"
 import {connect} from "react-redux"
 
 import {compose, withProps, withContext, getContext, setStatic, mapProps,
-		branch, createEagerFactory,renderNothing,renderComponent} from "recompose"
-		
+		branch,renderNothing,renderComponent} from "recompose"
+
 import IconHome from "material-ui/svg-icons/action/home"
 import IconData from "material-ui/svg-icons/action/dashboard"
 import IconCloud from "material-ui/svg-icons/file/cloud"
@@ -16,9 +16,9 @@ import IconAccount from 'material-ui/svg-icons/action/account-box'
 import IconSchema from 'material-ui/svg-icons/editor/insert-link'
 
 import {
-	graphql, withFragment, withQuery, 
+	graphql, withFragment, withQuery,
 	withInit, withMutation, withPagination,
-	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION, 
+	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION,
 	Comment, OfflineUI,CommandBar, CheckUpdate,
 	Setting, Profile, My,
 	Offline} from 'qili-app'
@@ -36,14 +36,14 @@ class QiliAdminOffline extends Offline{
 		if(app){
 			this.onSet(app,{author:_id, id:app})
 		}
-		
+
 		if(apps){
 			apps.forEach(a=>this.onSet(a, {author:_id, id:a}))
 		}
 	}
-	
+
 	onSetLog(){
-		
+
 	}
 }
 
@@ -55,7 +55,7 @@ const QiliAdmin=compose(
 			console:reducer
 		},
 		supportOffline: new QiliAdminOffline(
-			"qiliAdmin", 
+			"qiliAdmin",
 			require("../cloud")
 				.makeSchema(
 					require("../schema.graphql"),
@@ -69,7 +69,7 @@ const QiliAdmin=compose(
 								return await app.get1Entity("apps",{_id, author:user._id})
 							}
 						},
-						
+
 						App:{
 							cloudCode:({cloudCode})=>cloudCode||"/**Not support offline**/",
 							schema:()=>"Not support offline"
@@ -92,10 +92,11 @@ const QiliAdmin=compose(
 				}
 			}
 		`,
-		onSuccess(response,dispatch){
+		onSuccess(response,dispatch,store){
 			const {me:{apps, token,name}}=response
 			dispatch(qiliACTION.CURRENT_USER({name,token}))
-			if(apps && apps.length>0){
+			let currentApp=store.getState().console.current
+			if(!currentApp && apps && apps.length>0){
 				dispatch(ACTION.CURRENT_APP(apps[0].id))
 			}
 		}
@@ -123,7 +124,7 @@ const Current=compose(
 ))
 
 const withCurrent=()=>BaseComponent=>{
-	const factory=createEagerFactory(BaseComponent)
+	const factory=createFactory(BaseComponent)
 	const WithCurrent=props=>(<div><Current/>{factory(props)}</div>)
 	return WithCurrent
 }
@@ -140,7 +141,7 @@ const Navigator=()=>(
 )
 
 const withNavigator=()=>BaseComponent=>{
-	const factory=createEagerFactory(BaseComponent)
+	const factory=createFactory(BaseComponent)
 	const WithNavigator=props=>(<div>{factory(props)}<Navigator/></div>)
 	return WithNavigator
 }
@@ -162,7 +163,7 @@ const router=(
 						<App.Creator {...props} style={{margin:"0px 100px"}}/>
 					</div>)))),
 			)(({children})=><div>{children}</div>)}>
-			
+
 			<IndexRoute component={compose(
 							withCurrent(),
 							withNavigator(),

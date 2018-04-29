@@ -6,10 +6,10 @@ import {Tabs, Tab} from "material-ui/Tabs"
 import UploadIcon from "material-ui/svg-icons/file/file-upload"
 import SaveIcon from "material-ui/svg-icons/content/save"
 
-import CodeMirror from "react-codemirror"
+import {Controlled as CodeMirror} from "react-codemirror2"
 import "codemirror/mode/javascript/javascript"
 
-import {withMutation, graphql, withFragment,CommandBar} from "qili-app" 
+import {withMutation, graphql, withFragment,CommandBar} from "qili-app"
 
 import Schema from "./schema"
 
@@ -19,7 +19,7 @@ export class Cloud extends Component{
 	render(){
 		const {mutate, height,app}=this.props
 		const {cloudCode}=this.state
-		
+
 		return (
 			<div>
 				<Tabs>
@@ -27,7 +27,7 @@ export class Cloud extends Component{
 						<CodeMirror
 							value={cloudCode}
 							preserveScrollPosition={true}
-							onChange={cloudCode=>this.setState({cloudCode})}
+							onBeforeChange={(editor,data,cloudCode)=>this.setState({cloudCode})}
 							options={{
 								lineNumbers:true,
 								mode:"javascript",
@@ -36,9 +36,6 @@ export class Cloud extends Component{
 							}}
 							ref={a=>{
 								if(a){
-									if(a.codeMirror.getValue()!=cloudCode){//why
-										a.codeMirror.setValue(cloudCode)
-									}
 									let container=document.querySelector('.CodeMirror')
 									container.style.height=`${height}px`
 								}
@@ -88,7 +85,7 @@ export default compose(
 			cloudCode
 			...schema_app
 		}
-	`),	
+	`),
 	getContext({
 		showMessage: PropTypes.func,
 		theme: PropTypes.object,
@@ -97,5 +94,5 @@ export default compose(
 		height:theme.page.height-theme.footbar.height-theme.appBar.height,
 		app,
 		...others
-	})),	
+	})),
 )(Cloud)
