@@ -1,5 +1,5 @@
 import "../index.less"
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {render} from "react-dom"
 import merge from "lodash.merge"
@@ -49,11 +49,9 @@ const THEME=getMuiTheme(LightBaseTheme,{
 
 const UI=({muiTheme,children="hello Qili!"})=>(
 	<MuiThemeProvider muiTheme={muiTheme}>
-		<div className="withFootbar">
-			<div id="container" style={{overflowY:"scroll"}}>
+		<Fragment>
 			{children}
-			</div>
-		</div>
+		</Fragment>
 	</MuiThemeProvider>
 )
 
@@ -126,7 +124,7 @@ export default compose(
 					min-height:${window.innerHeight}px
 				}
 			`
-			container.style.height=window.innerHeight+'px'
+			//container.style.height=window.innerHeight+'px'
 			THEME.page.height=window.innerHeight
 		}
 

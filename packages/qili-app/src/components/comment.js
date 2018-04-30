@@ -41,8 +41,7 @@ export class Comment extends Component{
 		data: PropTypes.arrayOf(PropTypes.object).isRequired,
 		commentText: PropTypes.func,
 		commentPhoto: PropTypes.func,
-		loadMore: PropTypes.func,
-		minHeight: PropTypes.number,
+		loadMore: PropTypes.func
 	}
 	first=true
     state={comment:""}
@@ -59,7 +58,7 @@ export class Comment extends Component{
 		}
 	}
     render(){
-        const {data, commentText, commentPhoto, template,loadMore,hint="说两句", system,minHeight}=this.props
+        const {data, commentText, commentPhoto, template,loadMore,hint="说两句", system}=this.props
 		const {comment}=this.state
         const create=()=>commentText({content:comment}).then(a=>this.setState({comment:""}))
 
@@ -67,13 +66,13 @@ export class Comment extends Component{
             action:"Save",
             label:"发布",
             icon: <IconSave/>,
-            onSelect:create
+            onSelect:create,
         }
         let photo={
             action:"photo",
             label:"照片",
             icon: <IconCamera/>,
-            onSelect:commentPhoto
+            onSelect:commentPhoto,
         }
 
         let action=photo
@@ -82,44 +81,53 @@ export class Comment extends Component{
             action=save
 
 		return (
-            <div className="comment" style={{minHeight, backgroundColor:bg}}>
-                <PullToRefresh onRefresh={loadMore}>
-                    {data.reduce((state,a,i)=>{
-							let createdAt=new Date(a.createdAt)
-							let {comments,last}=state
-							let props={comment:a,key:i, system}
-							if(!last || (createdAt.getTime()-last.getTime())>1000*60){
-								props.time=createdAt
-							}
-							comments.push(React.createElement(template, props))
-							state.last=createdAt
-							return state
-						},{comments:[]}).comments
-					}
-                </PullToRefresh>
+			<Fragment>
+	            <div className="comment" style={{backgroundColor:bg,flex:"1 100%"}}>
+	                <PullToRefresh onRefresh={loadMore}>
+	                    {data.reduce((state,a,i)=>{
+								let createdAt=new Date(a.createdAt)
+								let {comments,last}=state
+								let props={comment:a,key:i, system}
+								if(!last || (createdAt.getTime()-last.getTime())>1000*60){
+									props.time=createdAt
+								}
+								comments.push(React.createElement(template, props))
+								state.last=createdAt
+								return state
+							},{comments:[]}).comments
+						}
+	                </PullToRefresh>
+				</div>
 
-
-                <CommandBar
-                    className="footbar centerinput"
-                    primary="Save"
-                    items={[
-							{action:"Back"},
-                            (<textarea placeholder={hint} value={comment}
-								onKeyDown={({keyCode})=>keyCode==13 && create()}
-                                onChange={e=>{
-                                    this.setState({comment:e.target.value})
-                                    e.preventDefault()
-                                }}/>),
-                            action
-                        ]}
-                    />
-    		</div>
+				<div style={{flex:1}}>
+	                <CommandBar className="CommentToolBar"
+	                    primary="Save"
+	                    items={[
+								{action:"Back"},
+	                            (<textarea
+									style={{
+										width: "100%",
+						                height: "100%",
+						                margin: 0,
+						                padding: 2,
+						                borderWidth: 0,
+						                borderBottom: "1px solid lightgray",
+						                textAlign:"center"
+									}}
+									placeholder={hint}
+									value={comment}
+									onKeyDown={({keyCode})=>keyCode==13 && create()}
+	                                onChange={e=>{
+	                                    this.setState({comment:e.target.value})
+	                                    e.preventDefault()
+	                                }}/>),
+	                            action
+	                        ]}
+	                    />
+				</div>
+    		</Fragment>
         )
     }
-
-	static contextTypes={
-		muiTheme: PropTypes.object
-	}
 
     static defaultProps={
         template: ({comment, system={}, time})=>{
@@ -202,8 +210,7 @@ export default compose(
 
 	})),
 	file.withGetToken,
-	getContext({muiTheme:PropTypes.object}),
-	mapProps(({muiTheme,minHeight,mutate,data,relay,hint,system,template,getToken})=>({
+	mapProps(({mutate,data,relay,hint,system,template,getToken})=>({
 		hint,system,template,
 		data:data ? data.comments.edges.map(({node})=>node) : [],
 		commentText({content}){
@@ -227,7 +234,6 @@ export default compose(
 					}
 				})
 			}
-		},
-		minHeight: minHeight||muiTheme.page.height,
+		}
 	})),
 )(Comment)

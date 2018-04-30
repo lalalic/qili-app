@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose, setStatic, getContext, withProps} from "recompose"
 import {graphql, withFragment, withMutation,CommandBar} from "qili-app"
@@ -24,7 +24,7 @@ export class App extends Component{
 		const {nameError, unameError}=this.state
 		let commandBar
 		if(removable)
-			commandBar=(<CommandBar className="footbar" primary="Upload"
+			commandBar=(<CommandBar primary="Upload"
 				items={[
 						{action:"Back"}
 
@@ -40,7 +40,7 @@ export class App extends Component{
 					]}
 				/>)
 		else
-			commandBar=(<CommandBar className="footbar" items={[{action:"Back"}]}/>)
+			commandBar=(<CommandBar items={[{action:"Back"}]}/>)
 
 		const changeName=value=>value!=name && update({name:value})
 			.then(a=>this.setState({nameError:null}),error=>this.setState({nameError:error}))
@@ -49,57 +49,60 @@ export class App extends Component{
 			.then(a=>this.setState({unameError:null}),error=>this.setState({unameError:error}))
 
 		return (
-			<div className="form">
-				<TextField
-					floatingLabelText="application name"
-					fullWidth={true}
-					disabled={!removable}
-					defaultValue={name}
-					errorText={nameError}
-					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
-					onBlur={({target:{value}})=>changeName(value.trim())}/>
+			<Fragment>
+				<div style={{flex:"1 100%",padding:5}}>
+					<TextField
+						floatingLabelText="application name"
+						fullWidth={true}
+						disabled={!removable}
+						defaultValue={name}
+						errorText={nameError}
+						onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeName(value.trim())}
+						onBlur={({target:{value}})=>changeName(value.trim())}/>
 
-				<TextField
-					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
-					fullWidth={true}
-					disabled={!removable}
-					defaultValue={uname}
-					errorText={unameError}
-					onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
-					onBlur={({target:{value}})=>changeUName(value.trim())}/>
+					<TextField
+						floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
+						fullWidth={true}
+						disabled={!removable}
+						defaultValue={uname}
+						errorText={unameError}
+						onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
+						onBlur={({target:{value}})=>changeUName(value.trim())}/>
 
-				<TextField
-					floatingLabelText="API key: value of http header 'x-application-id'"
-					fullWidth={true}
-					onFocus={({target})=>target.select()}
-					inputStyle={{color:"gray"}}
-					value={apiKey||""}/>
+					<TextField
+						floatingLabelText="API key: value of http header 'x-application-id'"
+						fullWidth={true}
+						onFocus={({target})=>target.select()}
+						inputStyle={{color:"gray"}}
+						value={apiKey||""}/>
 
-				<TextField
-					floatingLabelText="wechat url: use it to accept message from wechat"
-					onFocus={({target})=>target.select()}
-					fullWidth={true}
-					inputStyle={{color:"gray"}}
-					value={`http://qili2.com/1/${apiKey}/wechat`}/>
+					<TextField
+						floatingLabelText="wechat url: use it to accept message from wechat"
+						onFocus={({target})=>target.select()}
+						fullWidth={true}
+						inputStyle={{color:"gray"}}
+						value={`http://qili2.com/1/${apiKey}/wechat`}/>
 
-				<div style={{margin:50}}>
-					<Toggle
-						label="It's in development"
-						toggled={isDev}
-						onToggle={(e,isDev)=>update({isDev})}
-						/>
-
-					{canRunInCore==null ? null : (
+					<div style={{margin:50}}>
 						<Toggle
-							label="**Can run in core**"
-							toggled={canRunInCore}
-							onToggle={(e,canRunInCore)=>setRunInCore({canRunInCore})}
+							label="It's in development"
+							toggled={isDev}
+							onToggle={(e,isDev)=>update({isDev})}
 							/>
-						)
-					}
-					</div>
-				{commandBar}
-			</div>
+						{canRunInCore==null ? null : (
+							<Toggle
+								label="**Can run in core**"
+								toggled={canRunInCore}
+								onToggle={(e,canRunInCore)=>setRunInCore({canRunInCore})}
+								/>
+							)
+						}
+						</div>
+				</div>
+				<div style={{flex:1}}>
+					{commandBar}
+				</div>
+			</Fragment>
 		)
 	}
 }
@@ -111,26 +114,29 @@ export class Creator extends Component{
 		const {error}=this.state
 		let refName,refUname
 		return (
-			<div className="form">
-				<TextField ref={a=>refName=a}
-					floatingLabelText="application name"
-					errorText={error}
-					fullWidth={true}/>
+			<Fragment>
+				<div style={{flex:"1 100%", padding:5}}>
+					<TextField ref={a=>refName=a}
+						floatingLabelText="application name"
+						errorText={error}
+						fullWidth={true}/>
 
-				<TextField ref={a=>refUname=a}
-					floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
-					fullWidth={true}/>
-
-				<CommandBar className="footbar"
-					items={[
-						{action:"Back"}
-						,{action:"Save", label:"保存", icon:<IconSave/>
-							,onSelect:a=>create({name: refName.getValue(), uname: refUname.getValue()})
-								.then(({id})=>toApp(id), error=>this.setState({error}))
-						}
-					]}
-					/>
-			</div>
+					<TextField ref={a=>refUname=a}
+						floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
+						fullWidth={true}/>
+				</div>
+				<div style={{flex:1}}>
+					<CommandBar
+						items={[
+							{action:"Back"}
+							,{action:"Save", label:"保存", icon:<IconSave/>
+								,onSelect:a=>create({name: refName.getValue(), uname: refUname.getValue()})
+									.then(({id})=>toApp(id), error=>this.setState({error}))
+							}
+						]}
+						/>
+				</div>
+			</Fragment>
 		)
 	}
 }

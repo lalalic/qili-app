@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose, getContext, mapProps} from "recompose"
 
@@ -17,12 +17,15 @@ import Schema from "./schema"
 export class Cloud extends Component{
 	state={cloudCode:this.props.app.cloudCode||""}
 	render(){
-		const {mutate, height,app}=this.props
+		const {mutate,app}=this.props
 		const {cloudCode}=this.state
 
 		return (
-			<div>
-				<Tabs>
+			<Fragment>
+				<Tabs style={{flex:"1 100%",display:"flex",flexDirection:"column"}}
+					contentContainerStyle={{flex:"1 100%"}}
+					tabTemplateStyle={{height:"100%"}}
+					>
 					<Tab label="Code">
 						<CodeMirror
 							value={cloudCode}
@@ -34,26 +37,23 @@ export class Cloud extends Component{
 								dragDrop:true,
 								allowDropFileTypes:[".js",".json",".jsx"],
 							}}
-							ref={a=>{
-								if(a){
-									let container=document.querySelector('.CodeMirror')
-									container.style.height=`${height}px`
-								}
-							}}
 							/>
 					</Tab>
 					<Tab label="Schema">
-						<Schema app={app} style={{height}}/>
+						<Schema app={app}/>
 					</Tab>
 				</Tabs>
-				<CommandBar className="footbar"
-					items={[
-						{action:"Back"}
-						,{action:"Save",icon:<SaveIcon/>,
-							onSelect:e=>this.update()
-						}
-					]}/>
-			</div>
+
+				<div style={{flex:1}}>
+					<CommandBar
+						items={[
+							{action:"Back"}
+							,{action:"Save",icon:<SaveIcon/>,
+								onSelect:e=>this.update()
+							}
+						]}/>
+				</div>
+			</Fragment>
 		)
 	}
 	update(){
@@ -88,10 +88,8 @@ export default compose(
 	`),
 	getContext({
 		showMessage: PropTypes.func,
-		theme: PropTypes.object,
 	}),
-	mapProps(({app,theme,...others})=>({
-		height:theme.page.height-theme.footbar.height-theme.appBar.height,
+	mapProps(({app,...others})=>({
 		app,
 		...others
 	})),

@@ -5,28 +5,13 @@ import {getContext,compose,mapProps} from "recompose"
 
 import GraphiQL from 'graphiql'
 
-export const Dashboard=({fetcher,height})=>(
-	<GraphiQL
-		ref={ql=>{
-			if(ql){
-				let a=document.querySelector('.graphiql-container')
-				a.style.position="absolute"
-				a.style.height=`${height}px`
-			}
-		}}
-		fetcher={fetcher}
-		/>
-)
-
 export default compose(
 	getContext({
-		theme: PropTypes.object,
 		client: PropTypes.object,
 		showMessage: PropTypes.func
 	}),
 	connect(({console:{current}})=>({current})),
-	mapProps(({client,theme,showMessage,current})=>{
-		let height=theme.page.height-theme.footbar.height
+	mapProps(({client,showMessage,current})=>{
 		let apiKey=client.get(current).apiKey
 		return {
 			fetcher(params){
@@ -40,8 +25,7 @@ export default compose(
 				}else{
 					showMessage({level:"error",message:`system  error`})
 				}
-			},
-			height
+			}
 		}
 	})
-)(Dashboard)
+)(({fetcher})=><GraphiQL fetcher={fetcher} />)

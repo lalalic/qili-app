@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {connect} from "react-redux"
 import {ACTION} from "../state"
@@ -21,12 +21,6 @@ export default class CommandBar extends Component{
             <div className={`commands ${className}`} {...others}>
             {
                 items.map((command,i)=>{
-                    if(command instanceof CommandBar.Command)
-                        return command
-
-                    if(command instanceof CommandBar.DialogCommand)
-                        throw new Error("Please use common command to trigger DialogCommand")
-
                     if(React.isValidElement(command)){
                         return (
                             <div key={i++}>
@@ -59,7 +53,8 @@ export default class CommandBar extends Component{
 
 
                     return (
-                        <CommandBar.Command key={command.action}
+                        <CommandBar.Command
+                            key={command.action}
                             primary={command.action==primary}
                             onSelect={onSelect} {...command}/>
                     )
@@ -70,59 +65,12 @@ export default class CommandBar extends Component{
     }
     static contextTypes={router:PropTypes.object}
 
-    static DialogCommand=class extends Component{
-        constructor(props){
-            super(props)
-            this.state={open:false}
-        }
-        render(){
-            var {open}=this.state
-            return (
-                <div
-                    className={`page dialog-command ${open ? "" : "hide"}`}
-                    onTouchTap={()=>this.dismiss()} >
-                    <div className="page overlay"/>
-                    <div className="layout">
-                        <div className="content"
-                            onTouchTap={(e)=>{e.stopPropagation()}}>
-                            {this.renderContent()}
-                        </div>
-                    </div>
-                </div>
-            )
-        }
-
-        renderContent(){
-            var {children}=this.props
-            return children
-        }
-
-        componentWillUnmount(){
-            if(_current=this)
-                _current=null
-        }
-
-        show(){
-            _current && (_current!=this) && _current.dismiss()
-            this.setState({open:true})
-            _current=this
-        }
-
-        dismiss(){
-            if(this.props.onDismiss)
-                this.props.onDismiss()
-
-            this.setState({open:false})
-            _current=null
-        }
-    }
-
     static Command=class extends Component{
         render(){
-            const {primary, onSelect, action, label, icon=(<DefaultIcon/>), link, children}=this.props
-            var props={}
+            const {primary, onSelect, action, label, icon=(<DefaultIcon/>), link, children, style={}}=this.props
+            let props={style}
             if(!link){
-				if(primary)
+                if(primary)
 					props.className="primary"
 
 				return (
@@ -138,7 +86,7 @@ export default class CommandBar extends Component{
 			}else{
                 const {Link}=require("react-router")
 				return (
-					<div {...props}>
+					<div {...props} >
 						<Link
                             style={{cursor:'default'}}
                             to={link}

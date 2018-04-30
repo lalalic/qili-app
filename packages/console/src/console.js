@@ -1,4 +1,4 @@
-import React, {Component,createFactory} from "react"
+import React, {Component,createFactory,Fragment} from "react"
 import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
@@ -127,12 +127,12 @@ const Current=compose(
 
 const withCurrent=()=>BaseComponent=>{
 	const factory=createFactory(BaseComponent)
-	const WithCurrent=props=>(<div><Current/>{factory(props)}</div>)
+	const WithCurrent=props=>(<Fragment><Current/>{factory(props)}</Fragment>)
 	return WithCurrent
 }
 
 const Navigator=()=>(
-	<CommandBar  className="footbar"
+	<CommandBar
 		items={[
 			{link:"/",action:"dashboard",label:"Home", icon:<IconHome/>},
 			{link:"/cloud",action:"cloud", label:"Cloud", icon:<IconCloud/>},
@@ -144,7 +144,16 @@ const Navigator=()=>(
 
 const withNavigator=()=>BaseComponent=>{
 	const factory=createFactory(BaseComponent)
-	const WithNavigator=props=>(<div>{factory(props)}<Navigator/></div>)
+	const WithNavigator=props=>(
+		<Fragment>
+			<div style={{flex:"1 100%"}}>
+				{factory(props)}
+			</div>
+			<div style={{flex:1}}>
+				<Navigator/>
+			</div>
+		</Fragment>
+	)
 	return WithNavigator
 }
 
@@ -157,14 +166,14 @@ const router=(
 							toApp: id=>dispatch(ACTION.CURRENT_APP(id))
 						})),
 					)(props=>(
-					<div>
+					<Fragment>
 						<center style={{height:50, color:"lightgray", margin:20}}>
 							start from creating your first App!
 						</center>
 
 						<App.Creator {...props} style={{margin:"0px 100px"}}/>
-					</div>)))),
-			)(({children})=><div>{children}</div>)}>
+					</Fragment>)))),
+			)(({children})=><Fragment>{children}</Fragment>)}>
 
 			<IndexRoute component={compose(
 							withCurrent(),

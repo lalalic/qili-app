@@ -21,7 +21,7 @@ export const Profile=({
 	logout,
 	})=>(
 	<Fragment>
-		<InfoForm style={{padding:5}}>
+		<InfoForm style={{padding:5,flex:"1 100%"}}>
 			<Field primaryText="头像"
 				rightAvatar={
 					<Photo src={photo} size={100}
@@ -63,12 +63,14 @@ export const Profile=({
 
 		</InfoForm>
 
-		<CommandBar  className="footbar"
-			items={[
-				{action:"Back"},
-				{action:"Logout", label:"退出账号", icon:<IconQuit/>, onSelect:logout}
-				]}
-			/>
+		<div style={{flex:1}}>
+			<CommandBar
+				items={[
+					{action:"Back"},
+					{action:"Logout", label:"退出账号", icon:<IconQuit/>, onSelect:logout}
+					]}
+				/>
+		</div>
 	</Fragment>
 )
 
