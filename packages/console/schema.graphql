@@ -10,6 +10,7 @@ type App implements Node {
   updatedAt: Date
   schema: String
   logs(status: String, first: Int, after: JSON): LogConnection
+  canRunInCore: Boolean
 }
 
 type AppComment implements Comment, Node {
@@ -106,6 +107,7 @@ type Mutation {
   app_create(name: String!, uname: String): App
   app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String, isDev: Boolean): App
   app_remove(_id: ObjectID!): Boolean
+  app_canRunInCore(_id: ObjectID!, canRunInCore: Boolean): App
   comment_create(parent: ID, content: String!, type: CommentType, _id: ObjectID): Comment
 }
 

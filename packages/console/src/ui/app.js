@@ -19,7 +19,7 @@ const ENTER=13
 export class App extends Component{
 	state={nameError:null, unameError:null}
 	render(){
-		const {id, name,uname,apiKey, isDev,
+		const {id, name,uname,apiKey, isDev,canRunInCore,setRunInCore,
 			update, remove, toComment,removable}=this.props
 		const {nameError, unameError}=this.state
 		let commandBar
@@ -88,6 +88,15 @@ export class App extends Component{
 						toggled={isDev}
 						onToggle={(e,isDev)=>update({isDev})}
 						/>
+
+					{canRunInCore==null ? null : (
+						<Toggle
+							label="**Can run in core**"
+							toggled={canRunInCore}
+							onToggle={(e,canRunInCore)=>setRunInCore({canRunInCore})}
+							/>
+						)
+					}
 					</div>
 				{commandBar}
 			</div>
@@ -153,6 +162,7 @@ export default compose(
 			uname
 			apiKey
 			isDev
+			canRunInCore
 		}
 	`),
 	withProps(({data})=>({...data})),
@@ -178,6 +188,21 @@ export default compose(
 		mutation:graphql`
 			mutation app_remove_Mutation($id:ObjectID!){
 				app_remove(_id:$id)
+			}
+		`,
+	})),
+
+	withMutation(({id})=>({
+		promise:true,
+		name:"setRunInCore",
+		patch4:id,
+		variables:{id},
+		mutation:graphql`
+			mutation app_canRunInCore_Mutation($id:ObjectID!,$canRunInCore:Boolean){
+				app_canRunInCore(_id:$id,canRunInCore:$canRunInCore){
+					updatedAt
+					canRunInCore
+				}
 			}
 		`,
 	})),
