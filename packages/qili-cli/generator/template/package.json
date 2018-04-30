@@ -37,7 +37,7 @@
   "scripts": {
     "int":"qili init",
     "build": "webpack",
-    "dev": "yarn relay && webpack-dev-server --env=dev",
+    "dev": "yarn relay && yarn persist && webpack-dev-server --env=dev",
     "cordova": "cordova create cordova --link-to=dist && cd cordova && cp www/phone.xml config.xml && cordova platform add android && cordova build android",
     "relay": "relay-compiler --src ./src --schema ./schema.graphql",
     "persist": "qili persist src cloud",

@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import {compose, branch, renderComponent} from "recompose"
 import {connect} from "react-redux"
 import AppBar from 'material-ui/AppBar';
@@ -37,7 +37,7 @@ class NoNetworkBanner extends Component{
 					<div style={{display:"flex",flexDirection:"row",  background:"black"}}>
 						<div style={{flex:1}}>
 							<IconButton onClick={e=>this.setState({detailed:false})}>
-								<IconClose 
+								<IconClose
 									color="white"/>
 							</IconButton>
 						</div>
@@ -50,11 +50,11 @@ class NoNetworkBanner extends Component{
 						</div>
 					</div>
 					<NoNetwork/>
-				</FullPage>	
-			)			
+				</FullPage>
+			)
 		}
 		return  (
-			<div>
+			<Fragment>
 				<div onClick={e=>this.setState({detailed:true})}
 					style={{display:"flex",flexDirection:"row",  background:red100}}>
 					<div style={{flex:1}}>
@@ -67,7 +67,7 @@ class NoNetworkBanner extends Component{
 					</div>
 				</div>
 				{noNetwork}
-			</div>
+			</Fragment>
 		)
 	}
 }
@@ -76,10 +76,10 @@ class NoNetworkBanner extends Component{
 export const withNotification=(Base=()=>null)=>compose(
 	connect(({qili:{networkStatus}})=>({networkStatus})),
 )(({networkStatus, ...props})=>(
-	<div>
+	<Fragment>
 		{networkStatus=="offline" ? <NoNetworkBanner/> : null}
 		<Base {...props}/>
-	</div>
+	</Fragment>
 ))
 
 export const Notification=withNotification()

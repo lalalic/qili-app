@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,getContext,withProps,setPropTypes} from "recompose"
 import {graphql, withMutation} from "../tools/recompose"
@@ -16,7 +16,7 @@ import Photo from "./photo"
 
 export const Account=({id, photo, username, children,toSetting,toProfile,mutate})=>{
 	return (
-		<div>
+		<Fragment>
 			<List>
 				<ListItem primaryText={username}
 					leftIcon={
@@ -40,7 +40,7 @@ export const Account=({id, photo, username, children,toSetting,toProfile,mutate}
 					onClick={toSetting}
 					/>
 			</List>
-		</div>
+		</Fragment>
 	)
 }
 

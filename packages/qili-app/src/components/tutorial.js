@@ -1,9 +1,9 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 
 import { AutoRotatingCarousel, Slide } from 'material-auto-rotating-carousel'
 import MediaQuery from "react-responsive"
 export const Tutorial=({slides=[], onEnd, landscape=false})=>(
-	<div>
+	<Fragment>
 		<MediaQuery orientation="landscape">
 		{match=>match && (landscape=true) && null}
 		</MediaQuery>
@@ -27,7 +27,7 @@ export const Tutorial=({slides=[], onEnd, landscape=false})=>(
 				})
 			}
 		</AutoRotatingCarousel>
-	</div>
+	</Fragment>
 )
 
 export default Tutorial

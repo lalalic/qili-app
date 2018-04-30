@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {FlatButton,TextField} from "material-ui"
 import isEmail from "is-valid-email"
@@ -100,7 +100,7 @@ export class Authentication extends Component{
 
 
         return (
-			<div>
+			<Fragment>
 				<div style={{display:"table",tableLayout:"fixed",width:"100%"}}>
 					<div style={{display:"table-cell"}}>
 						<TextField
@@ -131,7 +131,7 @@ export class Authentication extends Component{
 				<center>
                     {btnLogin}
                 </center>
-			</div>
+			</Fragment>
         )
     }
 

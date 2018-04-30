@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {withStateHandlers} from "recompose"
 
@@ -27,7 +27,7 @@ export default class InfoForm extends Component{
 			)
 		}
 		return (
-			<div>
+			<Fragment>
 				<List {...others}>
 				{
 					children.map((child,i)=>{
@@ -74,7 +74,7 @@ export default class InfoForm extends Component{
 				}
 				</List>
 				{editor}
-			</div>
+			</Fragment>
 		)
 	}
 }

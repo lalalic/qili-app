@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,mapProps,getContext} from "recompose"
 import {withMutation} from "../tools/recompose"
@@ -148,7 +148,7 @@ export class Comment extends Component{
 			}
 
 			return (
-				<div>
+				<Fragment>
 					{timing}
 					<div key={comment._id} className="acomment" style={{padding:5}}>
 						<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{left}</div>
@@ -169,7 +169,7 @@ export class Comment extends Component{
 						</div>
 						<div style={{width:40,minHeight:40,verticalAlign:"top"}}>{right}</div>
 					</div>
-				</div>
+				</Fragment>
 			)
 		}
 	}

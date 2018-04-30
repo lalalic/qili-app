@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
@@ -20,7 +20,7 @@ export const Profile=({
 	mutate: update,
 	logout,
 	})=>(
-	<div>
+	<Fragment>
 		<InfoForm style={{padding:5}}>
 			<Field primaryText="头像"
 				rightAvatar={
@@ -69,7 +69,7 @@ export const Profile=({
 				{action:"Logout", label:"退出账号", icon:<IconQuit/>, onSelect:logout}
 				]}
 			/>
-	</div>
+	</Fragment>
 )
 
 

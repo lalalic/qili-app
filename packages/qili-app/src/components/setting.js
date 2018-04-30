@@ -1,4 +1,4 @@
-import React, {Component} from "react"
+import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {getContext, compose} from "recompose"
 import {connect} from "react-redux"
@@ -16,7 +16,7 @@ import CheckUpdate from "../components/check-update"
 import CommandBar from "../components/command-bar"
 
 export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=>(
-	<div>
+	<Fragment>
 		<List>
 			{app && (<ListItem primaryText="去评价" leftIcon={<IconRate/>}/>)}
 
@@ -39,7 +39,7 @@ export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=
 
 			<ListItem primaryText="关于" leftIcon={<IconAbout/>}/>
 		</List>
-	</div>
+	</Fragment>
 )
 
 export default compose(
