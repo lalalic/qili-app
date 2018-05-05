@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "graphql": "^0.12.0" ,
+    "graphql": "^0.13.0" ,
     "graphql-tools": "^3.0.0",
     "graphql-type-json": "^0.1.4",
     "is-valid-email": "^0.0.2",
@@ -34,7 +34,7 @@
   "resolutions":{
       "*/react":"^16.0.0",
       "*/react-dom":"^16.0.0",
-      "*/graphql":"^0.12.0",
+      "*/graphql":"^0.13.0",
       "*/react":"^16.0.0",
       "*/minimatch":"^3.0.0"
   },

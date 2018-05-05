@@ -13,7 +13,7 @@ type App implements Node {
   canRunInCore: Boolean
 }
 
-type AppComment implements Comment, Node {
+type AppComment implements Comment & Node {
   id: ID!
   content: String!
   type: CommentType
