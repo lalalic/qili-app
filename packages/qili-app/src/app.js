@@ -85,6 +85,7 @@ export default compose(
 		isDev: PropTypes.bool,
 		notifyOffline: PropTypes.bool,
 		supportOffline: PropTypes.object,
+		persistStoreConfig: PropTypes.object,
 	}),
 
 	setStatic("render", (app)=>{
@@ -165,7 +166,7 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,reducers,appId,project,isDev})=>{
+	withProps(({store,reducers,appId,project,isDev,persistStoreConfig})=>{
 		File.root=appId
 		if(!store){
 			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -174,7 +175,7 @@ export default compose(
 				composeEnhancers(applyMiddleware(thunk),autoRehydrate())
 			)
 
-			persistStore(store,{keyPrefix:`${appId}:`}, ()=>{
+			persistStore(store,{keyPrefix:`${appId}:`,...persistStoreConfig}, ()=>{
 				store.dispatch(ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})

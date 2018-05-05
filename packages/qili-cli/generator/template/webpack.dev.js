@@ -1,5 +1,5 @@
 const path = require('path')
-const {ContextReplacementPlugin} = require("webpack")
+const {ContextReplacementPlugin, IgnorePlugin} = require("webpack")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
@@ -31,7 +31,7 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				filename:"cordova.html",
 			}),
-			//new IgnorePlugin(/^react-router$/)
+			new IgnorePlugin(/^react-router$/)
 		]
 	}
 }
