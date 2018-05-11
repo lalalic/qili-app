@@ -1,5 +1,5 @@
 import PropTypes from "prop-types"
-import {compose, getContext, mapProps} from "recompose"
+import {compose, getContext,withProps} from "recompose"
 import {withMutation} from "../tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
@@ -111,7 +111,7 @@ function dataAsBlob(data){
 	})
 }
 
-export default {//for testable
+const FileModule={//for testable
     main,
     selectJsonFile(){
         return main("json")
@@ -148,44 +148,39 @@ export default {//for testable
 		var blob = new Blob(byteArrays, {type: contentType});
 		return blob;
 	},
-    root:null,//injected later
-    upload(data, props, token, url="http://up.qiniu.com"){
-        return new Promise((resolve, reject)=>{
-            props=props||{}
-            if(!props.id || !props.key){
-                reject("upload must have id and key in props")
-            }
-			if(module.exports.root){
-                props={...props,key:`${module.exports.root}/${props.id}/${props.key}`}
-            }
-			props['x:id']=props.id
-			delete  props.id
-
-			if(props.key)
-				props.key=props.key.replace(':','/')
-
-			const getToken=()=>{
-				if(typeof(token)=="string"){
-					return Promise.resolve(token)
-				}else{
-					return token({key:props.key}).then(({token})=>token)
-				}
-			}
-
-			getToken().then(token=>{
+	
+	upload(data,host,path,props={},client,url="http://up.qiniu.com"){
+		return client
+			.runQL({
+				id:"file_token_Query",
+				variables:{host,path},
+				query: (graphql`
+					query file_token_Query($host:ID, $path:String){
+						token:file_upload_token(host:$host, path:$path){
+							token
+							id
+						}
+					}
+				`)().text
+			})
+			.then(({data:{token,id}})=>new Promise((resolve,reject)=>
 				dataAsBlob(data).then(data=>{
 					var formData=new FormData()
 					formData.append('file',data)
 					formData.append('token',token)
-					Object.keys(props)
-						.forEach(a=>formData.append(a,props[a]))
-
+					if(props){
+						Object.keys(props)
+							.forEach(a=>formData.append(a,props[a]))
+					}
+					formData.append("x:id",id||host)
+					
 					var xhr=new XMLHttpRequest()
 					xhr.onreadystatechange = function () {
 						if (xhr.readyState === 4) {
-							if (xhr.status >= 200 && xhr.status < 300)
-								resolve(JSON.parse(xhr.responseText).data.file_create.url)
-							else
+							if (xhr.status >= 200 && xhr.status < 300){
+								let url=JSON.parse(xhr.responseText).data.file_create.url
+								resolve({id,url})
+							}else
 								reject(xhr.responseText);
 						}
 					}
@@ -193,42 +188,29 @@ export default {//for testable
 					xhr.open('POST',url,true)
 					xhr.send(formData)
 				})
-			})
-        })
-    },
-
-    withGetToken:compose(
+			))
+	},
+	
+	withUpload:compose(
 		getContext({client:PropTypes.object}),
-		mapProps(({client,...others})=>({
-			...others,
-			getToken(key){
-				key=typeof(key)=="string" ? {key} : key
-				return client.runQL({
-						id:"file_token_Query",
-						variables:key,
-						query: (graphql`
-							query file_token_Query($key:String){
-								token:file_upload_token(key:$key){
-									token
-									id
-								}
-							}
-						`)().text
-					})
-					.then(({data:{token}})=>token)
+		withProps(({client})=>({
+			upload(data,host,path,props={},url="http://up.qiniu.com"){
+				return FileModule.upload(data,host,path,props,client,url)
 			}
 		}))
-	),
-
-	withFileCreate: withMutation({
-        name:"createFile",
-        promise:true,
-        mutation:graphql`
-    		mutation file_create_Mutation($_id:String!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
-    			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
-    				url
-    			}
-    		}
-    	`
-    })
+	)
 }
+
+const withFileCreate=withMutation({
+	name:"createFile",
+	promise:true,
+	mutation:graphql`
+		mutation file_create_Mutation($_id:String!,$host:ID!,$bucket:String,$size:Int,$crc:Int,$mimeType:String,$imageInfo:JSON){
+			file_create(_id:$_id,host:$host,bucket:$bucket,size:$size,crc:$crc,mimeType:$mimeType,imageInfo:$imageInfo){
+				url
+			}
+		}
+	`
+})
+
+export default FileModule

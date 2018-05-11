@@ -209,8 +209,8 @@ export default compose(
 		},
 
 	})),
-	file.withGetToken,
-	mapProps(({mutate,data,relay,hint,system,template,getToken})=>({
+	file.withUpload,
+	mapProps(({mutate,data,relay,hint,system,template,upload})=>({
 		hint,system,template,
 		data:data ? data.comments.edges.map(({node})=>node) : [],
 		commentText({content}){
@@ -218,12 +218,8 @@ export default compose(
 		},
 		commentPhoto(){
 			return file.selectImageFile()
-                .then(data=>getToken()
-					.then(({id,token})=>
-						file.upload(data,{id:parent,key:`comments:${id}/a.jpg`},token)
-						.then(url=>mutate({content:url, type:"photo",id}))
-					)
-				)
+                .then(data=>upload(data,"comments","a.jpg"))
+				.then(({url,id})=>mutate({content:url, type:"photo",id}))
 		},
 		loadMore(ok){
 			if(relay.hasMore() && !relay.isLoading()){

@@ -14,14 +14,14 @@ import CheckUpdate from "./check-update"
 import Photo from "./photo"
 
 
-export const Account=({id, photo, username, children,toSetting,toProfile,mutate})=>{
+export const Account=({photo, username, children,toSetting,toProfile,mutate})=>{
 	return (
 		<Fragment>
 			<List>
 				<ListItem primaryText={username}
 					leftIcon={
 						<Photo src={photo}
-							autoUpload={{id,key:"photo.jpg"}}
+							autoUpload={{path:"photo.jpg"}}
 							onPhoto={photo=>mutate({photo})}/>
 					}
 					rightIcon={<IconRightArrow/>}
@@ -56,7 +56,7 @@ export default compose(
 		return {
 			patch4:id,
 			mutation: graphql`
-				mutation account_update_Mutation($photo:String){
+				mutation account_update_Mutation($photo:URL){
 					user_update(photo:$photo)
 				}
 			`

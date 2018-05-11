@@ -14,7 +14,7 @@ import IconQuit from "material-ui/svg-icons/file/cloud-off"
 const {Field}=InfoForm
 
 export const Profile=({
-	id,username,birthday,gender,location,photo,signature,
+	username,birthday,gender,location,photo,signature,
 	children,
 	valueStyle={color:"lightgray"},
 	mutate: update,
@@ -25,7 +25,7 @@ export const Profile=({
 			<Field primaryText="头像"
 				rightAvatar={
 					<Photo src={photo} size={100}
-						autoUpload={{id,key:'photo.jpg'}}
+						autoUpload={{path:'photo.jpg'}}
 						onPhoto={photo=>update({photo})}/>
 					}
 				style={{height:100}}/>
@@ -80,7 +80,7 @@ export default compose(
 		return {
 			patch4:id,
 			mutation: graphql`
-				mutation userProfile_update_Mutation($photo:String,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
+				mutation userProfile_update_Mutation($photo:URL,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
 					user_update(photo:$photo,username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature)
 				}
 			`

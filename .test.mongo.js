@@ -3,8 +3,8 @@ import project from "qili-app-console/package.json"
 import {QiliApp, File} from "qili-app"
 
 const _upload=File.upload
-File.upload=function(){
-	return _upload(...arguments).catch(a=>a).then(a=>"images/icon.svg")
+File.upload=function(data,host){
+	return Promise.resolve({url:"images/icon.svg",id:`tests:${Date.now()}`})
 }
 
 project.homepage=`http://localhost:9081`

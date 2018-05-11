@@ -26,7 +26,6 @@ import supportTap from 'react-tap-event-plugin'
 import * as date from "./tools/date"
 
 import Performance from "./components/performance"
-import File from "./components/file"
 import Authentication from "./components/authentication"
 import Tutorial from "./components/tutorial"
 import Empty from "./components/empty"
@@ -167,7 +166,6 @@ export default compose(
 	)),
 
 	withProps(({store,reducers,appId,project,isDev,persistStoreConfig})=>{
-		File.root=appId
 		if(!store){
 			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(

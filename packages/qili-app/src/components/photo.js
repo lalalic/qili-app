@@ -4,14 +4,14 @@ import PropTypes from "prop-types"
 import {Avatar, Dialog, SvgIcon,IconButton} from "material-ui"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconFile from 'material-ui/svg-icons/device/sd-storage'
-import file from './file' 
+import file from "./file"
 
 export class Photo extends Component{
     state={url:this.props.src, toSelectWay:false}
     render(){
         const {url,toSelectWay}=this.state
         const {size=24, cameraOptions, overwritable,onPhoto,
-			autoUpload, getToken, src, onClick, ...others}=this.props
+			autoUpload,upload, src, onClick, ...others}=this.props
         others.onClick=onClick || this.toSelectWay.bind(this)
 		others.style={...others.style,width:size,height:size}
 
@@ -84,13 +84,22 @@ export class Photo extends Component{
 
 	handlePhoto(url){
 		this.setState({toSelectWay:false})
-		const {onPhoto,autoUpload,getToken}=this.props
+		const {onPhoto,autoUpload,upload}=this.props
 		this.setState({url})
 		if(autoUpload){
-			file.upload(url,autoUpload,getToken)
-				.then(url=>onPhoto && onPhoto(url))
+			upload(url,autoUpload.host,autoUpload.path)
+				.then(({url,id})=>{
+					this.setState({url})
+					onPhoto && onPhoto(url,id)
+				})
 		}else {
-			onPhoto && onPhoto(url, (id,key,token)=>upload(url,{id,key},token||getToken))
+			onPhoto && onPhoto(url, (host,path, props)=>{
+				return upload(url,host,path,props)
+					.then(a=>{
+						this.setState({url:a.url})
+						return a
+					})
+			})
 		}
 	}
 
@@ -102,7 +111,7 @@ export class Photo extends Component{
 
         const {onFail, width, height}=this.props
         file.selectImageFile(width, height).
-            then(({url,binary})=>this.handlePhoto(url), onFail)
+            then(({url})=>this.handlePhoto(url), onFail)
     }
 
     takePhoto(sourceType=Camera.PictureSourceType.CAMERA){
@@ -123,7 +132,6 @@ export class Photo extends Component{
         cameraOptions: PropTypes.object,
         onPhoto: PropTypes.func,
         onFail: PropTypes.func,
-		getToken: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired,
     }
 
     static defaultProps={
@@ -142,4 +150,4 @@ export class Photo extends Component{
     }
 }
 
-export default file.withGetToken(Photo)
+export default file.withUpload(Photo)

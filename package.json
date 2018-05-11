@@ -58,7 +58,7 @@
     "test": "jest",
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
-    "persist": "qili persist packages ../qili/lib/admin",
+    "persist": "yarn relay && qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
     "api.weoffice": "rollup -c --no-treeshake -o ../we-office/node_modules/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
     "api.superdaddy": "rollup -c --no-treeshake -o ../superdaddy/node_modules/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
     "api": "rollup -c --no-treeshake -o ./packages/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
