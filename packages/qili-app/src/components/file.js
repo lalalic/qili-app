@@ -205,7 +205,7 @@ const FileModule={//for testable
 		getContext({client:PropTypes.object}),
 		withProps(({client})=>({
 			upload(data,host,path,props={},token){
-				return FileModule.upload(data,host,path,props,token,client,url)
+				return FileModule.upload(data,host,path,props,token,client)
 			}
 		}))
 	),
