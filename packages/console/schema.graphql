@@ -131,7 +131,7 @@ type Query {
   version: String!
   schema: String!
   me: User!
-  file_upload_token(host:ID, path:String): FileToken
+  file_upload_token(host:ID, path:String, justToken:Boolean): FileToken
   app_comments(parent: ObjectID, last: Int, before: JSON): AppCommentConnection
 }
 

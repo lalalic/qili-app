@@ -149,21 +149,31 @@ const FileModule={//for testable
 		return blob;
 	},
 	
-	upload(data,host,path,props={},client,url="http://up.qiniu.com"){
-		return client
-			.runQL({
-				id:"file_token_Query",
-				variables:{host,path},
-				query: (graphql`
-					query file_token_Query($host:ID, $path:String){
-						token:file_upload_token(host:$host, path:$path){
-							token
-							id
+	upload(data,host,path,props={},token, client,url="http://up.qiniu.com"){
+		function getToken(){
+			if(token){
+				props.key=path
+				return Promise.resolve({token})
+			}
+			
+			return client
+				.runQL({
+					id:"file_token_Query",
+					variables:{host,path},
+					query: (graphql`
+						query file_token_Query($host:ID, $path:String, $justToken:Boolean){
+							token:file_upload_token(host:$host, path:$path, justToken:$justToken){
+								token
+								id
+							}
 						}
-					}
-				`)().text
-			})
-			.then(({data:{token,id}})=>new Promise((resolve,reject)=>
+					`)().text
+				})
+				.then(({data:{token,id}})=>({token,id}))
+			
+		}
+		return getToken()
+			.then(({token,id})=>new Promise((resolve,reject)=>
 				dataAsBlob(data).then(data=>{
 					var formData=new FormData()
 					formData.append('file',data)
@@ -194,11 +204,24 @@ const FileModule={//for testable
 	withUpload:compose(
 		getContext({client:PropTypes.object}),
 		withProps(({client})=>({
-			upload(data,host,path,props={},url="http://up.qiniu.com"){
-				return FileModule.upload(data,host,path,props,client,url)
+			upload(data,host,path,props={},token){
+				return FileModule.upload(data,host,path,props,token,client,url)
 			}
 		}))
-	)
+	),
+	
+	withGetToken: compose(
+		getContext({client:PropTypes.object}),
+		withProps(({client})=>({
+			getToken(){
+				return client
+					.runQL({
+						id:"file_token_Query",
+						variables:{justToken:true}
+					})
+			}
+		}))
+	),
 }
 
 const withFileCreate=withMutation({
