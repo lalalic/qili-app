@@ -148,14 +148,14 @@ const FileModule={//for testable
 		var blob = new Blob(byteArrays, {type: contentType});
 		return blob;
 	},
-	
+
 	upload(data,host,path,props={},token, client,url="http://up.qiniu.com"){
 		function getToken(){
 			if(token){
 				props.key=path
 				return Promise.resolve({token})
 			}
-			
+
 			return client
 				.runQL({
 					id:"file_token_Query",
@@ -170,7 +170,7 @@ const FileModule={//for testable
 					`)().text
 				})
 				.then(({data:{token,id}})=>({token,id}))
-			
+
 		}
 		return getToken()
 			.then(({token,id})=>new Promise((resolve,reject)=>
@@ -183,7 +183,7 @@ const FileModule={//for testable
 							.forEach(a=>formData.append(a,props[a]))
 					}
 					formData.append("x:id",id||host)
-					
+
 					var xhr=new XMLHttpRequest()
 					xhr.onreadystatechange = function () {
 						if (xhr.readyState === 4) {
@@ -200,7 +200,7 @@ const FileModule={//for testable
 				})
 			))
 	},
-	
+
 	withUpload:compose(
 		getContext({client:PropTypes.object}),
 		withProps(({client})=>({
@@ -209,18 +209,27 @@ const FileModule={//for testable
 			}
 		}))
 	),
-	
-	withGetToken: compose(
+
+	withGetBatchUpload: compose(
 		getContext({client:PropTypes.object}),
-		withProps(({client})=>({
-			getToken(){
-				return client
-					.runQL({
-						id:"file_token_Query",
-						variables:{justToken:true}
-					})
-			}
-		}))
+		withProps(({client})=>{
+            return {
+    			getBatchUpload(){
+    				return client
+    					.runQL({
+    						id:"file_token_Query",
+    						variables:{justToken:true}
+    					})
+                        .then(({data:{token,id:_id}})=>({
+                            token,_id,
+                            upload(data,host, path,props={}){
+                				return FileModule.upload(data,host,path,props,token,client)
+                			}
+                        }))
+    			}
+            }
+
+		})
 	),
 }
 

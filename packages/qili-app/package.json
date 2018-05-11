@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.2.18",
+  "version": "1.2.19",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -34,7 +34,7 @@
       "graphql": "^0.13.0" ,
       "react": "^16.0.0",
       "react-dom": "^16.0.0",
-      "material-ui": "^0.19.0"            
+      "material-ui": "^0.19.0"
   },
   "resolutions":{
       "*/react":"^16.0.0",
