@@ -84,6 +84,7 @@ const QiliAdmin=compose(
 		query:graphql`
 			query console_prefetch_Query{
 				me{
+					id
 					name
 					token
 					apps{
@@ -95,8 +96,8 @@ const QiliAdmin=compose(
 			}
 		`,
 		onSuccess(response,dispatch,store){
-			const {me:{apps, token,name}}=response
-			dispatch(qiliACTION.CURRENT_USER({name,token}))
+			const {me:{apps, token,name,id}}=response
+			dispatch(qiliACTION.CURRENT_USER({id,name,token}))
 			let currentApp=store.getState().console.current
 			if(!currentApp && apps && apps.length>0){
 				dispatch(ACTION.CURRENT_APP(apps[0].id))

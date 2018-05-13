@@ -9,7 +9,7 @@ import {compose, pure,withState,branch,renderComponent, renderNothing,
 		setDisplayName,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
 import {withGraphqlClient} from "./tools/recompose"
-
+import File from "./components/file"
 import {createStore, applyMiddleware, combineReducers} from "redux"
 
 import {connect, Provider} from "react-redux"
@@ -166,6 +166,7 @@ export default compose(
 	)),
 
 	withProps(({store,reducers,appId,project,isDev,persistStoreConfig})=>{
+		File.root=appId
 		if(!store){
 			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(

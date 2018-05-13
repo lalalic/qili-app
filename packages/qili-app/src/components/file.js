@@ -1,5 +1,6 @@
 import PropTypes from "prop-types"
-import {compose, getContext,withProps} from "recompose"
+import {compose, getContext,mapProps} from "recompose"
+import {connect} from "react-redux"
 import {withMutation} from "../tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
@@ -100,7 +101,7 @@ function dataAsBlob(data){
 					reader.readAsArrayBuffer(file)
 				},reject), reject)
 			}else if(data.startsWith("data:")){
-				resolve(module.exports.toBlob(data))
+				resolve(FileModule.toBlob(data))
 			}else{
 				fetch(data).then(res=>res.blob()).then(resolve,reject)
 			}
@@ -149,81 +150,50 @@ const FileModule={//for testable
 		return blob;
 	},
 
-	upload(data,host,path,props={},token, client,url="http://up.qiniu.com"){
-		function getToken(){
-			if(token){
-				props.key=path
-				return Promise.resolve({token})
-			}
-
-			return client
-				.runQL({
-					id:"file_token_Query",
-					variables:{host,path},
-					query: (graphql`
-						query file_token_Query($host:ID, $path:String, $justToken:Boolean){
-							token:file_upload_token(host:$host, path:$path, justToken:$justToken){
-								token
-								id
-							}
-						}
-					`)().text
-				})
-				.then(({data:{token,id}})=>({token,id}))
-
-		}
-		return getToken()
-			.then(({token,id})=>new Promise((resolve,reject)=>
-				dataAsBlob(data).then(data=>{
-					var formData=new FormData()
-					formData.append('file',data)
-					formData.append('token',token)
-					if(props){
-						Object.keys(props)
-							.forEach(a=>formData.append(a,props[a]))
-					}
-					formData.append("x:id",id||host)
-
-					var xhr=new XMLHttpRequest()
-					xhr.onreadystatechange = function () {
-						if (xhr.readyState === 4) {
-							if (xhr.status >= 200 && xhr.status < 300){
-								let url=JSON.parse(xhr.responseText).data.file_create.url
-								resolve({id,url})
-							}else
-								reject(xhr.responseText);
-						}
-					}
-
-					xhr.open('POST',url,true)
-					xhr.send(formData)
-				})
-			))
-	},
+    root:"<appId>",//replaced later
 
 	withUpload:compose(
 		getContext({client:PropTypes.object}),
-		withProps(({client})=>({
-			upload(data,host,path,props={},token){
-				return FileModule.upload(data,host,path,props,token,client)
+        connect(state=>({__user:state.qili.user.id})),
+		mapProps(({client,__user,dispatch,...others})=>({
+            ...others,
+			upload(data,host,path,props={}){
+                props={...props,"x:id":host||__user}
+                props.key=`${FileModule.root}/${props["x:id"]}/${path||`${__user}/${Date.now()}`}`.replace(/[:]/g,"/").replace("//","/")
+
+                return client
+                    .runQL({
+                        id:"file_token_Query",
+                        variables:{key:props.key},
+                        query:graphql`query file_token_Query($key:String){
+                            token:file_upload_token(key:$key){
+                                token
+                                id
+                            }
+                        }`,
+                    })
+                    .then(({data:{token:{token}}})=>upload(data,props,token))
 			}
 		}))
 	),
 
 	withGetBatchUpload: compose(
 		getContext({client:PropTypes.object}),
-		withProps(({client})=>{
+        connect(state=>({__user:state.qili.user.id})),
+		mapProps(({client,__user,dispatch, ...others})=>{
             return {
+                ...others,
     			getBatchUpload(){
     				return client
     					.runQL({
     						id:"file_token_Query",
-    						variables:{justToken:true}
     					})
-                        .then(({data:{token,id:_id}})=>({
-                            token,_id,
+                        .then(({data:{token:{token,id:_id}}})=>({
+                            _id,
                             upload(data,host, path,props={}){
-                				return FileModule.upload(data,host,path,props,token,client)
+                                props={...props,"x:id":host||__user}
+                                props.key=`${FileModule.root}/${props["x:id"]}/${path||`${__user}/${Date.now()}`}`.replace(/[:]/g,"/").replace("//","/")
+                                return upload(data,props,token)
                 			}
                         }))
     			}
@@ -231,6 +201,35 @@ const FileModule={//for testable
 
 		})
 	),
+}
+
+
+function upload(data,props={},token,url="http://up.qiniu.com"){
+    return new Promise((resolve,reject)=>
+		dataAsBlob(data).then(data=>{
+            let formData=new FormData()
+			formData.append('file',data)
+			formData.append('token',token)
+            if(props){
+				Object.keys(props)
+					.forEach(a=>formData.append(a,props[a]))
+			}
+
+			var xhr=new XMLHttpRequest()
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4) {
+					if (xhr.status >= 200 && xhr.status < 300){
+						let url=JSON.parse(xhr.responseText).data.file_create.url
+						resolve({id,url})
+					}else
+						reject(xhr.responseText);
+				}
+			}
+
+			xhr.open('POST',url,true)
+			xhr.send(formData)
+		})
+	)
 }
 
 const withFileCreate=withMutation({
