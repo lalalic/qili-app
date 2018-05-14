@@ -190,7 +190,7 @@ const FileModule={//for testable
 		mapProps(({client,__user,dispatch, ...others})=>{
             return {
                 ...others,
-    			getBatchUpload(){
+    			getMultiUpload(){
     				return client
     					.runQL({
     						id:"file_token_Query",
