@@ -11,7 +11,7 @@ export class Photo extends Component{
     render(){
         const {url,toSelectWay}=this.state
         const {size=24, cameraOptions, overwritable,onPhoto,
-			autoUpload,upload, src, onClick, ...others}=this.props
+			autoUpload,upload, src, onClick, getToken, ...others}=this.props
         others.onClick=onClick || this.toSelectWay.bind(this)
 		others.style={...others.style,width:size,height:size}
 

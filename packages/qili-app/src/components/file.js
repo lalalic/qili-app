@@ -152,9 +152,11 @@ const FileModule={//for testable
 
     root:"<appId>",//replaced later
 	
-	uploadPathPolicy(host,user,path){
-		path=path||`${host ? user : ""}/${Date.now()}`
-		return `${FileModule.root}/${host||user}/${path}`
+	uploadPathPolicy(path,host,user){
+		if(!path)
+			return undefined
+		
+		return `${host||user}/${path}`
 			.replace(/[:]/g,"/")
 			.replace("//","/")
 	},
@@ -162,54 +164,37 @@ const FileModule={//for testable
 	withUpload:compose(
 		getContext({client:PropTypes.object}),
         connect(state=>({__user:state.qili.user.id})),
-		mapProps(({client,__user,dispatch,...others})=>({
-            ...others,
-			upload(data,host,path,props={}){
-                props={...props,"x:id":host||__user}
-                props.key=FileModule.uploadPathPolicy(host,__user,path)
-
-                return client
-                    .runQL({
-                        id:"file_token_Query",
-                        variables:{key:props.key},
-                        query:graphql`query file_token_Query($key:String){
-                            token:file_upload_token(key:$key){
-                                token
-                                id
-                            }
-                        }`,
-                    })
-                    .then(({data:{token:{token}}})=>upload(data,props,token))
+		mapProps(({client,__user,dispatch,...others})=>{
+			function getToken(key){
+				return client
+					.runQL({
+						id:"file_token_Query",
+						variables:{key}
+					})
+					.then(({data:{token:{token,_id}}})=>({token,_id}))
 			}
-		}))
-	),
-
-	withGetMultiUpload: compose(
-		getContext({client:PropTypes.object}),
-        connect(state=>({__user:state.qili.user.id})),
-		mapProps(({client,__user,dispatch, ...others})=>{
-            return {
-                ...others,
-    			getMultiUpload(){
-    				return client
-    					.runQL({
-    						id:"file_token_Query",
-    					})
-                        .then(({data:{token:{token,id:_id}}})=>({
-                            _id,
-                            upload(data,host, path,props={}){
-                                props={...props,"x:id":host||__user}
-                                props.key=FileModule.uploadPathPolicy(host,__user,path)
-                                return upload(data,props,token)
-                			}
-                        }))
-    			}
-            }
-
+			return{
+				...others,
+				upload(data,host,path,props={},token){
+					if(typeof(props)=="string"){
+						token=props
+						props={}
+					}
+					props={...props,"x:id":host||__user}
+					let key=FileModule.uploadPathPolicy(path,host,__user)
+					if(key){
+						props.key=key
+					}
+					
+					return (token ? Promise.resolve({token}) : getToken(props.key))
+						.then(({token})=>upload(data,props,token))
+				},
+				
+				getToken,
+			}
 		})
-	),
+	)
 }
-
 
 function upload(data,props={},token,url="http://up.qiniu.com"){
     return new Promise((resolve,reject)=>
@@ -227,7 +212,7 @@ function upload(data,props={},token,url="http://up.qiniu.com"){
 				if (xhr.readyState === 4) {
 					if (xhr.status >= 200 && xhr.status < 300){
 						let url=JSON.parse(xhr.responseText).data.file_create.url
-						resolve({id,url})
+						resolve({id:props["x:id"],url})
 					}else
 						reject(xhr.responseText);
 				}
