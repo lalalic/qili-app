@@ -151,6 +151,13 @@ const FileModule={//for testable
 	},
 
     root:"<appId>",//replaced later
+	
+	uploadPathPolicy(host,user,path){
+		path=path||`${host ? user : ""}/${Date.now()}`
+		return `${FileModule.root}/${host||user}/${path}`
+			.replace(/[:]/g,"/")
+			.replace("//","/")
+	},
 
 	withUpload:compose(
 		getContext({client:PropTypes.object}),
@@ -159,7 +166,7 @@ const FileModule={//for testable
             ...others,
 			upload(data,host,path,props={}){
                 props={...props,"x:id":host||__user}
-                props.key=`${FileModule.root}/${props["x:id"]}/${path||`${__user}/${Date.now()}`}`.replace(/[:]/g,"/").replace("//","/")
+                props.key=FileModule.uploadPathPolicy(host,__user,path)
 
                 return client
                     .runQL({
@@ -177,7 +184,7 @@ const FileModule={//for testable
 		}))
 	),
 
-	withGetBatchUpload: compose(
+	withGetMultiUpload: compose(
 		getContext({client:PropTypes.object}),
         connect(state=>({__user:state.qili.user.id})),
 		mapProps(({client,__user,dispatch, ...others})=>{
@@ -192,7 +199,7 @@ const FileModule={//for testable
                             _id,
                             upload(data,host, path,props={}){
                                 props={...props,"x:id":host||__user}
-                                props.key=`${FileModule.root}/${props["x:id"]}/${path||`${__user}/${Date.now()}`}`.replace(/[:]/g,"/").replace("//","/")
+                                props.key=FileModule.uploadPathPolicy(host,__user,path)
                                 return upload(data,props,token)
                 			}
                         }))
