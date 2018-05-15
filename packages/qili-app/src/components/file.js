@@ -193,41 +193,40 @@ const FileModule={//for testable
 					}
 
 					return (token ? Promise.resolve({token}) : getToken(props.key))
-						.then(({token})=>upload(data,props,token))
+						.then(({token})=>FileModule.upload(data,props,token))
 				},
 
 				getToken,
 			}
 		})
-	)
-}
-
-function upload(data,props={},token,url="http://up.qiniu.com"){
-    return new Promise((resolve,reject)=>
-		dataAsBlob(data).then(data=>{
-            let formData=new FormData()
-			formData.append('file',data)
-			formData.append('token',token)
-            if(props){
-				Object.keys(props)
-					.forEach(a=>formData.append(a,props[a]))
-			}
-
-			var xhr=new XMLHttpRequest()
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState === 4) {
-					if (xhr.status >= 200 && xhr.status < 300){
-						let url=JSON.parse(xhr.responseText).data.file_create.url
-						resolve({id:props["x:id"],url})
-					}else
-						reject(xhr.responseText);
+	),
+	upload(data,props={},token,url="http://up.qiniu.com"){
+		return new Promise((resolve,reject)=>
+			dataAsBlob(data).then(data=>{
+				let formData=new FormData()
+				formData.append('file',data)
+				formData.append('token',token)
+				if(props){
+					Object.keys(props)
+						.forEach(a=>formData.append(a,props[a]))
 				}
-			}
 
-			xhr.open('POST',url,true)
-			xhr.send(formData)
-		})
-	)
+				var xhr=new XMLHttpRequest()
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4) {
+						if (xhr.status >= 200 && xhr.status < 300){
+							let url=JSON.parse(xhr.responseText).data.file_create.url
+							resolve({id:props["x:id"],url})
+						}else
+							reject(xhr.responseText);
+					}
+				}
+
+				xhr.open('POST',url,true)
+				xhr.send(formData)
+			})
+		)
+	}
 }
 
 const withFileCreate=withMutation({
@@ -241,7 +240,5 @@ const withFileCreate=withMutation({
 		}
 	`
 })
-
-FileModule.upload=upload
 
 export default FileModule
