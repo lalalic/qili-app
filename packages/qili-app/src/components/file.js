@@ -236,4 +236,6 @@ const withFileCreate=withMutation({
 	`
 })
 
+FileModule.upload=upload
+
 export default FileModule
