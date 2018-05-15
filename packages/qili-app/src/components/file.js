@@ -151,11 +151,11 @@ const FileModule={//for testable
 	},
 
     root:"<appId>",//replaced later
-	
+
 	uploadPathPolicy(path,host,user){
 		if(!path)
 			return undefined
-		
+
 		return `${host||user}/${path}`
 			.replace(/[:]/g,"/")
 			.replace("//","/")
@@ -169,7 +169,13 @@ const FileModule={//for testable
 				return client
 					.runQL({
 						id:"file_token_Query",
-						variables:{key}
+						variables:{key},
+                        query:graphql`query file_token_Query($key:String){
+                            token: file_upload_token(key: $key){
+                                _id: id
+                                token
+                            }
+                        }`
 					})
 					.then(({data:{token:{token,_id}}})=>({token,_id}))
 			}
@@ -185,11 +191,11 @@ const FileModule={//for testable
 					if(key){
 						props.key=key
 					}
-					
+
 					return (token ? Promise.resolve({token}) : getToken(props.key))
 						.then(({token})=>upload(data,props,token))
 				},
-				
+
 				getToken,
 			}
 		})
