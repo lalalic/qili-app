@@ -113,7 +113,7 @@ export default function createEnvironment(props){
 		})().catch(e=>{
 			loading(false)
 			showMessage({message:e.message, level:"error"})
-			console.debug({error, props, network:network()})
+			console.debug({error:e, props, network:network()})
 			throw e
 		}).then(res=>{
 			loading(false)
