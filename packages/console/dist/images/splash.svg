@@ -4,9 +4,7 @@
      stroke="lightgreen"
     width="100%" height="100%" viewBox="0 0 24 24">
   <g fill="none" stroke-width="1">
-    <circle cx="18" cy="4" r="2"/>
-    <circle cx="4" cy="6" r="3"/>
-    <text x="5" y="20" font-size="5">C N B</text>
-    <path d="M 3.5208 10.2525 q 6.95554 7.98853 16.9068 -4.76903"/>
+    <text x="3" y="16" font-size="5">Q i L i 2</text>
+    <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
   </g>
 </svg>

@@ -1,10 +1,13 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import CountDown from "./count-down"
-import FullPage  from "./full-page"
+import Logo from "./logo"
 
 export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})=>(
-	<FullPage style={{
+	<div style={{
+		flex:"1 100%",
+		display:"flex",
+		flexDirection:"column",
 		backgroundColor:"transparent",
 		backgroundImage: url ? `${url}?width=${width}&height=${height}` : undefined,
 	}}>
@@ -19,7 +22,15 @@ export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})
 				color:"white",
 				borderRadius:5,
 			}}><CountDown n={3} {...props}/>s 跳过</div>
-	</FullPage>
+		<div style={{flex:"1 100%"}}>
+			{!url && <Logo style={{width:200,height:"100%",display:"block",margin:"auto"}}/>}
+		</div>
+		<div style={{
+				flex:1,
+				fontSize:"x-small",
+				textAlign:"center"
+			}}>----- QiLi2提供云服务 -----</div>
+	</div>
 )
 
 SplashAD.contextTypes={

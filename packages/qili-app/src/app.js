@@ -87,8 +87,8 @@ export default compose(
 		persistStoreConfig: PropTypes.object,
 	}),
 
-	setStatic("render", (app)=>{
-		let container=document.getElementById('app')
+	setStatic("render", (app,container)=>{
+		container=container||document.getElementById('app')
 		if(!container){
 			container=document.createElement('div')
 			container.id='app'
@@ -109,6 +109,8 @@ export default compose(
 				background-color:white;
 				margin:0px auto;
 				position:relative;
+				display:flex;
+				flex-direction:column;
 			`
 		}
 
@@ -121,7 +123,7 @@ export default compose(
 					position:absolute;
 					width:100%;
 					height:100%;
-					min-height:${window.innerHeight}px
+					overflow:hidden;
 				}
 			`
 			//container.style.height=window.innerHeight+'px'
@@ -266,16 +268,16 @@ export default compose(
 			</Provider>
 	)),
 
-	branch(({AD, adUrl})=>!AD && adUrl,renderComponent(({doneAD, adUrl})=><SplashAD url={adUrl} onEnd={doneAD}/>)),
-
-	branch(({inited})=>!inited, renderComponent(()=>(
-		<center>
-			<div style={{width:300,height:300,margin:"100px auto"}}>
-				<img src="images/splash.svg"/>
-			</div>
-			<div className="spinner" id="loading"/>
-		</center>
-	))),
+	branch(({AD, inited, adUrl})=>!AD || !inited,
+		renderComponent(({inited, doneAD, adUrl, store, theme})=>(
+				<Provider store={store}>
+					<UI muiTheme={theme}>
+						<SplashAD url={adUrl} onEnd={inited ? doneAD : a=>a}/>
+					 </UI>
+				</Provider>
+			)
+		)
+	),
 
 	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
 

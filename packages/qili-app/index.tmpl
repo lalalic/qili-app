@@ -8,54 +8,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta http-equiv="Content-Security-Policy">
         <title><%= htmlWebpackPlugin.options.title %></title>
-		<style>
-			.spinner {
-			  width: 40px;
-			  height: 40px;
-			  margin: 100px auto;
-			  background-color: #333;
-
-			  border-radius: 100%;
-			  -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
-			  animation: sk-scaleout 1.0s infinite ease-in-out;
-			}
-
-			@-webkit-keyframes sk-scaleout {
-			  0% { -webkit-transform: scale(0) }
-			  100% {
-				-webkit-transform: scale(1.0);
-				opacity: 0;
-			  }
-			}
-
-			@keyframes sk-scaleout {
-			  0% {
-				-webkit-transform: scale(0);
-				transform: scale(0);
-			  } 100% {
-				-webkit-transform: scale(1.0);
-				transform: scale(1.0);
-				opacity: 0;
-			  }
-			}
-			#app{
-				width:100%;
-			}
-
-			@media screen and (min-width:960px){
-				#app{
-					width:960px;
-				}
-			}
-		</style>
     </head>
     <body style="display:flex;flex-direction:column;overflow:hidden;margin:0px auto;padding:0;background-color:lightgray;position:absolute;width:100%;height:100%">
 		<div id="app" style="flex:1;background-color:white;margin:0px auto;position:relative;display:flex;flex-direction:column;">
-			<div>
-				<div style="width:300px;height:300px;margin:100px auto;">
-					<img src="images/splash.svg"/>
+			<div style="flex:1 100%;display:flex;flex-direction:column;">
+				<div style="flex:1 100%;overflow:hidden">
+					
 				</div>
-				<div class="spinner" id="loading"/>
+				<div style="flex:1;font-size:x-small;text-align:center">----- QiLi2提供云服务 -----</div>
 			</div>
 		</div>
 		<%=htmlWebpackPlugin.options.extra%>
