@@ -9,7 +9,7 @@ export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})
 		display:"flex",
 		flexDirection:"column",
 		backgroundColor:"transparent",
-		backgroundImage: url ? `${url}?width=${width}&height=${height}` : undefined,
+		overflow:"hidden"
 	}}>
 		<div className="sticky top right" 
 			onClick={props.onEnd}
@@ -22,8 +22,11 @@ export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})
 				color:"white",
 				borderRadius:5,
 			}}><CountDown n={3} {...props}/>s 跳过</div>
-		<div style={{flex:"1 100%"}}>
-			{!url && <Logo style={{width:200,height:"100%",display:"block",margin:"auto"}}/>}
+		<div style={{flex:"1 100%",overflow:"hidden"}}>
+			{!url ? 
+				<Logo style={{width:200,height:"100%",display:"block",margin:"auto"}}/> :
+				<img src={url} style={{display:"block",margin:"auto",maxHeight:"100%",maxWidth:"100%"}}/>
+			}
 		</div>
 		<div style={{
 				flex:1,
