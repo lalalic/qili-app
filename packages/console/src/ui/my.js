@@ -7,8 +7,8 @@ import {List, ListItem} from "material-ui"
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
-export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetting})=>(
-	<Account {...{id, username, photo,toProfile,toSetting}} >
+export const My=({user, toCreate, toApp, toProfile, toSetting})=>(
+	<Account {...{user,toProfile,toSetting}} >
 		<ListItem
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
@@ -16,7 +16,7 @@ export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetti
 			onTouchTap={toCreate}
 			leftIcon={<IconAdd/>}
 			nestedItems={
-				apps.map(a=>(
+				user.apps.map(a=>(
 						<ListItem primaryText={a.name} key={a.id}
 							leftIcon={<span/>}
 							rightIcon={<IconItem/>}
@@ -29,15 +29,12 @@ export const My=({id, username, photo, apps, toCreate, toApp, toProfile, toSetti
 
 export default compose(
 	withFragment(graphql`
-		fragment my on User{
-			id
-			username
-			photo
+		fragment my_user on User{
+			...account_user
 			apps{
 				id
 				name
 			}
 		}
-	`),
-	withProps(({data})=>data)
+	`)
 )(My)

@@ -14,7 +14,7 @@ import IconQuit from "material-ui/svg-icons/file/cloud-off"
 const {Field}=InfoForm
 
 export const Profile=({
-	username,birthday,gender,location,photo,signature,
+	user:{username,birthday,gender,location,photo,signature},
 	children,
 	valueStyle={color:"lightgray"},
 	mutate: update,
@@ -48,7 +48,7 @@ export const Profile=({
 				onEdit={location=>update({location})}
 				/>
 
-			<Field primaryText="生日" value={birthday}
+			<Field primaryText="生日" value={new Date(birthday)}
 				type="date"
 				onEdit={birthday=>update({birthday})}/>
 
@@ -76,9 +76,20 @@ export const Profile=({
 
 
 export default compose(
-	withMutation(({id}, data)=>{
+	withFragment(graphql`
+		fragment userProfile_user on User{
+			id
+			username
+			birthday
+			gender
+			location
+			photo
+			signature
+		}
+	`),
+	withMutation(({user}, data)=>{
 		return {
-			patch4:id,
+			patch4:user.id,
 			mutation: graphql`
 				mutation userProfile_update_Mutation($photo:URL,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
 					user_update(photo:$photo,username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature)

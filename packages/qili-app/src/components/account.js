@@ -1,7 +1,7 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,getContext,withProps,setPropTypes} from "recompose"
-import {graphql, withMutation} from "../tools/recompose"
+import {graphql, withMutation, withFragment} from "../tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
 
@@ -14,7 +14,7 @@ import CheckUpdate from "./check-update"
 import Photo from "./photo"
 
 
-export const Account=({photo, username, children,toSetting,toProfile,mutate})=>{
+export const Account=({user:{photo, username}, children,toSetting,toProfile,mutate})=>{
 	return (
 		<Fragment>
 			<List>
@@ -46,15 +46,19 @@ export const Account=({photo, username, children,toSetting,toProfile,mutate})=>{
 
 export default compose(
 	setPropTypes({
-		id: PropTypes.string.isRequired,
-		photo: PropTypes.string,
-		username: PropTypes.string,
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired
 	}),
-	withMutation(({id}, data)=>{
+	withFragment(graphql`
+		fragment account_user on User{
+			id
+			photo
+			username
+		}
+	`),
+	withMutation(({user}, data)=>{
 		return {
-			patch4:id,
+			patch4:user.id,
 			mutation: graphql`
 				mutation account_update_Mutation($photo:URL){
 					user_update(photo:$photo)
@@ -63,3 +67,6 @@ export default compose(
 		}
 	})
 )(Account)
+
+
+

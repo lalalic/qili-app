@@ -181,22 +181,20 @@ const router=(
 							withNavigator(),
 							OfflineUI.notSupport,
 							)(Dashboard)}/>
-
+			
 			<Route path="my">
 				<IndexRoute  component={
 						compose(
 							withNavigator(),
 							withQuery({
-								spread:false,
 								query: graphql`
 									query console_my_apps_Query{
-										me{
-											...my
+										user:me{
+											...my_user
 										}
 									}
 								`
 							}),
-							withProps(({me})=>({data:me})),
 							getContext({router:PropTypes.object}),
 							mapProps(({router,...others})=>({
 								...others,
@@ -216,22 +214,12 @@ const router=(
 							withQuery({
 								query:graphql`
 									query console_userProfile_me_Query{
-										me{
-											id
-											username
-											birthday
-											gender
-											location
-											photo
-											signature
+										user:me{
+											...userProfile_user
 										}
 									}
 									`,
 							}),
-							withProps(({me})=>({
-								...me,
-								birthday: me&&me.birthday ? new Date(me.birthday) : undefined
-							})),
 						)(Profile)
 					}/>
 			</Route>
