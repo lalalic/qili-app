@@ -1,9 +1,10 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose,getContext,withProps,setPropTypes} from "recompose"
-import {graphql, withMutation, withFragment} from "../tools/recompose"
+import {compose,getContext,withProps,mapProps,setPropTypes} from "recompose"
+import {graphql, withMutation, withFragment, withQuery} from "../tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
+import {Route, IndexRoute} from "react-router"
 
 import IconRightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import IconSetting from 'material-ui/svg-icons/action/settings'
@@ -12,9 +13,32 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import CheckUpdate from "./check-update"
 import Photo from "./photo"
+import Setting from "./setting"
+import Profile from "./user-profile"
 
-
-export const Account=({user:{photo, username}, children,toSetting,toProfile,mutate})=>{
+const Account=compose(
+	setPropTypes({
+		toSetting: PropTypes.func.isRequired,
+		toProfile: PropTypes.func.isRequired
+	}),
+	withFragment(graphql`
+		fragment account_user on User{
+			id
+			photo
+			username
+		}
+	`),
+	withMutation(({user}, data)=>{
+		return {
+			patch4:user.id,
+			mutation: graphql`
+				mutation account_update_Mutation($photo:URL){
+					user_update(photo:$photo)
+				}
+			`
+		}
+	})
+)(({user:{photo, username}, children,toSetting,toProfile,mutate})=>{
 	return (
 		<Fragment>
 			<List>
@@ -42,31 +66,54 @@ export const Account=({user:{photo, username}, children,toSetting,toProfile,muta
 			</List>
 		</Fragment>
 	)
-}
+})
 
-export default compose(
-	setPropTypes({
-		toSetting: PropTypes.func.isRequired,
-		toProfile: PropTypes.func.isRequired
-	}),
-	withFragment(graphql`
-		fragment account_user on User{
-			id
-			photo
-			username
-		}
-	`),
-	withMutation(({user}, data)=>{
-		return {
-			patch4:user.id,
-			mutation: graphql`
-				mutation account_update_Mutation($photo:URL){
-					user_update(photo:$photo)
+
+Account.routes=({
+		path="my",
+		accountQL=graphql`
+			query account_me_Query{
+				user:me{
+					...my_user
 				}
-			`
-		}
-	})
-)(Account)
+			}
+		`,
+		profileQL=graphql`
+			query account_userProfile_Query{
+				user:me{
+					...userProfile_user
+				}
+			}
+			`,
+		account,
+		setting,
+		profile,
+	}={})=>(
+	<Route path={path}>
+		<IndexRoute  component={account ||
+				compose(
+					withQuery({
+						query: accountQL
+					}),
+					getContext({router:PropTypes.object}),
+					mapProps(({router,...others})=>({
+						...others,
+						toSetting: ()=>router.push(`/${path}/setting`),
+						toProfile: ()=>router.push(`/${path}/profile`)
+					})),
+				)(Account)
+			}/>
 
+		<Route path="setting" component={setting||Setting}/>
 
+		<Route path="profile" component={profile||
+				compose(
+					withQuery({
+						query:profileQL
+					}),
+				)(Profile)
+			}/>
+	</Route>
+)
 
+export default Account

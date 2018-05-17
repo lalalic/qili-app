@@ -20,7 +20,7 @@ import {
 	withInit, withMutation, withPagination,
 	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION,
 	Comment, OfflineUI,CommandBar, CheckUpdate,
-	Setting, Profile,
+	Setting, Profile, Account,
 	Offline} from 'qili-app'
 
 import Dashboard from "./ui/dashboard"
@@ -181,48 +181,30 @@ const router=(
 							withNavigator(),
 							OfflineUI.notSupport,
 							)(Dashboard)}/>
-			
-			<Route path="my">
-				<IndexRoute  component={
-						compose(
-							withNavigator(),
-							withQuery({
-								query: graphql`
-									query console_my_apps_Query{
-										user:me{
-											...my_user
-										}
-									}
-								`
-							}),
-							getContext({router:PropTypes.object}),
-							mapProps(({router,...others})=>({
-								...others,
-								toCreate: ()=>router.push(`/app`),
-								toApp:a=>router.push(`/app/${a.id}`),
-								toSetting: ()=>router.push('/my/setting'),
-								toProfile: ()=>router.push('/my/profile')
-							})),
 
-						)(My)
-					}/>
-
-				<Route path="setting" component={withNavigator()(Setting)}/>
-
-				<Route path="profile" component={
-						compose(
-							withQuery({
-								query:graphql`
-									query console_userProfile_me_Query{
-										user:me{
-											...userProfile_user
-										}
-									}
-									`,
-							}),
-						)(Profile)
-					}/>
-			</Route>
+			{Account.routes({
+				account:compose(
+					withNavigator(),
+					withQuery({
+						query: graphql`
+							query console_my_apps_Query{
+								user:me{
+									...my_user
+								}
+							}
+						`
+					}),
+					getContext({router:PropTypes.object}),
+					mapProps(({router,...others})=>({
+						...others,
+						toCreate: ()=>router.push(`/app`),
+						toApp:a=>router.push(`/app/${a.id}`),
+						toSetting: ()=>router.push('/my/setting'),
+						toProfile: ()=>router.push('/my/profile')
+					})),
+				)(My),
+				setting:withNavigator()(Setting)
+			})}
 
 			<Route path="app">
 				<IndexRoute component={compose(

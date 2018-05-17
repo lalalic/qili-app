@@ -4,6 +4,8 @@ import {connect} from "react-redux"
 import {ACTION} from "../state"
 
 import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
+import {Link} from "react-router"
+
 
 import RefreshIcon from "material-ui/svg-icons/navigation/refresh"
 import DefaultIcon from "material-ui/svg-icons/action/favorite-border"
@@ -84,8 +86,7 @@ export default class CommandBar extends Component{
 					</div>
 				)
 			}else{
-                const {Link}=require("react-router")
-				return (
+                return (
 					<div {...props} >
 						<Link
                             style={{cursor:'default'}}

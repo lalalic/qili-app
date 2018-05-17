@@ -1,7 +1,7 @@
 const babel = require("rollup-plugin-babel");
 const commonjs = require("rollup-plugin-commonjs");
 const less =require('rollup-plugin-less')
-const {dependencies={}, peerDependencies={}}=require(`./packages/qili-app/package.json`)
+const {dependencies={}, peerDependencies={},optionalDependencies}=require(`./packages/qili-app/package.json`)
 
 const _external=externals=>id=>{
 	return !!externals.find(a=>id==a||id.startsWith(a+'/'))
@@ -14,6 +14,7 @@ export default {
 	external:_external(
 	  Object.keys(dependencies)
 		.concat(Object.keys(peerDependencies))
+		.concat(Object.keys(optionalDependencies))
 		.filter(a=>!!a)
 	),
 	plugins: [
