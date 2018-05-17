@@ -40,8 +40,12 @@ export default withFragment
 
 
 function isPagination(gql){
-	let {metadata}=gql[Object.keys(gql)[0]]()
-	return metadata && metadata.connection && metadata.connection.length>0
+	try{
+		let {metadata}=gql[Object.keys(gql)[0]]()
+		return metadata && metadata.connection && metadata.connection.length>0
+	}catch(e){
+		return false
+	}
 }
 
 const trim=o=>Object.keys(o).reduce((o,k)=>{

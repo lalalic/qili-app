@@ -74,7 +74,7 @@ Account.routes=({
 		accountQL=graphql`
 			query account_me_Query{
 				user:me{
-					...my_user
+					...account_user
 				}
 			}
 		`,
