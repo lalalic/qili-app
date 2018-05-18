@@ -30,7 +30,7 @@ export const My=({user, toCreate, toApp, toProfile, toSetting})=>(
 export default compose(
 	withFragment(graphql`
 		fragment my_user on User{
-			...account_user
+			...qiliQL_account_user
 			apps{
 				id
 				name

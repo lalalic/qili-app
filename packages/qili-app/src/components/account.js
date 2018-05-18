@@ -1,6 +1,6 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose,getContext,withProps,mapProps,setPropTypes} from "recompose"
+import {compose,getContext,withProps,mapProps,setPropTypes, setDisplayName} from "recompose"
 import {graphql, withMutation, withFragment, withQuery} from "../tools/recompose"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
@@ -16,18 +16,15 @@ import Photo from "./photo"
 import Setting from "./setting"
 import Profile from "./user-profile"
 
+import ql from "../qiliQL"
+
 const Account=compose(
+	setDisplayName("Account"),
 	setPropTypes({
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired
 	}),
-	withFragment(graphql`
-		fragment account_user on User{
-			id
-			photo
-			username
-		}
-	`),
+	withFragment(ql.account_user),
 	withMutation(({user}, data)=>{
 		return {
 			patch4:user.id,
@@ -71,20 +68,8 @@ const Account=compose(
 
 Account.routes=({
 		path="my",
-		accountQL=graphql`
-			query account_me_Query{
-				user:me{
-					...account_user
-				}
-			}
-		`,
-		profileQL=graphql`
-			query account_userProfile_Query{
-				user:me{
-					...userProfile_user
-				}
-			}
-			`,
+		accountQL=ql.account_me_Query,
+		profileQL=ql.account_userProfile_Query,
 		account,
 		setting,
 		profile,

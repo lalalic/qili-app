@@ -190,6 +190,7 @@ const router=(
 							query console_my_apps_Query{
 								user:me{
 									...my_user
+									phone
 								}
 							}
 						`
