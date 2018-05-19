@@ -1,4 +1,4 @@
-module.exports={
+export default {
 	account_user:graphql`
 		fragment qiliQL_account_user on User{
 			id
