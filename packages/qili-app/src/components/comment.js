@@ -188,7 +188,7 @@ export default compose(
 	setPropTypes({
 		parent: PropTypes.string.isRequired
 	}),
-	withMutation(({parent,connection},client)=>({
+	withMutation(({parent,connection},data,client)=>({
 		promise:true,
 		variables:{parent},
 		mutation:graphql`
