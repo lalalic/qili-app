@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.2.26",
+  "version": "1.2.27",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -61,7 +61,8 @@
     "index.tmpl",
     "index.less",
     "makeOfflineSchema.js",
-    "src/sharedQL/qili.js"
+    "src/sharedQL/qili.js",
+    "cp.js"
   ],
   "license": "MIT",
   "bin": {
