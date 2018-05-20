@@ -1,7 +1,7 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose,mapProps,getContext} from "recompose"
-import {withMutation} from "../tools/recompose"
+import {compose,mapProps,getContext,setPropTypes} from "recompose"
+import {withMutation,withFragment} from "../tools/recompose"
 
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"
@@ -18,6 +18,7 @@ import PullToRefresh from "pull-to-refresh2"
 import file from "./file"
 import CommandBar from './command-bar'
 import Empty from "./empty"
+import ql from "../sharedQL/qili"
 
 import {createPaginationContainer} from "react-relay"
 
@@ -130,7 +131,7 @@ export class Comment extends Component{
     }
 
     static defaultProps={
-        template: ({comment, system={}, time})=>{
+        template: withFragment({comment:ql.comment})(({comment, system={}, time})=>{
 			let name, left, right, text
             if(comment.system){
                 name=(<span style={{fontSize:'x-small'}}>{system.name}</span>)
@@ -179,27 +180,21 @@ export class Comment extends Component{
 					</div>
 				</Fragment>
 			)
-		}
+		})
 	}
 }
 
 export default compose(
-	withMutation(({parent,connection},data,client)=>({
+	setPropTypes({
+		parent: PropTypes.string.isRequired
+	}),
+	withMutation(({parent,connection},client)=>({
 		promise:true,
 		variables:{parent},
 		mutation:graphql`
 			mutation comment_create_Mutation($parent:ID!, $content:String!, $type: CommentType, $id:ObjectID){
 				comment:comment_create(parent:$parent, content:$content, type:$type, _id:$id){
-					id
-					content
-					type
-					createdAt
-					author{
-						id
-						name
-						photo
-					}
-					isOwner
+					...qili_comment @relay(mask:false)
 				}
 			}
 		`,
@@ -223,12 +218,14 @@ export default compose(
 		},
 		loadMore(ok){
 			if(relay.hasMore() && !relay.isLoading()){
-				relay.loadMore(10, e=>{
+				relay.loadMore(3, e=>{
 					ok()
 					if(e){
 						console.error(e)
 					}
 				})
+			}else{
+				ok()
 			}
 		}
 	})),

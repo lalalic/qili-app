@@ -9,7 +9,7 @@ import Photo from "../components/photo"
 import InfoForm from "../components/info-form"
 import {TextField} from "material-ui"
 import {ACTION} from "../state"
-import ql from "../qiliQL"
+import ql from "../sharedQL/qili"
 
 import IconQuit from "material-ui/svg-icons/file/cloud-off"
 const {Field}=InfoForm
@@ -77,12 +77,14 @@ export const Profile=({
 
 
 export default compose(
-	withFragment(ql.userProfile_user),
+	withFragment({
+		user:ql.profile_user
+	}),
 	withMutation(({user}, data)=>{
 		return {
 			patch4:user.id,
 			mutation: graphql`
-				mutation userProfile_update_Mutation($photo:URL,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
+				mutation profile_update_Mutation($photo:URL,$username:String,$birthday:Date,$gender:Gender,$location:String,$signature:String){
 					user_update(photo:$photo,username:$username,birthday:$birthday,gender:$gender,location:$location,signature:$signature)
 				}
 			`

@@ -14,9 +14,8 @@ import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 import CheckUpdate from "./check-update"
 import Photo from "./photo"
 import Setting from "./setting"
-import Profile from "./user-profile"
-
-import ql from "../qiliQL"
+import Profile from "./profile"
+import ql from "../sharedQL/qili"
 
 const Account=compose(
 	setDisplayName("Account"),
@@ -24,7 +23,9 @@ const Account=compose(
 		toSetting: PropTypes.func.isRequired,
 		toProfile: PropTypes.func.isRequired
 	}),
-	withFragment(ql.account_user),
+	withFragment({
+		user:ql.account_user
+	}),
 	withMutation(({user}, data)=>{
 		return {
 			patch4:user.id,
@@ -39,7 +40,7 @@ const Account=compose(
 	return (
 		<Fragment>
 			<List>
-				<ListItem primaryText={username}
+				<ListItem primaryText={username||<span style={{color:"lightgray"}}>Me</span>}
 					leftIcon={
 						<Photo src={photo}
 							autoUpload={{path:"photo.jpg"}}
@@ -68,8 +69,8 @@ const Account=compose(
 
 Account.routes=({
 		path="my",
-		accountQL=ql.account_me_Query,
-		profileQL=ql.account_userProfile_Query,
+		accountQL,
+		profileQL,
 		account,
 		setting,
 		profile,
@@ -84,7 +85,7 @@ Account.routes=({
 					mapProps(({router,...others})=>({
 						...others,
 						toSetting: ()=>router.push(`/${path}/setting`),
-						toProfile: ()=>router.push(`/${path}/profile`)
+						toProfile: ()=>router.push(`/${path}/profile`),
 					})),
 				)(Account)
 			}/>

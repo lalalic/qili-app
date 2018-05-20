@@ -204,8 +204,16 @@ const router=(
 						toProfile: ()=>router.push('/my/profile')
 					})),
 				)(My),
-				setting:withNavigator()(Setting)
-			})}
+				setting:withNavigator()(Setting),
+				profileQL: graphql`
+					query console_profile_Query{
+						user:me{
+							...qili_profile_user
+						}
+					}
+				`
+			}
+		)}
 
 			<Route path="app">
 				<IndexRoute component={compose(
@@ -267,17 +275,9 @@ const router=(
 						comments:app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"console_app_comments"){
 							edges{
 								node{
-									id
-									content
-									type
-									createdAt
-									author{
-										id
-										name
-										photo
-									}
-									isOwner
+									...qili_comment
 								}
+								cursor
 							}
 							pageInfo{
 								hasPreviousPage
