@@ -52,7 +52,7 @@
   },
   "readme": "README.md",
   "scripts":{
-      "postinstall":"cp src/sharedQL/qili.js ../../src/sharedQL/qili.js"
+      "postinstall":"mkdir ../../src/sharedQL && cp src/sharedQL/qili.js ../../src/sharedQL/qili.js"
   },
   "files": [
     "index.js",
