@@ -34,16 +34,13 @@
     "less-loader": "^2.2.3",
     "raw-loader": "^0.5.1",
     "relay-compiler": "^1.6.0",
-    "rollup": "^0.58.0",
-    "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-commonjs": "^9.1.0",
-    "rollup-plugin-less": "^0.1.4",
     "source-map-loader": "^0.1.6",
     "style-loader": "^0.13.1",
     "text-loader": "^0.0.1",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.4.1"
+    "webpack-dev-server": "^2.4.1",
+    "webpack-node-externals": "^1.7.2"
   },
   "resolutions": {
     "*/react": "^16.0.0",
@@ -59,9 +56,9 @@
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
     "persist": "yarn relay && qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
-    "api.weoffice": "rollup -c --no-treeshake -o ../we-office/node_modules/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
-    "api.superdaddy": "rollup -c --no-treeshake -o ../superdaddy/node_modules/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
-    "api": "rollup -c --no-treeshake -o ./packages/qili-app/index.js -f cjs -m inline ./packages/qili-app/src/index.js",
+    "api.weoffice": "yarn api --output-path ../we-office/node_modules/qili-app",
+    "api.superdaddy": "yarn api --output-path ../superdaddy/node_modules/qili-app",
+    "api": "yarn build --env=api",
     "upload": "qili publish packages/console/cloud/index.js --no-build-cloud -f packages/console/schema.graphql"
   },
   "repository": {
