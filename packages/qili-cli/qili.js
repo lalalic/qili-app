@@ -1,24 +1,19 @@
 #!/usr/bin/env node
-const program = require('commander')
 const prompts=require("prompts")
 const chalk=require("chalk")
 const fs=require("fs")
 const path=require("path")
 const cwd=process.cwd()
-const QiliCloud=require("./qili-cloud")
+const AdminCloud=require("./admin")
+AdminCloud.RC_NAME=".qilirc"
 const { execSync } = require('child_process')
-const rc=require("rc")("qili",{service:"http://qili2.com/1/graphql"})
+const {getRc, getProgram, project,tryRequireProject}=require(".")
+const rc=getRc("qili")
+const program=getProgram(rc)
 
-function tryRequireProject(a){
-	try{
-		return require(a)
-	}catch(e){
-		return {config:{}}
-	}
-}
 
 try{
-	const {config:{service,appId}}=tryRequireProject(path.resolve(cwd,"package.json"))
+	const {config:{service,appId}}={config:{}, ...project}
 	if(service){
 		rc.service=service
 	}
@@ -35,16 +30,13 @@ function run(cmd, stdio="ignore"){
 }
 
 function getQili(){
-	return new QiliCloud(program.service, program.appId)
+	return new AdminCloud(program.service, "qiliAdmin", program.appId)
 		.getToken(rc)
 }
 
 program
-	.version(require("./package.json").version, '-v, --version')
 	.usage('[options] <command>')
-	.description(require("./package.json").description)
 	.option('-a, --appId <appId>', 'application id', rc.appId)
-	.option('-s, --service <endpoint>', 'server endpoint', rc.service)
 
 program
 	.command("init [dest]")
