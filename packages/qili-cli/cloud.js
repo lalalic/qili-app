@@ -42,7 +42,7 @@ module.exports=class QiliCloud{
 		if(!this.constructor.RC_NAME)
 			return Promise.resolve(this)
 
-		return new Promise(resolve,reject)=>
+		return new Promise((resolve,reject)=>
 			fs.writeFile(path.resolve(require("os").homedir(),this.constructor.RC_NAME), JSON.stringify(data,null,4), (e)=>{
 				if(e)
 					reject(e)
@@ -61,7 +61,7 @@ module.exports=class QiliCloud{
 			.then(({contact})=>{
 				if(token){
 					this.token=token
-					return {token, contact}
+					return this.init({...rc, token, contact})
 				}
 
 				return this.runQL("authentication_requestToken_Mutation",{contact})

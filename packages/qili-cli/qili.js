@@ -9,7 +9,7 @@ AdminCloud.RC_NAME=".qilirc"
 const { execSync } = require('child_process')
 const {getRc, getProgram, project,tryRequireProject}=require(".")
 const rc=getRc("qili")
-const program=getProgram(rc)
+const program=getProgram(rc, require("./package.json"))
 
 
 try{
@@ -44,7 +44,6 @@ program
 	.action(function(dest="."){
 		dest=path.resolve(cwd,dest)
 		const copy=require("ncp").ncp
-		const project=tryRequireProject(path.resolve(dest,"package.json"))
 
 		function mergePackageJson(read, write, name){
 			try{
@@ -54,6 +53,7 @@ program
 				if(program.appId){
 					merged.config.appId=program.appId
 				}
+				
 				if(program.service){
 					merged.config.service=program.service
 				}
