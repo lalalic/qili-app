@@ -28,7 +28,7 @@ module.exports=class extends QiliCloud{
 
 	publish(codeFile){
 		return this.getAppId().then(appId=>
-			Promise.resolve(fs.readFileSync(codeFile,{encoding:"utf8"}))
+			Promise.resolve(require("fs").readFileSync(codeFile,{encoding:"utf8"}))
 				.then(cloudCode=>this.runQL("cloud_update_Mutation",{cloudCode,id:appId}))
 				.then(a=>{
 					console.log("cloud code updated on server")
