@@ -128,7 +128,7 @@ const FileModule={//for testable
         return main("image",width,height,accept)
     },
     selectTextFile(accept){
-        return main("text",,undefined,undefined,accpet)
+        return main("text",undefined,undefined,accept)
     },
     select(accept){
         return main("raw",undefined,undefined,accept)
