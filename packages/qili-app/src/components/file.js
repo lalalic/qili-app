@@ -5,7 +5,7 @@ import {withMutation} from "../tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
 
-function main(type="json", width, height){
+function main(type="json", width, height, accept){
     //return Promise.as("http://ts2.mm.bing.net/th?id=JN.tzKlieg4w8eYJfDBkEHoAw&pid=15.1")
 
     if(input==null){
@@ -18,6 +18,10 @@ function main(type="json", width, height){
         document.body.appendChild(input)
         document.body.appendChild(_imgSizer)
     }
+	
+	if(accept){
+		input.setAttribute("accept",accept)
+	}
 
     return new Promise((resolve,reject)=>{
         var needResize=width||height,
@@ -114,20 +118,20 @@ function dataAsBlob(data){
 
 const FileModule={//for testable
     main,
-    selectJsonFile(){
-        return main("json")
+    selectJsonFile(accept){
+        return main("json",undefined,undefined,accpet)
     },
     selectJsonInJsFile(){
-        return main("jsonInJs")
+        return main("jsonInJs",undefined,undefined,accpet)
     },
-    selectImageFile(width,height){
-        return main("image",...arguments)
+    selectImageFile(width,height,accept="image/*"){
+        return main("image",width,height,accept)
     },
-    selectTextFile(){
-        return main("text")
+    selectTextFile(accept){
+        return main("text",,undefined,undefined,accpet)
     },
-    select(){
-        return main("raw",...arguments)
+    select(accept){
+        return main("raw",undefined,undefined,accept)
     },
 	toBlob(data,contentType="image/*", sliceSize=512){
 		var byteCharacters = atob(data.substr(IMAGE_DATA_SCHEME_LEN))
