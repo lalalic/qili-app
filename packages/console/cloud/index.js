@@ -6,4 +6,4 @@ Cloud.resolver=AppComment.resolver
 
 module.exports=Cloud
 
-//hello1
+//hello2
