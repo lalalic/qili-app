@@ -116,34 +116,46 @@ program
 	.action(async function(codeFilePath="cloud/__generated.js", {
 			relayCompile, persistQuery,buildCloud, schemaFile="schema.graphql"}){
 		codeFilePath=path.resolve(cwd,codeFilePath)
-		if(relayCompile){
-			try{
-				run("npm run relay","pipe")
-				console.log(chalk.blue("relay compiled"))
-			}catch(e){
-				console.log(chalk.red("failed compiling relay"))
-				console.log(chalk.red(e.message))
-				console.log(chalk.yellow("ignore this eror and continue"))
+
+		function build(){
+			if(relayCompile){
+				try{
+					run("npm run relay","pipe")
+					console.log(chalk.blue("relay compiled"))
+				}catch(e){
+					console.log(chalk.red("failed compiling relay"))
+					console.log(chalk.red(e.message))
+					console.log(chalk.yellow("ignore this eror and continue"))
+				}
+			}else{
+				console.log(chalk.yellow("ignore relay compile"))
 			}
-		}else{
-			console.log(chalk.yellow("ignore relay compile"))
+
+			if(persistQuery){
+				run("npm run persist")
+				console.log(chalk.blue("graphql query persisted"))
+			}else{
+				console.log(chalk.yellow("ignore persit graph query"))
+			}
+
+			if(buildCloud){
+				run("npm run cloud")
+				console.log(chalk.blue("cloud code is ready"))
+			}else{
+				console.log(chalk.yellow("ignore build cloud code"))
+			}
 		}
 
-		if(persistQuery){
-			run("npm run persist")
-			console.log(chalk.blue("graphql query persisted"))
-		}else{
-			console.log(chalk.yellow("ignore persit graph query"))
-		}
-
-		if(buildCloud){
-			run("npm run cloud")
-			console.log(chalk.blue("cloud code is ready"))
-		}else{
-			console.log(chalk.yellow("ignore build cloud code"))
-		}
-
-		return (await getQili())
+		return
+			new Promise((resolve,reject)=>{
+				try{
+					build()
+					resolve()
+				}catch(e){
+					reject(e)
+				}
+			})
+			.then(getQili)
 			.publish(codeFilePath)
 			.then(schema=>{
 				fs.writeFileSync(path.resolve(cwd,schemaFile),schema,{encoding:"utf8"})

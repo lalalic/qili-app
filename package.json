@@ -59,7 +59,7 @@
     "api.weoffice": "yarn api --output-path ../we-office/node_modules/qili-app",
     "api.superdaddy": "yarn api --output-path ../superdaddy/node_modules/qili-app",
     "api": "yarn build --env=api",
-    "sync": "qili publish packages/console/cloud/index.js --no-build-cloud -f packages/console/schema.graphql"
+    "sync": "qili publish packages/console/cloud/index.js --no-build-cloud --no-relay-compile --no-persist-query -f packages/console/schema.graphql"
   },
   "repository": {
     "type": "git",
