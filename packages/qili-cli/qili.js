@@ -118,6 +118,7 @@ program
 		codeFilePath=path.resolve(cwd,codeFilePath)
 
 		function build(){
+			console.log("building...")
 			if(relayCompile){
 				try{
 					run("npm run relay","pipe")
@@ -146,17 +147,18 @@ program
 			}
 		}
 
-		return
-			new Promise((resolve,reject)=>{
-				try{
-					build()
-					resolve()
-				}catch(e){
-					reject(e)
-				}
-			})
+		const built=new Promise((resolve,reject)=>{
+			try{
+				build()
+				resolve()
+				console.log("built")
+			}catch(e){
+				reject(e)
+			}
+		})
+		return built
 			.then(getQili)
-			.publish(codeFilePath)
+			.then(qili=>qili.publish(codeFilePath))
 			.then(schema=>{
 				fs.writeFileSync(path.resolve(cwd,schemaFile),schema,{encoding:"utf8"})
 				let i=schema.indexOf("scalar AAError")
