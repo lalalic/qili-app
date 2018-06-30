@@ -53,7 +53,7 @@ program
 				if(program.appId){
 					merged.config.appId=program.appId
 				}
-				
+
 				if(program.service){
 					merged.config.service=program.service
 				}
@@ -157,6 +157,7 @@ program
 			})
 			.catch(e=>{
 				console.log(chalk.red(e.message))
+				process.exit(1)
 			})
 	})
 
