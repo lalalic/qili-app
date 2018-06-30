@@ -32,6 +32,10 @@ function run(cmd, stdio="ignore"){
 function getQili(){
 	return new AdminCloud(program.service, "qiliAdmin", program.appId)
 		.getToken(rc)
+		.then(cloud=>{
+			console.log(`${program.service} initialized for ${program.appId}`)
+			return cloud
+		})
 }
 
 program
@@ -118,7 +122,6 @@ program
 		codeFilePath=path.resolve(cwd,codeFilePath)
 
 		function build(){
-			console.log("building...")
 			if(relayCompile){
 				try{
 					run("npm run relay","pipe")
@@ -151,7 +154,6 @@ program
 			try{
 				build()
 				resolve()
-				console.log("built")
 			}catch(e){
 				reject(e)
 			}
