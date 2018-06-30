@@ -5,3 +5,5 @@ Cloud.typeDefs=`${AppComment.typeDefs}`
 Cloud.resolver=AppComment.resolver
 
 module.exports=Cloud
+
+//hello1

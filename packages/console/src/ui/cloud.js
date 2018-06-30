@@ -3,13 +3,14 @@ import PropTypes from "prop-types"
 import {compose, getContext, mapProps} from "recompose"
 
 import {Tabs, Tab} from "material-ui/Tabs"
-import UploadIcon from "material-ui/svg-icons/file/file-upload"
+import OpenIcon from "material-ui/svg-icons/file/file-upload"
 import SaveIcon from "material-ui/svg-icons/content/save"
+
 
 import {Controlled as CodeMirror} from "react-codemirror2"
 import "codemirror/mode/javascript/javascript"
 
-import {withMutation, graphql, withFragment,CommandBar} from "qili-app"
+import {withMutation, graphql, withFragment,CommandBar,File} from "qili-app"
 
 import Schema from "./schema"
 
@@ -35,7 +36,7 @@ export class Cloud extends Component{
 								lineNumbers:true,
 								mode:"javascript",
 								dragDrop:true,
-								allowDropFileTypes:[".js",".json",".jsx"],
+								allowDropFileTypes:[".js"],
 							}}
 							/>
 					</Tab>
@@ -47,9 +48,20 @@ export class Cloud extends Component{
 				<div style={{flex:1}}>
 					<CommandBar
 						items={[
-							{action:"Back"}
-							,{action:"Save",icon:<SaveIcon/>,
+							{action:"Back"},
+							{
+								action:"Save",
+								icon:<SaveIcon/>,
 								onSelect:e=>this.update()
+							},
+							{
+								action:"Open",
+								icon:<OpenIcon/>,
+								onSelect:e=>{
+									File
+										.selectAsData(".js")
+										.then(({data:cloudCode})=>this.setState({cloudCode}))
+								}
 							}
 						]}/>
 				</div>

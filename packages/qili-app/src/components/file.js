@@ -5,6 +5,35 @@ import {withMutation} from "../tools/recompose"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
 var instance,input,_imgSizer;
 
+
+function select(accept){
+    if(input==null){
+        input=document.createElement('input')
+        input.type="file"
+        _imgSizer=document.createElement('canvas')
+        _imgSizer.style.position=input.style.position='absolute'
+        _imgSizer.style.left=input.style.left='-9999px'
+
+        document.body.appendChild(input)
+        document.body.appendChild(_imgSizer)
+    }
+
+	if(accept){
+		input.setAttribute("accept",accept)
+	}
+
+    return new Promise((resolve,reject)=>{
+        input.onChange=function(){
+            var file=this.files[0];
+            if(file==null)
+                reject()
+            else
+                resolve(file)
+        }
+        input.click()
+    })
+}
+
 function main(type="json", width, height, accept){
     //return Promise.as("http://ts2.mm.bing.net/th?id=JN.tzKlieg4w8eYJfDBkEHoAw&pid=15.1")
 
@@ -18,7 +47,7 @@ function main(type="json", width, height, accept){
         document.body.appendChild(input)
         document.body.appendChild(_imgSizer)
     }
-	
+
 	if(accept){
 		input.setAttribute("accept",accept)
 	}
@@ -129,6 +158,9 @@ const FileModule={//for testable
     },
     selectTextFile(accept){
         return main("text",undefined,undefined,accept)
+    },
+    selectAsData(accept){
+        return FileModule.selectTextFile(...arguments)
     },
     select(accept){
         return main("raw",undefined,undefined,accept)

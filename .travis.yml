@@ -44,7 +44,7 @@ after_success:
  - mv dist $APP_NAME
  - rm $APP_NAME/config.xml
  - rm $APP_NAME/cordova.html
- 
+
  - ls $APP_NAME -l
  - cd $APP_NAME
  - tar cvfz ../$APP_NAME.tgz .

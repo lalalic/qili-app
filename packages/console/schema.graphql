@@ -50,8 +50,6 @@ enum CommentType {
 
 scalar Date
 
-scalar URL
-
 type File {
   id: ID!
   url: String
@@ -69,7 +67,9 @@ enum Gender {
   boy
 }
 
-# The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
 scalar JSON
 
 type Log implements Node {
@@ -117,7 +117,7 @@ interface Node {
   id: ID!
 }
 
-# mongodb ID
+"""mongodb ID"""
 scalar ObjectID
 
 type PageInfo {
@@ -131,7 +131,7 @@ type Query {
   version: String!
   schema: String!
   me: User!
-  file_upload_token(key:String):FileToken
+  file_upload_token(key: String): FileToken
   app_comments(parent: ObjectID, last: Int, before: JSON): AppCommentConnection
 }
 
@@ -147,6 +147,8 @@ type Role implements Node {
 type Subscription {
   ping: Boolean
 }
+
+scalar URL
 
 type User implements Node {
   id: ID!
