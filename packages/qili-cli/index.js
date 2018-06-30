@@ -21,14 +21,16 @@ exports.getProgram=function(rc, project){
     	.version(project.version, '-v, --version')
         .description(project.description)
     	.option('-s, --service <endpoint>', 'server endpoint', rc.service)
-		
+		.option('--token <token>','qili2 token')
+		.option('--contact <contact>','qili2 account contact')
+
 	program
 		.command("info")
 		.description("get current command settings")
-		.action(function(){
+		.action(function({clean}){
 			console.dir(rc)
 		})
-	
+
 	return program
 }
 
@@ -36,6 +38,3 @@ exports.tryRequireProject=tryRequireProject
 exports.project=project
 
 exports.Cloud=require("./cloud")
-
-
-
