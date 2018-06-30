@@ -37,8 +37,7 @@ script:
 
 after_success:
 # sync cloud code to qili2.com
- - ping qili2.com
- - yarn sync --service $QILI_SERVICE --appId $QILI_APPID --token "$QILI_TOKEN"
+ - yarn sync --service $QILI --token "$QILI_TOKEN"
 # upload apk
  - mv cordova/platforms/android/build/outputs/apk/android-release.apk ./app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
