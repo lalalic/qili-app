@@ -30,11 +30,15 @@ script:
  - mv packages/console/dist/index.html .
  - ls -l
  - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
+# auto deploy later according to version changes
  - yarn info qili-app --json > qili-app.json
  - export LATEST=$(node -p "require('./qili-app.json').data['dist-tags'].latest")
  - export CURRENT=$(node -p "require('./packages/qili-app/package.json').version")
 
 after_success:
+# sync cloud code to qili2.com
+ - yarn sync --service $QILI_SERVICE --contact $QILI_CONTACT -appId $QILI_APPID --token $QILI_TOKEN
+# upload apk
  - mv cordova/platforms/android/build/outputs/apk/android-release.apk ./app.apk
  - travis_wait sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./app.apk "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"
 
@@ -44,7 +48,7 @@ after_success:
  - mv dist $APP_NAME
  - rm $APP_NAME/config.xml
  - rm $APP_NAME/cordova.html
-
+# upload web pages
  - ls $APP_NAME -l
  - cd $APP_NAME
  - tar cvfz ../$APP_NAME.tgz .
