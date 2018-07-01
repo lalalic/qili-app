@@ -27,7 +27,7 @@ exports.getProgram=function(rc, project){
 	program
 		.command("info")
 		.description("get current command settings")
-		.action(function({clean}){
+		.action(function(){
 			console.dir(rc)
 		})
 
