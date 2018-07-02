@@ -169,3 +169,12 @@ export default compose(
 		`
 	})
 )(Authentication)
+
+
+const renewToken=graphql`
+	query authentication_renewToken_Query{
+		me{
+			token
+		}
+	}
+`

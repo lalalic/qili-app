@@ -41,6 +41,9 @@ module.exports=class QiliCloud{
 	saveRC(data){
 		if(!this.constructor.RC_NAME)
 			return Promise.resolve(this)
+		
+		if(data.service!="http://qili2.com/1/graphql")
+			return Promise.resolve(this)
 
 		return new Promise((resolve,reject)=>
 			fs.writeFile(path.resolve(require("os").homedir(),this.constructor.RC_NAME), JSON.stringify(data,null,4), (e)=>{
@@ -59,12 +62,7 @@ module.exports=class QiliCloud{
 		return Promise.resolve(rc.contact ? {contact:rc.contact}
 				: prompts({name:"contact",type:"text",message:"account contact"}))
 			.then(({contact})=>{
-				if(token){
-					this.token=token
-					return this.init({...rc, token, contact})
-				}
-
-				return this.runQL("authentication_requestToken_Mutation",{contact})
+				const requestToken=()=>this.runQL("authentication_requestToken_Mutation",{contact})
 					.then(async ()=>{
 						const {code}=await prompts({name:"code",type:"text",message:`code in your ${contact}`})
 						return this.runQL("authentication_login_Mutation", {contact,token:code})
@@ -74,6 +72,17 @@ module.exports=class QiliCloud{
 						this.token=token
 						return this.init({...rc, token, contact})
 					})
+				
+				if(token){
+					this.token=token
+					return this.runQL("authentication_renewToken_Query")
+						.then(()=>{
+							return this.init({...rc,token,contact})
+						})
+						.catch(requestToken)
+				}
+
+				return requestToken()
 			})
 			.catch(e=>{
 				console.log(chalk.red(e.message))
@@ -81,7 +90,7 @@ module.exports=class QiliCloud{
 			})
 	}
 
-	init(rc){
-		return this.saveRC(rc)
+	init({service,contact,token}){
+		return this.saveRC({service,contact,token})
 	}
 }

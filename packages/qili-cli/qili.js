@@ -9,7 +9,7 @@ AdminCloud.RC_NAME=".qilirc"
 const { execSync } = require('child_process')
 const {getRc, getProgram, project,tryRequireProject}=require(".")
 const rc=getRc("qili")
-const program=getProgram(rc, require("./package.json"))
+const program=getProgram(rc, require("./package.json"),new AdminCloud(rc.service, "qiliAdmin",rc.appId))
 
 
 try{

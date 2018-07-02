@@ -21,11 +21,11 @@ exports.getProgram=function(rc, project){
     	.version(project.version, '-v, --version')
         .description(project.description)
     	.option('-s, --service <endpoint>', 'server endpoint', rc.service)
-		.option('--token <token>','qili2 token')
-		.option('--contact <contact>','qili2 account contact')
+		.option('--token <token>','token')
+		.option('--contact <contact>','account contact')
 
 	program
-		.command("info")
+		.command("setting")
 		.description("get current command settings")
 		.action(function(){
 			console.dir(rc)

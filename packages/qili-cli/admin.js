@@ -6,12 +6,12 @@ module.exports=class extends QiliCloud{
         this.appId=appId
     }
 
-    init(rc){
+    init({service,contact}){
         return this.runQL("console_prefetch_Query")
             .then(({me:{apps,token}})=>{
                 this.token=token
                 this.apps=apps
-                return super.init({...rc, token, apps})
+                return super.saveRC({service,contact, token, apps})
             })
     }
 
