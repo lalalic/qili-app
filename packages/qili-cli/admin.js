@@ -1,8 +1,9 @@
+const prompts=require("prompts")
 const QiliCloud=require("./cloud")
 
 module.exports=class extends QiliCloud{
-    constructor(service, xApplicationID, appId){
-        super(...arguments)
+    constructor(service, appId){
+        super(service,"qiliAdmin")
         this.appId=appId
     }
 
@@ -57,3 +58,5 @@ module.exports=class extends QiliCloud{
 		)
 	}
 }
+
+module.exports.NAME="qili"

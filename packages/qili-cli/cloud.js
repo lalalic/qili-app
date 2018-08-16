@@ -39,14 +39,15 @@ module.exports=class QiliCloud{
 	}
 
 	saveRC(data){
-		if(!this.constructor.RC_NAME)
+		if(!this.constructor.NAME)
 			return Promise.resolve(this)
 		
-		if(data.service!="http://qili2.com/1/graphql")
-			return Promise.resolve(this)
+		
+		//if(data.service!="http://qili2.com/1/graphql")
+			//return Promise.resolve(this)
 
 		return new Promise((resolve,reject)=>
-			fs.writeFile(path.resolve(require("os").homedir(),this.constructor.RC_NAME), JSON.stringify(data,null,4), (e)=>{
+			fs.writeFile(path.resolve(require("os").homedir(),`.${this.constructor.NAME.toLowerCase()}rc`), JSON.stringify(data,null,4), (e)=>{
 				if(e)
 					reject(e)
 				else

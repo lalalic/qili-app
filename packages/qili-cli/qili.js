@@ -1,41 +1,20 @@
 #!/usr/bin/env node
-const prompts=require("prompts")
 const chalk=require("chalk")
 const fs=require("fs")
 const path=require("path")
 const cwd=process.cwd()
-const AdminCloud=require("./admin")
-AdminCloud.RC_NAME=".qilirc"
 const { execSync } = require('child_process')
-const {getRc, getProgram, project,tryRequireProject}=require(".")
-const rc=getRc("qili")
-const program=getProgram(rc, require("./package.json"),new AdminCloud(rc.service, "qiliAdmin",rc.appId))
 
-
-try{
-	const {config:{service,appId}}={config:{}, ...project}
-	if(service){
-		rc.service=service
-	}
-	if(appId){
-		rc.appId=appId
-	}
-}catch(e){
-
-}
+const {
+		rc, program, project, tryRequireProject, 
+		
+		getCloud,  getQili=()=>getCloud(program.appId)
+		
+	}=require(".").getInstance(require("./admin"))
 
 
 function run(cmd, stdio="ignore"){
 	execSync(cmd, {stdio})
-}
-
-function getQili(){
-	return new AdminCloud(program.service, "qiliAdmin", program.appId)
-		.getToken(rc)
-		.then(cloud=>{
-			console.log(`${program.service} initialized for ${program.appId}`)
-			return cloud
-		})
 }
 
 program
