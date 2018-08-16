@@ -10,7 +10,7 @@ const {
 		
 		getCloud,  getQili=()=>getCloud(program.appId)
 		
-	}=require(".").getInstance(require("./admin"))
+	}=require(".").getInstance(require("./admin"), require("./package.json"))
 
 
 function run(cmd, stdio="ignore"){

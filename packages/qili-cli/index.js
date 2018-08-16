@@ -10,7 +10,7 @@ const tryRequireProject=exports.tryRequireProject=function (a){
 	}
 }
 
-exports.getInstance=function(MyCloud){
+exports.getInstance=function(MyCloud, {version,name, description=name}){
 	const NAME=MyCloud.NAME
 	console.assert(NAME,"Cloud must have a name")
 	const program = require('commander')
@@ -37,8 +37,8 @@ exports.getInstance=function(MyCloud){
 
 	(function getProgram(){
 		program
-			.version(project.version, '-v, --version')
-			.description(project.description)
+			.version(version, '-v, --version')
+			.description(description)
 			.option('-s, --service <endpoint>', 'server endpoint', rc.service)
 			.option('--token <token>','token')
 			.option('--contact <contact>','account contact')
