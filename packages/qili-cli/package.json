@@ -1,7 +1,7 @@
 {
   "name": "qili-cli",
   "description": "qili cli",
-  "version": "1.2.43",
+  "version": "1.2.45",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",

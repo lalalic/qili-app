@@ -35,6 +35,10 @@ exports.getInstance=function(MyCloud, {version,name, description=name}){
 		return rc
 	})(NAME);
 
+	if(!!!rc.verbose){
+		console.trace=console.debug=()=>{}
+	}
+
 	(function getProgram(){
 		program
 			.version(version, '-v, --version')
@@ -42,6 +46,7 @@ exports.getInstance=function(MyCloud, {version,name, description=name}){
 			.option('-s, --service <endpoint>', 'server endpoint', rc.service)
 			.option('--token <token>','token')
 			.option('--contact <contact>','account contact')
+			.option("--verbose", !!rc.verbose)
 
 		program
 			.command("setting")
@@ -61,7 +66,7 @@ exports.getInstance=function(MyCloud, {version,name, description=name}){
 
 		return program
 	})(rc);
-	
+
 	return {
 		rc, program, project, tryRequireProject,
 		getCloud(){

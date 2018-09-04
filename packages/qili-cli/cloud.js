@@ -31,9 +31,10 @@ module.exports=class QiliCloud{
 		})
 		.then(({data, errors})=>{
 			if(errors){
+				console.debug(errors)
 				throw new Error(errors.map(a=>a.message).join("\r\n"))
 			}
-
+			console.debug({runQL:id,variables,data})
 			return data
 		})
 	}
@@ -41,8 +42,8 @@ module.exports=class QiliCloud{
 	saveRC(data){
 		if(!this.constructor.NAME)
 			return Promise.resolve(this)
-		
-		
+
+
 		//if(data.service!="http://qili2.com/1/graphql")
 			//return Promise.resolve(this)
 
@@ -53,10 +54,12 @@ module.exports=class QiliCloud{
 				else
 					resolve(this)
 			})
+			.then(()=>console.debug("rc saved"))
 		)
 	}
 
-	getToken({token, config, configs,_,apps=[],...rc}){
+	getToken({token, config, configs,_,apps=[],verbose,...rc}){
+		this.verbose=!!verbose
 		if(this.token)
 			return Promise.resolve(this)
 
@@ -73,7 +76,7 @@ module.exports=class QiliCloud{
 						this.token=token
 						return this.init({...rc, token, contact})
 					})
-				
+
 				if(token){
 					this.token=token
 					return this.runQL("authentication_renewToken_Query")
