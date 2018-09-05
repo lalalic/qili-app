@@ -31,14 +31,15 @@ module.exports=class QiliCloud{
 		})
 		.then(({data, errors})=>{
 			if(errors){
-				console.debug(errors)
-				throw new Error(errors.map(a=>a.message).join("\r\n"))
+				console.debug({id,variables,errors})
+				throw new Error(`Server Error: [${id}]`+errors.map(a=>a.message).join("\r\n"))
 			}
 			console.debug({runQL:id,variables,data})
 			return data
 		})
 	}
-
+	
+	//must return Promise.resolve(this)
 	saveRC(data){
 		if(!this.constructor.NAME)
 			return Promise.resolve(this)
@@ -54,10 +55,12 @@ module.exports=class QiliCloud{
 				else
 					resolve(this)
 			})
-			.then(()=>console.debug("rc saved"))
 		)
+		.then(()=>console.debug("rc saved"))
+		.catch(e=>console.debug(e))
+		.then(()=>this)
 	}
-
+	//must return Promise.resolve(this)
 	getToken({token, config, configs,_,apps=[],verbose,...rc}){
 		this.verbose=!!verbose
 		if(this.token)
@@ -72,7 +75,7 @@ module.exports=class QiliCloud{
 						return this.runQL("authentication_login_Mutation", {contact,token:code})
 					})
 					.then(({login:{token}})=>{
-						console.log(chalk.blue(`${this.service} connected`))
+						console.log(chalk.blue(`connected`))
 						this.token=token
 						return this.init({...rc, token, contact})
 					})
@@ -80,20 +83,22 @@ module.exports=class QiliCloud{
 				if(token){
 					this.token=token
 					return this.runQL("authentication_renewToken_Query")
-						.then(()=>{
-							return this.init({...rc,token,contact})
+						.then(({me:{token}})=>{
+							this.token=token
+							return this
+								.init({...rc,token,contact})
 						})
-						.catch(requestToken)
+						.catch(e=>{
+							console.debug(`can't renew token, request token`)
+							return requestToken()
+						})
 				}
 
 				return requestToken()
 			})
-			.catch(e=>{
-				console.log(chalk.red(e.message))
-				throw e
-			})
 	}
 
+	//must return Promise.resolve(this)
 	init({service,contact,token}){
 		return this.saveRC({service,contact,token})
 	}
