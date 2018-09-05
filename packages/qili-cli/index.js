@@ -73,7 +73,7 @@ exports.getInstance=function(MyCloud, {version,name, description=name}){
 			return new MyCloud(program.service, ...arguments)
 				.getToken(rc)
 				.then(cloud=>{
-					console.log(`Initialized [AppID=${cloud.xApplicationID}][rc=${MyCloud.NAME}]`)
+					console.log(`initialized [AppID=${chalk.blue(cloud.xApplicationID)}][rc=${MyCloud.NAME}]`)
 					return cloud
 				})
 		}

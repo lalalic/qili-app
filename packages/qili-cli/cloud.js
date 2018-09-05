@@ -8,6 +8,7 @@ module.exports=class QiliCloud{
 	constructor(service="http://qili2.com/1/graphql", xApplicationID){
 		this.service=service
 		this.xApplicationID=xApplicationID
+		console.log(`To ${chalk.blue(service)}`)
 	}
 
 	runQL(id, variables){
