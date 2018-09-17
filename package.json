@@ -56,8 +56,6 @@
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
     "persist": "yarn relay && qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
-    "api.weoffice": "yarn api --output-path ../we-office/node_modules/qili-app",
-    "api.superdaddy": "yarn api --output-path ../superdaddy/node_modules/qili-app",
     "api": "yarn build --env=api",
     "sync": "qili publish packages/console/cloud/index.js --no-build-cloud --no-relay-compile --no-persist-query -f packages/console/schema.graphql"
   },

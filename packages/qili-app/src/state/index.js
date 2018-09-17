@@ -30,9 +30,9 @@ export const REDUCER=(state={networkStatus:"online"},{type,payload})=>{
 	case `@@${DOMAIN}/OPTICS`:
 		return {...state, optics:{toJSON:()=>undefined,...payload}}
 	case `@@${DOMAIN}/INITED`:
-		return {...state, inited:{toJSON:()=>undefined}}
+		return {...state, inited:true}
 	case `@@${DOMAIN}/ADDONE`:
-		return {...state, AD:{toJSON:()=>undefined}}
+		return {...state, AD:true}
 	case `@@${DOMAIN}/USER_CHANGED`:
 		return {...state,user:payload}
 	case `@@${DOMAIN}/TUTORIALIZED`:

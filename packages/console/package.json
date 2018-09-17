@@ -1,7 +1,7 @@
 {
   "name": "qili-app-console",
   "description": "qili dashboard",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "homepage": "http://app.qili2.com",
   "author": {
     "name": "Raymond Li",

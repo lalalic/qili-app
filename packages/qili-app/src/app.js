@@ -180,6 +180,11 @@ export default compose(
 				store.dispatch(ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})
+			
+			store.combineReducers=function(appending){
+				store.replaceReducer(combineReducers({...appending, [DOMAIN]:REDUCER,...reducers}))
+				return store
+			}
 
 			const dispatch=store.dispatch.bind(store)
 
@@ -279,11 +284,14 @@ export default compose(
 		)
 	),
 
-	connect(({qili:{user}})=>(user!==undefined ? {user} : {})),
+	connect(({qili:{user={}}})=>{
+		const {id,token}=user
+		return {user:id,token, key:id}
+	}),
 
 	withGraphqlClient(),
 
-	branch(({user})=>!user||!user.token,renderComponent(({theme, store, setUser})=>
+	branch(({token})=>!token,renderComponent(({theme, store, setUser})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
 				<div style={{margin:10}}>

@@ -3,15 +3,10 @@ import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
 const source=new RecordSource()
 const store = new Store(source);
 const handlerProvider = null;
-const environments={}
 const NoService=new Error("Network error")
 
 export default function createEnvironment(props){
-	let {user, appId, supportOffline, network, showMessage, loading, isDev}=props
-	const token=user ? user.token : null
-	let key=`${appId}-${!!token}`
-	if(environments[key])
-		return environments[key]
+	let {user, token, appId, supportOffline, network, showMessage, loading, isDev}=props
 
 	if(supportOffline){
 		supportOffline.user=user
@@ -127,6 +122,9 @@ export default function createEnvironment(props){
 		network:Network.create(fetchQuery),
 		store,
 	}),{
+		changeToken(newToken){
+			token=newToken
+		},
 		fetcher(req){
 			loading(true)
 			return (()=>{

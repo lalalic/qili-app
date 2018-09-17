@@ -49,7 +49,7 @@ export class Offline{
 
 	set user(user){
 		if(user){
-			this._user={id:user.id}
+			this._user={id:user}
 		}else{
 			this._user=null
 		}
