@@ -191,7 +191,7 @@ export default compose(
 			const props={
 				store,
 				checkVersion(){
-					project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+					project && dispatch(ACTION.CHECK_VERSION(project.version))
 				},
 				tutorialize(){
 					dispatch(ACTION.TUTORIALIZED)
