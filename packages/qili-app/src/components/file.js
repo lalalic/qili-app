@@ -236,7 +236,7 @@ const FileModule={//for testable
 			}
 		})
 	),
-	upload(data,props={},token,url="https://upload.qiniu.com"){
+	upload(data,props={},token,url="https://up.qiniu.com"){
 		return new Promise((resolve,reject)=>
 			dataAsBlob(data).then(data=>{
 				let formData=new FormData()
