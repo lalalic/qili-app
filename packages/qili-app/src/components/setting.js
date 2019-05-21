@@ -15,7 +15,7 @@ import IconLogo from "material-ui/svg-icons/action/android"
 import CheckUpdate from "../components/check-update"
 import CommandBar from "../components/command-bar"
 
-export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=>(
+export const Setting=({latestVersion,is:{app}, project:{version}})=>(
 	<Fragment>
 		<List>
 			{app && (<ListItem primaryText="去评价" leftIcon={<IconRate/>}/>)}
@@ -27,7 +27,7 @@ export const Setting=({latestVersion,is:{app}, project:{homepage=".",version}})=
 					if(app && (!latestVersion || version==latestVersion))
 						return
 					let a=document.createElement("a")
-					a.href=`${homepage}/app.apk`
+					a.href="/app.apk"
 					a.download="app.apk"
 					a.style.position="absolute"
 					a.top=-1000;
