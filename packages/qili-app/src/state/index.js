@@ -1,8 +1,8 @@
 export const DOMAIN="qili"
 
 export const ACTION={
-	CHECK_VERSION:(homepage,currentVersion)=>dispatch=>{
-		fetch(`${homepage}/app.apk.version`)
+	CHECK_VERSION:(currentVersion)=>dispatch=>{
+		fetch(`app.apk.version`)
 			.then(res=>res.text())
 			.then(version=>dispatch({type:`@@${DOMAIN}/LASTEST_VERSION`, payload:ver}))
 			.catch(e=>e)

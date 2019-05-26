@@ -17,11 +17,13 @@ import {ACTION} from "../state"
 const ENTER=13
 
 export class App extends Component{
-	state={nameError:null, unameError:null}
+	state={nameError:null, unameError:null,smsNameError:null}
 	render(){
-		const {id, name,uname,apiKey, isDev,canRunInCore,setRunInCore,
+		const {id, name,uname,apiKey, isDev,
+			canRunInCore,setRunInCore,
+			sms_name,
 			update, remove, toComment,removable}=this.props
-		const {nameError, unameError}=this.state
+		const {nameError, unameError,smsNameError}=this.state
 		let commandBar
 		if(removable)
 			commandBar=(<CommandBar primary="Upload"
@@ -48,6 +50,9 @@ export class App extends Component{
 		const changeUName=value=>value!=uname && update({uname:value})
 			.then(a=>this.setState({unameError:null}),error=>this.setState({unameError:error}))
 
+		const changeSMSName=value=>value!=sms_name && update({sms_name:value})
+			.then(a=>this.setState({smsNameError:null}),error=>this.setState({smsNameError:error}))
+
 		return (
 			<Fragment>
 				<div style={{flex:"1 100%",padding:5}}>
@@ -68,6 +73,15 @@ export class App extends Component{
 						errorText={unameError}
 						onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeUName(value.trim())}
 						onBlur={({target:{value}})=>changeUName(value.trim())}/>
+
+					<TextField
+						floatingLabelText="sms sign name when sending certification code"
+						fullWidth={true}
+						disabled={!removable}
+						defaultValue={sms_name}
+						errorText={smsNameError}
+						onKeyDown={({target:{value},keyCode})=>keyCode==ENTER && changeSMSName(value.trim())}
+						onBlur={({target:{value}})=>changeSMSName(value.trim())}/>
 
 					<TextField
 						floatingLabelText="API key: value of http header 'x-application-id'"
@@ -169,6 +183,7 @@ export default compose(
 			apiKey
 			isDev
 			canRunInCore
+			sms_name
 		}
 	`),
 	withProps(({data})=>({...data})),
@@ -179,8 +194,8 @@ export default compose(
 		patch4:id,
 		variables:{id},
 		mutation:graphql`
-			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String, $isDev:Boolean){
-				app_update(_id:$id, name:$name, uname: $uname, isDev:$isDev){
+			mutation app_update_Mutation($id:ObjectID!, $name: String, $uname:String, $isDev:Boolean, $sms_name:String){
+				app_update(_id:$id, name:$name, uname: $uname, isDev:$isDev, sms_name:$sms_name){
 					updatedAt
 				}
 			}

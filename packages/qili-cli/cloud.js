@@ -5,7 +5,7 @@ const chalk=require("chalk")
 const prompts=require("prompts")
 
 module.exports=class QiliCloud{
-	constructor(service="http://qili2.com/1/graphql", xApplicationID){
+	constructor(service="https://api.qili2.com/1/graphql", xApplicationID){
 		this.service=service
 		this.xApplicationID=xApplicationID
 		console.log(`To ${chalk.blue(service)}`)
@@ -39,7 +39,7 @@ module.exports=class QiliCloud{
 			return data
 		})
 	}
-	
+
 	//must return Promise.resolve(this)
 	saveRC(data){
 		if(!this.constructor.NAME)

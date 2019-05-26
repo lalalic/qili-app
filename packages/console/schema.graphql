@@ -11,6 +11,7 @@ type App implements Node {
   schema: String
   logs(status: String, first: Int, after: JSON): LogConnection
   canRunInCore: Boolean
+  sms_name: String
 }
 
 type AppComment implements Comment & Node {
@@ -107,7 +108,7 @@ type Mutation {
   file_create(_id: String!, host: ID!, bucket: String, size: Int, crc: Int, mimeType: String, imageInfo: JSON): File
   file_clean(host: ID!): Boolean
   app_create(name: String!, uname: String): App
-  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String, isDev: Boolean): App
+  app_update(_id: ObjectID!, name: String, uname: String, cloudCode: String, isDev: Boolean, sms_name: String): App
   app_remove(_id: ObjectID!): Boolean
   app_canRunInCore(_id: ObjectID!, canRunInCore: Boolean): App
   comment_create(parent: ID, content: String!, type: CommentType, _id: ObjectID): Comment

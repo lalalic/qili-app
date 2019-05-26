@@ -138,7 +138,7 @@ export default compose(
 	}),
 
 	defaultProps({
-		service:"http://qili2.com/1/graphql",
+		service:"https://api.qili2.com/1/graphql",
 		theme:THEME
 	}),
 
@@ -180,7 +180,7 @@ export default compose(
 				store.dispatch(ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})
-			
+
 			store.combineReducers=function(appending){
 				store.replaceReducer(combineReducers({...appending, [DOMAIN]:REDUCER,...reducers}))
 				return store
@@ -191,7 +191,7 @@ export default compose(
 			const props={
 				store,
 				checkVersion(){
-					project && dispatch(ACTION.CHECK_VERSION(project.homepage, project.version))
+					project && dispatch(ACTION.CHECK_VERSION(project.version))
 				},
 				tutorialize(){
 					dispatch(ACTION.TUTORIALIZED)
