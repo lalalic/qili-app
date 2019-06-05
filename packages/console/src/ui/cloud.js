@@ -23,8 +23,8 @@ export class Cloud extends Component{
 
 		return (
 			<Fragment>
-				<Tabs style={{flex:"1 100%",display:"flex",flexDirection:"column"}}
-					contentContainerStyle={{flex:"1 100%", overflow:"scroll"}}
+				<Tabs style={{flex:"1 1 100%", overflowY:"scroll",display:"flex",flexDirection:"column"}}
+					contentContainerStyle={{flex:"1 1 100%", overflow:"scroll"}}
 					tabTemplateStyle={{height:"100%"}}
 					>
 					<Tab label="Code">
@@ -45,7 +45,7 @@ export class Cloud extends Component{
 					</Tab>
 				</Tabs>
 
-				<div style={{flex:1}}>
+				<div style={{flex:"none"}}>
 					<CommandBar
 						items={[
 							{action:"Back"},

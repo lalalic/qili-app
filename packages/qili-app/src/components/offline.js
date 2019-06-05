@@ -35,14 +35,14 @@ class NoNetworkBanner extends Component{
 			noNetwork=(
 				<FullPage>
 					<div style={{display:"flex",flexDirection:"row",  background:"black"}}>
-						<div style={{flex:1}}>
+						<div style={{flex:"none"}}>
 							<IconButton onClick={e=>this.setState({detailed:false})}>
 								<IconClose
 									color="white"/>
 							</IconButton>
 						</div>
 						<div style={{
-								flex:"1 100%",height:48,
+								flex:"1 1 100%",height:48,
 								lineHeight:"48px",fontSize:"small",
 								color:"white"
 								}}>
@@ -57,12 +57,12 @@ class NoNetworkBanner extends Component{
 			<Fragment>
 				<div onClick={e=>this.setState({detailed:true})}
 					style={{display:"flex",flexDirection:"row",  background:red100}}>
-					<div style={{flex:1}}>
+					<div style={{flex:"none"}}>
 						<IconButton>
 							<IconAlert/>
 						</IconButton>
 					</div>
-					<div style={{flex:"1 100%",height:48,lineHeight:"48px",fontSize:"small"}}>
+					<div style={{flex:"1 1 100%", overflowY:"scroll",height:48,lineHeight:"48px",fontSize:"small"}}>
 						网络连接不可用
 					</div>
 				</div>

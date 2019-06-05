@@ -5,7 +5,7 @@ import Logo from "./logo"
 
 export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})=>(
 	<div style={{
-		flex:"1 100%",
+		flex:"1 1 100%",
 		display:"flex",
 		flexDirection:"column",
 		backgroundColor:"transparent",
@@ -22,14 +22,14 @@ export const SplashAD=({url, children, ...props}, {theme:{page:{width,height}}})
 				color:"white",
 				borderRadius:5,
 			}}><CountDown n={3} {...props}/>s 跳过</div>
-		<div style={{flex:"1 100%",overflow:"hidden"}}>
+		<div style={{flex:"1 1 100%",overflow:"hidden"}}>
 			{!url ? 
 				<Logo style={{width:200,height:"100%",display:"block",margin:"auto"}}/> :
 				<img src={url} style={{display:"block",margin:"auto",maxHeight:"100%",maxWidth:"100%"}}/>
 			}
 		</div>
 		<div style={{
-				flex:1,
+				flex:"none",
 				fontSize:"x-small",
 				textAlign:"center"
 			}}>----- QiLi2提供云服务 -----</div>

@@ -83,7 +83,7 @@ export class Comment extends Component{
 
 		return (
 			<Fragment>
-	            <div className="comment" style={{backgroundColor:bg,flex:"1 100%"}}>
+	            <div className="comment" style={{backgroundColor:bg,flex:"1 1 100%", overflowY:"scroll"}}>
 	                <PullToRefresh onRefresh={loadMore}>
 	                    {data.reduce((state,a,i)=>{
 								let createdAt=new Date(a.createdAt)
@@ -100,7 +100,7 @@ export class Comment extends Component{
 	                </PullToRefresh>
 				</div>
 
-				<div style={{flex:1}}>
+				<div style={{flex:"none"}}>
 	                <CommandBar className="CommentToolBar"
 	                    primary="Save"
 	                    items={[

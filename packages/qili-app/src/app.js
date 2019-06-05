@@ -55,7 +55,7 @@ const UI=({muiTheme,children="hello Qili!"})=>(
 )
 
 const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
-	<div className="sticky top right" style={{zIndex:1000}}>
+	<div className="loading sticky top right" style={{zIndex:9000}}>
 		<CircularProgress style={{display: loading ? undefined : "none"}}/>
 	</div>
 ))
@@ -63,6 +63,7 @@ const Loading=connect(state=>({loading:!!state[DOMAIN].loading}))(({loading})=>(
 const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
 	({level,message,dispatch,duration=(level=="info" ? 1000 : 3000)})=>(
 	<Snackbar
+		  className="message"
           open={!!message}
 		  contentStyle={{color: level=="info" ? "white" : "red"}}
           message={message||""}
@@ -105,7 +106,7 @@ export default compose(
 				height:100%
 			`
 			container.style=`
-				flex:1;
+				flex:1 1 100%;
 				background-color:white;
 				margin:0px auto;
 				position:relative;
@@ -314,9 +315,9 @@ export default compose(
 			return (
 				<Provider store={store}>
 					<UI muiTheme={theme}>
+						<Loading/>
 						{notifyOffline ? <offline.Notification/> : null}
 						{children}
-						<Loading/>
 						<Message/>
 						{isDev ? <Performance/> : null}
 					 </UI>

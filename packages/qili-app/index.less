@@ -10,13 +10,15 @@
         background-color:lightgray;
 
         #app{
-            width:@maxWidth;
+            width:@maxWidth!important;
             margin:0px auto!important;
         }
     }
 }
 
 #app{
+	width:100%;
+	
 	.vendor(@prop,@value){
 		-webkit-@{prop}:@value;
 		-moz-@{prop}:   @value;
@@ -281,6 +283,126 @@
 			img{
 				max-width: 80%;
 				max-height: 80%;
+			}
+		}
+	}
+	
+	.li{
+		@listHeight:120px;
+		@listHeightWithImage:160px;
+		@titleFont:larger;
+		@titleLineHeight:25px;
+		@smallFont:small;
+		@smallLineHeight:15px;
+		@imageWidth:120px;
+		@imageHeight:100px;
+		@margin:10px;
+
+		@media screen and (min-width:@maxWidth){
+
+		}
+
+		margin: @margin;
+		border-radius: @margin;
+		background-color: white;
+
+		height: @listHeight;
+		overflow: hidden;
+		position: relative;
+
+		border-bottom: 1px solid lightgray;
+		padding: 10px;
+		text-overflow: ellipsis;
+
+		.title{
+			font-size: @titleFont;
+			line-height: @titleLineHeight;
+			max-height: 2*@titleLineHeight;
+			overflow: hidden;
+			font-weight: bold;
+			text-align: left;
+		}
+
+		.summary{
+			font-size: @smallFont;
+			color:gray;
+			line-height: @smallLineHeight;
+			max-height: 2*@smallLineHeight;
+			overflow: hidden;
+			text-align: left;
+		}
+
+		.more{
+			font-size: @smallFont;
+			color:gray;
+			line-height: @smallLineHeight;
+			max-height: @smallLineHeight;
+
+			>*{
+				display:inline-block;
+			}
+
+			>:first-child{
+				padding-right:10px;
+			}
+			bottom:5px;
+			position:absolute;
+		}
+
+		.photos{
+			text-align: center;
+
+			img{
+				max-height:@imageHeight;
+				max-width: 100%;
+				min-width: @imageWidth;
+				padding: 0px 2px;
+			}
+		}
+
+		&.photo0{
+
+		}
+
+		&.photo1{
+			.layout{
+				#app.grid;
+
+				>:last-child{
+					width:33.3%;
+					vertical-align: top;
+				}
+				>:first-child{
+					vertical-align: top;
+				}
+			}
+
+			.title{
+				max-height: 3*@titleLineHeight;
+			}
+		}
+
+		&.photo3{
+			.photos{
+				#app.grid;
+				>*{
+					vertical-align: middle;
+					text-align: center;
+					width:33.3%
+				}
+				>:last-child{
+					text-align: right
+				}
+				>:first-child{
+					text-align: left;
+				}
+			}
+			height: @listHeightWithImage;
+
+			.title{
+				max-height: @titleLineHeight;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 			}
 		}
 	}

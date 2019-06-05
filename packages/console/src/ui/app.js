@@ -55,7 +55,7 @@ export class App extends Component{
 
 		return (
 			<Fragment>
-				<div style={{flex:"1 100%",padding:5}}>
+				<div style={{flex:"1 1 100%", overflowY:"scroll",padding:5}}>
 					<TextField
 						floatingLabelText="application name"
 						fullWidth={true}
@@ -113,7 +113,7 @@ export class App extends Component{
 						}
 						</div>
 				</div>
-				<div style={{flex:1}}>
+				<div style={{flex:"none"}}>
 					{commandBar}
 				</div>
 			</Fragment>
@@ -129,7 +129,7 @@ export class Creator extends Component{
 		let refName,refUname
 		return (
 			<Fragment>
-				<div style={{flex:"1 100%", padding:5}}>
+				<div style={{flex:"1 1 100%", overflowY:"scroll", padding:5}}>
 					<TextField ref={a=>refName=a}
 						floatingLabelText="application name"
 						errorText={error}
@@ -139,7 +139,7 @@ export class Creator extends Component{
 						floatingLabelText="global unique product name: app.qili2.com/{prouctName}"
 						fullWidth={true}/>
 				</div>
-				<div style={{flex:1}}>
+				<div style={{flex:"none"}}>
 					<CommandBar
 						items={[
 							{action:"Back"}
