@@ -28,4 +28,4 @@ export default compose(
 			}
 		}
 	})
-)(({fetcher})=><GraphiQL fetcher={fetcher} />)
+)(({fetcher})=><GraphiQL fetcher={fetcher}/>)
