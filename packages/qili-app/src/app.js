@@ -2,10 +2,9 @@ import "../index.less"
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {render} from "react-dom"
-import merge from "lodash.merge"
 import {persistStore, autoRehydrate} from 'redux-persist'
 
-import {compose, pure,withState,branch,renderComponent, renderNothing,
+import {compose, pure,branch,renderComponent, renderNothing,
 		setDisplayName,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
 import {withGraphqlClient} from "./tools/recompose"
@@ -20,7 +19,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import LightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import CircularProgress from 'material-ui/CircularProgress'
 import Snackbar from 'material-ui/Snackbar'
-import IconOffline from "material-ui/svg-icons/file/cloud-off"
 
 import supportTap from 'react-tap-event-plugin'
 import * as date from "./tools/date"
@@ -178,6 +176,7 @@ export default compose(
 			)
 
 			persistStore(store,{keyPrefix:`${appId}:`,...persistStoreConfig}, ()=>{
+				store.dispatch(ACTION.LOADING(false))
 				store.dispatch(ACTION.ONLINE())
 				store.dispatch(ACTION.READY)
 			})
