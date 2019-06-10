@@ -42,7 +42,7 @@ export const withQuery=option=>BaseComponent=>{
 							</Wrapper>
 						)
 					}else {
-						return <div className="query loading">loading...</div>
+						return <div className="query loading"><span>loading...</span></div>
 					}
 				},
 				environment,
