@@ -84,6 +84,7 @@ export default compose(
 		notifyOffline: PropTypes.bool,
 		supportOffline: PropTypes.object,
 		persistStoreConfig: PropTypes.object,
+		supportEmailAccount: PropTypes.bool,
 	}),
 
 	setStatic("render", (app,container)=>{
@@ -125,7 +126,6 @@ export default compose(
 					overflow:hidden;
 				}
 			`
-			//container.style.height=window.innerHeight+'px'
 			THEME.page.height=window.innerHeight
 		}
 
@@ -291,11 +291,11 @@ export default compose(
 
 	withGraphqlClient(),
 
-	branch(({token})=>!token,renderComponent(({theme, store, setUser})=>
+	branch(({token})=>!token,renderComponent(({theme, store, setUser, supportEmailAccount})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>
 				<div style={{margin:10}}>
-					<Authentication onSuccess={setUser}/>
+					<Authentication onSuccess={setUser} supportEmail={supportEmailAccount}/>
 				</div>
 				<Loading/>
 				<Message/>

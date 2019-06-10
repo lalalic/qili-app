@@ -43,7 +43,9 @@
 		margin:0px;
 		padding:0px;
 		border:0px;
-		.vendor(user-select,none);
+		:not(input, textarea, select){
+			.vendor(user-select,none);
+		}
 	}
 
 	svg{

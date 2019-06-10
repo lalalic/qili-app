@@ -11,7 +11,8 @@ const isPhone=v=>(/^(\+\d{2})?\d{11}$/g).test(v)
 
 export class Authentication extends Component{
 	static propTypes={
-		onSuccess: PropTypes.func
+		onSuccess: PropTypes.func,
+		supportEmail: PropTypes.bool,
 	}
 	state={
         tick:null,
@@ -64,9 +65,8 @@ export class Authentication extends Component{
 	}
 
 	render(){
-        const {contact, setContact, token, setToken, name, setName, success, onSuccess}=this.props
-		const {login}=this.props
-
+        const {contact, setContact, token, setToken, name, setName,supportEmail}=this.props
+		
 		const {tick,error,errName,exists}=this.state
 		let btnRequest, btnLogin, inputName
 		if(contact){
@@ -105,7 +105,7 @@ export class Authentication extends Component{
 					<div style={{display:"table-cell"}}>
 						<TextField
 							fullWidth={true}
-							floatingLabelText="手机号/Email"
+							floatingLabelText={`手机号${supportEmail ? "/Email" : ""}`}
 							disabled={!!tick}
 							errorText={contact&&!token ? error : null}
 							onChange={({target:{value}})=>setContact(this.validate(value))}
@@ -136,7 +136,8 @@ export class Authentication extends Component{
     }
 
     validate(v){
-        return (isEmail(v) || isPhone(v)) ? v : undefined
+		const {supportEmail}=this.props
+        return (isPhone(v) || (supportEmail && isEmail(v))) ? v : undefined
     }
 }
 
@@ -169,7 +170,6 @@ export default compose(
 		`
 	})
 )(Authentication)
-
 
 const renewToken=graphql`
 	query authentication_renewToken_Query{
