@@ -22,3 +22,6 @@ to get logs of this QiliApp on server
 
 ###dev
 to set development mode on server side, so you can use graphql to query.
+
+###acloud
+to create qili acloud plugin

@@ -64,11 +64,11 @@ const QiliAdmin=compose(
 					{
 						User:{
 							async apps(parent,{},{app,user:{_id}}){
-								return await app.findEntity("apps",{author:_id})
+								return await app.findEntity("App",{author:_id})
 							},
 
 							async app(_, {_id}, {app,user}){
-								return await app.get1Entity("apps",{_id, author:user._id})
+								return await app.get1Entity("App",{_id, author:user._id})
 							}
 						},
 

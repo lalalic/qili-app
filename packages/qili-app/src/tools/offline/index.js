@@ -7,9 +7,8 @@ export {default as Cursor} from "./cursor"
 export {default as Websql} from "./data-service-websql"
 
 const typed=id=>{
-	const [types, _id]=id.split(":")
-	let Type=types[0].toUpperCase()+types.substring(1,types.length-1)
-	return [Type,_id, types]
+	const [Type, _id]=id.split(":")
+	return [Type,_id]
 }
 
 export class Offline{
@@ -83,7 +82,7 @@ export class Offline{
 	}
 
 	remove(id){
-		const [Type, _id, types]=typed(id)
+		const [Type, _id]=typed(id)
 		if(typeof(this[`onRemove${Type}`])=="function")
 			return this[`onRemove${Type}`](_id)
 		else
@@ -91,20 +90,20 @@ export class Offline{
 	}
 
 	onSet(id, record){
-		const [,_id,cols]=typed(id)
-		return this.createOrUpdateEntity(cols, _id, record)
+		const [Type,_id]=typed(id)
+		return this.createOrUpdateEntity(Type, _id, record)
 	}
 
 	onSetUser(_id, {...record}){
-		return this.createOrUpdateEntity("users", _id, record)
+		return this.createOrUpdateEntity("User", _id, record)
 	}
 
 	onRemove(id){
-		const [,_id,cols]=typed(id)
-		return this.removeEntity(cols,_id)
+		const [Type,_id]=typed(id)
+		return this.removeEntity(Type,_id)
 	}
 
-	createOrUpdateEntity(cols, _id, data){
+	createOrUpdateEntity(Type, _id, data){
 		throw new Error("createOrUpdateEntity must be implemented")
 	}
 
@@ -145,20 +144,20 @@ export default class WebSQLOffline extends Offline{
 	}
 
 	getUser(){
-		return this.db.get1Entity("users",this._user)
+		return this.db.get1Entity("User",this._user)
 	}
 
-	createOrUpdateEntity(cols, _id, data){
+	createOrUpdateEntity(Type, _id, data){
 		return this.seq=this.seq.then(()=>
-			this.db.get1Entity(cols,{_id})
-			.then(doc=>this.db.createEntity(cols, {_id, ...doc, ...data}))
+			this.db.get1Entity(Type,{_id})
+			.then(doc=>this.db.createEntity(Type, {_id, ...doc, ...data}))
 			.catch(console.error)
 		)
 	}
 
-	removeEntity(cols,_id){
+	removeEntity(Type,_id){
 		return this.seq=this.seq.then(()=>
-			this.db.remove1Entity(cols, {_id})
+			this.db.remove1Entity(Type, {_id})
 				.catch(console.error)
 		)
 	}

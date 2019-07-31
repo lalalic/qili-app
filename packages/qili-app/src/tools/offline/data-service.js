@@ -15,35 +15,35 @@ export default class{
 
     }
 
-    createEntity(cols,doc){
+    createEntity(Type,doc){
 
     }
 
-    updateEntity(cols,query,doc){
+    updateEntity(Type,query,doc){
 
     }
 
-    patchEntity(cols,query,patch){
+    patchEntity(Type,query,patch){
 
     }
 
-    remove1Entity(cols,query){
+    remove1Entity(Type,query){
 
     }
 
-    get1Entity(cols,query){
+    get1Entity(Type,query){
 
     }
 
-    findEntity(cols,query,filter=cursor=>cursor){
+    findEntity(Type,query,filter=cursor=>cursor){
 
     }
 
-    nextPage(cols, {first, after}, filter){
-        return this.findEntity(cols, {}, filter)
+    nextPage(Type, {first, after}, filter){
+        return this.findEntity(Type, {}, filter)
     }
 
-    prevPage(cols, {last, before},filter){
-        return this.findEntity(cols, {}, filter)
+    prevPage(Type, {last, before},filter){
+        return this.findEntity(Type, {}, filter)
     }
 }

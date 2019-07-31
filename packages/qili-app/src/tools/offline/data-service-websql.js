@@ -17,73 +17,73 @@ export default class extends DataService{
             (tx, error)=>console.error(error)))
     }
 
-    collection(cols){
-        return this.findEntity(cols)
+    collection(Type){
+        return this.findEntity(Type)
     }
 
-    createEntity(cols,{_id, ...doc}){
+    createEntity(Type,{_id, ...doc}){
         _id=_id||this.makeId()
         const data={_id, ...doc}
 		return new Promise((resolve, reject)=>{
                 this.db.transaction(tx=>tx.executeSql(
                     `insert or replace into docs(col,id,doc,state) values(?, ?, ?, ?)`,
-                    [cols, _id, JSON.stringify(data), "upserted"],
+                    [Type, _id, JSON.stringify(data), "upserted"],
                     ()=>resolve(data),
                     (tx,e)=>reject(e)
                 ))
             })
     }
 
-    updateEntity(cols,query,doc){
-        let {_id}=this.get1Entity(cols,query)
+    updateEntity(Type,query,doc){
+        let {_id}=this.get1Entity(Type,query)
         let updatedAt=new Date()
         const data={...doc, _id, updatedAt}
         return new Promise((resolve, reject)=>this.db.transaction(tx=>tx.executeSql(
                 `replace into docs(col, id, doc,state) values(?,?,?,?)`,
-                [cols, _id, JSON.stringify(data),"upserted"],
+                [Type, _id, JSON.stringify(data),"upserted"],
                 ()=>resolve(updatedAt),
                 (tx,e)=>reject(e))))
     }
 
-    patchEntity(cols,query,patch){
-        let {_id, ...raw}=this.get1Entity(cols,query)
+    patchEntity(Type,query,patch){
+        let {_id, ...raw}=this.get1Entity(Type,query)
         let updatedAt=new Date()
         const data={...raw, ...patch, _id, updatedAt}
         return new Promise((resolve, reject)=>this.db.transaction(tx=>tx.executeSql(
                 `replace into docs(col, id, doc,state) values(?,?,?,?)`,
-                [cols, _id, JSON.stringify(data),"upserted"],
+                [Type, _id, JSON.stringify(data),"upserted"],
                 ()=>resolve(updatedAt),
                 (tx,e)=>reject(e))))
     }
 
-    remove1Entity(cols,query){
-        let {_id,...raw}=this.get1Entity(cols,query)
+    remove1Entity(Type,query){
+        let {_id,...raw}=this.get1Entity(Type,query)
         const data={_id,...raw}
         return new Promise((resolve,reject)=>this.db.transaction(tx=>tx.executeSql(
                 `delete from docs where col=? and id=?`,
-                [cols, _id],
+                [Type, _id],
                 resolve,
                 (tx,e)=>reject(e))))
     }
 
-    get1Entity(cols,{_id, ...query}){
+    get1Entity(Type,{_id, ...query}){
         if(_id){
             return new Promise((resolve,reject)=>this.db.transaction(tx=>tx.executeSql(
                     `select doc from docs where col=? and id=?`,
-                    [cols, _id],
+                    [Type, _id],
                     (tx,{rows})=>{
                         resolve(rows.length>0 ? JSON.parse(rows[0].doc) : undefined)
                     },
                     (tx,e)=>reject(e))))
         }else{
-            return this.findEntity(cols, query).then(docs=>docs[0])
+            return this.findEntity(Type, query).then(docs=>docs[0])
         }
     }
 
-    findEntity(cols,query={},filter=cursor=>cursor){
+    findEntity(Type,query={},filter=cursor=>cursor){
         return new Promise((resolve, reject)=>this.db.transaction(tx=>tx.executeSql(
                 `select doc from docs where col=?`,
-                [cols],
+                [Type],
                 (tx, {rows})=>{
                         let filtered=[]
                         for(let i=0;i<rows.length;i++){

@@ -37,9 +37,8 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 				environment.getAll=function(type){
 					let store=this.getStore()
 					let source=store.getSource()
-					let ex=type[0].toLowerCase()+type.substr(1)+'s'
 					return source.getRecordIDs()
-						.filter(id=>id.startsWith(ex))
+						.filter(id=>id.startsWith(type))
 						.map(id=>source.get(id))
 						.filter(a=>!!a)
 				}
@@ -49,8 +48,7 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 					const record=store.get(id)
 					const connection=ConnectionHandler.getConnection(record,key,filter)
 					const type=node=>{
-						let typeComments=node.id.split(":")[0]
-						let TypeComment=typeComments[0].toUpperCase()+typeComments.substr(1,typeComments.length-2)
+						let TypeComment=node.id.split(":")[0]
 						return TypeComment+'Edge'
 					}
 					return {
