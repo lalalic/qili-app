@@ -95,7 +95,7 @@ export class App extends Component{
 						onFocus={({target})=>target.select()}
 						fullWidth={true}
 						inputStyle={{color:"gray"}}
-						value={`http://qili2.com/1/${apiKey}/wechat`}/>
+						value={`https://qili2.com/1/${apiKey}/wechat`}/>
 
 					<div style={{margin:50}}>
 						<Toggle
