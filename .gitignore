@@ -31,3 +31,8 @@ view/dashboard
 test/
 
 __generated__
+
+packages/console/dist/cordova.html
+packages/console/dist/index.*
+packages/qili-app/index.js
+
