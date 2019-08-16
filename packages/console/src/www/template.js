@@ -7,9 +7,13 @@ export default function({content}){
         </head>
         <body style="margin:0">
             <header style="position:fixed;top:0px;width:100%;height:50px;line-height:50px;display:flex;flex-direction:row;background-color:#303848;color:white;">
+                <center style="flex:none;padding-left:20px;margin:auto">
+                    <strong>七里云</strong>
+                </center>
+                
                 <center style="flex:1 1 100%"></center>
-                <center style="flex:1;padding-right:20px;margin:auto">
-                    <a href="https://app.qili2.com" style="padding:10px;white-space:nowrap; border-radius:5px; border:1px solid white;background:transparent;color:white">
+                <center style="flex:none;padding-right:20px;margin:auto">
+                    <a href="https://app.qili2.com" style="text-decoration:none;padding:10px;white-space:nowrap; border-radius:5px; border:1px solid white;background:transparent;color:white">
                         管理控制台
                     </a>
                 </center>
