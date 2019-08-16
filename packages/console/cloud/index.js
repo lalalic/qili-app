@@ -1,9 +1,16 @@
 const AppComment=Cloud.buildComment("App")
 
-Cloud.typeDefs=`${AppComment.typeDefs}`
+Cloud.supportAnonymous=true
 
-Cloud.resolver=AppComment.resolver
+Cloud.addModule({
+    typeDefs:`${AppComment.typeDefs}`,
+    resolver:AppComment.resolver,
+    static(service){
+        service.on(/.*/,function({path},res){
+            require("../src/www/server")(path,res)
+        })
+    },
+})
 
+//to support offline
 module.exports=Cloud
-
-//hello2

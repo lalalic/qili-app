@@ -17,6 +17,7 @@ module.exports=(base,HTML,port)=>{
 			port,
 			host:"0.0.0.0",
 			disableHostCheck:true,
+			historyApiFallback:true,
 			before(app){
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
 			}

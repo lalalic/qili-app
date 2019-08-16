@@ -31,3 +31,5 @@ view/dashboard
 test/
 
 __generated__
+
+__generated.js

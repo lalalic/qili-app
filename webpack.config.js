@@ -71,6 +71,25 @@ module.exports=env=>{
 	if(env){
 		return require(`./webpack.${env}.js`)(base,HTML,9081)
 	}
-
 	return base
+
+	return [
+		base,
+		{...base,
+			entry:["babel-polyfill","./packages/console/src/www/client.js"],
+			output:{
+				filename:"boundle.js",
+				path:path.resolve(__dirname, 'packages/console/dist')
+			},
+			plugins:[
+				new UglifyJsPlugin(),
+				new DefinePlugin({
+					'process.env.NODE_ENV': JSON.stringify('production')
+				}),
+				new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
+				new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
+				new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
+			]
+		}
+	]
 }

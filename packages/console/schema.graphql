@@ -8,10 +8,10 @@ type App implements Node {
   author: User
   createdAt: Date!
   updatedAt: Date
+  sms_name: String
   schema: String
   logs(status: String, first: Int, after: JSON): LogConnection
   canRunInCore: Boolean
-  sms_name: String
 }
 
 type AppComment implements Comment & Node {
@@ -133,6 +133,7 @@ type Query {
   schema: String!
   me: User!
   file_upload_token(key: String): FileToken
+  anonymous_apps(name: String): [App]
   app_comments(parent: ObjectID, last: Int, before: JSON): AppCommentConnection
 }
 

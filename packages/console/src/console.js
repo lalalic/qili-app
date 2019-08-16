@@ -1,19 +1,16 @@
-import React, {Component,createFactory,Fragment} from "react"
+import React, {createFactory,Fragment} from "react"
 import PropTypes from "prop-types"
-import {Router, Route, IndexRoute, hashHistory, Redirect, IndexRedirect, Link} from "react-router"
+import {Router, Route, IndexRoute, browserHistory} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
-import {combineReducers} from "redux"
 import {connect} from "react-redux"
 
-import {compose, withProps, withContext, getContext, setStatic, mapProps,
+import {compose, withProps, getContext, setStatic, mapProps,
 		branch,renderNothing,renderComponent} from "recompose"
 
 import IconHome from "material-ui/svg-icons/action/home"
-import IconData from "material-ui/svg-icons/action/dashboard"
 import IconCloud from "material-ui/svg-icons/file/cloud"
 import IconLog from "material-ui/svg-icons/action/assignment"
 import IconAccount from 'material-ui/svg-icons/action/account-box'
-import IconSchema from 'material-ui/svg-icons/editor/insert-link'
 
 import {
 	graphql, withFragment, withQuery,
@@ -26,7 +23,6 @@ import {
 import Dashboard from "./ui/dashboard"
 import App from "./ui/app"
 import Cloud from "./ui/cloud"
-import Schema from "./ui/schema"
 import Log from "./ui/log"
 import My from "./ui/my"
 
@@ -159,7 +155,7 @@ const withNavigator=()=>BaseComponent=>{
 }
 
 const router=(
-	<Router history={hashHistory}>
+	<Router history={browserHistory}>
 		<Route path="/" component={compose(
 				connect(state=>({hasApp:!!state.console.current})),
 				branch(({hasApp})=>!hasApp,renderComponent(compose(

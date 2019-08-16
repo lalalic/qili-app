@@ -33,45 +33,29 @@ const Scalar={
 		}
 	}
 }
+
+const empty=()=>({})
+const modules=[]
 module.exports={
 	merge,
-	"static":{
-		on(path, callback){
-
-		},
-
-		reply(req, res){
-
-		}
+	ID:({_id},_,context,{parentType:{name}})=>`${name}:${_id}`,
+    buildComment:empty,
+    buildFavorite:empty,
+    buildStatistics:empty,
+    buildPagination:empty,
+	statistics:empty,
+	addModule(m){
+		if(m && typeof(m)=="object")
+			modules.push(m)
+		return module.exports
 	},
-	wechat:{
-		on(event, callback){
-
-		},
-
-		reply(req, res){
-
-		}
-	},
-	buildPagination:()=>({
-		typeDefs:"",
-		resolver:{}
-	}),
-	buildComment:()=>({
-		typeDefs:"",
-		resolver:{}
-	}),
-	isDev:false,
-	typeDefs:"",
-	resolver:{},
-	persistedQuery:{},
 	makeSchema(typeDefs, resolvers={}){
 		return makeExecutableSchema({
 			resolverValidationOptions:{
 				requireResolversForResolveType: false
 			},
-			typeDefs: typeDefs||this.typeDefs,
-			resolvers: merge({}, this.resolver,{
+			typeDefs: typeDefs||modules.map(a=>a.typeDefs).filter(a=>!!a),
+			resolvers: merge({}, ...modules.map(a=>a.resolver).filter(a=>!!a).reverse(),{
 				User: {
 					name:({username,name})=>username||name,
 					username: ({username,name})=>username||name||"",

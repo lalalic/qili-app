@@ -70,6 +70,38 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
         />
 ))
 
+class Anonymous extends Component{
+	constructor(){
+		super(...arguments)
+		this.state={}
+		this.auth=()=>this.setState({auth:true})
+		this.cancel=this.cancel.bind(this)
+	}
+	render(){
+		const {auth}=this.state
+		const {children,setUser, supportEmailAccount}=this.props
+		return (
+			<Fragment>
+				{auth && 
+				(
+					<div onClick={this.cancel} style={{opacity:"", position:"fixed",top:0,left:0,width:"100%",height:"100%"}}>
+						<div style={{width:400,margin:"100px auto",padding:5,borderLeft:"1px dotted lightgray", borderRight:"1px dotted lightgray"}}>
+							<Authentication onSuccess={setUser} supportEmail={supportEmailAccount}/>
+						</div>
+					</div>
+				)}
+				{React.cloneElement(children,{auth:this.auth})}
+			</Fragment>
+		)
+	}
+
+	cancel(e){
+		if(e.target==e.currentTarget){
+			this.setState({auth:undefined})
+		}
+	}
+}
+
 export default compose(
 	setDisplayName("QiliApp"),
 	setPropTypes({
@@ -85,6 +117,7 @@ export default compose(
 		supportOffline: PropTypes.object,
 		persistStoreConfig: PropTypes.object,
 		supportEmailAccount: PropTypes.bool,
+		anonymous:PropTypes.element,
 	}),
 
 	setStatic("render", (app,container)=>{
@@ -252,6 +285,11 @@ export default compose(
 			optics
 		})
 	),
+	
+	connect(({qili:{user={}}})=>{
+		const {id,token}=user
+		return {user:id,token, key:id}
+	}),
 
 	connect(({qili:{inited,AD,tutorialized}})=>{
 		let props={}
@@ -284,13 +322,20 @@ export default compose(
 		)
 	),
 
-	connect(({qili:{user={}}})=>{
-		const {id,token}=user
-		return {user:id,token, key:id}
-	}),
-
 	withGraphqlClient(),
 
+	branch(({anonymous, token})=>anonymous&&!token,renderComponent(({store,anonymous,theme,setUser, supportEmailAccount})=>(
+		<Provider store={store}>
+			<UI muiTheme={theme}>
+				<Loading/>
+				<Anonymous {...{setUser, supportEmailAccount}}>
+					{anonymous}
+				</Anonymous>
+				<Message/>
+			</UI>
+		</Provider>
+	))),
+	
 	branch(({token})=>!token,renderComponent(({theme, store, setUser, supportEmailAccount})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>

@@ -57,7 +57,8 @@
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
     "persist": "yarn relay && qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
     "api": "yarn build --env=api",
-    "sync": "qili publish packages/console/cloud/index.js --no-build-cloud --no-relay-compile --no-persist-query -f packages/console/schema.graphql"
+    "cloud": "webpack --env=cloud",
+    "sync": "qili publish packages/console/cloud/__generated.js --no-relay-compile --no-persist-query -f packages/console/schema.graphql"
   },
   "repository": {
     "type": "git",
