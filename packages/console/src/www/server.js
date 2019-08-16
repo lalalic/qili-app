@@ -2,6 +2,7 @@ import React from "react"
 import {renderToString} from "react-dom/server"
 import {match, Router} from "react-router"
 import routes from "./routes"
+import template from "./template"
 
 export default function(location,res){
     match({routes,location}, (err, redirect, props)=>{
