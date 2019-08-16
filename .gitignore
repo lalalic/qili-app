@@ -33,3 +33,7 @@ test/
 __generated__
 
 __generated.js
+packages/console/dist/cordova.html
+packages/console/dist/index.*
+packages/qili-app/index.js
+
