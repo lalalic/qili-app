@@ -1,4 +1,4 @@
-import React, {createFactory,Fragment} from "react"
+import React, {Fragment} from "react"
 import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, browserHistory} from "react-router"
 import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
@@ -123,8 +123,7 @@ const Current=compose(
 ))
 
 const withCurrent=()=>BaseComponent=>{
-	const factory=createFactory(BaseComponent)
-	const WithCurrent=props=>(<Fragment><Current/>{factory(props)}</Fragment>)
+	const WithCurrent=props=>(<Fragment><Current/><BaseComponent {...props}/></Fragment>)
 	return WithCurrent
 }
 
@@ -140,11 +139,10 @@ const Navigator=()=>(
 )
 
 const withNavigator=()=>BaseComponent=>{
-	const factory=createFactory(BaseComponent)
 	const WithNavigator=props=>(
 		<Fragment>
 			<div style={{flex:"1 1 100%", overflowY:"scroll"}}>
-				{factory(props)}
+				<BaseComponent {...props}/>
 			</div>
 			<div style={{flex:"none"}}>
 				<Navigator/>

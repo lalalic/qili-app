@@ -1,8 +1,7 @@
-import React, {Component,createFactory} from "react"
+import React, {createFactory} from "react"
 import PropTypes from "prop-types"
-import {compose, withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
+import {withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
 import withQuery from "./withQuery"
-import withFragment from "./withFragment"
 
 export const withPagination=(options)=>BaseComponent=>{
     const factory=createFactory(

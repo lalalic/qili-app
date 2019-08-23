@@ -1,13 +1,10 @@
-import React, {PureComponent,createFactory} from "react"
+import React, {PureComponent} from "react"
 import PropTypes from "prop-types"
-import {connect} from "react-redux"
 import {QueryRenderer} from "react-relay"
-import {compose, setDisplayName, wrapDisplayName, getContext} from "recompose"
-
-import Empty from "../../components/empty"
-import IconError from "material-ui/svg-icons/alert/error"
+import {compose, setDisplayName, wrapDisplayName, getContext, setStatic} from "recompose"
 
 import hack from "./hack-null-default-undefined"
+import isNode from "../is-node"
 
 class Wrapper extends PureComponent{
 	componentWillMount(){
@@ -18,16 +15,25 @@ class Wrapper extends PureComponent{
 	}
 }
 export const withQuery=option=>BaseComponent=>{
-	const factory=createFactory(QueryRenderer)
+	const opt=function(props){
+		try{
+			return typeof(option)=="function" ? option(props) : option
+		}catch(e){
+			
+		}
+	}
 	const WithQuery=compose(
+			setStatic("withQuery", opt),
 			getContext({
 				client:PropTypes.object,
 				store: PropTypes.object
 			}),
 		)(({client:environment,store,...others})=>{
-			const {query, onSuccess, onError, ...more}=typeof(option)=="function" ? option(others) : option
+			debugger
+			const {query, onSuccess, onError, ...more}=opt(others)||{}
 
-			return factory({
+			return <QueryRenderer {...{
+				dataFrom:"STORE_THEN_NETWORK",
 				render({error, props}){
 					if(props){
 						return (
@@ -38,7 +44,7 @@ export const withQuery=option=>BaseComponent=>{
 					}else if(error){
 						return (
 							<Wrapper handle={()=>onError && onError(error,store.dispatch,store)}>
-								<Empty icon={<IconError color="red"/>}>error: {error.toString()}</Empty>
+								<div className="message error">error: {error.toString()}</div>
 							</Wrapper>
 						)
 					}else {
@@ -48,7 +54,7 @@ export const withQuery=option=>BaseComponent=>{
 				environment,
 				query:hack(query),
 				...more,
-				})
+				}}/>
 		})
 
 	if (process.env.NODE_ENV !== 'production') {

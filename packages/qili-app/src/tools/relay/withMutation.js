@@ -1,6 +1,6 @@
-import React, {Component,createFactory} from "react"
+import React from "react"
 import PropTypes from "prop-types"
-import {compose,withProps, getContext, setDisplayName, wrapDisplayName } from "recompose"
+import {getContext, setDisplayName, wrapDisplayName } from "recompose"
 import {commitMutation} from "react-relay"
 
 import spreadResponse from "../spread-response"
@@ -26,7 +26,6 @@ const isDate=date=>date && typeof date.getMonth === 'function'
  */
 
 export const withMutation=option=>BaseComponent=>{
-	const factory=createFactory(BaseComponent)
 	const WithMutation=getContext({
 			client:PropTypes.object,
 			showMessage: PropTypes.func,
@@ -86,7 +85,7 @@ export const withMutation=option=>BaseComponent=>{
 					})
 				})
 			}
-			return factory({...others, [name]:mutate})
+			return <BaseComponent {...{...others, [name]:mutate}}/>
 		}
 	)
 

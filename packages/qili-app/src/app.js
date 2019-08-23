@@ -7,7 +7,7 @@ import {persistStore, autoRehydrate} from 'redux-persist'
 import {compose, pure,branch,renderComponent, renderNothing,
 		setDisplayName,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
-import {withGraphqlClient} from "./tools/recompose"
+import {withGraphql} from "./tools/recompose"
 import File from "./components/file"
 import {createStore, applyMiddleware, combineReducers} from "redux"
 
@@ -31,6 +31,8 @@ import SplashAD from "./components/splash-ad"
 import * as offline from "./components/offline"
 
 import {DOMAIN, ACTION, REDUCER} from "./state"
+
+import isNode from "./tools/is-node"
 
 const THEME=getMuiTheme(LightBaseTheme,{
 	footbar:{
@@ -173,6 +175,10 @@ export default compose(
 		service:"https://api.qili2.com/1/graphql",
 		theme:THEME
 	}),
+
+	branch(()=>isNode, renderComponent(compose(
+		withGraphql()
+	)(({children})=><Fragment>{children}</Fragment>))),
 
 	branch(({appId})=>!appId,renderComponent(({theme})=>
 		<UI muiTheme={theme}>
@@ -322,7 +328,7 @@ export default compose(
 		)
 	),
 
-	withGraphqlClient(),
+	withGraphql(),
 
 	branch(({anonymous, token})=>anonymous&&!token,renderComponent(({store,anonymous,theme,setUser, supportEmailAccount})=>(
 		<Provider store={store}>

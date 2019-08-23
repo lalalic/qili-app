@@ -10,7 +10,7 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 					client: PropTypes.object,
 					optics: PropTypes.func,
 				},
-				({client,optics,store})=>({
+				({client,optics})=>({
 					client,
 					optics
 				})
@@ -27,6 +27,7 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 			const props=this.props
 			let {client:environment}=props
 			let clientOpts=typeof(options)=="function" ? options(props) : options
+			environment=environment||clientOpts.environment
 			if(!environment){
 				environment=createEnvironment({...props,...clientOpts})
 				environment.get=function(id){

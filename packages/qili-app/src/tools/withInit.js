@@ -1,6 +1,5 @@
 import React, {Fragment} from "react"
-import PropTypes from "prop-types"
-import {compose, setDisplayName, wrapDisplayName} from "recompose"
+import {setDisplayName, wrapDisplayName} from "recompose"
 import {withQuery} from "./relay/withQuery"
 
 export const withInit=options=>BaseComponent=>{

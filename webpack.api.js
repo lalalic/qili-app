@@ -5,9 +5,12 @@ const nodeExternals = require('webpack-node-externals')
 module.exports=(base,HTML,port)=>{
     return {
 		...base,
-		entry:["./packages/qili-app/src/index.js"],
+		entry:{
+			index:["./packages/qili-app/src/index.js"],
+			graphql: "./packages/qili-app/src/tools/recompose.js",
+		},
         output:{
-			filename:"index.js",
+			filename:"[name].js",
 			path:path.resolve(__dirname, 'packages/qili-app'),
             libraryTarget: "commonjs2",
 		},

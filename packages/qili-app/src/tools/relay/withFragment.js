@@ -1,4 +1,4 @@
-import React, {Component, createFactory} from "react"
+import React from "react"
 import PropTypes from "prop-types"
 import {compose,withProps, getContext, setDisplayName, wrapDisplayName}  from "recompose"
 import {createFragmentContainer, createPaginationContainer} from "react-relay"
@@ -7,8 +7,9 @@ export const withFragment=options=>BaseComponent=>{
 	let WithFragment=null
 	if(isPagination(options)){
 		WithFragment=getContext({pagination:PropTypes.any})(({pagination, ...props})=>{
+			debugger
 			let {query,variables, direction,getVariables, getConnectionFromProps, getFragmentVariables}=typeof(pagination)=="function" ? pagination(props) : pagination
-			let factory=createFactory(createPaginationContainer(BaseComponent, options, {
+			const PaginationContainer=createPaginationContainer(BaseComponent, options, {
 				getVariables(props,{count,cursor}){
 					if(getVariables)
 						return getVariables(...arguments)
@@ -22,12 +23,11 @@ export const withFragment=options=>BaseComponent=>{
 				getConnectionFromProps,
 				getFragmentVariables,
 				query,
-			}))
-			return factory(props)
+			})
+			return <PaginationContainer {...props}/>
 		})
 	}else{
-		let factory=createFactory(BaseComponent)
-		WithFragment=createFragmentContainer(props=>factory(props),options)
+		WithFragment=createFragmentContainer(props=><BaseComponent {...props}/>,options)
 	}
 
 	if (process.env.NODE_ENV !== 'production') {

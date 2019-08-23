@@ -1,13 +1,20 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
 
-const source=new RecordSource()
-const store = new Store(source);
+import isNode from "../is-node"
+
 const handlerProvider = null;
 const NoService=new Error("Network error")
 
 export default function createEnvironment(props){
-	let {user, token, appId, supportOffline, network, showMessage, loading, isDev}=props
+	if(isNode){
+		return createServerEnvironment(...arguments)
+	}
+	
+	const source=new RecordSource(window._initRelay)
+	const store = new Store(source);
 
+	let {user, token, appId, supportOffline, network=a=>a, showMessage=a=>a, loading=a=>a, isDev}=props
+	
 	if(supportOffline){
 		supportOffline.user=user
 	}
@@ -185,4 +192,26 @@ export default function createEnvironment(props){
 			})
 		}
 	});
+}
+
+
+function createServerEnvironment({app,user}){
+	function fetchQuery(operation, variables){
+		return app.runQL(typeof(operation)=="string" ? operation : operation.text,variables)
+	}
+
+	return Object.assign(new Environment({
+		handlerProvider,
+		network:Network.create(fetchQuery),
+		store:new Store(new RecordSource()),
+	}),{
+		changeToken(){
+
+		},
+		fetcher(){
+
+		},
+		runQL:fetchQuery
+	})
+
 }
