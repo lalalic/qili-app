@@ -1,4 +1,6 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
+import {RelayNetworkLayer,urlMiddleware} from "react-relay-network-modern/lib"
+import RelayClientSSR from 'react-relay-network-modern-ssr/lib/client'
 
 import isNode from "../is-node"
 
@@ -123,10 +125,38 @@ export default function createEnvironment(props){
 		})
 	}
 
+	function createNetwork(){
+		const relayClientSSR = new RelayClientSSR(window.__RELAY_BOOTSTRAP_DATA__)
+		return new RelayNetworkLayer([
+			(next)=>async (req) =>{
+				loading(true)
+				if(network()=="online"){
+					const res=await next(req)
+					loading(false)
+					return res
+				}else if(supportOffline){
+					return fetchQueryOffline({text:req.query}, req.variables)
+				}else
+					return Promise.resolve(NoService)
+			},
+			relayClientSSR.getMiddleware({
+				// Will preserve cache rather than purge after mount.
+				lookup: false
+			}),
+
+			urlMiddleware({
+				url:req=>props.service,
+				headers:{
+					"X-Application-ID": appId,
+					"X-Session-Token": token,
+				},
+			})
+		])
+	}
 
 	return Object.assign(new Environment({
 		handlerProvider,
-		network:Network.create(fetchQuery),
+		network: createNetwork(),//Network.create(fetchQuery),
 		store,
 	}),{
 		changeToken(newToken){

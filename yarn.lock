@@ -416,6 +416,10 @@
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
 
+"@types/relay-runtime@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@types/relay-runtime/-/relay-runtime-5.0.3.tgz#92daa14f70a76d38f8b850d470d79e11e34c0408"
+
 "@wry/equality@^0.1.2":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.1.9.tgz#b13e18b7a8053c6858aa6c85b54911fb31e3a909"
@@ -545,10 +549,6 @@ ansi-escapes@^3.0.0:
 ansi-html@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/ansi-html/-/ansi-html-0.0.7.tgz#813584021962a9e9e6fd039f940d12f56ca7859e"
-
-ansi-regex@*:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.0.tgz#8b9f8f08cf1acb843756a839ca8c7e3168c51997"
 
 ansi-regex@^2.0.0:
   version "2.1.1"
@@ -4386,7 +4386,7 @@ imports-loader@^0.7.1:
     loader-utils "^1.0.2"
     source-map "^0.5.6"
 
-imurmurhash@*, imurmurhash@^0.1.4:
+imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
 
@@ -7263,6 +7263,16 @@ react-redux@^4.4.5:
     lodash "^4.17.11"
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
+
+react-relay-network-modern-ssr@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/react-relay-network-modern-ssr/-/react-relay-network-modern-ssr-1.2.4.tgz#3d55ee9e9ed7ed07a2c7c56fc274eba3114777e1"
+
+react-relay-network-modern@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/react-relay-network-modern/-/react-relay-network-modern-4.0.4.tgz#e39ef88d2edf7460643f5ca11951778ac4697784"
+  optionalDependencies:
+    "@types/relay-runtime" "^5.0.3"
 
 react-relay@^5.0.0:
   version "5.0.0"
