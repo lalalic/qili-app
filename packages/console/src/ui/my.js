@@ -13,7 +13,7 @@ export const My=({user, toCreate, toApp, toProfile, toSetting})=>(
 			primaryText="Create QiLi app"
 			initiallyOpen={true}
 			autoGenerateNestedIndicator={false}
-			onTouchTap={toCreate}
+			onClick={toCreate}
 			leftIcon={<IconAdd/>}
 			nestedItems={
 				user.apps.map(a=>(
@@ -28,7 +28,7 @@ export const My=({user, toCreate, toApp, toProfile, toSetting})=>(
 )
 
 export default compose(
-	withFragment(graphql`
+	withFragment({user:graphql`
 		fragment my_user on User{
 			...qili_account_user
 			apps{
@@ -36,5 +36,5 @@ export default compose(
 				name
 			}
 		}
-	`)
+	`})
 )(My)

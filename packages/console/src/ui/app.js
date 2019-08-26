@@ -175,7 +175,7 @@ export default compose(
 		showMessage: PropTypes.func,
 	}),
 
-	withFragment(graphql`
+	withFragment({app:graphql`
 		fragment app on App{
 			id
 			name
@@ -185,8 +185,8 @@ export default compose(
 			canRunInCore
 			sms_name
 		}
-	`),
-	withProps(({data})=>({...data})),
+	`}),
+	withProps(({app})=>({...app})),
 
 	withMutation(({id})=>({
 		promise:true,

@@ -21,10 +21,10 @@ export const Schema=({schema, style})=>(
 )
 
 export default compose(
-	withFragment(graphql`
+	withFragment({app:graphql`
 		fragment schema_app on App{
 			schema
 		}
-	`),
+	`}),
 	mapProps(({app,style})=>({schema:app.schema,style}))
 )(Schema)

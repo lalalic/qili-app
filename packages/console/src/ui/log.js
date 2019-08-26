@@ -5,7 +5,7 @@ import Pull2Refresh from "pull-to-refresh2"
 import {compose} from "recompose"
 import {withFragment} from "qili-app"
 
-const Log=({data:logs, loadMore})=>(
+const Log=({logs, loadMore})=>(
     <Pull2Refresh onMore={loadMore}>
 		<div style={{margin:5}}>
 			<table className="logs">
@@ -39,7 +39,7 @@ const Log=({data:logs, loadMore})=>(
 
 
 export default compose(
-    withFragment(graphql`
+    withFragment({logs:graphql`
         fragment log on Log@relay(plural: true){
             id
 			startedAt
@@ -50,5 +50,5 @@ export default compose(
 			variables
 			report
         }
-    `),
+    `}),
 )(Log)

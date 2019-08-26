@@ -20,7 +20,6 @@ import LightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import CircularProgress from 'material-ui/CircularProgress'
 import Snackbar from 'material-ui/Snackbar'
 
-import supportTap from 'react-tap-event-plugin'
 import * as date from "./tools/date"
 
 import Performance from "./components/performance"
@@ -165,7 +164,6 @@ export default compose(
 		}
 
 		size()
-		supportTap()
 		window.addEventListener("resize", size)
 
 		return render(app,container)

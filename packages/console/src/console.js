@@ -83,6 +83,7 @@ const QiliAdmin=compose(
 					id
 					name
 					token
+					
 					apps{
 						id
 						name
@@ -190,8 +191,9 @@ const router=(
 						`
 					}),
 					getContext({router:PropTypes.object}),
-					mapProps(({router,...others})=>({
+					mapProps(({data, router,...others})=>({
 						...others,
+						user:data.user,
 						toCreate: ()=>router.push(`/app`),
 						toApp:a=>router.push(`/app/${a.id}`),
 						toSetting: ()=>router.push('/my/setting'),
@@ -239,8 +241,8 @@ const router=(
 								client:PropTypes.object,
 								router:PropTypes.object,
 							}),
-							withProps(({me,client,current,dispatch,router,params:{id}})=>({
-								data:me.app,
+							withProps(({data,client,current,dispatch,router,params:{id}})=>({
+								app:data.me.app,
 								switchApp(){
 									let apps=client.getAll("App")
 									dispatch(ACTION.CURRENT_APP(apps.length ? apps[0].id : null))
@@ -264,7 +266,7 @@ const router=(
 				        }
 				    `,
 				})),
-				withFragment({data:graphql`
+				withFragment(graphql`
 					fragment console_appComments on Query{
 						comments:app_comments(parent:$parent, last:$count, before: $cursor)@connection(key:"console_app_comments"){
 							edges{
@@ -279,7 +281,7 @@ const router=(
 							}
 						}
 					}
-				`}),
+				`),
 				withProps(({params:{id:parent}})=>({
 					parent,
 					connection:"console_app_comments"
@@ -330,9 +332,9 @@ const router=(
 						}
 					`
 				})),
-				withProps(({data})=>({logApp:data.me.app})),
+				withProps(({data})=>({data:data.me.app})),
 				withFragment(graphql`
-					fragment console_logApp on App{
+					fragment console_logApp on App {
 						logs(status:$status, first:$count, after:$cursor)@connection(key:"console_logs"){
 							edges{
 								node{
@@ -347,8 +349,8 @@ const router=(
 						}
 					}
 				`),
-				mapProps(({logApp,data,relay})=>({
-					data:logApp.logs.edges.map(a=>a.node),
+				mapProps(({data,relay})=>({
+					logs:data.logs.edges.map(a=>a.node),
 					loadMore(ok){
 						if(relay.hasMore() && !relay.isLoading()){
 							relay.loadMore(10, e=>{

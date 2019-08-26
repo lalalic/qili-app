@@ -29,7 +29,6 @@ export const withQuery=option=>BaseComponent=>{
 				store: PropTypes.object
 			}),
 		)(({client:environment,store,...others})=>{
-			debugger
 			const {query, onSuccess, onError, ...more}=opt(others)||{}
 
 			return <QueryRenderer {...{
@@ -38,7 +37,7 @@ export const withQuery=option=>BaseComponent=>{
 					if(props){
 						return (
 							<Wrapper handle={()=>onSuccess && onSuccess(props,store.dispatch,store)}>
-								<BaseComponent {...others} {...props} data={props}/>
+								<BaseComponent {...others} data={props}/>
 							</Wrapper>
 						)
 					}else if(error){

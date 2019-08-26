@@ -26,7 +26,7 @@ module.exports=function persist(src,dest){
 			fs.readdirSync(root)
 				.forEach(file=>{
 					file=path.join(root,file)
-					const {kind,text,name}=require(file)
+					const {kind,params:{text,name}={}}=require(file)
 					if(kind!=="Fragment"){
 						if(schema[name]){
 							console.error(`operation[${name}] already exists in ${file}`)

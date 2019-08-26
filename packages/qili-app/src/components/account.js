@@ -82,8 +82,9 @@ Account.routes=({
 						query: accountQL
 					}),
 					getContext({router:PropTypes.object}),
-					mapProps(({router,...others})=>({
+					mapProps(({router,data, ...others})=>({
 						...others,
+						user:data.user,
 						toSetting: ()=>router.push(`/${path}/setting`),
 						toProfile: ()=>router.push(`/${path}/profile`),
 					})),
@@ -97,6 +98,7 @@ Account.routes=({
 					withQuery({
 						query:profileQL
 					}),
+					mapProps(({data, ...others})=>({user:data.user, ...others})),
 				)(Profile)
 			}/>
 	</Route>

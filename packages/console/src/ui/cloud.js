@@ -92,17 +92,13 @@ export default compose(
 			}
 		`
 	})),
-	withFragment(graphql`
+	withFragment({app:graphql`
 		fragment cloud_app on App{
 			cloudCode
 			...schema_app
 		}
-	`),
+	`}),
 	getContext({
 		showMessage: PropTypes.func,
-	}),
-	mapProps(({app,...others})=>({
-		app,
-		...others
-	})),
+	})
 )(Cloud)

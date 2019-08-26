@@ -4,9 +4,9 @@
       "react"
     ],
     "plugins": [
+      "babel-plugin-relay",
       "babel-plugin-add-module-exports",
       "babel-plugin-transform-object-rest-spread",
-      "babel-plugin-transform-class-properties",
-	  "babel-plugin-relay"
+      "babel-plugin-transform-class-properties"
     ]
  }

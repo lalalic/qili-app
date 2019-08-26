@@ -4,10 +4,12 @@ import {compose,withProps, getContext, setDisplayName, wrapDisplayName}  from "r
 import {createFragmentContainer, createPaginationContainer} from "react-relay"
 
 export const withFragment=options=>BaseComponent=>{
+	if(typeof(options)=="function"){
+		options={data:options}
+	}
 	let WithFragment=null
 	if(isPagination(options)){
 		WithFragment=getContext({pagination:PropTypes.any})(({pagination, ...props})=>{
-			debugger
 			let {query,variables, direction,getVariables, getConnectionFromProps, getFragmentVariables}=typeof(pagination)=="function" ? pagination(props) : pagination
 			const PaginationContainer=createPaginationContainer(BaseComponent, options, {
 				getVariables(props,{count,cursor}){
@@ -27,7 +29,7 @@ export const withFragment=options=>BaseComponent=>{
 			return <PaginationContainer {...props}/>
 		})
 	}else{
-		WithFragment=createFragmentContainer(props=><BaseComponent {...props}/>,options)
+		WithFragment=createFragmentContainer(BaseComponent,options)
 	}
 
 	if (process.env.NODE_ENV !== 'production') {
@@ -41,8 +43,10 @@ export default withFragment
 
 function isPagination(gql){
 	try{
-		let {metadata}=gql[Object.keys(gql)[0]]()
-		return metadata && metadata.connection && metadata.connection.length>0
+		return !!Object.keys(gql).find(k=>{
+			const {metadata}=gql[k]()
+			return metadata && metadata.connection && metadata.connection.length>0
+		})
 	}catch(e){
 		return false
 	}
