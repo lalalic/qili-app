@@ -25,8 +25,13 @@ module.exports=(base,HTML,port)=>{
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
 			},
 			proxy:{
-				"/www":"http://localhost:9080/1/qiliAdmin/static",
-				"/www/www.js":"http://localhost:9081/www.js",
+				"/www":{
+					target:"http://localhost:9080",
+					pathRewrite:{
+						"/www":"/1/qiliAdmin/static"
+					},
+					changeOrigin: true
+				}
 			}
 		},
 		plugins:[
@@ -35,14 +40,14 @@ module.exports=(base,HTML,port)=>{
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
 				...HTML,
-				chunks:["index"]
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				filename:"cordova.html",
-				chunks:["index"]
+				chunks:["app"]
 			})
 		]
 	}
