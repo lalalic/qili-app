@@ -2,7 +2,7 @@ import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,withProps,getContext,pure} from "recompose"
 import {connect} from "react-redux"
-import {graphql, withFragment, withMutation} from "../tools/recompose"
+import {graphql, withFragment, withMutation} from "../graphql"
 
 import CommandBar from "../components/command-bar"
 import Photo from "../components/photo"

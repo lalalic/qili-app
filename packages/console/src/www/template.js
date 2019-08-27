@@ -1,4 +1,4 @@
-export default function({content}){
+export default function({content, data}){
     return `<!doctype html><html>
         <head>
             <meta charset="utf-8" />
@@ -18,9 +18,7 @@ export default function({content}){
                     </a>
                 </center>
             </header>
-            <article style="min-height:500px;margin-top:55px" id="app">
-                ${content}
-            </article>
+            <article style="min-height:500px;margin-top:55px" id="app">${content}</article>
             <footer style="padding:10px;background-color:#303848;color:white; min-height:300px;display:flex;flex-direction:column">
                 <div style="flex:1 1 100%">
                 
@@ -33,6 +31,9 @@ export default function({content}){
                 </div>
             </footer>
         </body>
-        <script src="bundle.js" defer></script>
+        <script>
+            window.__RELAY_BOOTSTRAP_DATA__ = ${JSON.stringify(data)};
+          </script>
+        <script src="http://localhost:9081/bundle.js" defer></script>
     </html>`
 }

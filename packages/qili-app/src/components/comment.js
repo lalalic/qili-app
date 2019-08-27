@@ -1,7 +1,7 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,mapProps,getContext,setPropTypes} from "recompose"
-import {withMutation,withFragment} from "../tools/recompose"
+import {withMutation,withFragment} from "../graphql"
 
 import {Avatar, List, ListItem} from "material-ui"
 import {connect} from "react-redux"

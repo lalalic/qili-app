@@ -1,8 +1,8 @@
 import React, {Component,createFactory} from "react"
 import PropTypes from "prop-types"
-import {compose, withContext, setDisplayName, wrapDisplayName,pure} from "recompose"
+import {withContext} from "recompose"
 import {ConnectionHandler} from "relay-runtime"
-import createEnvironment from "./environment"
+import {createEnvironment} from "./environment"
 
 export const withGraphqlClient=(options={})=>BaseComponent=>{
 	const factory=createFactory(
@@ -76,11 +76,6 @@ export const withGraphqlClient=(options={})=>BaseComponent=>{
 			return factory({client:this.environment,...this.props})
 		}
 	}
-
-	if (process.env.NODE_ENV !== 'production') {
-		return setDisplayName(wrapDisplayName(BaseComponent, 'withGraphqlClient'))(WithGraphqlClient)
-	}
-
 	return WithGraphqlClient
 }
 

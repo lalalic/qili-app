@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import {FlatButton,TextField} from "material-ui"
 import isEmail from "is-valid-email"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
-import {graphql, withMutation} from "../tools/recompose"
+import {graphql, withMutation} from "../graphql"
 import * as offline from "./offline"
 
 const ENTER=13

@@ -1,18 +1,10 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
-import {RelayNetworkLayer,urlMiddleware} from "react-relay-network-modern/lib"
-import RelayClientSSR from 'react-relay-network-modern-ssr/lib/client'
-
-import isNode from "../is-node"
 
 const handlerProvider = null;
 const NoService=new Error("Network error")
 
-export default function createEnvironment(props){
-	if(isNode){
-		return createServerEnvironment(...arguments)
-	}
-	
-	const source=new RecordSource(window._initRelay)
+export function createEnvironment(props){
+	const source=new RecordSource()
 	const store = new Store(source);
 
 	let {user, token, appId, supportOffline, network=a=>a, showMessage=a=>a, loading=a=>a, isDev}=props
@@ -105,9 +97,17 @@ export default function createEnvironment(props){
 			})
 	}
 
-	function fetchQuery(){
+	function fetchQuery(operation, variables){
 		return (()=>{
 			loading(true)
+			if(window.__RELAY_BOOTSTRAP_DATA__){
+				const {query,variables,data}=window.__RELAY_BOOTSTRAP_DATA__
+				delete window.__RELAY_BOOTSTRAP_DATA__
+				if(query==operation.id||operation.name){
+					debugger
+					return Promise.resolve(data)
+				}
+			}
 			if(network()=="online")
 				return fetchQueryOnline(...arguments)
 			else if(supportOffline)
@@ -125,38 +125,9 @@ export default function createEnvironment(props){
 		})
 	}
 
-	function createNetwork(){
-		const relayClientSSR = new RelayClientSSR(window.__RELAY_BOOTSTRAP_DATA__)
-		return new RelayNetworkLayer([
-			(next)=>async (req) =>{
-				loading(true)
-				if(network()=="online"){
-					const res=await next(req)
-					loading(false)
-					return res
-				}else if(supportOffline){
-					return fetchQueryOffline({text:req.query}, req.variables)
-				}else
-					return Promise.resolve(NoService)
-			},
-			relayClientSSR.getMiddleware({
-				// Will preserve cache rather than purge after mount.
-				lookup: false
-			}),
-
-			urlMiddleware({
-				url:req=>props.service,
-				headers:{
-					"X-Application-ID": appId,
-					"X-Session-Token": token,
-				},
-			})
-		])
-	}
-
 	return Object.assign(new Environment({
 		handlerProvider,
-		network: createNetwork(),//Network.create(fetchQuery),
+		network: Network.create(fetchQuery),
 		store,
 	}),{
 		changeToken(newToken){
@@ -222,26 +193,4 @@ export default function createEnvironment(props){
 			})
 		}
 	});
-}
-
-
-function createServerEnvironment({app,user}){
-	function fetchQuery(operation, variables){
-		return app.runQL(typeof(operation)=="string" ? operation : operation.text,variables)
-	}
-
-	return Object.assign(new Environment({
-		handlerProvider,
-		network:Network.create(fetchQuery),
-		store:new Store(new RecordSource()),
-	}),{
-		changeToken(){
-
-		},
-		fetcher(){
-
-		},
-		runQL:fetchQuery
-	})
-
 }

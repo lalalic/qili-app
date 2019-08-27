@@ -1,4 +1,6 @@
 import "../index.less"
+import * as date from "./tools/date"
+
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {render} from "react-dom"
@@ -7,7 +9,7 @@ import {persistStore, autoRehydrate} from 'redux-persist'
 import {compose, pure,branch,renderComponent, renderNothing,
 		setDisplayName,
 		withProps, defaultProps, withContext, setStatic, setPropTypes, mapProps} from "recompose"
-import {withGraphql} from "./tools/recompose"
+import {withGraphql} from "./graphql"
 import File from "./components/file"
 import {createStore, applyMiddleware, combineReducers} from "redux"
 
@@ -20,8 +22,6 @@ import LightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
 import CircularProgress from 'material-ui/CircularProgress'
 import Snackbar from 'material-ui/Snackbar'
 
-import * as date from "./tools/date"
-
 import Performance from "./components/performance"
 import Authentication from "./components/authentication"
 import Tutorial from "./components/tutorial"
@@ -30,8 +30,6 @@ import SplashAD from "./components/splash-ad"
 import * as offline from "./components/offline"
 
 import {DOMAIN, ACTION, REDUCER} from "./state"
-
-import isNode from "./tools/is-node"
 
 const THEME=getMuiTheme(LightBaseTheme,{
 	footbar:{
@@ -71,38 +69,6 @@ const Message=connect(state=>({level:"info",...state[DOMAIN].message}))(
         />
 ))
 
-class Anonymous extends Component{
-	constructor(){
-		super(...arguments)
-		this.state={}
-		this.auth=()=>this.setState({auth:true})
-		this.cancel=this.cancel.bind(this)
-	}
-	render(){
-		const {auth}=this.state
-		const {children,setUser, supportEmailAccount}=this.props
-		return (
-			<Fragment>
-				{auth && 
-				(
-					<div onClick={this.cancel} style={{opacity:"", position:"fixed",top:0,left:0,width:"100%",height:"100%"}}>
-						<div style={{width:400,margin:"100px auto",padding:5,borderLeft:"1px dotted lightgray", borderRight:"1px dotted lightgray"}}>
-							<Authentication onSuccess={setUser} supportEmail={supportEmailAccount}/>
-						</div>
-					</div>
-				)}
-				{React.cloneElement(children,{auth:this.auth})}
-			</Fragment>
-		)
-	}
-
-	cancel(e){
-		if(e.target==e.currentTarget){
-			this.setState({auth:undefined})
-		}
-	}
-}
-
 export default compose(
 	setDisplayName("QiliApp"),
 	setPropTypes({
@@ -118,7 +84,6 @@ export default compose(
 		supportOffline: PropTypes.object,
 		persistStoreConfig: PropTypes.object,
 		supportEmailAccount: PropTypes.bool,
-		anonymous:PropTypes.element,
 	}),
 
 	setStatic("render", (app,container)=>{
@@ -173,10 +138,6 @@ export default compose(
 		service:"https://api.qili2.com/1/graphql",
 		theme:THEME
 	}),
-
-	branch(()=>isNode, renderComponent(compose(
-		withGraphql()
-	)(({children})=><Fragment>{children}</Fragment>))),
 
 	branch(({appId})=>!appId,renderComponent(({theme})=>
 		<UI muiTheme={theme}>
@@ -328,18 +289,6 @@ export default compose(
 
 	withGraphql(),
 
-	branch(({anonymous, token})=>anonymous&&!token,renderComponent(({store,anonymous,theme,setUser, supportEmailAccount})=>(
-		<Provider store={store}>
-			<UI muiTheme={theme}>
-				<Loading/>
-				<Anonymous {...{setUser, supportEmailAccount}}>
-					{anonymous}
-				</Anonymous>
-				<Message/>
-			</UI>
-		</Provider>
-	))),
-	
 	branch(({token})=>!token,renderComponent(({theme, store, setUser, supportEmailAccount})=>
 		<Provider store={store}>
 			<UI muiTheme={theme}>

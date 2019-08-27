@@ -7,7 +7,9 @@ module.exports=(base,HTML,port)=>{
 		...base,
 		entry:{
 			index:["./packages/qili-app/src/index.js"],
-			graphql: "./packages/qili-app/src/tools/recompose.js",
+			graphql: "./packages/qili-app/src/graphql/index.js",
+			"www/client":"./packages/qili-app/src/www/client.js",
+			"www/server":"./packages/qili-app/src/www/server.js"
 		},
         output:{
 			filename:"[name].js",

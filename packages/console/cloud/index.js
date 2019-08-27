@@ -6,9 +6,7 @@ Cloud.addModule({
     typeDefs:`${AppComment.typeDefs}`,
     resolver:AppComment.resolver,
     static(service){
-        service.on(/.*/,function({path},res){
-            require("../src/www/server")(path,res)
-        })
+        service.on(/.*/,require("../src/www/server"))
     },
 })
 

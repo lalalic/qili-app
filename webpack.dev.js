@@ -5,11 +5,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports=(base,HTML,port)=>{
 	return {
 		...base,
-		entry:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
+		entry:{
+			...base.entry,
+			index:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
+		},
 		devtool: 'source-map',
 		resolve:{
 			alias:{
-				"qili-app": path.resolve(__dirname,"packages/qili-app/src")
+				"qili-app": `${__dirname}/packages/qili-app/src`,
 			}
 		},
 		devServer:{
@@ -27,13 +30,15 @@ module.exports=(base,HTML,port)=>{
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
-				...HTML
+				...HTML,
+				chunks:["index"]
 			}),
 
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				filename:"cordova.html",
+				chunks:["index"]
 			})
 		]
 	}

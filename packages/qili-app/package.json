@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "homepage": "https://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -19,8 +19,6 @@
     "pull-to-refresh2": "^1.0.0",
     "react-redux": "^4.4.5",
     "react-relay": "^5.0.0",
-    "react-relay-network-modern": "^4.0.4",
-    "react-relay-network-modern-ssr": "^1.2.4",
     "react-responsive": "^4.1.0",
     "react-swipeable-views": "^0.12.13",
     "recompose": "^0.27.0",
@@ -61,7 +59,10 @@
     "index.less",
     "makeOfflineSchema.js",
     "src/sharedQL/qili.js",
-    "cp.js"
+    "cp.js",
+    "graphql.js",
+    "www/server.js",
+    "www/client.js"
   ],
   "license": "MIT",
   "bin": {

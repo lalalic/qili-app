@@ -1,7 +1,7 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose,getContext,withProps,mapProps,setPropTypes, setDisplayName} from "recompose"
-import {graphql, withMutation, withFragment, withQuery} from "../tools/recompose"
+import {graphql, withMutation, withFragment, withQuery} from "../graphql"
 
 import {Avatar,List, ListItem, Divider} from "material-ui"
 import {Route, IndexRoute} from "react-router"
