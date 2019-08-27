@@ -7,7 +7,7 @@ module.exports=(base,HTML,port)=>{
 		...base,
 		entry:{
 			...base.entry,
-			index:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
+			app:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
 		},
 		devtool: 'source-map',
 		resolve:{
@@ -23,6 +23,10 @@ module.exports=(base,HTML,port)=>{
 			historyApiFallback:true,
 			before(app){
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
+			},
+			proxy:{
+				"/www":"http://localhost:9080/1/qiliAdmin/static",
+				"/www/www.js":"http://localhost:9081/www.js",
 			}
 		},
 		plugins:[

@@ -33,7 +33,7 @@ export default function({content, data}){
         </body>
         <script>
             window.__RELAY_BOOTSTRAP_DATA__ = ${JSON.stringify(data)};
-          </script>
-        <script src="http://localhost:9081/www.js" defer></script>
+        </script>
+        <script src="www.js" defer></script>
     </html>`
 }

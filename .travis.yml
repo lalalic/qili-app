@@ -23,7 +23,7 @@ script:
  - yarn relay
  - yarn api
  - yarn build
- - rm packages/console/dist/index.js
+ - rm packages/console/dist/app.js
  - mv packages/console/dist/index.html .
  - ls -l
 # - yarn cordova -- --storePassword=$STORE_PWD --password=$STORE_PWD
