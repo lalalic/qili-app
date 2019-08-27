@@ -13,8 +13,8 @@ const HTML={
 module.exports=env=>{
 	const base={
 		entry:{
-			index:["babel-polyfill","./packages/console/src/index.js"],
-			bundle:["babel-polyfill","./packages/console/src/www/browser.js"]
+			app:["babel-polyfill","./packages/console/src/index.js"],
+			www:["babel-polyfill","./packages/console/src/www/client.js"]
 		},
 		output:{
 			filename:"[name].js",
@@ -58,7 +58,7 @@ module.exports=env=>{
 			new HtmlWebpackPlugin({
 				...HTML,
 				inlineSource: '.(js|css)$',
-				chunks:["index"]
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackPlugin({
@@ -66,7 +66,7 @@ module.exports=env=>{
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				inlineSource: '.(js|css)$',
 				filename:"cordova.html",
-				chunks:["index"]
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackInlineSourcePlugin(),
@@ -77,23 +77,5 @@ module.exports=env=>{
 		return require(`./webpack.${env}.js`)(base,HTML,9081)
 	}
 	
-	return [
-		base,
-		{...base,
-			entry:["babel-polyfill","./packages/console/src/www/client.js"],
-			output:{
-				filename:"boundle.js",
-				path:path.resolve(__dirname, 'packages/console/dist')
-			},
-			plugins:[
-				new UglifyJsPlugin(),
-				new DefinePlugin({
-					'process.env.NODE_ENV': JSON.stringify('production')
-				}),
-				new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
-				new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
-				new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
-			]
-		}
-	]
+	return base
 }

@@ -34,6 +34,6 @@ export default function({content, data}){
         <script>
             window.__RELAY_BOOTSTRAP_DATA__ = ${JSON.stringify(data)};
           </script>
-        <script src="http://localhost:9081/bundle.js" defer></script>
+        <script src="http://localhost:9081/www.js" defer></script>
     </html>`
 }
