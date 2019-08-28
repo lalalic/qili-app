@@ -1,6 +1,9 @@
 {
   "dependencies":{
-	  "qili-app":"latest"
+    "qili-app":"^1.0.0",
+    "react": "16.7.0",
+    "react-dom": "16.7.0",
+    "graphql": "^14.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -20,7 +23,7 @@
     "imports-loader": "^0.7.1",
     "less": "2.7.2",
     "less-loader": "^4.0.5",
-    "relay-compiler": "1.6.0",
+    "relay-compiler": "^5.0.0",
     "source-map-loader": "^0.2.1",
     "style-loader": "^0.18.2",
     "webpack": "^3.4.1",
@@ -46,7 +49,7 @@
   },
   "config":{
       "devPort":9083,
-	  "service":"http://qili2.com/1/graphql",
+	  "service":"https://api.qili2.com/1/graphql",
 	  "appId":""
   },
   "keywords": ["qili"],

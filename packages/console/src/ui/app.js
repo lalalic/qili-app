@@ -1,13 +1,12 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose, setStatic, getContext, withProps} from "recompose"
-import {graphql, withFragment, withMutation,CommandBar} from "qili-app"
+import {CommandBar} from "qili-app"
+import {withFragment, withMutation} from "qili-app/graphql"
 import {connect} from "react-redux"
 
-import {TextField,Toggle,Divider} from 'material-ui'
+import {TextField,Toggle} from 'material-ui'
 
-import IconUpload from "material-ui/svg-icons/file/file-upload"
-import IconDownload from "material-ui/svg-icons/file/file-download"
 import IconSave from "material-ui/svg-icons/content/save"
 import IconRemove from "material-ui/svg-icons/action/delete"
 import IconComment from "material-ui/svg-icons/editor/mode-comment"

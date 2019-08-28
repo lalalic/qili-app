@@ -1,7 +1,7 @@
 import React, {Fragment} from "react"
 import PropTypes from "prop-types"
 import {Router, Route, IndexRoute, browserHistory} from "react-router"
-import {FloatingActionButton, AppBar, IconButton} from 'material-ui'
+import {FloatingActionButton} from 'material-ui'
 import {connect} from "react-redux"
 
 import {compose, withProps, getContext, setStatic, mapProps,
@@ -12,14 +12,10 @@ import IconCloud from "material-ui/svg-icons/file/cloud"
 import IconLog from "material-ui/svg-icons/action/assignment"
 import IconAccount from 'material-ui/svg-icons/action/account-box'
 
-import {
-	graphql, withFragment, withQuery,
-	withInit, withMutation, withPagination,
-	QiliApp,DOMAIN,REDUCER, ACTION as qiliACTION,
-	Comment, OfflineUI,CommandBar, CheckUpdate,
-	Setting, Profile, Account,
-	Offline} from 'qili-app'
+import {QiliApp, ACTION as qiliACTION,Comment, OfflineUI,CommandBar, CheckUpdate,Setting, Account,Offline} from 'qili-app'
 
+import {withFragment, withQuery,withInit, withPagination} from 'qili-app/graphql'
+	
 import Dashboard from "./ui/dashboard"
 import App from "./ui/app"
 import Cloud from "./ui/cloud"

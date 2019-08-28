@@ -6,7 +6,7 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 	return {
 		...base,
 		entry:{
-			index: ["babel-polyfill",require.resolve("./.test.js"),require.resolve("./src/index.js")],
+			app: ["babel-polyfill",require.resolve("./.test.js"),require.resolve("./src/index.js")],
 		},
 		devtool: 'source-map',
 		devServer:{
@@ -14,8 +14,18 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 			port,
 			host:"0.0.0.0",
 			disableHostCheck:true,
+			historyApiFallback:true,
 			before(app){
 				app.get("/app.apk.version",(req, res)=>res.json(require("./package.json").version))
+			},
+			proxy:{
+				"/www":{
+					target:"http://localhost:9080",
+					pathRewrite:{
+						"/www":"/1/[appKey]/static"
+					},
+					changeOrigin: true
+				}
 			}
 		},
 		plugins:[
@@ -23,13 +33,15 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
-				...HTML
+				...HTML,
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				filename:"cordova.html",
+				chunks:["app"]
 			}),
 			new IgnorePlugin(/^react-router$/)
 		]

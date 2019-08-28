@@ -13,7 +13,7 @@ const HTML={
 module.exports=env=>{
 	const base={
 		entry:{
-			index:["babel-polyfill",require.resolve("./src/index.js")],
+			app:["babel-polyfill",require.resolve("./src/index.js")],
 		},
 		output:{
 			filename:"[name].js",
@@ -52,7 +52,8 @@ module.exports=env=>{
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
 				...HTML,
-				inlineSource: 'index.js$'
+				inlineSource: 'index.js$',
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackPlugin({
@@ -60,11 +61,10 @@ module.exports=env=>{
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
 				inlineSource: 'index.js$',
 				filename:"cordova.html",
+				chunks:["app"]
 			}),
 
 			new HtmlWebpackInlineSourcePlugin(),
-
-			//new IgnorePlugin(/^react-router$/)
 		]
 	}
 

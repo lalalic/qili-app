@@ -2,7 +2,6 @@ import * as wechat from "./components/wechat"
 import * as OfflineUI from "./components/offline"
 
 export * from "./state"
-export * from "./graphql"
 export {default as Offline} from "./graphql/offline"
 export {default as Setting} from "./components/setting"
 export {default as Profile} from "./components/profile"

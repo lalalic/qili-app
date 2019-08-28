@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import Pull2Refresh from "pull-to-refresh2"
 
 import {compose} from "recompose"
-import {withFragment} from "qili-app"
+import {withFragment} from "qili-app/graphql"
 
 const Log=({logs, loadMore})=>(
     <Pull2Refresh onMore={loadMore}>

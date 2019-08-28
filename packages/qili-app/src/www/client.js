@@ -3,13 +3,16 @@ import {hydrate,render} from "react-dom"
 import {browserHistory, match,Router} from "react-router"
 import withGraphql from "../graphql/relay/withGraphqlClient"
 
-export default (routes,container,history=browserHistory)=>{
-    const Context=withGraphql()(Router)
+export default (routes,container,environment={},App=React.Fragment,history=browserHistory)=>{
+    const Context=withGraphql({...environment})(Router)
     match({history, routes}, (error, redirect, props) => {
-        if(props && !props.routes.find(a=>a.onlyBrowser)){
-            hydrate(<Context {...props}/>, container)
-        }else if(props){
-            render(<Context {...props} />, container)
+        if(props){
+            const element=<App><Context {...props}/></App>
+            if(!props.routes.find(a=>a.onlyBrowser)){
+                hydrate(element, container)
+            }else{
+                render(element, container)
+            }
         }
     })
 }

@@ -3,12 +3,21 @@ import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
 const handlerProvider = null;
 const NoService=new Error("Network error")
 
-export function createEnvironment(props){
+export function createEnvironment({
+	service="https://api.qili2.com/1/graphql", //must, such as https://
+	appId, //must
+	user, 
+	token, 
+	supportOffline,
+	optics=a=>console.debug({reporting:true, ...a}), 
+	network=a=>"online", 
+	showMessage=console.debug, 
+	loading=a=>console.debug(`loading=${a}`), 
+	isDev
+}){
 	const source=new RecordSource()
 	const store = new Store(source);
 
-	let {user, token, appId, supportOffline, network=a=>a, showMessage=a=>a, loading=a=>a, isDev}=props
-	
 	if(supportOffline){
 		supportOffline.user=user
 	}
@@ -32,7 +41,6 @@ export function createEnvironment(props){
 		if(supportOffline)
 			supportOffline.setSource(source)
 
-		const {service,optics:report}=props
 		return fetch(service,{
 			method: 'POST',
 			...opt,
@@ -54,7 +62,7 @@ export function createEnvironment(props){
 				handleErrors(res.errors, showMessage)
 
 			if(res.extensions)
-				report(res.extensions.report)
+				optics(res.extensions.report)
 
 			return res
 		})
@@ -104,7 +112,6 @@ export function createEnvironment(props){
 				const {query,variables,data}=window.__RELAY_BOOTSTRAP_DATA__
 				delete window.__RELAY_BOOTSTRAP_DATA__
 				if(query==operation.id||operation.name){
-					debugger
 					return Promise.resolve(data)
 				}
 			}
@@ -117,7 +124,6 @@ export function createEnvironment(props){
 		})().catch(e=>{
 			loading(false)
 			showMessage({message:e.message, level:"error"})
-			console.debug({error:e, props, network:network()})
 			throw e
 		}).then(res=>{
 			loading(false)

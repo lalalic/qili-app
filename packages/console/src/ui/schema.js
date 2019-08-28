@@ -1,9 +1,7 @@
-import React, {Component} from "react"
-import PropTypes from "prop-types"
+import React from "react"
 
-import {connect} from "react-redux"
 import {compose, mapProps} from "recompose"
-import {withFragment} from "qili-app"
+import {withFragment} from "qili-app/graphql"
 
 
 export const Schema=({schema, style})=>(

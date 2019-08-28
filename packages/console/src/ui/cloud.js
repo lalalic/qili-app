@@ -10,7 +10,8 @@ import SaveIcon from "material-ui/svg-icons/content/save"
 import {Controlled as CodeMirror} from "react-codemirror2"
 import "codemirror/mode/javascript/javascript"
 
-import {withMutation, graphql, withFragment,CommandBar,File} from "qili-app"
+import {CommandBar,File} from "qili-app"
+import {withMutation, withFragment} from "qili-app/graphql"
 
 import Schema from "./schema"
 
