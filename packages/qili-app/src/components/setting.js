@@ -3,11 +3,10 @@ import PropTypes from "prop-types"
 import {getContext, compose} from "recompose"
 import {connect} from "react-redux"
 
-import {List, ListItem} from "material-ui"
+import {List, ListItem} from "material-ui/List"
 
 import IconRate from 'material-ui/svg-icons/editor/mode-edit'
 import IconBug from 'material-ui/svg-icons/action/bug-report'
-import IconUpdate from 'material-ui/svg-icons/action/system-update-alt'
 import IconAbout from 'material-ui/svg-icons/action/info-outline'
 import IconLogo from "material-ui/svg-icons/action/android"
 

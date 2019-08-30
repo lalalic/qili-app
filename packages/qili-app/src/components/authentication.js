@@ -1,6 +1,8 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {FlatButton,TextField} from "material-ui"
+import FlatButton from "material-ui/FlatButton"
+import TextField from "material-ui/TextField"
+
 import isEmail from "is-valid-email"
 import {compose, withState, withProps, branch,renderComponent,defaultProps} from "recompose"
 import {graphql, withMutation} from "../graphql"

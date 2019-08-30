@@ -1,7 +1,7 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {connect} from "react-redux"
-import {Badge} from "material-ui"
+import Badge from "material-ui/Badge"
 
 export const CheckUpdate=({lastVersion,children},{project:{version}})=>{
 	let hasUpdate=lastVersion && lastVersion!=version

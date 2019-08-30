@@ -1,13 +1,11 @@
-import React, {Component,Fragment} from "react"
-import PropTypes from "prop-types"
-import {compose,withProps,getContext,pure} from "recompose"
+import React, {Fragment} from "react"
+import {compose,pure} from "recompose"
 import {connect} from "react-redux"
 import {graphql, withFragment, withMutation} from "../graphql"
 
 import CommandBar from "../components/command-bar"
 import Photo from "../components/photo"
 import InfoForm from "../components/info-form"
-import {TextField} from "material-ui"
 import {ACTION} from "../state"
 import ql from "../sharedQL/qili"
 

@@ -1,13 +1,13 @@
 import React, {createFactory} from "react"
 import PropTypes from "prop-types"
-import {withContext, setDisplayName, wrapDisplayName, getContext} from "recompose"
+import {withContext, setDisplayName, wrapDisplayName} from "recompose"
 import withQuery from "./withQuery"
 
 export const withPagination=(options)=>BaseComponent=>{
     const factory=createFactory(
             withContext(
-                {pagination:PropTypes.any},
-                ()=>({pagination:options})
+                {connectionConfig:PropTypes.any},
+                ()=>({connectionConfig:options})
             )(BaseComponent))
 
     const WithPagination=withQuery(options)(props=>factory(props))

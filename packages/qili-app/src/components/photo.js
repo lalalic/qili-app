@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import PropTypes from "prop-types"
 
-import {Avatar, Dialog, SvgIcon,IconButton} from "material-ui"
+import SvgIcon from "material-ui/SvgIcon"
+import IconButton from "material-ui/IconButton"
+import Dialog from "material-ui/Dialog"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconFile from 'material-ui/svg-icons/device/sd-storage'
 import file from "./file"

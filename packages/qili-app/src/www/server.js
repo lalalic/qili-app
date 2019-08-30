@@ -37,7 +37,7 @@ function createServerEnvironment({app,user}){
 }
 
 export default (routes,template,App=React.Fragment)=>(req,res)=>{
-	const {path:location,app}=req
+	const {url:location,app}=req
     match({routes,location}, (err, redirect, props)=>{
         if(props){
             const environment=createServerEnvironment({app})
@@ -47,8 +47,8 @@ export default (routes,template,App=React.Fragment)=>(req,res)=>{
             renderToString(element)
             //when data fetched then it's ready for server side render
             environment.SSRReady().then(data=>{
-                const content=renderToString(element)
-                res.reply(template({content, data}))
+				const content=renderToString(element)
+				res.reply(template({content, data}))
             }).catch(e=>{
                 res.reply(e.message)
             })

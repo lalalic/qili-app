@@ -35,9 +35,9 @@ export const withQuery=option=>BaseComponent=>{
         constructor(){
             super(...arguments)
             const {client:environment}=this.context
-			const {query, variables}=opt(this.props)
-
+			
 			if(environment.SSRReady){
+				const {query, variables}=opt(this.props)
 				/** if it's for ssr, first to fire fetch and render nothing, and second render will create html */
 				fetchQuery(environment, query, variables)
 					.then(()=>{

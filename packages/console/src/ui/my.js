@@ -1,10 +1,9 @@
-import React, {Component} from "react"
-import PropTypes from "prop-types"
-import {getContext,compose,withProps} from "recompose"
+import React from "react"
+import {compose} from "recompose"
 import {withFragment} from "qili-app/graphql"
 import {Account} from "qili-app"
 
-import {List, ListItem} from "material-ui"
+import {ListItem} from "material-ui/List"
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
 import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 

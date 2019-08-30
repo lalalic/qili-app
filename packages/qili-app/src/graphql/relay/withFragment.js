@@ -1,20 +1,47 @@
 import React from "react"
 import PropTypes from "prop-types"
-import {compose,withProps, getContext, setDisplayName, wrapDisplayName}  from "recompose"
+import {getContext, setDisplayName, wrapDisplayName}  from "recompose"
 import {createFragmentContainer, createPaginationContainer} from "react-relay"
+import {Pagination} from "../../components/pagination"
 
 export const withFragment=options=>BaseComponent=>{
 	if(typeof(options)=="function"){
 		options={data:options}
 	}
 	let WithFragment=null
-	if(isPagination(options)){
-		WithFragment=getContext({pagination:PropTypes.any})(({pagination, ...props})=>{
-			let {query,variables, direction,getVariables, getConnectionFromProps, getFragmentVariables}=typeof(pagination)=="function" ? pagination(props) : pagination
-			const PaginationContainer=createPaginationContainer(BaseComponent, options, {
+	const myGetConnectionFromProps=tryCreateGetConnectionFromProps(options)
+	if(myGetConnectionFromProps){
+		WithFragment=getContext({connectionConfig:PropTypes.any})(({connectionConfig, ...props})=>{
+			let {query,variables, direction,getVariables, getConnectionFromProps=myGetConnectionFromProps, getFragmentVariables}=typeof(connectionConfig)=="function" ? connectionConfig(props) : connectionConfig
+			variables=(getVariables ? getVariables(props,{}) : variables)||{}
+
+			const RelayBaseComponent=({relay, ...myProps})=>{
+				const connection=getConnectionFromProps(myProps)
+				function loadMore(){
+					if(relay.hasMore() && !relay.isLoading()){
+						relay.loadMore(...arguments)
+					}
+				}
+				return <BaseComponent {...myProps} 
+						relay={relay} 
+						pagination={
+							<Pagination {...{
+								relay, 
+								loadMore,
+								pageInfo:connection.pageInfo,
+								url(props, cursor, dir){
+									if(dir=="backward")
+										return null
+									return `?q=${JSON.stringify({...variables,cursor})}`
+								}
+							}}/>
+						}
+						loadMore={loadMore}
+						/>
+			}
+
+			const PaginationContainer=createPaginationContainer(RelayBaseComponent, options, {
 				getVariables(props,{count,cursor}){
-					if(getVariables)
-						return getVariables(...arguments)
 					return {
 						...variables,
 						count,
@@ -41,14 +68,29 @@ export const withFragment=options=>BaseComponent=>{
 export default withFragment
 
 
-function isPagination(gql){
+function tryCreateGetConnectionFromProps(fragmentsSpec){
 	try{
-		return !!Object.keys(gql).find(k=>{
-			const {metadata}=gql[k]()
+		var metadata, fragmentName
+		if(!!Object.keys(fragmentsSpec).find(k=>{
+			metadata=fragmentsSpec[fragmentName=k]().metadata
 			return metadata && metadata.connection && metadata.connection.length>0
-		})
+		})){	
+			//copy from ReactRelayPagination createGetConnectionFromProps
+			var path=metadata.connection[0].path
+			return function(props){
+				var data=props[fragmentName]
+				for (var i = 0; i < path.length; i++) {
+					if (!data || typeof data !== 'object') {
+						return null;
+					}
+					data = data[path[i]];
+				}
+
+				return data;
+			}
+		}
 	}catch(e){
-		return false
+		
 	}
 }
 
@@ -60,3 +102,4 @@ const trim=o=>Object.keys(o).reduce((o,k)=>{
   }
   return o
 },o)
+

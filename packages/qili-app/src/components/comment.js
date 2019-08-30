@@ -1,26 +1,17 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose,mapProps,getContext,setPropTypes} from "recompose"
+import {compose,mapProps,setPropTypes} from "recompose"
 import {withMutation,withFragment} from "../graphql"
 
-import {Avatar, List, ListItem} from "material-ui"
-import {connect} from "react-redux"
-
-import TextField from 'material-ui/TextField'
-import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar'
-import IconButton from 'material-ui/IconButton'
+import Avatar from "material-ui/Avatar"
 import {cyan50 as bg} from "material-ui/styles/colors"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
-import IconEmptyComment from "material-ui/svg-icons/editor/mode-comment"
 import PullToRefresh from "pull-to-refresh2"
 
 import file from "./file"
 import CommandBar from './command-bar'
-import Empty from "./empty"
 import ql from "../sharedQL/qili"
-
-import {createPaginationContainer} from "react-relay"
 
 function smartFormat(d){
 	let now=new Date()

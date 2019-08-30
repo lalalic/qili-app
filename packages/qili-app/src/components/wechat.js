@@ -1,5 +1,6 @@
 import React from "react"
-import {RaisedButton, SvgIcon} from "material-ui"
+import {RaisedButton} from "material-ui/RaisedButton"
+import SvgIcon from "material-ui/SvgIcon"
 
 export const ACTION={
 	CODE: code=>({type:"wechat_access_code", payload:code})

@@ -1,15 +1,14 @@
-import React, {Component,Fragment} from "react"
+import React, {Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose,getContext,withProps,mapProps,setPropTypes, setDisplayName} from "recompose"
+import {compose,getContext,mapProps,setPropTypes, setDisplayName} from "recompose"
 import {graphql, withMutation, withFragment, withQuery} from "../graphql"
 
-import {Avatar,List, ListItem, Divider} from "material-ui"
+import {List, ListItem} from "material-ui/List"
+import Divider from "material-ui/Divider"
 import {Route, IndexRoute} from "react-router"
 
 import IconRightArrow from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 import IconSetting from 'material-ui/svg-icons/action/settings'
-import IconAdd from "material-ui/svg-icons/content/add-circle-outline"
-import IconItem from "material-ui/svg-icons/hardware/keyboard-arrow-right"
 
 import CheckUpdate from "./check-update"
 import Photo from "./photo"
