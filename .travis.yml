@@ -21,8 +21,8 @@ install:
 
 script:
  - yarn relay
- - yarn api
- - yarn build
+ - yarn api -p
+ - yarn build -p
  - rm packages/console/dist/app.js
  - mv packages/console/dist/index.html .
  - ls -l

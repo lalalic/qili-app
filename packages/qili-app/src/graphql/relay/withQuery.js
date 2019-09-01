@@ -89,7 +89,11 @@ class MyQueryRenderer extends QueryRenderer{
 		super(...arguments)
 		//@@Hack:  to remove queryFetcher cache, otherwise always loading at first render
 		this.componentDidUpdate()
-		super(...arguments)
+		try{
+			super(...arguments)
+		}catch(e){
+			
+		}
 	}
 }
 

@@ -2,7 +2,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path');
 const {ContextReplacementPlugin, DefinePlugin} = require("webpack");
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const HTML={
 	template:'./packages/qili-app/index.tmpl',
@@ -13,8 +12,8 @@ const HTML={
 module.exports=env=>{
 	const base={
 		entry:{
-			app:["babel-polyfill","./packages/console/src/index.js"],
-			www:["babel-polyfill","./packages/console/src/www/client.js"]
+			app:["@babel/polyfill","./packages/console/src/index.js"],
+			www:["@babel/polyfill","./packages/console/src/www/client.js"]
 		},
 		output:{
 			filename:"[name].js",
@@ -48,7 +47,6 @@ module.exports=env=>{
 			}]
 		},
 		plugins:[
-			new UglifyJsPlugin(),
 			new DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify('production')
 			}),
@@ -71,6 +69,7 @@ module.exports=env=>{
 
 			new HtmlWebpackInlineSourcePlugin(),
 		],
+		mode:"development"
 	}
 
 	if(env){

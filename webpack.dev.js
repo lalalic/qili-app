@@ -10,6 +10,7 @@ module.exports=(base,HTML,port)=>{
 			app:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
 		},
 		devtool: 'source-map',
+		mode: "development",
 		resolve:{
 			alias:{
 				"qili-app": `${__dirname}/packages/qili-app/src`,

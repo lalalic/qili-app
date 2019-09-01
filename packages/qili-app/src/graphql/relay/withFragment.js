@@ -15,7 +15,7 @@ export const withFragment=options=>BaseComponent=>{
 			let {query,variables, direction,getVariables, getConnectionFromProps=myGetConnectionFromProps, getFragmentVariables}=typeof(connectionConfig)=="function" ? connectionConfig(props) : connectionConfig
 			variables=(getVariables ? getVariables(props,{}) : variables)||{}
 
-			const RelayBaseComponent=({relay, ...myProps})=>{
+			const RelayBaseComponent=({relay, pagination=true, ...myProps})=>{
 				const connection=getConnectionFromProps(myProps)
 				function loadMore(){
 					if(relay.hasMore() && !relay.isLoading()){
@@ -24,7 +24,7 @@ export const withFragment=options=>BaseComponent=>{
 				}
 				return <BaseComponent {...myProps} 
 						relay={relay} 
-						pagination={
+						pagination={pagination && connection && 
 							<Pagination {...{
 								relay, 
 								loadMore,

@@ -36,13 +36,15 @@ function createServerEnvironment({app,user}){
 
 }
 
-export default (routes,template,App=React.Fragment)=>(req,res)=>{
+export default (routes,template,App)=>(req,res)=>{
 	const {url:location,app}=req
     match({routes,location}, (err, redirect, props)=>{
         if(props){
+			debugger
             const environment=createServerEnvironment({app})
 			const Context=withGraphql({environment})(Router)
-			const element=<App req={req}><Context {...props}/></App>
+			const ctx=<Context {...props}/>
+			const element=App ? <App req={req}>{ctx}</App> : ctx
             //to fire query
             renderToString(element)
             //when data fetched then it's ready for server side render
