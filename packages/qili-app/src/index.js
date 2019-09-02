@@ -13,6 +13,8 @@ export {default as Photo} from "./components/photo"
 export {default as CheckUpdate} from "./components/check-update"
 export {default as Account} from "./components/account"
 export {default as InfoForm} from "./components/info-form"
+export {default as Pull2Refresh} from "./components/pull-to-refresh"
+
 
 export {wechat, OfflineUI}
 export {default as QiliApp} from "./app"

@@ -7,7 +7,7 @@ module.exports=(base,HTML,port)=>{
 		...base,
 		entry:{
 			...base.entry,
-			app:["babel-polyfill","./.test.mongo.js","./packages/console/src/index.js"],
+			app:["@babel/polyfill","./.test.mongo.js","./packages/console/src/index.js"],
 		},
 		devtool: 'source-map',
 		mode: "development",

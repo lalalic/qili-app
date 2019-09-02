@@ -1,7 +1,7 @@
 @import "~codemirror/lib/codemirror.css";
 @import "~graphiql/graphiql.css";
 
-table{
+table.logs{
 	width:100%;
 	border-collapse: collapse;
 
@@ -11,6 +11,19 @@ table{
 
 	&,td,th{
 		border: 1px solid lightgray;
+		text-align: left;
+	}
+
+	tr{
+		line-height:30px;
+	}
+
+	tr.error{
+		background:lightcoral;
+	}
+
+	tr:nth-child(even){
+		background:lightblue;
 	}
 }
 

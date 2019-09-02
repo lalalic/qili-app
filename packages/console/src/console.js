@@ -319,47 +319,17 @@ const router=(
 				withPagination(({id,status})=>({
 					variables:{id,status},
 					query:graphql`
-						query console_log_Query($id:ObjectID!,$status:String, $count:Int, $cursor:JSON){
+						query console_log_Query($id:ObjectID!,$status:String, $count:Int=20, $cursor:JSON){
 							me{
 								app(_id:$id){
-									...console_logApp
+									...log_app
 								}
 							}
 						}
 					`
 				})),
-				withProps(({data})=>({data:data.me.app})),
-				withFragment(graphql`
-					fragment console_logApp on App {
-						logs(status:$status, first:$count, after:$cursor)@connection(key:"console_logs"){
-							edges{
-								node{
-									...log
-								}
-								cursor
-							}
-							pageInfo{
-								hasPreviousPage
-								startCursor
-							}
-						}
-					}
-				`),
-				mapProps(({data,relay})=>({
-					logs:data.logs.edges.map(a=>a.node),
-					loadMore(ok){
-						if(relay.hasMore() && !relay.isLoading()){
-							relay.loadMore(10, e=>{
-								ok()
-								if(e){
-									console.error(e)
-								}
-							})
-						}
-					},
-				})),
+				withProps(({data})=>({data:data.me.app}))
 			)(Log)}/>
-
 		</Route>
 	</Router>
 )

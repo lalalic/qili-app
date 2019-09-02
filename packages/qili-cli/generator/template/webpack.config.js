@@ -2,7 +2,6 @@ const path = require('path')
 const {ContextReplacementPlugin, DefinePlugin, IgnorePlugin} = require("webpack")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 
 const HTML={
 	template:require.resolve('qili-app/index.tmpl'),
@@ -13,7 +12,7 @@ const HTML={
 module.exports=env=>{
 	const base={
 		entry:{
-			app:["babel-polyfill",require.resolve("./src/index.js")],
+			app:["@babel/polyfill",require.resolve("./src/index.js")],
 		},
 		output:{
 			filename:"[name].js",
@@ -43,7 +42,6 @@ module.exports=env=>{
 			}]
 		},
 		plugins:[
-			new UglifyJsPlugin(),
 			new DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify('production')
 			}),
@@ -52,20 +50,21 @@ module.exports=env=>{
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
 			new HtmlWebpackPlugin({
 				...HTML,
-				inlineSource: 'index.js$',
+				inlineSource: 'app.js$',
 				chunks:["app"]
 			}),
 
 			new HtmlWebpackPlugin({
 				...HTML,
 				extra:'<script type="text/javascript" src="cordova.js"></script>',
-				inlineSource: 'index.js$',
+				inlineSource: 'app.js$',
 				filename:"cordova.html",
 				chunks:["app"]
 			}),
 
 			new HtmlWebpackInlineSourcePlugin(),
-		]
+		],
+		mode:"development"
 	}
 
 	if(env){

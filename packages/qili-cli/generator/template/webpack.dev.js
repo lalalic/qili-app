@@ -9,6 +9,7 @@ module.exports=(base,HTML,port=require("./package.json").config.devPort)=>{
 			app: ["babel-polyfill",require.resolve("./.test.js"),require.resolve("./src/index.js")],
 		},
 		devtool: 'source-map',
+		mode: "development",
 		devServer:{
 			contentBase: path.join(__dirname, "dist"),
 			port,

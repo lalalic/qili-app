@@ -17,9 +17,18 @@ export const withFragment=options=>BaseComponent=>{
 
 			const RelayBaseComponent=({relay, pagination=true, ...myProps})=>{
 				const connection=getConnectionFromProps(myProps)
-				function loadMore(){
+				function loadMore(pageSize, ...more){
+					if(typeof(pageSize)!=="number"){//try to get count from query.count.defaultValue
+						more=typeof(pageSize)!="undefined" ? [pageSize, ...more] : more
+						const argCount=query().operation.argumentDefinitions.find(a=>a.name=="count" && a.defaultValue)
+						if(argCount){
+							pageSize=argCount.defaultValue
+						}else{
+							pageSize=20
+						}
+					}
 					if(relay.hasMore() && !relay.isLoading()){
-						relay.loadMore(...arguments)
+						relay.loadMore(pageSize, ...more)
 					}
 				}
 				return <BaseComponent {...myProps} 
@@ -77,7 +86,7 @@ function tryCreateGetConnectionFromProps(fragmentsSpec){
 		})){	
 			//copy from ReactRelayPagination createGetConnectionFromProps
 			var path=metadata.connection[0].path
-			return function(props){
+			function getConnectionFromProps(props){
 				var data=props[fragmentName]
 				for (var i = 0; i < path.length; i++) {
 					if (!data || typeof data !== 'object') {
@@ -88,6 +97,8 @@ function tryCreateGetConnectionFromProps(fragmentsSpec){
 
 				return data;
 			}
+
+			return getConnectionFromProps
 		}
 	}catch(e){
 		

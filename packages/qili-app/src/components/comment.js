@@ -7,7 +7,7 @@ import Avatar from "material-ui/Avatar"
 import {cyan50 as bg} from "material-ui/styles/colors"
 import IconCamera from 'material-ui/svg-icons/image/photo-camera'
 import IconSave from "material-ui/svg-icons/content/save"
-import PullToRefresh from "pull-to-refresh2"
+import PullToRefresh from "./pull-to-refresh"
 
 import file from "./file"
 import CommandBar from './command-bar'

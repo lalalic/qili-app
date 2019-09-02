@@ -1,8 +1,7 @@
-import React, {Component} from "react"
-import PropTypes from "prop-types"
-import Pull2Refresh from "pull-to-refresh2"
+import React from "react"
+import {Pull2Refresh} from "qili-app"
 
-import {compose} from "recompose"
+import {compose, mapProps} from "recompose"
 import {withFragment} from "qili-app/graphql"
 
 const Log=({logs, loadMore})=>(
@@ -21,7 +20,7 @@ const Log=({logs, loadMore})=>(
 			{
 				logs.map(({id,type,operation,status,startedAt})=>{
 					return (
-						<tr key={id}>
+						<tr key={id} className={status ? "error" : ""}>
 							<td>{new Date(startedAt).smartFormat()}</td>						
 							<td>{type}</td>
 							<td>{operation}</td>
@@ -39,16 +38,31 @@ const Log=({logs, loadMore})=>(
 
 
 export default compose(
-    withFragment({logs:graphql`
-        fragment log on Log@relay(plural: true){
-            id
-			startedAt
-            type
-            operation
-			status
-			time
-			variables
-			report
-        }
-    `}),
+    withFragment(graphql`
+		fragment log_app on App {
+			logs(status:$status, first:$count, after:$cursor)@connection(key:"app_logs"){
+				edges{
+					node{
+						id
+						startedAt
+						type
+						operation
+						status
+						time
+						variables
+						report
+					}
+					cursor
+				}
+				pageInfo{
+					hasPreviousPage
+					startCursor
+				}
+			}
+		}
+	`),
+	mapProps(({data,loadMore})=>({
+		logs:data.logs.edges.map(a=>a.node),
+		loadMore
+	})),
 )(Log)

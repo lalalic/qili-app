@@ -8,6 +8,9 @@ Cloud.addModule({
     static(service){
         service.on(/.*/,require("../src/www/server").default)
     },
+    indexes:{
+        
+    }
 })
 
 //to support offline

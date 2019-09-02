@@ -3,7 +3,6 @@ import PropTypes from "prop-types"
 import {connect} from "react-redux"
 import {ACTION} from "../state"
 
-import {SvgIcon,EnhancedButton,Paper} from 'material-ui'
 import {Link} from "react-router"
 
 

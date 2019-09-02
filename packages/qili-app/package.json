@@ -1,14 +1,13 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "homepage": "https://app.qili2.com",
   "author": {
     "name": "Raymond Li",
     "email": "lalalic@139.com"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "graphql-tools": "^4.0.0",
     "graphql-type-json": "^0.3.0",
     "is-valid-email": "^0.0.2",
@@ -16,11 +15,11 @@
     "material-auto-rotating-carousel": "^1.7.0",
     "material-ui": "^0.19.0",
     "prop-types": "^15.6.0",
-    "pull-to-refresh2": "^1.0.0",
     "react-redux": "^4.4.5",
     "react-relay": "^5.0.0",
     "react-responsive": "^4.1.0",
     "react-swipeable-views": "^0.12.13",
+    "react-hammerjs": "^1.0.1",
     "recompose": "^0.27.0",
     "redux": "^3.6.0",
     "redux-persist": "^4.10.1",
