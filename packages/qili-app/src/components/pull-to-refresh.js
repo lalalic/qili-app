@@ -1,5 +1,6 @@
 import React, {Component} from "react"
 import Hammer from "react-hammerjs"
+import {Waypoint} from "react-waypoint"
 
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import IconArrowDown from "material-ui/svg-icons/navigation/arrow-downward"
@@ -60,12 +61,16 @@ export class PullToRefresh extends Component{
 			host.scrollTop=host.scrollHeight-host.clientHeight
 		}
 	}
+
+
 	componentWillUnmount(){
 		this.unmounted=true
 	}
 	render(){
-		const {onRefresh, children, onMore, resistance, distanceToRefresh, label}=this.props
+		const {onRefresh, children, onMore, resistance, distanceToRefresh, label, pagination}=this.props
 		const {status, offset}=this.state
+		const reset=e=>!this.unmounted && this.setState({status:null,offset:undefined})
+						
 		let loading=null
 		if(onMore){
 			loading=<Loading label={label} show={"pushing,loading".split(",").includes(this.state.status)}/>
@@ -100,7 +105,6 @@ export class PullToRefresh extends Component{
 						}
 					}}
 					onPanEnd={e=>{
-						let reset=e=>!this.unmounted && this.setState({status:null,offset:undefined})
 						this.content.style.transform = this.content.style.webkitTransform = ``
 						switch(status){
 						case "pulling":
@@ -127,6 +131,12 @@ export class PullToRefresh extends Component{
 					</div>
 				</Hammer>
 				{loading}
+				<Waypoint onEnter={e=>{
+					if(!status && onMore){
+						this.setState({status:"loading"})
+						onMore(reset)
+					}
+				}}/>
 			</div>
 		)
 	}

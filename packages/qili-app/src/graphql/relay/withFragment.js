@@ -29,6 +29,8 @@ export const withFragment=options=>BaseComponent=>{
 					}
 					if(relay.hasMore() && !relay.isLoading()){
 						relay.loadMore(pageSize, ...more)
+					}else if(typeof(more[0])=="function"){
+						more[0]()
 					}
 				}
 				return <BaseComponent {...myProps} 

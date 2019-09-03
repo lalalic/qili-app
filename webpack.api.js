@@ -15,7 +15,7 @@ module.exports=(base,HTML,port)=>{
 			path:`${__dirname}/packages/qili-app`,
             libraryTarget: "commonjs2",
 		},
-        target:"node",
+		target:"node",
 		externals:[nodeExternals()],
 		plugins:[]
 	}
