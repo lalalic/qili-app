@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "homepage": "https://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -64,8 +64,8 @@
     "src/sharedQL/qili.js",
     "cp.js",
     "graphql.js",
-    "www/server.js",
-    "www/client.js"
+    "www",
+    "components"
   ],
   "license": "MIT",
   "bin": {
