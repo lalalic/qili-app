@@ -1,6 +1,7 @@
 import React from "react"
 import project from "qili-app-console/package.json"
-import {QiliApp, File} from "qili-app"
+import {QiliApp} from "qili-app"
+import File from "qili-app/components/file"
 
 project.homepage=`http://localhost:9081`
 

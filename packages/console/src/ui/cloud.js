@@ -1,6 +1,6 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
-import {compose, getContext, mapProps} from "recompose"
+import {compose, getContext} from "recompose"
 
 import {Tabs, Tab} from "material-ui/Tabs"
 import OpenIcon from "material-ui/svg-icons/file/file-upload"
@@ -10,7 +10,9 @@ import SaveIcon from "material-ui/svg-icons/content/save"
 import {Controlled as CodeMirror} from "react-codemirror2"
 import "codemirror/mode/javascript/javascript"
 
-import {CommandBar,File} from "qili-app"
+import CommandBar from "qili-app/components/command-bar"
+import File from "qili-app/components/file"
+
 import {withMutation, withFragment} from "qili-app/graphql"
 
 import Schema from "./schema"

@@ -1,7 +1,7 @@
 import React, {Component,Fragment} from "react"
 import PropTypes from "prop-types"
 import {compose, setStatic, getContext, withProps} from "recompose"
-import {CommandBar} from "qili-app"
+import CommandBar from "qili-app/components/command-bar"
 import {withFragment, withMutation} from "qili-app/graphql"
 import {connect} from "react-redux"
 

@@ -1,7 +1,7 @@
 import React from "react"
 import {compose} from "recompose"
 import {withFragment} from "qili-app/graphql"
-import {Account} from "qili-app"
+import Account from "qili-app/components/account"
 
 import {ListItem} from "material-ui/List"
 import IconAdd from "material-ui/svg-icons/content/add-circle-outline"

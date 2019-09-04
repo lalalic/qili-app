@@ -1,5 +1,5 @@
 import React from "react"
-import {Pull2Refresh} from "qili-app"
+import Pull2Refresh from "qili-app/components/pull-to-refresh"
 
 import {compose, mapProps} from "recompose"
 import {withFragment} from "qili-app/graphql"

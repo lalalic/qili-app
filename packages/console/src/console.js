@@ -12,7 +12,14 @@ import IconCloud from "material-ui/svg-icons/file/cloud"
 import IconLog from "material-ui/svg-icons/action/assignment"
 import IconAccount from 'material-ui/svg-icons/action/account-box'
 
-import {QiliApp, ACTION as qiliACTION,Comment, OfflineUI,CommandBar, CheckUpdate,Setting, Account,Offline} from 'qili-app'
+import {QiliApp, ACTION as qiliACTION,Offline} from 'qili-app'
+import Comment from "qili-app/components/comment"
+import * as OfflineUI from "qili-app/components/offline"
+import CommandBar from "qili-app/components/command-bar"
+import CheckUpdate from "qili-app/components/check-update"
+import Setting from "qili-app/components/setting"
+import Account from "qili-app/components/account"
+
 
 import {withFragment, withQuery,withInit, withPagination} from 'qili-app/graphql'
 	
