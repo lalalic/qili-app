@@ -10,6 +10,7 @@ module.exports=(base,HTML,port)=>{
 			"www/client":"./packages/qili-app/src/www/client.js",
 			"www/server":"./packages/qili-app/src/www/server.js",
 			"components/tutorial":"./packages/qili-app/src/components/tutorial.js",
+			"components/profile":"./packages/qili-app/src/components/profile.js",
 			"components/setting":"./packages/qili-app/src/components/setting.js",
 			"components/comment":"./packages/qili-app/src/components/comment.js",
 			"components/command-bar":"./packages/qili-app/src/components/command-bar.js",
