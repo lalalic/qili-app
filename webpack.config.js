@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path');
-const {ContextReplacementPlugin, DefinePlugin} = require("webpack");
+const {ContextReplacementPlugin} = require("webpack");
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 
 const HTML={
@@ -21,6 +21,10 @@ module.exports=env=>{
 		},
 		module:{
 			rules:[{
+				test: /.js?$/,
+				use: 'source-map-loader',
+				enforce:"pre",
+			},{
 				test: /.js?$/,
 				use: 'babel-loader',
 				exclude: /node_modules/,
@@ -47,9 +51,6 @@ module.exports=env=>{
 			}]
 		},
 		plugins:[
-			new DefinePlugin({
-				'process.env.NODE_ENV': JSON.stringify('production')
-			}),
 			new ContextReplacementPlugin(/graphql-language-service-interface[\/\\]dist/, /\.js$/),
 			new ContextReplacementPlugin(/transformation[\/\\]file/, /\.js$/),
 			new ContextReplacementPlugin(/source-map[\/\\]lib/, /\.js$/),
@@ -69,7 +70,7 @@ module.exports=env=>{
 
 			new HtmlWebpackInlineSourcePlugin(),
 		],
-		mode:"development"
+		mode:"production"
 	}
 
 	if(env){
