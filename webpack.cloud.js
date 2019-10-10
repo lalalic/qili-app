@@ -22,7 +22,7 @@ module.exports=()=>({
         path:`${__dirname}/packages/console/cloud`,
         filename:"__generated.js",
     },
-    mode:"development",
+    mode:"production",
     //devtool:"inline-source-map",
     plugins:[
         //must not have devtool on options, and mode must be development
