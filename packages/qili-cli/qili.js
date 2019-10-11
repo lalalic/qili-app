@@ -123,7 +123,7 @@ program
 			}
 
 			if(buildCloud){
-				run(`npm run cloud -- ${cloud||""}`)
+				run(`npm run cloud ${cloud ? "-- "+cloud : ""}`)
 				console.log(chalk.blue("cloud code is ready"))
 			}else{
 				console.log(chalk.yellow("ignore build cloud code"))
