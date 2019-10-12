@@ -24,6 +24,7 @@ module.exports=env=>{
 				test: /.js?$/,
 				use: 'source-map-loader',
 				enforce:"pre",
+				exclude: /node_modules/,
 			},{
 				test: /.js?$/,
 				use: 'babel-loader',

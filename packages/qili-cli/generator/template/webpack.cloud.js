@@ -1,5 +1,5 @@
 module.exports=()=>({
-    entry:["./cloud/index.js"],
+    entry:["@babel/polyfill","./cloud/index.js"],
     target:"node",
     externals: [
         function(context, request, callback){
@@ -18,15 +18,23 @@ module.exports=()=>({
         filename:"__generated.js",
     },
     mode:"production",
-    //devtool:"eval-source-map",
     module: {
-        rules: [
-            {
-                test: /.js?$/,
-                use: ['source-map-loader'],
-                enforce:"pre",
-            }, 
-          { test: /\.(js)$/, use: 'babel-loader' }
-        ]
+        rules: [{
+            test: /\.js$/,
+            use: 'source-map-loader',
+            enforce:"pre",
+            include: /qili\-app/
+        },
+        { 
+            test: /\.js$/, 
+            use: "babel-loader",
+            exclude: /node_modules/, 
+        },{
+            test:/.less?$/,
+            use: [
+                'css-loader',
+                'less-loader',
+            ]
+        }]
     },
 })
