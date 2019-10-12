@@ -22,6 +22,7 @@ function createServerEnvironment({app,user}){
 	}),{
 		SSRReady(query){
 			if(!hasQuery){
+				delete this.SSRReady//to make it ready for render content, check withQuery
 				resolve()
 			}else if(query){
 				delete this.SSRReady//to make it ready for render content, check withQuery
