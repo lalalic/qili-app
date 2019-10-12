@@ -8,7 +8,9 @@ import withGraphql from "../graphql/relay/withGraphqlClient"
 function createServerEnvironment({app,user}){
 	const store=new Store(new RecordSource())
 	let fetchPayload, resolve, _SSRReady=new Promise(r=>resolve=r)
+	let hasQuery=false
 	function fetchQuery(operation, variables){
+		hasQuery=true
 		return app.runQL(typeof(operation)=="string" ? operation : operation.text,variables)
 			.then(data=>fetchPayload=data)
 	}
@@ -19,7 +21,9 @@ function createServerEnvironment({app,user}){
 		store,
 	}),{
 		SSRReady(query){
-			if(query){
+			if(!hasQuery){
+				resolve()
+			}else if(query){
 				delete this.SSRReady//to make it ready for render content, check withQuery
 				resolve({...query, data:fetchPayload})
 			}
