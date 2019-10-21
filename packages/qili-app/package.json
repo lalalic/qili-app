@@ -1,7 +1,7 @@
 {
   "name": "qili-app",
   "description": "qili application framework",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "homepage": "https://app.qili2.com",
   "author": {
     "name": "Raymond Li",
@@ -15,18 +15,19 @@
     "material-auto-rotating-carousel": "^1.7.0",
     "material-ui": "^0.19.0",
     "prop-types": "^15.6.0",
+    "react-hammerjs": "^1.0.1",
     "react-redux": "^4.4.5",
     "react-relay": "^5.0.0",
     "react-responsive": "^4.1.0",
     "react-swipeable-views": "^0.12.13",
-    "react-hammerjs": "^1.0.1",
-    "react-waypoint":"^9.0.0",
+    "react-waypoint": "^9.0.0",
     "recompose": "^0.27.0",
     "redux": "^3.6.0",
     "redux-persist": "^4.10.1",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "subscriptions-transport-ws": "^0.9.16"
   },
-  "devDependencies":{
+  "devDependencies": {
     "relay-compiler": "^5.0.0"
   },
   "optionalDependencies": {
@@ -55,15 +56,11 @@
     "postinstall": "node ./cp.js"
   },
   "files": [
-    "index.js",
-    "README.md",
-    "CHANGELOG.md",
+    "*.js",
+    "*.md",
     "index.tmpl",
     "index.less",
-    "makeOfflineSchema.js",
     "src/sharedQL/qili.js",
-    "cp.js",
-    "graphql.js",
     "www",
     "components"
   ],

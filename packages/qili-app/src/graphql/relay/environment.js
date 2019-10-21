@@ -1,5 +1,7 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
 
+import { SubscriptionClient } from 'subscriptions-transport-ws/dist/client'
+
 const handlerProvider = null;
 const NoService=new Error("Network error")
 
@@ -46,8 +48,8 @@ export function createEnvironment({
 			...opt,
 			headers: {
 				'content-type': 'application/json',
-				"X-Application-ID": appId,
-				"X-Session-Token": token,
+				"x-application-id": appId,
+				"x-session-token": token,
 				...(opt?opt.headers:null)
 			},
 		})
@@ -72,7 +74,7 @@ export function createEnvironment({
 		return fetcherOnline({
 			body: JSON.stringify({
 				query: isDev===true ? operation.text : undefined, // GraphQL text from input
-				id: isDev===true ? undefined : operation.name,
+				operationName: isDev===true ? undefined : operation.name,
 				variables,
 			}),
 		})
@@ -131,9 +133,30 @@ export function createEnvironment({
 		})
 	}
 
+	function setupSubscription(){
+		const wsUrl=(([procol,...d])=>['ws',...d].join(":"))(service.split(":"))
+		const ws = new SubscriptionClient(wsUrl, {
+			reconnect: true,
+			lazy:true,
+			connectionParams:{
+				"x-application-id": appId,
+				"x-session-token": token,
+			}
+		})
+
+		return (operation, variables) =>{
+			debugger
+			return ws.request({
+				query: operation.text,
+				operationName: isDev===true ? undefined : operation.name,
+				variables
+			})
+		}
+
+	}
 	return Object.assign(new Environment({
 		handlerProvider,
-		network: Network.create(fetchQuery),
+		network: Network.create(fetchQuery,setupSubscription()),
 		store,
 	}),{
 		changeToken(newToken){

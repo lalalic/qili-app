@@ -1,5 +1,5 @@
 import React from "react"
-import QiliApp, * as qili from "qili"
+import QiliApp, * as qili from "qili-app"
 import Tutorial from "components/tutorial"
 import Empty from "components/empty"
 import Authentication from "components/authentication"

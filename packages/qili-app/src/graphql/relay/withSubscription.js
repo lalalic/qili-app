@@ -2,7 +2,6 @@ import React from "react"
 import PropTypes from "prop-types"
 import {requestSubscription} from "react-relay"
 import {compose, setDisplayName, wrapDisplayName, getContext} from "recompose"
-import hack from "./hack-null-default-undefined"
 
 export const withSubscription=option=>BaseComponent=>{
 	const WithSubscription=compose(
@@ -10,9 +9,10 @@ export const withSubscription=option=>BaseComponent=>{
 		)(({client:environment,...others})=>{
 			const {subscription, updater, ...more}=typeof(option)=="function" ? option(others) : option
 
-			requestSubscription({
-                environment,
-				subscription:hack(subscription),
+			requestSubscription(
+				environment,
+				{
+                subscription,
                 ...more,
             })
 

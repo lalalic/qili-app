@@ -4,20 +4,7 @@ import { AutoRotatingCarousel, Slide } from 'material-auto-rotating-carousel'
 import MediaQuery from "react-responsive"
 
 export class Tutorial extends Component{
-	constructor(){
-		super(...arguments)
-		this.state={ready:true}
-	}
-
-	componentDidMount(){
-		this.setState({ready:true})
-	}
-
 	render(){
-		const {ready}=this.state
-		if(!ready){
-			return null
-		}
 		var {slides=[], onEnd, landscape=false, ...props}=this.props
 		return (
 			<Fragment>

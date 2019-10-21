@@ -3,8 +3,6 @@ import PropTypes from "prop-types"
 import {QueryRenderer} from "react-relay"
 import {fetchQuery} from "relay-runtime"
 
-import hack from "./hack-null-default-undefined"
-
 class Wrapper extends PureComponent{
 	constructor(){
 		super(...arguments)

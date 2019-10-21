@@ -50,6 +50,9 @@ module.exports=(base,HTML,port)=>{
 				filename:"cordova.html",
 				chunks:["app"]
 			})
-		]
+		],
+		watchOptions:{
+			ignored: /node_modules/
+		}
 	}
 }
