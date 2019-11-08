@@ -20,10 +20,9 @@ Cloud.addModule({
     }
 })
 
-Cloud.logVariables=function(operationName, variables){
-    if(typeof(variables)=="object" && variables.cloudCode){
-        const {cloudCode, ...a}=variables
-        return a
+Cloud.logVariables=function(variables){
+    if(variables.cloudCode){
+        variables.cloudCode="..."
     }
     return variables
 }

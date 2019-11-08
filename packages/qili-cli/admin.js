@@ -10,13 +10,14 @@ module.exports=class extends QiliCloud{
     init({service,contact}){
         return this.runQL("console_prefetch_Query")
             .then(({me:{apps,token}})=>{
-                this.token=token
+				this.token=token
                 this.apps=apps
                 return super.saveRC({service,contact, token, apps})
-            })
+			})
     }
 
 	getAppId(){
+		console.log(this.appId)
 		return Promise.resolve(this.appId || prompts({
 				name:"appId",
 				type:"select",

@@ -54,10 +54,12 @@
     "test": "jest",
     "cordova": "cordova create cordova --link-to=packages/console/dist && cd cordova && cordova platform add android && cordova build android --release -- --keystore=../lalalic.keystore --alias=lalalic",
     "relay": "relay-compiler --src ./packages --include */src/**  --schema ./packages/console/schema.graphql",
-    "persist": "yarn relay && qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
+    "persist": "qili persist packages/qili-app ../qili/lib && qili persist packages/console ../qili/lib/admin",
     "api": "yarn build --env=api",
     "cloud": "webpack --env=cloud",
-    "sync": "qili publish packages/console/cloud/__generated.js -f packages/console/schema.graphql"
+    "cloud.dev": "webpack --env=cloud.dev",
+    "sync": "qili publish packages/console/cloud/__generated.js -f packages/console/schema.graphql",
+    "sync.dev": "qili publish --cloud cloud.dev packages/console/cloud/__generated.js -s http://localhost:9080/1/graphql -f packages/console/schema.graphql"
   },
   "repository": {
     "type": "git",

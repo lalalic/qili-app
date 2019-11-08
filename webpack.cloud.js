@@ -21,16 +21,11 @@ module.exports=()=>({
     output:{
         path:`${__dirname}/packages/console/cloud`,
         filename:"__generated.js",
+        devtoolNamespace:"qili-console"
     },
     mode:"production",
-    //devtool:"eval-source-map",
     module: {
         rules: [
-            {
-                test: /.js?$/,
-                use: ['source-map-loader'],
-                enforce:"pre",
-            },
           { 
               test: /\.(js)$/, 
               use:'babel-loader'

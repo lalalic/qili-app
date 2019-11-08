@@ -32,10 +32,9 @@ module.exports=class QiliCloud{
 		})
 		.then(({data, errors})=>{
 			if(errors){
-				console.debug({id,variables,errors})
+				console.log({id,variables,errors})
 				throw new Error(`Server Error: [${id}]`+errors.map(a=>a.message).join("\r\n"))
 			}
-			console.debug({runQL:id,variables,data})
 			return data
 		})
 	}
@@ -58,7 +57,7 @@ module.exports=class QiliCloud{
 			})
 		)
 		.then(()=>console.debug("rc saved"))
-		.catch(e=>console.debug(e))
+		.catch(e=>console.log(e))
 		.then(()=>this)
 	}
 	//must return Promise.resolve(this)
