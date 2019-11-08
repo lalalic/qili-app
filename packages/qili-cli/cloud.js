@@ -26,14 +26,13 @@ module.exports=class QiliCloud{
 		})
 		.then(res=>{
 			if(!res.ok){
-				throw new Error(res.statusText)
+				throw new Error(`[${id}] >> ${res.statusText}`)
 			}
 			return res.json()
 		})
 		.then(({data, errors})=>{
 			if(errors){
-				console.log({id,variables,errors})
-				throw new Error(`Server Error: [${id}]`+errors.map(a=>a.message).join("\r\n"))
+				throw new Error(`Server Error: [${id}] >> `+errors.map(a=>a.message).join("\r\n"))
 			}
 			return data
 		})
@@ -44,10 +43,6 @@ module.exports=class QiliCloud{
 		if(!this.constructor.NAME)
 			return Promise.resolve(this)
 
-
-		//if(data.service!="http://qili2.com/1/graphql")
-			//return Promise.resolve(this)
-
 		return new Promise((resolve,reject)=>
 			fs.writeFile(path.resolve(require("os").homedir(),`.${this.constructor.NAME.toLowerCase()}rc`), JSON.stringify(data,null,4), (e)=>{
 				if(e)
@@ -56,7 +51,7 @@ module.exports=class QiliCloud{
 					resolve(this)
 			})
 		)
-		.then(()=>console.debug("rc saved"))
+		.then(()=>console.log("rc saved"))
 		.catch(e=>console.log(e))
 		.then(()=>this)
 	}
@@ -89,7 +84,7 @@ module.exports=class QiliCloud{
 								.init({...rc,token,contact})
 						})
 						.catch(e=>{
-							console.debug(`can't renew token, request token`)
+							console.log(`can't renew token, request token`)
 							return requestToken()
 						})
 				}

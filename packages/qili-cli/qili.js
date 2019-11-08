@@ -95,7 +95,7 @@ program
 	.option('--no-persist-query', "don't persist graphql query")
 	.option('-b, --build-cloud',"build cloud code")
 	.option('--no-build-cloud',"don't build cloud code")
-	.option('--cloud <cloud>', "cloud code build option")
+	.option('--cloud <cloud>', "cloud code build script: run as: npm run <cloud>")
 	.option('-f, --schema-file <schemaFile>', "schema file path,which will be updated after publish, default [schema.graphql]")
 	.action(async function(codeFilePath="cloud/__generated.js", {
 			relayCompile, persistQuery,buildCloud, schemaFile="schema.graphql", cloud}){

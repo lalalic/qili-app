@@ -1,7 +1,8 @@
-Cloud.typeDefs=``
-
-Cloud.resolver={}
-
-Cloud.persistedQuery=require("./persisted-query")
+Cloud.addModule({
+    typeDefs:``,
+    resolver:{},
+    persistedQuery:require("./persisted-query"),
+    index:{}
+})
 
 module.exports=Cloud
