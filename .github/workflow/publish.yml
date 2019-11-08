@@ -1,0 +1,11 @@
+name: publish cli
+on: push
+
+jobs:
+  publish:
+    name: publish qili-cli to npm
+    runs-on: ubuntu
+
+    steps:
+      - name: check version change
+      
