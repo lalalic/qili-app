@@ -49,8 +49,6 @@ export default compose(
 						operation
 						status
 						time
-						variables
-						report
 					}
 					cursor
 				}

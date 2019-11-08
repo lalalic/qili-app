@@ -1,3 +1,7 @@
+type Anonymous {
+  name: String
+}
+
 type App implements Node {
   id: ID!
   apiKey: String!
