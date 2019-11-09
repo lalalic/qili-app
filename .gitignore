@@ -36,4 +36,5 @@ __generated.js
 packages/console/dist/cordova.html
 packages/console/dist/index.*
 packages/qili-app/index.js
+.DS_Store
 
