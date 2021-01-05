@@ -164,10 +164,10 @@ export default compose(
 		</UI>
 	)),
 
-	withProps(({store,reducers,appId,project,isDev,persistStoreConfig})=>{
+	withProps(({store,reducers,appId,project,isDev,persistStoreConfig, debug})=>{
 		File.root=appId
 		if(!store){
-			const composeEnhancers = process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+			const composeEnhancers = (debug||process.env.NODE_ENV !== 'production') && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 			store=createStore(
 				combineReducers({[DOMAIN]:REDUCER,...reducers}),
 				composeEnhancers(applyMiddleware(thunk),autoRehydrate())

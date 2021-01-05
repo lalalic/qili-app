@@ -11,6 +11,7 @@ export function createEnvironment({
 	user, 
 	token, 
 	supportOffline,
+	ws:wsService,
 	optics=a=>console.debug({reporting:true, ...a}), 
 	network=a=>"online", 
 	showMessage=console.debug, 
@@ -134,7 +135,7 @@ export function createEnvironment({
 	}
 
 	function setupSubscription(){
-		const wsUrl=(([procol,...d])=>['ws',...d].join(":"))(service.split(":"))
+		const wsUrl=wsService || (([procol,...d])=>['ws',...d].join(":"))(service.split(":"))
 		const ws = new SubscriptionClient(wsUrl, {
 			reconnect: true,
 			lazy:true,
@@ -144,24 +145,25 @@ export function createEnvironment({
 			}
 		})
 
-		return (operation, variables) =>{
-			debugger
+		return Object.assign((operation, variables) =>{
 			return ws.request({
 				query: operation.text,
 				operationName: isDev===true ? undefined : operation.name,
 				variables
 			})
-		}
-
+		},{ws})
 	}
+
+	const subscription=setupSubscription()
 	return Object.assign(new Environment({
 		handlerProvider,
-		network: Network.create(fetchQuery,setupSubscription()),
+		network: Network.create(fetchQuery,subscription),
 		store,
 	}),{
 		changeToken(newToken){
 			token=newToken
 		},
+
 		fetcher(req){
 			loading(true)
 			return (()=>{
@@ -192,6 +194,7 @@ export function createEnvironment({
 				return res
 			})
 		},
+
 		runQL(query, variables){
 			loading(true)
 			return (()=>{
@@ -220,6 +223,21 @@ export function createEnvironment({
 				loading(false)
 				return res
 			})
+		},
+		
+		send(query,variables){
+			const {operation, params}=query()
+			operation.text=operation.text||params.text
+			
+			return new Promise((resolve, reject)=>{
+				const {unsubscribe}=subscription(operation,variables)
+						.subscribe(data=>(unsubscribe(),resolve(data)),reject,reject)
+			})
+		},
+
+		static(url){
+			url=`${service.replace("graphql",appId)}/static${url}`
+			return fetch(url,{headers:{"x-session-token": token}})
 		}
 	});
 }
