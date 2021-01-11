@@ -31,7 +31,8 @@ export const withQuery=option=>BaseComponent=>{
         }
 
         constructor(){
-            super(...arguments)
+			super(...arguments)
+			this.state={}
             const {client:environment}=this.context
 			
 			if(environment.SSRReady){
@@ -43,12 +44,16 @@ export const withQuery=option=>BaseComponent=>{
 						environment.SSRReady({query:id||name,variables})
 					})
 			}
-        }
+			this.fetch=this.fetch.bind(this)
+		}
+		
+		fetch(vars){
+			this.setState({vars})
+		}
 
 		render(){
-			const {client:environment,store}=this.context
-			const {...selfProps}=this.props
-			const {query, onSuccess, onError, ...queryProps}=opt(this.props)||{}
+			const {context:{client:environment,store},props:{...selfProps},state:{vars={}}}=this
+			const {query, onSuccess, onError, variables, ...queryProps}=opt(this.props)||{}
 
 			if(environment.SSRReady){
 				return null
@@ -56,11 +61,11 @@ export const withQuery=option=>BaseComponent=>{
 
 			return <MyQueryRenderer {...{
 				dataFrom:"STORE_THEN_NETWORK",
-				render({error, props}){
+				render:({error, props})=>{
 					if(props){
 						return (
 							<Wrapper handle={()=>onSuccess && onSuccess(props,store.dispatch,store)}>
-								<BaseComponent {...selfProps} data={props}/>
+								<BaseComponent {...{...selfProps,data:props, fetch:vars=>this.setState({vars}),...vars }}/>
 							</Wrapper>
 						)
 					}else if(error){
@@ -75,6 +80,10 @@ export const withQuery=option=>BaseComponent=>{
 				},
 				environment,
 				query,//hack(query),
+				variables:{
+					...variables,
+					...vars,
+				},
 				...queryProps,
 				}}/>
 		}

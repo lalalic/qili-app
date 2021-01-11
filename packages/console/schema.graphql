@@ -148,7 +148,7 @@ type Role implements Node {
 }
 
 type Subscription {
-  ping: Boolean
+  ping: Int
 }
 
 scalar URL
@@ -167,6 +167,7 @@ type User implements Node {
   gender: Gender
   location: String
   signature: String
+  files(filter: String): [File]
   roles: [Role]
   apps: [App]!
   app(_id: ObjectID!): App
