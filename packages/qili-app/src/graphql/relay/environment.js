@@ -1,5 +1,5 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
-
+import print from "graphql/language/printer"
 import { SubscriptionClient } from 'subscriptions-transport-ws/dist/client'
 
 const handlerProvider = null;
@@ -224,15 +224,44 @@ export function createEnvironment({
 				return res
 			})
 		},
-		
-		send(query,variables){
+
+		publish(query,variables){
 			const {operation, params}=query()
-			operation.text=operation.text||params.text
-			
-			return new Promise((resolve, reject)=>{
-				const {unsubscribe}=subscription(operation,variables)
-						.subscribe(data=>(unsubscribe(),resolve(data)),reject,reject)
-			})
+			const {stringify, parse}=JSON
+			try{
+				JSON.stringify=(a)=>{
+					let counter=0, data=[]
+					const str=stringify(a,function(k,v){
+						if(v){
+							if(v instanceof Uint8Array){
+								debugger
+					
+								data.push(v)
+								return `__$${++counter}`
+							}else if(v.type=="Buffer" && v.data){
+								debugger
+					
+								data.push(new Uint8Array(v.data))
+								return `__$${++counter}`
+							}
+						}
+						return v
+					})
+					if(data.length){
+						return new Blob([new Uint32Array([str.length]).buffer,str,...data.map(a=>[new Uint32Array([a.length]).buffer,a]).flat()])
+					}
+					return str
+				}
+
+				JSON.parse=()=>1
+				return subscription.ws.sendMessage(undefined,'publish',{
+					query: isDev===true ? operation.text||params.text : undefined,
+					operationName: isDev===true ? undefined : operation.name,
+					variables
+				})
+			}finally{
+				Object.assign(JSON,{stringify,parse})
+			}
 		},
 
 		static(url){
