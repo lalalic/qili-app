@@ -233,14 +233,10 @@ export function createEnvironment({
 					let counter=0, data=[]
 					const str=stringify(a,function(k,v){
 						if(v){
-							if(v instanceof Uint8Array){
-								debugger
-					
+							if(v instanceof Uint8Array || v instanceof Blob){
 								data.push(v)
 								return `__$${++counter}`
 							}else if(v.type=="Buffer" && v.data){
-								debugger
-					
 								data.push(new Uint8Array(v.data))
 								return `__$${++counter}`
 							}
