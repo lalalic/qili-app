@@ -3,40 +3,9 @@ import {compose, getContext,mapProps} from "recompose"
 import {connect} from "react-redux"
 import {withMutation} from "../graphql"
 const IMAGE_DATA_SCHEME_LEN="data:image/jpeg;base64,".length
-var instance,input,_imgSizer;
-
-
-function select(accept){
-    if(input==null){
-        input=document.createElement('input')
-        input.type="file"
-        _imgSizer=document.createElement('canvas')
-        _imgSizer.style.position=input.style.position='absolute'
-        _imgSizer.style.left=input.style.left='-9999px'
-
-        document.body.appendChild(input)
-        document.body.appendChild(_imgSizer)
-    }
-
-	if(accept){
-		input.setAttribute("accept",accept)
-	}
-
-    return new Promise((resolve,reject)=>{
-        input.onChange=function(){
-            var file=this.files[0];
-            if(file==null)
-                reject()
-            else
-                resolve(file)
-        }
-        input.click()
-    })
-}
+var input,_imgSizer;
 
 function main(type="json", width, height, accept){
-    //return Promise.as("http://ts2.mm.bing.net/th?id=JN.tzKlieg4w8eYJfDBkEHoAw&pid=15.1")
-
     if(input==null){
         input=document.createElement('input')
         input.type="file"
@@ -110,7 +79,6 @@ function main(type="json", width, height, accept){
 		input.click()
     })
 }
-
 
 function resize(dataUrl, size, img){
     var ctx=_imgSizer.getContext('2d')
@@ -218,18 +186,24 @@ const FileModule={//for testable
 			return{
 				...others,
 				upload(data,host,path,props={},token){
+					if(arguments.length==1 && !(data instanceof Blob) && typeof(data)=="object"){
+						({data,token,host, path,props}=(({data, token, host, path, ...props})=>({data,token,host, path,props}))(data));
+					}
+					
 					if(typeof(props)=="string"){
 						token=props
 						props={}
 					}
 					props={...props,"x:id":host||__user}
-					let key=FileModule.uploadPathPolicy(path,host,__user)
-					if(key){
-						props.key=key
+					if(!props.key){
+						const key=FileModule.uploadPathPolicy(path,host,__user)
+						if(key){
+							props.key=key
+						}
 					}
 
 					return (token ? Promise.resolve({token}) : getToken(props.key))
-						.then(({token})=>FileModule.upload(data,props,token))
+						.then(({token})=>FileModule.upload({...props, data,token}))
 				},
 
 				getToken,
@@ -237,6 +211,9 @@ const FileModule={//for testable
 		})
 	),
 	upload(data,props={},token,url="https://up.qbox.me"){
+		if(arguments.length==1 && !(data instanceof Blob) && typeof(data)=="object"){
+			({data,props,token,url="https://up.qbox.me"}=(({data, token, url, ...props})=>({data,token,url,props}))(data));
+		}
 		return new Promise((resolve,reject)=>
 			dataAsBlob(data).then(data=>{
 				let formData=new FormData()

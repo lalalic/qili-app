@@ -1,9 +1,10 @@
 import {Environment, Network, RecordSource,  Store} from 'relay-runtime'
-import print from "graphql/language/printer"
 import { SubscriptionClient } from 'subscriptions-transport-ws/dist/client'
 
 const handlerProvider = null;
 const NoService=new Error("Network error")
+
+const q2o=(q, {operation:a, params:b}=q())=>(a.text=b.text, a)
 
 export function createEnvironment({
 	service="https://api.qili2.com/1/graphql", //must, such as https://
@@ -20,6 +21,12 @@ export function createEnvironment({
 }){
 	const source=new RecordSource()
 	const store = new Store(source);
+
+	const normalizeQuery=(operation, variables)=>({
+		query: isDev===true ? operation.text : undefined, // GraphQL text from input
+		operationName: isDev===true ? undefined : operation.name,
+		variables,
+	})
 
 	if(supportOffline){
 		supportOffline.user=user
@@ -73,16 +80,10 @@ export function createEnvironment({
 
 	function fetchQueryOnline(operation, variables, cacheConfig,uploadables){
 		return fetcherOnline({
-			body: JSON.stringify({
-				query: isDev===true ? operation.text : undefined, // GraphQL text from input
-				operationName: isDev===true ? undefined : operation.name,
-				variables,
-			}),
+			body: JSON.stringify(normalizeQuery(operation,variables)),
 		})
 		.catch(e=>{
-
 			network("offline")
-
 			if(supportOffline)
 				return fetchQueryOffline(operation, variables, cacheConfig,uploadables)
 
@@ -136,7 +137,58 @@ export function createEnvironment({
 
 	function setupSubscription(){
 		const wsUrl=wsService || (([procol,...d])=>['ws',...d].join(":"))(service.split(":"))
-		const ws = new SubscriptionClient(wsUrl, {
+		const ws = new (class extends SubscriptionClient{
+			//allow without query
+			checkOperationOptions(options,...args){
+				super.checkOperationOptions({...options, query:"query {me}"},...args)
+			}
+
+			processReceivedData(){
+				const _parse=JSON.parse
+				JSON.parse=m=>{
+					try{
+						return _parse(m,(k,v)=>{
+							if(v && v.type==="Buffer" && v.data){
+								return new Uint8Array(v.data).buffer//ArrayView can't be frozen, so use buffer
+							}
+							return v
+						})
+					}finally{
+						JSON.parse=_parse
+					}
+				}
+				return super.processReceivedData(...arguments)
+			}
+			publish(query,variables){
+				const {stringify, parse}=JSON
+				try{
+					JSON.stringify=(a)=>{
+						let counter=0, data=[]
+						const str=stringify(a,function(k,v){
+							if(v){
+								if(v instanceof Uint8Array || v instanceof Blob){
+									data.push(v)
+									return `__$${++counter}`
+								}else if(v.type=="Buffer" && v.data){
+									data.push(new Uint8Array(v.data))
+									return `__$${++counter}`
+								}
+							}
+							return v
+						})
+						if(data.length){
+							return new Blob([new Uint32Array([str.length]).buffer,str,...data.map(a=>[new Uint32Array([a.length]).buffer,a]).flat()])
+						}
+						return str
+					}
+	
+					JSON.parse=()=>1
+					return this.sendMessage(undefined,'publish',normalizeQuery(q2o(query),variables))
+				}finally{
+					Object.assign(JSON,{stringify,parse})
+				}
+			}
+		})(wsUrl, {
 			reconnect: true,
 			lazy:true,
 			connectionParams:{
@@ -144,14 +196,9 @@ export function createEnvironment({
 				"x-session-token": token,
 			}
 		})
-
 		return Object.assign((operation, variables) =>{
-			return ws.request({
-				query: operation.text,
-				operationName: isDev===true ? undefined : operation.name,
-				variables
-			})
-		},{ws})
+			return ws.request(normalizeQuery(operation,variables))
+		},{publish:ws.publish.bind(ws)})
 	}
 
 	const subscription=setupSubscription()
@@ -199,6 +246,19 @@ export function createEnvironment({
 			loading(true)
 			return (()=>{
 				if(network()=="online"){
+					/**
+					 * query maybe one of following:
+					 * > {id, query, variables}
+					 * > compiled query
+					 * > query string
+					 */
+					if(typeof(query)=="function"){
+						query=normalizeQuery(q2o(query),variables)
+					}else if(query.query){
+						query=(({query:a, variables:b=variables})=>normalizeQuery(q2o(a),variables))(query);
+					}else if(typeof(query)=="string"){
+						query={variables,query}
+					}
 					return fetcherOnline({body:JSON.stringify(query)})
 				}else if(supportOffline){
 					return supportOffline.runQL(query, variables)
@@ -226,38 +286,7 @@ export function createEnvironment({
 		},
 
 		publish(query,variables){
-			const {operation, params}=query()
-			const {stringify, parse}=JSON
-			try{
-				JSON.stringify=(a)=>{
-					let counter=0, data=[]
-					const str=stringify(a,function(k,v){
-						if(v){
-							if(v instanceof Uint8Array || v instanceof Blob){
-								data.push(v)
-								return `__$${++counter}`
-							}else if(v.type=="Buffer" && v.data){
-								data.push(new Uint8Array(v.data))
-								return `__$${++counter}`
-							}
-						}
-						return v
-					})
-					if(data.length){
-						return new Blob([new Uint32Array([str.length]).buffer,str,...data.map(a=>[new Uint32Array([a.length]).buffer,a]).flat()])
-					}
-					return str
-				}
-
-				JSON.parse=()=>1
-				return subscription.ws.sendMessage(undefined,'publish',{
-					query: isDev===true ? operation.text||params.text : undefined,
-					operationName: isDev===true ? undefined : operation.name,
-					variables
-				})
-			}finally{
-				Object.assign(JSON,{stringify,parse})
-			}
+			return subscription.publish(...arguments)
 		},
 
 		static(url){
@@ -266,3 +295,4 @@ export function createEnvironment({
 		}
 	});
 }
+
