@@ -136,7 +136,7 @@ export function createEnvironment({
 	}
 
 	function setupSubscription(){
-		const wsUrl=wsService || (([procol,...d])=>['ws',...d].join(":"))(service.split(":"))
+		const wsUrl=wsService || (([http,...d])=>[http=="https" ? 'wss' : 'ws',...d].join(":"))(service.split(":"))
 		const ws = new (class extends SubscriptionClient{
 			//allow without query
 			checkOperationOptions(options,...args){
