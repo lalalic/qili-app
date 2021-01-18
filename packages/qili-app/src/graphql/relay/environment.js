@@ -255,7 +255,7 @@ export function createEnvironment({
 					if(typeof(query)=="function"){
 						query=normalizeQuery(q2o(query),variables)
 					}else if(query.query){
-						query=(({query:a, variables:b=variables})=>normalizeQuery(q2o(a),variables))(query);
+						query=(({query:a, variables:b=variables})=>normalizeQuery(q2o(a),b))(query);
 					}else if(typeof(query)=="string"){
 						query={variables,query}
 					}
