@@ -25,8 +25,8 @@ export default function({content, data}){
                 </div>
                 <div style="flex:none;border-top:1px solid gray; font-size:small">
                     <p>
-                        <span>© 2019 七里云</span>
-                        <span style="float:right">京ICP备15008710号-1</span>
+                        <span>© 2021 七里云</span>
+                        <a href="https://beian.miit.gov.cn/" target="_blank" style="float:right">京ICP备15008710号-1</a>
                     </p>
                 </div>
             </footer>
